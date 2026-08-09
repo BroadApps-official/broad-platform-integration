@@ -239,6 +239,12 @@ private struct ExamplePaywallRepository: PaywallRepositoryProtocol {
         if arguments.contains("-paywall-empty") {
             return 0
         }
+        if arguments.contains("-paywall-one-product") {
+            return 1
+        }
+        if arguments.contains("-paywall-two-products") {
+            return 2
+        }
         if arguments.contains("-paywall-many-products") {
             return 12
         }

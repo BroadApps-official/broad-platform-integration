@@ -76,6 +76,8 @@ struct ExampleMainView: View {
         private let scenarios = [
             "-live-adapty            real catalog; purchase/restore disabled",
             "-analytics-fixture       paywall + typed recording sink",
+            "-paywall-one-product     1 product, automatic selection",
+            "-paywall-two-products    2 products, original order",
             "-paywall-many-products   12 products, original order",
             "-paywall-payment-methods Apple/SBP/Card sheet fixture",
             "-paywall-empty           safe empty paywall",

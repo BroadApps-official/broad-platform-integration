@@ -1,4 +1,29 @@
-# Исходники диаграмм README
+# Визуальные материалы README
+
+## Реальные экраны example
+
+`Documentation/Assets/README/Screenshots` содержит настоящие снимки
+`BroadAppTemplate`, собранного и запущенного на iPhone 17 Pro Simulator:
+
+| Файл | Fixture |
+|---|---|
+| `onboarding-dark.png` | первый onboarding-слайд, `-tracking-disabled` |
+| `paywall-light.png` | обычный adaptive paywall |
+| `paywall-one-light.png` | один продукт + automatic selection |
+| `paywall-two-dark.png` | два продукта в provider order |
+| `paywall-many-dark.png` | paywall с 12 provider products |
+| `payment-methods-light.png` | UI-only выбор App Store / СБП / карты |
+| `paywall-empty-dark.png` | безопасный empty state |
+| `paywall-error-dark.png` | безопасный error + retry state |
+| `main-dark.png` | main fixture после завершённого flow |
+
+Скриншоты снимаются с фиксированным status bar `9:41`, без системных prompt и
+без настоящего платежа. Перед обновлением изображения нужно заново собрать
+example, запустить соответствующий fixture и убедиться, что на снимке нет
+локальных уведомлений или отладочных окон. PNG хранится в размере `603×1311`:
+этого достаточно для Retina-превью README без лишнего веса репозитория.
+
+## Схемы и анимации
 
 | Файл | Что описывает |
 |---|---|

@@ -1,7 +1,7 @@
 # Текущий статус автоматической проверки
 
 Текущий source snapshot:
-`3372422a8bb87fa7087dfaaf0d6a22957213fb9648c2e39ef85d70574c73ceab`.
+`8468a65a7b2e2f80698c2153d112050bdf19bf9015ede69b26a6c29100fe3068`.
 
 ## Единый рабочий процесс
 
@@ -42,18 +42,19 @@ Manager либо используют локальную checkout-папку.
 
 ## Итог
 
-`PASS` — 9 августа 2026 года финальный `agent_review_and_fix` завершился с
-первой попытки без platform-owned исправлений.
+`PASS` — 9 августа 2026 года после обновления визуальной документации и
+fixture-режимов последовательно прошли `release_gate` и полный `agent_gate`.
 
 Подтверждено для указанного snapshot:
 
-- внутренний полный `Scripts/agent_gate.sh` — `PASS`;
-- независимый повторный wrapper-gate — `PASS`;
+- `Scripts/release_gate.sh` — `PASS`;
+- `Scripts/agent_gate.sh` — `PASS`;
 - SwiftFormat — `0/242` файлов требуют форматирования;
 - SwiftLint — `0` нарушений;
 - Xcode build matrix — `4/4`;
 - live Adapty compile-only configurations — `2/2` (`5013` и `5109Codex`);
-- рабочее дерево после automation осталось чистым.
+- documentation/link/asset validation проверяет девять настоящих iPhone PNG;
+- fixture paywall подтверждён для `0/1/2/12` продуктов.
 
 Подробный локальный runtime-отчёт создаётся в
 `AgentChecks/AutomationReports/latest.md`. Этот файл намеренно не хранится в

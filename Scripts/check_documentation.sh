@@ -78,10 +78,37 @@ for required_pattern in \
     'Documentation/Analytics\.md' \
     'Documentation/AgentAutomation\.md' \
     'Documentation/PlatformHandoff\.md' \
+    'Documentation/Assets/README/Screenshots/onboarding-dark\.png' \
+    'Documentation/Assets/README/Screenshots/paywall-light\.png' \
+    'Documentation/Assets/README/Screenshots/payment-methods-light\.png' \
+    'Documentation/Assets/README/Screenshots/main-dark\.png' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
     if ! rg -q "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
+    fi
+done
+
+for screenshot_path in \
+    "$platform_root/Documentation/Assets/README/Screenshots/onboarding-dark.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-light.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-one-light.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-two-dark.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-many-dark.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/payment-methods-light.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-empty-dark.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-error-dark.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/main-dark.png"
+do
+    if [[ ! -s "$screenshot_path" ]]; then
+        record_failure "README screenshot is missing: ${screenshot_path#$platform_root/}"
+        continue
+    fi
+
+    screenshot_width="$(/usr/bin/sips -g pixelWidth "$screenshot_path" 2>/dev/null | /usr/bin/awk '/pixelWidth:/ { print $2 }')"
+    screenshot_height="$(/usr/bin/sips -g pixelHeight "$screenshot_path" 2>/dev/null | /usr/bin/awk '/pixelHeight:/ { print $2 }')"
+    if [[ "$screenshot_width" != "603" || "$screenshot_height" != "1311" ]]; then
+        record_failure "README screenshot must be 603x1311: ${screenshot_path#$platform_root/} (${screenshot_width:-unknown}x${screenshot_height:-unknown})"
     fi
 done
 

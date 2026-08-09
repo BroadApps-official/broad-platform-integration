@@ -49,8 +49,7 @@ Example использует локальные monetization fixtures и `Disabl
 - `BroadAppTemplateLiveAdapty5109Codex`.
 
 Рабочие bundle/Adapty/placement values хранятся в соответствующих tracked
-`.xcconfig` и попадут в Git по требованию руководства. Дополнительный импорт
-перед запуском не нужен.
+`.xcconfig`. Дополнительный импорт перед запуском не нужен.
 
 Reference repositories остаются read-only. Live scheme проверяет только Adapty
 activation/load/show. StoreKit purchase и restore запрещены company policy и
@@ -66,6 +65,8 @@ fail-before-charge.
 | `-analytics-fixture` | paywall-only flow + typed recording sink |
 | `-tracking-disabled` | полный UI smoke без системного ATT prompt |
 | `-paywall-empty` | empty paywall |
+| `-paywall-one-product` | один продукт + automatic selection |
+| `-paywall-two-products` | два продукта в provider order |
 | `-paywall-many-products` | 12 products + sticky controls |
 | `-paywall-payment-methods` | UI-only Apple/SBP/Card sheet; RU adapter remains disabled |
 | `-paywall-failure` | safe load error |

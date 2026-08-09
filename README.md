@@ -16,6 +16,15 @@
   </p>
 
   <p><strong>Один Swift Package для запуска приложения, монетизации и общих SwiftUI-флоу.</strong></p>
+
+  <p>
+    <a href="#showcase">📱 Живой example</a> ·
+    <a href="#installation">📦 Подключение</a> ·
+    <a href="#architecture">🧭 Архитектура</a> ·
+    <a href="#monetization">💳 Монетизация</a> ·
+    <a href="#automation">🤖 Автопроверка</a> ·
+    <a href="#documentation">📚 Документация</a>
+  </p>
 </div>
 
 > [!NOTE]
@@ -29,12 +38,84 @@
 > `TARGETED_DEVICE_FAMILY = 1`; iPad, Mac, Mac Catalyst и visionOS не входят в
 > поддерживаемый scope.
 
+<a id="showcase"></a>
+## Живой example
+
+Это не макеты: все изображения ниже сняты с собранного
+`BroadAppTemplate` в iPhone 17 Pro Simulator. Нажмите на экран, чтобы открыть
+его в полном размере.
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/onboarding-dark.png">
+        <img src="Documentation/Assets/README/Screenshots/onboarding-dark.png" alt="Первый onboarding-слайд в dark mode" width="100%">
+      </a>
+      <br><strong>Onboarding</strong>
+      <br><sub>App-owned контент · ATT только после первого слайда</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-light.png">
+        <img src="Documentation/Assets/README/Screenshots/paywall-light.png" alt="Адаптивный paywall в light mode" width="100%">
+      </a>
+      <br><strong>Adaptive paywall</strong>
+      <br><sub>Provider order · длинные строки · sticky CTA</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/payment-methods-light.png">
+        <img src="Documentation/Assets/README/Screenshots/payment-methods-light.png" alt="Выбор Apple и RU способов оплаты" width="100%">
+      </a>
+      <br><strong>Payment methods</strong>
+      <br><sub>App Store · СБП · банковская карта</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-empty-dark.png">
+        <img src="Documentation/Assets/README/Screenshots/paywall-empty-dark.png" alt="Безопасный empty state paywall" width="100%">
+      </a>
+      <br><strong>Empty</strong>
+      <br><sub>0 продуктов · retry · restore · close</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-error-dark.png">
+        <img src="Documentation/Assets/README/Screenshots/paywall-error-dark.png" alt="Безопасное error state paywall" width="100%">
+      </a>
+      <br><strong>Error + retry</strong>
+      <br><sub>Без raw SDK error и ложного premium</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/main-dark.png">
+        <img src="Documentation/Assets/README/Screenshots/main-dark.png" alt="Main после завершённого AppFlow" width="100%">
+      </a>
+      <br><strong>Verified main</strong>
+      <br><sub>Доступ только после authoritative entitlement refresh</sub>
+    </td>
+  </tr>
+</table>
+
+> [!TIP]
+> Хотите проверить конкретное состояние? Ниже есть готовые launch arguments
+> для `empty`, `error`, `12 products`, payment sheet, pending purchase и
+> entitlement-сценариев — без test target и без реального списания.
+
+## Что получает приложение
+
+| Задача | Готовое решение |
+|---|---|
+| Предсказуемо запустить приложение | bounded bootstrap, cache/offline и единые loading/error/retry states |
+| Показать первый пользовательский flow | конфигурируемый onboarding → adaptive paywall → verified main |
+| Подключить монетизацию | Adapty + StoreKit contracts, placements, experiments, RU billing и analytics |
+| Не выдать доступ ошибочно | единый entitlement engine; `pending`, timeout и unresolved не становятся premium |
+| Не копировать UI между проектами | общие SwiftUI-компоненты с app-owned текстами, assets, цветами и конфигами |
+| Автоматически проверить результат | одна команда запускает Codex, полный iPhone/Xcode gate и независимую перепроверку |
+
 ## Текущая готовность
 
 | Контур | Статус |
 |---|---|
-| Package и engineering gate | **PASS · 9 августа 2026** |
-| Platform handoff | **READY FOR REVIEW** · единый agent gate проходит, интеграция приложений выполняется отдельно |
+| Package и engineering gate | **PASS · 9 августа 2026** · два последовательных полных gate |
+| Platform handoff | **READY** · локальная приёмка закрыта, интеграция приложений выполняется отдельно |
 | Внедрение в реальные приложения | **OUT OF SCOPE** · выполнят app-разработчики после передачи |
 | GitHub | **PUBLISHED** · [`agent/broadapps-ios-platform`](https://github.com/BroadApps-official/BroadCore/tree/agent/broadapps-ios-platform) |
 | Version tag | **AFTER APPROVAL** · пока используйте branch dependency |
@@ -43,6 +124,7 @@
 [Статус автоматической проверки →](AgentChecks/STATUS.md) ·
 [История изменений →](CHANGELOG.md)
 
+<a id="installation"></a>
 ## Подключить из GitHub
 
 В Xcode откройте `File → Add Package Dependencies…`, вставьте:
@@ -73,7 +155,7 @@ dependencies: [
 организации `BroadApps-official`. После согласования version tag branch rule
 будет заменён на обычную версию `from: "1.0.0"`.
 
-## Запустить example за пять минут
+## Запустить example за три команды
 
 Требуются Xcode 16+ и Swift 6 toolchain. Скрипты точно фиксируют и отклоняют другие версии XcodeGen `2.45.4`, SwiftLint `0.62.2` и SwiftFormat `0.62.1`. Исходники компилируются в Swift 5 language mode, минимальная версия — iOS 17.
 
@@ -83,7 +165,8 @@ cd BroadAppsIOSPlatform
 open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 ```
 
-Запустите схему `BroadAppTemplate` в Simulator. Первый чистый запуск показывает полный сценарий:
+Запустите схему `BroadAppTemplate` на любом iPhone Simulator. Первый чистый
+запуск показывает полный сценарий:
 
 ```text
 launch → onboarding (3 слайда) → paywall → purchase / restore → main
@@ -97,6 +180,7 @@ launch → onboarding (3 слайда) → paywall → purchase / restore → ma
 
 [Пошаговое подключение к приложению →](Documentation/GettingStarted.md)
 
+<a id="automation"></a>
 ## 🤖 Один запуск: агент проверит и исправит
 
 Если нужен не просто список ошибок, а готовый цикл «проверить → исправить →
@@ -134,6 +218,7 @@ launch → onboarding (3 слайда) → paywall → purchase / restore → ma
 
 [Очень простая инструкция, схема и разбор ошибок →](Documentation/AgentAutomation.md)
 
+<a id="architecture"></a>
 ## Цветовая карта
 
 | Цвет | Владелец | Что находится внутри |
@@ -330,6 +415,7 @@ let analytics = NonBlockingMonetizationAnalytics(
 [Все события, поля, PII-правила и recording fixture →](Documentation/Analytics.md)
 </details>
 
+<a id="monetization"></a>
 ## Placements и общий резерв `main`
 
 Платформа оперирует логическими идентификаторами:
@@ -391,6 +477,39 @@ UI rows          [A, B, A, C, ...]
   <img alt="Анимация адаптивного paywall для разного количества продуктов" src="Documentation/Assets/README/adaptive-paywall.gif" width="86%">
 </div>
 
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-empty-dark.png">
+        <img alt="Paywall без продуктов" src="Documentation/Assets/README/Screenshots/paywall-empty-dark.png" width="100%">
+      </a>
+      <br><strong>0 продуктов</strong>
+      <br><sub>empty · retry · restore</sub>
+    </td>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-one-light.png">
+        <img alt="Paywall с одним продуктом" src="Documentation/Assets/README/Screenshots/paywall-one-light.png" width="100%">
+      </a>
+      <br><strong>1 продукт</strong>
+      <br><sub>выбирается автоматически</sub>
+    </td>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-two-dark.png">
+        <img alt="Paywall с двумя продуктами" src="Documentation/Assets/README/Screenshots/paywall-two-dark.png" width="100%">
+      </a>
+      <br><strong>2 продукта</strong>
+      <br><sub>provider order сохранён</sub>
+    </td>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-many-dark.png">
+        <img alt="Paywall с двенадцатью продуктами" src="Documentation/Assets/README/Screenshots/paywall-many-dark.png" width="100%">
+      </a>
+      <br><strong>12 продуктов</strong>
+      <br><sub>scroll + sticky footer</sub>
+    </td>
+  </tr>
+</table>
+
 На карточках и CTA нет `opacity`, `scale`, затемнения или мерцания при tap/purchase. Повторные касания блокируются логикой, а progress отображается отдельным индикатором.
 Все product/actions/legal/close hit-area clamp-ятся минимум до `44×44`
 немасштабируемых points; busy и durable pending делают product rows
@@ -417,7 +536,12 @@ fulfillment/ledger. Cached Adapty product также нельзя молча п�
 
 [Контракт paywall UI →](Documentation/PaywallUI.md)
 
-## Special offer действительно опционален
+## Ключевые правила, которые нельзя сломать
+
+<details>
+  <summary><strong>🎁 Special offer может полностью отсутствовать</strong></summary>
+
+<br>
 
 ```swift
 let specialOffer: SpecialOfferConfiguration? = nil
@@ -437,7 +561,12 @@ let specialOffer: SpecialOfferConfiguration? = nil
 
 [Special offer →](Documentation/SpecialOffer.md) · [Remote config →](Documentation/RemoteConfig.md)
 
-## ATT и Rate Us — разные правила
+</details>
+
+<details>
+  <summary><strong>🛡️ ATT и Rate Us — разные правила</strong></summary>
+
+<br>
 
 > [!IMPORTANT]
 > ATT никогда не вызывается в loader/bootstrap. Запрос возможен только после того, как первый onboarding-слайд уже появился, окно видно, приложение активно и системный статус остаётся `.notDetermined`.
@@ -452,7 +581,12 @@ let specialOffer: SpecialOfferConfiguration? = nil
 
 [Onboarding и ATT →](Documentation/OnboardingAndATT.md) · [ADR с точным решением →](Documentation/ADR/0002-att-and-rate-us.md)
 
-## RU billing: только App Store storefront
+</details>
+
+<details>
+  <summary><strong>🇷🇺 RU billing включается только через App Store storefront</strong></summary>
+
+<br>
 
 RU способы оплаты появляются только когда одновременно выполнены три условия:
 
@@ -475,7 +609,12 @@ Apple purchase, restore и RU checkout обязаны использовать �
 
 [RU billing →](Documentation/RUBilling.md) · [ADR о безопасных fallback →](Documentation/ADR/0004-ru-billing-fallback.md)
 
-## Безопасность по умолчанию
+</details>
+
+<details>
+  <summary><strong>🔐 Безопасность по умолчанию</strong></summary>
+
+<br>
 
 - В tracked example configs лежат рабочие client-visible Adapty public SDK key,
   bundle ID, access level и placements 5013/5109.
@@ -488,9 +627,16 @@ Apple purchase, restore и RU checkout обязаны использовать �
 
 [Security guide →](Documentation/Security.md)
 
+</details>
+
 ## Example и ручные сценарии
 
 Обычный чистый запуск показывает три onboarding-слайда, adaptive paywall и main после подтверждённой fixture-покупки. Progress сохраняется; чтобы снова увидеть первый запуск, удалите приложение из Simulator.
+
+<details>
+  <summary><strong>🧪 Все launch arguments и команда запуска</strong></summary>
+
+<br>
 
 Основные launch arguments:
 
@@ -502,6 +648,8 @@ Apple purchase, restore и RU checkout обязаны использовать �
 | `-analytics-fixture` | paywall-only flow и bounded typed recorder в debug-панели main |
 | `-tracking-disabled` | полный onboarding без системного ATT prompt для UI smoke |
 | `-paywall-empty` | ноль продуктов, safe empty + retry/restore/close |
+| `-paywall-one-product` | один продукт и безопасный automatic selection |
+| `-paywall-two-products` | два продукта в исходном provider order |
 | `-paywall-many-products` | 12 продуктов и sticky controls |
 | `-paywall-payment-methods` | UI-only sheet Apple/SBP/Card; RU checkout остаётся безопасно выключен |
 | `-paywall-failure` | safe error без raw SDK text |
@@ -527,6 +675,8 @@ xcrun simctl launch booted com.broadapps.platform.template \
 ```
 
 Bootstrap fixtures (`-bootstrap-degraded`, `-bootstrap-failed-once`, `-bootstrap-seed-cache`, `-bootstrap-stale-cache`) подробно описаны в [Bootstrap.md](Documentation/Bootstrap.md).
+
+</details>
 
 ### Рабочие Adapty-конфигурации в Git
 
@@ -579,6 +729,7 @@ purchase и restore недоступны по правилам компании 
 
 </details>
 
+<a id="documentation"></a>
 ## Карта документации
 
 | Хочу сделать | Открыть |
