@@ -166,7 +166,7 @@ BroadAppsIOSPlatform
 
 `.unresolved`, timeout, offline, pending и `completedButUnverified` не превращаются в `.inactive` и не выдают доступ.
 
-<details>
+<details open>
   <summary>Статическая версия схемы</summary>
   <br>
   <picture>
