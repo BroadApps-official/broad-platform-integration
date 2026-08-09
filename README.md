@@ -15,13 +15,15 @@
     <img alt="No test targets" src="https://img.shields.io/badge/Tests-no%20targets-64748B">
   </p>
 
-  <p><strong>Один локальный Swift Package для запуска приложения, монетизации и общих SwiftUI-флоу.</strong></p>
+  <p><strong>Один Swift Package для запуска приложения, монетизации и общих SwiftUI-флоу.</strong></p>
 </div>
 
 > [!NOTE]
-> Платформа пока подключается локально и готовится к публикации в Git. Рабочие
-> Adapty reference-configs 5013/5109Codex входят в tracked source. В package
-> намеренно нет test targets — приёмка выполняется
+> Платформа опубликована в приватном репозитории
+> [`BroadApps-official/BroadCore`](https://github.com/BroadApps-official/BroadCore).
+> До появления version tag подключайте ветку `agent/broadapps-ios-platform`.
+> Рабочие Adapty reference-configs 5013/5109Codex входят в tracked source. В
+> package намеренно нет test targets — приёмка выполняется
 > статическими проверками, сборкой и ручными fixture-сценариями example-приложения.
 > Platform policy — **только iPhone**: example хранит
 > `TARGETED_DEVICE_FAMILY = 1`; iPad, Mac, Mac Catalyst и visionOS не входят в
@@ -31,16 +33,47 @@
 
 | Контур | Статус |
 |---|---|
-| Локальный package и engineering gate | **PASS · 9 августа 2026** |
+| Package и engineering gate | **PASS · 9 августа 2026** |
 | Platform handoff | **READY FOR REVIEW** · единый agent gate проходит, интеграция приложений выполняется отдельно |
 | Внедрение в реальные приложения | **OUT OF SCOPE** · выполнят app-разработчики после передачи |
-| Git remote, CI, tag и release 1.0.0 | **PENDING** · выполняется только после локальной приёмки |
+| GitHub | **PUBLISHED** · [`agent/broadapps-ios-platform`](https://github.com/BroadApps-official/BroadCore/tree/agent/broadapps-ios-platform) |
+| Version tag | **AFTER APPROVAL** · пока используйте branch dependency |
 
 [Подробная матрица требований и доказательств →](Documentation/Traceability.md) ·
-[Статус проверяющих агентов →](AgentChecks/STATUS.md) ·
+[Статус автоматической проверки →](AgentChecks/STATUS.md) ·
 [История изменений →](CHANGELOG.md)
 
-## За пять минут
+## Подключить из GitHub
+
+В Xcode откройте `File → Add Package Dependencies…`, вставьте:
+
+```text
+https://github.com/BroadApps-official/BroadCore.git
+```
+
+Выберите dependency rule `Branch`, укажите
+`agent/broadapps-ios-platform` и добавьте нужному iPhone target три продукта:
+
+- `BroadCore`;
+- `BroadMonetization`;
+- `BroadUIFlows`.
+
+Если host сам описан через `Package.swift`:
+
+```swift
+dependencies: [
+    .package(
+        url: "https://github.com/BroadApps-official/BroadCore.git",
+        branch: "agent/broadapps-ios-platform"
+    )
+]
+```
+
+Репозиторий приватный: у GitHub-аккаунта разработчика должен быть доступ к
+организации `BroadApps-official`. После согласования version tag branch rule
+будет заменён на обычную версию `from: "1.0.0"`.
+
+## Запустить example за пять минут
 
 Требуются Xcode 16+ и Swift 6 toolchain. Скрипты точно фиксируют и отклоняют другие версии XcodeGen `2.45.4`, SwiftLint `0.62.2` и SwiftFormat `0.62.1`. Исходники компилируются в Swift 5 language mode, минимальная версия — iOS 17.
 

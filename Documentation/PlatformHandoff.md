@@ -4,9 +4,18 @@
 iPad, Mac, Mac Catalyst и visionOS не входят в scope версии 1.0.
 
 Этот документ фиксирует реальный scope платформы. `BroadAppsIOSPlatform`
-готовится как локальный Swift Package и передаётся разработчикам приложений.
-Встраивание в конкретные production-приложения выполняется ими позднее и не
-блокирует готовность самого package.
+опубликован в приватной GitHub-ветке и может подключаться как remote или local
+Swift Package. Встраивание в конкретные production-приложения выполняется
+app-разработчиками позднее и не блокирует готовность самого package.
+
+До появления version tag используется branch dependency:
+
+```swift
+.package(
+    url: "https://github.com/BroadApps-official/BroadCore.git",
+    branch: "agent/broadapps-ios-platform"
+)
+```
 
 ## Ограничения компании
 
@@ -110,7 +119,8 @@ source contracts, архитектуру, fixture wiring, документаци
 - [ ] purchase/restore в live scheme fail-before-charge;
 - [ ] `agent_review_and_fix.sh` и независимый wrapper gate завершились `PASS`;
 - [ ] reference repositories не изменялись;
-- [ ] Git/CI/RC выполняются только после отдельного подтверждения.
+- [x] GitHub-ветка `agent/broadapps-ios-platform` опубликована;
+- [ ] version tag создаётся после отдельного подтверждения.
 
 После передачи app-команды самостоятельно выполняют integration work: задают
 свои IDs/copy/assets, подключают backend и release pipeline и принимают

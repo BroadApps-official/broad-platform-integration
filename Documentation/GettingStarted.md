@@ -4,7 +4,10 @@
 > установите `TARGETED_DEVICE_FAMILY = 1`. iPad, Mac, Mac Catalyst и visionOS
 > не входят в поддерживаемый scope BroadApps iOS Platform.
 
-Эта инструкция доводит новое приложение от подключения локального package до рабочего маршрута `launch → onboarding → paywall → purchase/restore → main`. Сначала запустите готовый example, затем переносите те же границы в свой composition root.
+Эта инструкция доводит новое приложение от подключения package из GitHub или
+локальной checkout-папки до рабочего маршрута
+`launch → onboarding → paywall → purchase/restore → main`. Сначала запустите
+готовый example, затем переносите те же границы в свой composition root.
 
 ## 1. Что требуется
 
@@ -47,7 +50,41 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 
 Для одной полной **локальной engineering** команды используйте `./Scripts/release_gate.sh`. Она проверяет package, Debug/Release Simulator и unsigned generic-device compile, но не создаёт archive или `.ipa`. Platform handoff не требует StoreKit sandbox, physical-device accessibility matrix или host attestations. Единый автоматический review-and-fix cycle и live Adapty catalog smoke описаны в [Platform Handoff](PlatformHandoff.md).
 
-## 3. Подключите local package
+## 3. Подключите package
+
+### Вариант A — из GitHub
+
+В Xcode откройте:
+
+```text
+File → Add Package Dependencies…
+```
+
+Укажите URL:
+
+```text
+https://github.com/BroadApps-official/BroadCore.git
+```
+
+До появления version tag выберите dependency rule `Branch` и укажите
+`agent/broadapps-ios-platform`. Репозиторий приватный, поэтому GitHub-аккаунту
+разработчика нужен доступ к организации `BroadApps-official`.
+
+Если host сам является Swift Package:
+
+```swift
+dependencies: [
+    .package(
+        url: "https://github.com/BroadApps-official/BroadCore.git",
+        branch: "agent/broadapps-ios-platform"
+    )
+]
+```
+
+После согласования version tag branch dependency заменяется на
+`from: "1.0.0"`.
+
+### Вариант B — локальная checkout-папка
 
 В Xcode откройте:
 
@@ -68,6 +105,12 @@ dependencies: [
     .package(path: "../BroadAppsIOSPlatform")
 ]
 ```
+
+В обоих вариантах добавьте нужному iPhone target три продукта:
+
+- `BroadCore`;
+- `BroadMonetization`;
+- `BroadUIFlows`.
 
 Не копируйте исходники модулей в app target: иначе исчезнут проверяемые границы зависимостей.
 

@@ -1,7 +1,7 @@
 # Текущий статус автоматической проверки
 
 Текущий source snapshot:
-`699e99b54d875f97a71c2d7f9f4ca8e6193c8991f63e815fa3755c25ae738136`.
+`3372422a8bb87fa7087dfaaf0d6a22957213fb9648c2e39ef85d70574c73ceab`.
 
 ## Единый рабочий процесс
 
@@ -33,8 +33,15 @@
 - purchase/restore в live Adapty schemes завершаются до финансового SDK-вызова;
 - интеграцию production-приложений выполняют app-разработчики позднее.
 
+## Подключение
+
+Package опубликован в приватном репозитории
+`BroadApps-official/BroadCore`, ветка `agent/broadapps-ios-platform`. До
+согласования version tag приложения подключают эту ветку через Swift Package
+Manager либо используют локальную checkout-папку.
+
 ## Итог
 
-`PASS` — функциональные platform contracts реализованы. Для указанного source
-snapshot успешно прошли local engineering gate и обе compile-only live Adapty
-configurations. Старые отдельные handoff-проверки не требуются.
+Функциональные platform contracts реализованы, GitHub-ветка опубликована.
+Documentation и validation для указанного snapshot проверяются в рамках шага 2;
+финальный полный agent review-and-fix cycle выполняется отдельным шагом 3.

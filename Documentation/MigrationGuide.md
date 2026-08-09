@@ -46,7 +46,8 @@
 
 ## 1. Подключите package без изменения UI
 
-Добавьте local package и три продукта. Создайте один `AppCompositionRoot`, но сначала оставьте legacy screen builders.
+Добавьте package из GitHub или локальной checkout-папки и три продукта. Создайте
+один `AppCompositionRoot`, но сначала оставьте legacy screen builders.
 
 Проверка этапа:
 

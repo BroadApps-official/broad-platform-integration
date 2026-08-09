@@ -15,7 +15,7 @@
 | `REQUIRES_LIVE_EVIDENCE` | Нужен разрешённый live provider/backend smoke без финансовой операции |
 | `PARTIAL` | Безопасная часть готова, но заявлять полный продуктовый сценарий нельзя |
 | `OUT_OF_SCOPE` | Пункт сознательно передан app-разработчикам или исключён company policy |
-| `RELEASE_PENDING` | Локальная реализация есть, но Git/CI/tag/release ещё не созданы |
+| `PUBLISHED` | Package опубликован в отдельной GitHub-ветке и доступен как branch dependency |
 
 `IMPLEMENTED` не означает готовую интеграцию приложения. Platform handoff
 фиксируется для exact source snapshot по
@@ -50,7 +50,7 @@
 | Автоматическая проверка агентом | [Automation prompt](../AgentChecks/AUTOMATION_PROMPT.md), [agent script](../Scripts/agent_review_and_fix.sh), [agent gate](../Scripts/agent_gate.sh) | [Current status](../AgentChecks/STATUS.md), `./Scripts/agent_review_and_fix.sh` | `IMPLEMENTED` — один агент проверяет, исправляет и повторно подтверждает полный gate |
 | Developer-first README, схемы, GIF и профильные guides | [README](../README.md), [README assets](Assets/README), эта матрица и документация | Link/XML/GIF validation + developer walkthrough | Документация — `IMPLEMENTED`; настоящая запись Simulator/device — `PARTIAL` |
 | Внедрение в текущие приложения | Platform даёт migration/handoff contracts, но не меняет reference projects | [Migration Guide](MigrationGuide.md), [Platform Handoff](PlatformHandoff.md) | `OUT_OF_SCOPE` — выполнят app-разработчики после передачи |
-| Git repository, CI, tag и BroadApps iOS Platform 1.0 | Package и local release gate готовы | Git remote/workflow/tag/release | `RELEASE_PENDING` |
+| Git repository и подключение package | [BroadApps-official/BroadCore](https://github.com/BroadApps-official/BroadCore), branch `agent/broadapps-ios-platform` | GitHub branch + SPM branch dependency из [Getting Started](GettingStarted.md) | `PUBLISHED`; version tag создаётся после согласования и не блокирует developer handoff |
 | Не писать unit/UI test targets | [Package.swift](../Package.swift) содержит только library products; validate запрещает `Tests/` и test targets | `Scripts/validate.sh` | `IMPLEMENTED` — это согласованная policy, а не дефект |
 
 ## Границы текущей передачи
