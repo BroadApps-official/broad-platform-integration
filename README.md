@@ -372,7 +372,7 @@ fulfillment/ledger. Cached Adapty product также нельзя молча п�
 требует exact variation, provider index, SKU и opaque commercial fingerprint
 цены/периода/offer terms.
 
-<details>
+<details open>
   <summary>Статическая версия адаптивного paywall</summary>
   <br>
   <picture>
