@@ -1,0 +1,24 @@
+{
+  "originHash" : "bc64a18bd07fb82c69c297f35e264d0c7dcf95b6f5137106daf49a223c1d73f1",
+  "pins" : [
+    {
+      "identity" : "adaptysdk-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/adaptyteam/AdaptySDK-iOS.git",
+      "state" : {
+        "revision" : "2c73ea4599b2e30bd4ba0a72660e1497a7b069f3",
+        "version" : "3.17.3"
+      }
+    },
+    {
+      "identity" : "swinject",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Swinject/Swinject.git",
+      "state" : {
+        "revision" : "b685b549fe4d8ae265fc7a2f27d0789720425d69",
+        "version" : "2.10.0"
+      }
+    }
+  ],
+  "version" : 3
+}

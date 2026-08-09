@@ -1,0 +1,15 @@
+flowchart LR
+    Launch["Launch\nbounded bootstrap"] --> Onboarding["Onboarding\n1...N slides, ATT if enabled"]
+    Onboarding --> Paywall["Adaptive paywall\n0...N products"]
+    Paywall --> Checkout["Purchase / Restore\nApple or RU"]
+    Checkout --> Entitlement["Authoritative entitlement\nactive / inactive / unresolved"]
+    Entitlement -->|"active"| Main["Main\nverified premium"]
+    Entitlement -->|"inactive / unresolved"| Safe["Safe free state\nno false premium"]
+
+    style Launch fill:#3B82F6,color:#FFFFFF,stroke:#1D4ED8
+    style Onboarding fill:#EC4899,color:#FFFFFF,stroke:#BE185D
+    style Paywall fill:#EC4899,color:#FFFFFF,stroke:#BE185D
+    style Checkout fill:#10B981,color:#052E16,stroke:#047857
+    style Entitlement fill:#10B981,color:#052E16,stroke:#047857
+    style Main fill:#F59E0B,color:#422006,stroke:#B45309
+    style Safe fill:#64748B,color:#FFFFFF,stroke:#334155

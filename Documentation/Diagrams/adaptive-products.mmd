@@ -1,0 +1,11 @@
+flowchart LR
+    Provider["Provider array\n[A, B, A, C, ...]"] --> Mapping["1:1 mapping\nno filter / sort / dedup"]
+    Mapping --> Identity["Unique presentation ID\nfor every occurrence"]
+    Identity --> UI["Adaptive UI\n0, 1 or N rows"]
+    UI --> Purchase["Exact opaque ProductReference\nfor selection and purchase"]
+
+    style Provider fill:#64748B,color:#FFFFFF,stroke:#334155
+    style Mapping fill:#10B981,color:#052E16,stroke:#047857
+    style Identity fill:#10B981,color:#052E16,stroke:#047857
+    style UI fill:#EC4899,color:#FFFFFF,stroke:#BE185D
+    style Purchase fill:#F59E0B,color:#422006,stroke:#B45309

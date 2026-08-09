@@ -1,0 +1,20 @@
+flowchart TD
+    Request["Logical placement request"] --> RequestedRemote["Requested remote"]
+    RequestedRemote -->|"usable products"| Result["Paywall payload"]
+    RequestedRemote -->|"empty / unavailable"| RequestedCache["Requested cache"]
+    RequestedCache -->|"usable"| Result
+    RequestedCache -->|"miss / unusable"| IsMain{"Requested = main?"}
+    IsMain -->|"yes"| Safe["Safe empty / unavailable"]
+    IsMain -->|"no"| MainRemote["Main remote"]
+    MainRemote -->|"usable"| Result
+    MainRemote -->|"empty / unavailable"| MainCache["Main cache"]
+    MainCache -->|"usable"| Result
+    MainCache -->|"miss / unusable"| Safe
+
+    style Request fill:#F59E0B,color:#422006,stroke:#B45309
+    style RequestedRemote fill:#10B981,color:#052E16,stroke:#047857
+    style RequestedCache fill:#3B82F6,color:#FFFFFF,stroke:#1D4ED8
+    style MainRemote fill:#10B981,color:#052E16,stroke:#047857
+    style MainCache fill:#3B82F6,color:#FFFFFF,stroke:#1D4ED8
+    style Result fill:#EC4899,color:#FFFFFF,stroke:#BE185D
+    style Safe fill:#64748B,color:#FFFFFF,stroke:#334155

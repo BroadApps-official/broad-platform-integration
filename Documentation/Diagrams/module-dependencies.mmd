@@ -1,0 +1,14 @@
+flowchart TB
+    App["Host App"] --> UI["BroadUIFlows"]
+    UI --> Monetization["BroadMonetization"]
+    UI --> Core["BroadCore"]
+    Monetization --> Core["BroadCore"]
+    Monetization --> Adapty["Adapty / StoreKit"]
+    Monetization --> RU["RU Billing Backend"]
+
+    style App fill:#F59E0B,color:#111827,stroke:#B45309
+    style UI fill:#EC4899,color:#FFFFFF,stroke:#BE185D
+    style Monetization fill:#10B981,color:#052E16,stroke:#047857
+    style Core fill:#3B82F6,color:#FFFFFF,stroke:#1D4ED8
+    style Adapty fill:#64748B,color:#FFFFFF,stroke:#334155
+    style RU fill:#64748B,color:#FFFFFF,stroke:#334155

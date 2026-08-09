@@ -1,0 +1,15 @@
+flowchart LR
+    Apple["Apple\nStoreKit + qualified verifier"] --> Engine["Entitlement Engine"]
+    Backend["Primary backend"] --> Engine
+    RU["RU billing backend\nonly when configured"] --> Engine
+    Engine --> Active["active\nany valid active wins"]
+    Engine --> Inactive["inactive\nall configured sources inactive"]
+    Engine --> Unresolved["unresolved\ntimeout / offline / invalid"]
+
+    style Apple fill:#64748B,color:#FFFFFF,stroke:#334155
+    style Backend fill:#64748B,color:#FFFFFF,stroke:#334155
+    style RU fill:#64748B,color:#FFFFFF,stroke:#334155
+    style Engine fill:#10B981,color:#052E16,stroke:#047857
+    style Active fill:#F59E0B,color:#422006,stroke:#B45309
+    style Inactive fill:#3B82F6,color:#FFFFFF,stroke:#1D4ED8
+    style Unresolved fill:#EC4899,color:#FFFFFF,stroke:#BE185D
