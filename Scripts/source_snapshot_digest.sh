@@ -4,10 +4,10 @@ set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-# Reports and their mutable STATUS dashboard are intentionally excluded: each
-# report stores this digest, so including their status would make the evidence
-# circular. Static INDEX routing, reviewer prompts and REPORT_TEMPLATE remain
-# included.
+# Mutable runtime reports and the STATUS dashboard are intentionally excluded
+# from the source snapshot. The automation prompt and executable scripts remain
+# included, so any change to the actual review-and-fix procedure changes the
+# digest.
 # Generated Xcode project files and build products are excluded as well;
 # project.yml and source inputs are part of the snapshot.
 /usr/bin/ruby -rdigest -e '

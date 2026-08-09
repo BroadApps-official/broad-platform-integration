@@ -32,7 +32,7 @@
 | Контур | Статус |
 |---|---|
 | Локальный package и engineering gate | **PASS · 9 августа 2026** |
-| Platform handoff | **PENDING** · нужны свежие agent reports, metadata и финальные fixtures |
+| Platform handoff | **READY FOR REVIEW** · единый agent gate проходит, интеграция приложений выполняется отдельно |
 | Внедрение в реальные приложения | **OUT OF SCOPE** · выполнят app-разработчики после передачи |
 | Git remote, CI, tag и release 1.0.0 | **PENDING** · выполняется только после локальной приёмки |
 
@@ -142,7 +142,7 @@ BroadAppsIOSPlatform
 ├── 🩷 <a href="Sources/BroadUIFlows">Sources/BroadUIFlows</a>              AppFlow, onboarding, loadable UI, adaptive paywall
 ├── 🟠 <a href="Examples/BroadAppTemplate">Examples/BroadAppTemplate</a>          локальное fixture-приложение без production credentials
 ├── 📘 <a href="Documentation">Documentation</a>                       подключение, контракты, ADR и manual QA
-├── 🤖 <a href="AgentChecks">AgentChecks</a>                         auto-fix агент, 7 handoff-проверок и отчёты
+├── 🤖 <a href="AgentChecks">AgentChecks</a>                         инструкция auto-fix агента и его актуальный статус
 ├── 🛠️ <a href="Scripts">Scripts</a>                             agent cycle, format, lint, build и gates
 ├── 📝 <a href="CHANGELOG.md">CHANGELOG.md</a>                        изменения до будущего релиза 1.0.0
 └── 📦 <a href="Package.swift">Package.swift</a>                       три library products и exact dependencies

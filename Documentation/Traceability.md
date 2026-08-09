@@ -47,7 +47,7 @@
 | Variation проходит в Apple и внешнюю RU conversion analytics | [analytics contexts](../Sources/BroadMonetization/Domain/Analytics/MonetizationAnalyticsEvent.swift), [pending RU store](../Sources/BroadMonetization/Data/RUBilling/PendingRUCheckoutStore.swift) | Purchase + cold-launch RU return scenarios | `IMPLEMENTED`; analytics export — `REQUIRES_HOST` |
 | Общий RU billing adapter, storefront gate, catalog, Safari return, polling, cancel | [RU Application](../Sources/BroadMonetization/Application/RUBilling), [RU Infrastructure](../Sources/BroadMonetization/Infrastructure/RUBilling) | [RU Billing](RUBilling.md), [ADR-0004](ADR/0004-ru-billing-fallback.md) | Fail-closed contract — `IMPLEMENTED`; реальный backend/payment — `OUT_OF_SCOPE` для package handoff |
 | Единая typed analytics без PII/raw errors | [analytics domain](../Sources/BroadMonetization/Domain/Analytics), [analytics adapters](../Sources/BroadMonetization/Infrastructure/Analytics), [example recorder](../Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Analytics) | [Analytics](Analytics.md), `-analytics-fixture`, [Security](Security.md), agent review/export allow-list | Pipeline и локальный recorder — `IMPLEMENTED`, `FIXTURE_VERIFIED`; production destination/export — `REQUIRES_HOST` |
-| Проверяющие агенты | [AgentChecks](../AgentChecks), report template, digest и handoff scripts | [Current status](../AgentChecks/STATUS.md) | Определения — `IMPLEMENTED`; текущие reports требуют повторного snapshot run |
+| Автоматическая проверка агентом | [Automation prompt](../AgentChecks/AUTOMATION_PROMPT.md), [agent script](../Scripts/agent_review_and_fix.sh), [agent gate](../Scripts/agent_gate.sh) | [Current status](../AgentChecks/STATUS.md), `./Scripts/agent_review_and_fix.sh` | `IMPLEMENTED` — один агент проверяет, исправляет и повторно подтверждает полный gate |
 | Developer-first README, схемы, GIF и профильные guides | [README](../README.md), [README assets](Assets/README), эта матрица и документация | Link/XML/GIF validation + developer walkthrough | Документация — `IMPLEMENTED`; настоящая запись Simulator/device — `PARTIAL` |
 | Внедрение в текущие приложения | Platform даёт migration/handoff contracts, но не меняет reference projects | [Migration Guide](MigrationGuide.md), [Platform Handoff](PlatformHandoff.md) | `OUT_OF_SCOPE` — выполнят app-разработчики после передачи |
 | Git repository, CI, tag и BroadApps iOS Platform 1.0 | Package и local release gate готовы | Git remote/workflow/tag/release | `RELEASE_PENDING` |
@@ -55,10 +55,9 @@
 
 ## Границы текущей передачи
 
-До platform handoff остаются fresh agent reports, финальные fixtures,
-repository metadata и Git/CI только после разрешения. Working Adapty
-activation/load/show проверяется через две tracked Xcode configurations для
-`5013` и `5109Codex`.
+Platform handoff подтверждается единым автоматическим agent cycle, локальными
+fixtures и двумя tracked Xcode configurations для `5013` и `5109Codex`.
+Интеграция конкретных приложений и их release pipeline выполняются отдельно.
 
 Внедрение в реальные приложения, StoreKit sandbox, physical-device
 VoiceOver/Dynamic Type, distribution-signed `.ipa` и host attestations не

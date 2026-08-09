@@ -27,8 +27,6 @@ production-ready версии.
   placements 5013/5109Codex по требованию руководства;
 - [platform handoff guide](Documentation/PlatformHandoff.md) с фактическим
   scope и ограничениями компании;
-- handoff acceptance gate без требований к real apps, StoreKit sandbox,
-  physical-device accessibility, signed `.ipa` и host attestations;
 - provider-opaque `PaywallVariationID` в Apple purchase analytics;
 - сохранение paywall presentation, variation и requested/resolved placement во
   внешнем RU checkout analytics, включая продолжение после cold launch;
@@ -71,6 +69,6 @@ production-ready версии.
 
 ## 1.0.0
 
-Platform handoff pending: нужны свежие snapshot-bound reports проверяющих
-агентов и отдельное решение о Git/CI/RC. Интеграцию в реальные приложения
-позднее выполняют app-команды; она не является критерием готовности package.
+Platform package передаётся после успешного единого agent review-and-fix cycle.
+Интеграцию в реальные приложения позднее выполняют app-команды; она не является
+критерием готовности package.

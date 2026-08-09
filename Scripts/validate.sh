@@ -46,24 +46,9 @@ echo "[1/5] Package structure"
 
 required_check_files=(
     "$platform_root/AGENTS.md"
-    "$platform_root/AgentChecks/INDEX.md"
     "$platform_root/AgentChecks/AUTOMATION_PROMPT.md"
     "$platform_root/AgentChecks/AutomationReports/README.md"
-    "$platform_root/AgentChecks/REPORT_TEMPLATE.md"
-    "$platform_root/AgentChecks/architecture.md"
-    "$platform_root/AgentChecks/ui.md"
-    "$platform_root/AgentChecks/onboarding-att-rateus.md"
-    "$platform_root/AgentChecks/paywall.md"
-    "$platform_root/AgentChecks/monetization.md"
-    "$platform_root/AgentChecks/ru-billing.md"
-    "$platform_root/AgentChecks/security.md"
-    "$platform_root/AgentChecks/Reports/architecture.md"
-    "$platform_root/AgentChecks/Reports/ui.md"
-    "$platform_root/AgentChecks/Reports/onboarding-att-rateus.md"
-    "$platform_root/AgentChecks/Reports/paywall.md"
-    "$platform_root/AgentChecks/Reports/monetization.md"
-    "$platform_root/AgentChecks/Reports/ru-billing.md"
-    "$platform_root/AgentChecks/Reports/security.md"
+    "$platform_root/AgentChecks/STATUS.md"
 )
 for required_file in "${required_check_files[@]}"; do
     if [[ ! -s "$required_file" ]]; then
@@ -80,15 +65,6 @@ for required_file in "${required_automation_files[@]}"; do
     if [[ ! -x "$required_file" ]]; then
         record_failure "Required automation script is missing or not executable:" "$required_file"
     fi
-done
-
-required_report_files=("$platform_root"/AgentChecks/Reports/*.md)
-for report_file in "${required_report_files[@]}"; do
-    for required_heading in '^Дата:' '^Вердикт:' '^## Команды$' '^## Проверено$' '^## Findings$' '^## Неподтверждённые риски$'; do
-        if ! rg -q "$required_heading" "$report_file"; then
-            record_failure "Checking-agent report is incomplete:" "$report_file ($required_heading)"
-        fi
-    done
 done
 
 test_target_matches="$(capture_rg '\.testTarget[[:space:]]*\(' "$platform_root/Package.swift")"

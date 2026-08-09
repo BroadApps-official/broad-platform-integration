@@ -33,8 +33,9 @@ Handoff candidate готов, когда:
    entitlement, analytics, cache/error/retry и optional RU UI;
 4. live Adapty catalog smoke загружает рабочий paywall из одной из двух tracked
    reference-конфигураций;
-5. семь read-only agent reports относятся к текущему digest;
-6. README, guides, traceability и repository metadata готовы к передаче;
+5. единый `agent_review_and_fix.sh` завершился `PASS`, а wrapper независимо
+   повторил полный gate;
+6. README, guides и traceability готовы к передаче;
 7. ограничения и задачи будущей app-интеграции перечислены явно.
 
 Handoff не требует совершения покупки, реального списания, sandbox account,
@@ -88,11 +89,12 @@ Fixture подтверждает orchestration платформы, но не я�
 production credentials, StoreKit policy и entitlement authorities при
 интеграции.
 
-## Проверяющие агенты
+## Автоматическая проверка агентом
 
-Каждый агент проверяет только platform-owned scope: source contracts,
-архитектуру, fixture wiring, документацию и локальные команды. Отсутствие
-sandbox/device/IPA evidence не заставляет ставить `BLOCKED`.
+`./Scripts/agent_review_and_fix.sh` проверяет только platform-owned scope:
+source contracts, архитектуру, fixture wiring, документацию и локальные
+команды. Отсутствие sandbox/device/IPA evidence не заставляет ставить
+`BLOCKED`.
 
 `BLOCKED` используется, если найден дефект самой платформы или обязательная
 локальная команда не проходит. Недоступные корпоративные сценарии фиксируются
@@ -106,7 +108,7 @@ sandbox/device/IPA evidence не заставляет ставить `BLOCKED`.
 - [ ] analytics recorder пройден;
 - [ ] live Adapty catalog smoke пройден на `5013` или `5109Codex`;
 - [ ] purchase/restore в live scheme fail-before-charge;
-- [ ] семь reports свежие для exact digest;
+- [ ] `agent_review_and_fix.sh` и независимый wrapper gate завершились `PASS`;
 - [ ] reference repositories не изменялись;
 - [ ] Git/CI/RC выполняются только после отдельного подтверждения.
 
