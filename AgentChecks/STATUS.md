@@ -1,7 +1,7 @@
 # Текущий статус проверок
 
 Текущий source snapshot:
-`fe96933e0a104f42d41b920bf3f5d6f26b03666329f2429db8174ac86b9a7e74`.
+`93d8e9603f2a8fde8a6e6fb36fdc02c873e0552cfc808616cd7253aeab5a46e5`.
 
 Для него 9 августа 2026 года успешно пройден полный локальный
 `Scripts/release_gate.sh`: contracts/privacy/documentation, SwiftFormat,

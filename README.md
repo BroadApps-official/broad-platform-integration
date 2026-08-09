@@ -20,8 +20,8 @@
 
 > [!NOTE]
 > Платформа пока подключается локально и готовится к публикации в Git. Рабочие
-> Adapty reference-configs 5013/5109Codex входят в tracked source по требованию
-> руководства. В package намеренно нет test targets — приёмка выполняется
+> Adapty reference-configs 5013/5109Codex входят в tracked source. В package
+> намеренно нет test targets — приёмка выполняется
 > статическими проверками, сборкой и ручными fixture-сценариями example-приложения.
 > Platform policy — **только iPhone**: example хранит
 > `TARGETED_DEVICE_FAMILY = 1`; iPad, Mac, Mac Catalyst и visionOS не входят в
@@ -75,7 +75,7 @@ launch → onboarding (3 слайда) → paywall → purchase / restore → ma
 
 Дальше всё происходит автоматически:
 
-1. Codex запускается с **полным доступом к Mac** по решению руководства — так
+1. Codex запускается с **полным доступом к Mac** — так
    Xcode и CoreSimulatorService работают без искусственных ограничений.
 2. Агент читает постоянные правила из `AGENTS.md`, сам запускает полный local
    engineering gate и обе live Adapty-сборки — 5013 и 5109Codex.
@@ -445,7 +445,7 @@ Apple purchase, restore и RU checkout обязаны использовать �
 ## Безопасность по умолчанию
 
 - В tracked example configs лежат рабочие client-visible Adapty public SDK key,
-  bundle ID, access level и placements 5013/5109 по требованию руководства.
+  bundle ID, access level и placements 5013/5109.
 - Backend credentials, bearer, private keys и payment URL приходят из host app
   и не кешируются платформой.
 - HTTP adapters требуют HTTPS, запрещают redirects/cookies/URL credentials и ограничивают размер ответа.
@@ -497,8 +497,8 @@ Bootstrap fixtures (`-bootstrap-degraded`, `-bootstrap-failed-once`, `-bootstrap
 
 ### Рабочие Adapty-конфигурации в Git
 
-По требованию руководства рабочие bundle ID, Adapty public SDK key, access
-level и placements для обоих references хранятся в project configuration и
+Рабочие bundle ID, Adapty public SDK key, access level и placements для обоих
+references хранятся в project configuration и
 попадают в Git. Ничего импортировать перед запуском не нужно.
 
 В Xcode выберите одну из схем:
