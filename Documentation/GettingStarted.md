@@ -67,7 +67,7 @@ https://github.com/BroadApps-official/BroadCore.git
 ```
 
 До появления version tag выберите dependency rule `Branch` и укажите
-`agent/broadapps-ios-platform`. Репозиторий приватный, поэтому GitHub-аккаунту
+`vers_niiaz`. Репозиторий приватный, поэтому GitHub-аккаунту
 разработчика нужен доступ к организации `BroadApps-official`.
 
 Если host сам является Swift Package:
@@ -76,7 +76,7 @@ https://github.com/BroadApps-official/BroadCore.git
 dependencies: [
     .package(
         url: "https://github.com/BroadApps-official/BroadCore.git",
-        branch: "agent/broadapps-ios-platform"
+        branch: "vers_niiaz"
     )
 ]
 ```

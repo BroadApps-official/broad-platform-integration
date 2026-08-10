@@ -13,7 +13,7 @@ app-разработчиками позднее и не блокирует го�
 ```swift
 .package(
     url: "https://github.com/BroadApps-official/BroadCore.git",
-    branch: "agent/broadapps-ios-platform"
+    branch: "vers_niiaz"
 )
 ```
 
@@ -119,7 +119,7 @@ source contracts, архитектуру, fixture wiring, документаци
 - [ ] purchase/restore в live scheme fail-before-charge;
 - [ ] `agent_review_and_fix.sh` и независимый wrapper gate завершились `PASS`;
 - [ ] reference repositories не изменялись;
-- [x] GitHub-ветка `agent/broadapps-ios-platform` опубликована;
+- [x] GitHub-ветка `vers_niiaz` опубликована;
 - [ ] version tag создаётся после отдельного подтверждения.
 
 После передачи app-команды самостоятельно выполняют integration work: задают

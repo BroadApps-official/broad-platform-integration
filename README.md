@@ -30,7 +30,7 @@
 > [!NOTE]
 > Платформа опубликована в приватном репозитории
 > [`BroadApps-official/BroadCore`](https://github.com/BroadApps-official/BroadCore).
-> До появления version tag подключайте ветку `agent/broadapps-ios-platform`.
+> До появления version tag подключайте ветку `vers_niiaz`.
 > Рабочие Adapty reference-configs 5013/5109Codex входят в tracked source. В
 > package намеренно нет test targets — приёмка выполняется
 > статическими проверками, сборкой и ручными fixture-сценариями example-приложения.
@@ -117,7 +117,7 @@
 | Package и engineering gate | **PASS · 9 августа 2026** · два последовательных полных gate |
 | Platform handoff | **READY** · локальная приёмка закрыта, интеграция приложений выполняется отдельно |
 | Внедрение в реальные приложения | **OUT OF SCOPE** · выполнят app-разработчики после передачи |
-| GitHub | **PUBLISHED** · [`agent/broadapps-ios-platform`](https://github.com/BroadApps-official/BroadCore/tree/agent/broadapps-ios-platform) |
+| GitHub | **PUBLISHED** · [`vers_niiaz`](https://github.com/BroadApps-official/BroadCore/tree/vers_niiaz) |
 | Version tag | **AFTER APPROVAL** · пока используйте branch dependency |
 
 [Подробная матрица требований и доказательств →](Documentation/Traceability.md) ·
@@ -134,7 +134,7 @@ https://github.com/BroadApps-official/BroadCore.git
 ```
 
 Выберите dependency rule `Branch`, укажите
-`agent/broadapps-ios-platform` и добавьте нужному iPhone target три продукта:
+`vers_niiaz` и добавьте нужному iPhone target три продукта:
 
 - `BroadCore`;
 - `BroadMonetization`;
@@ -146,7 +146,7 @@ https://github.com/BroadApps-official/BroadCore.git
 dependencies: [
     .package(
         url: "https://github.com/BroadApps-official/BroadCore.git",
-        branch: "agent/broadapps-ios-platform"
+        branch: "vers_niiaz"
     )
 ]
 ```

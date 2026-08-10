@@ -1,7 +1,7 @@
 # Текущий статус автоматической проверки
 
 Текущий source snapshot:
-`8468a65a7b2e2f80698c2153d112050bdf19bf9015ede69b26a6c29100fe3068`.
+`3242656f16f84ab330c52c8bf62c935546b8c45c61eac38723bc1441fe9c7589`.
 
 ## Единый рабочий процесс
 
@@ -36,7 +36,7 @@
 ## Подключение
 
 Package опубликован в приватном репозитории
-`BroadApps-official/BroadCore`, ветка `agent/broadapps-ios-platform`. До
+`BroadApps-official/BroadCore`, ветка `vers_niiaz`. До
 согласования version tag приложения подключают эту ветку через Swift Package
 Manager либо используют локальную checkout-папку.
 
