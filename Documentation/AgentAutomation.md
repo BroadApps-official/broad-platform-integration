@@ -42,8 +42,7 @@ flowchart LR
 | `./Scripts/agent_gate.sh` | Только запускает все проверки и live-config builds | Нет |
 | `./Scripts/agent_review_and_fix.sh` | Запускает Codex, разрешает локальные исправления, затем перепроверяет | Да, если найдена проблема |
 
-По решению руководства automation использует Codex sandbox
-`danger-full-access`. Это необходимо, чтобы агент сам работал с Xcode и
+Automation использует Codex sandbox `danger-full-access`, чтобы агент сам работал с Xcode и
 CoreSimulatorService. При этом `AGENTS.md` жёстко сохраняет scope: менять можно
 только `BroadAppsIOSPlatform`, нельзя трогать reference-проекты, делать
 commit/push или запускать настоящие платежи.

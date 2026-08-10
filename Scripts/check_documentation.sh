@@ -76,16 +76,39 @@ for required_pattern in \
     '^## Текущая готовность$' \
     'Documentation/Traceability\.md' \
     'Documentation/Analytics\.md' \
+    'Documentation/AccountRecovery\.md' \
+    'Documentation/NetworkInterruptions\.md' \
     'Documentation/AgentAutomation\.md' \
     'Documentation/PlatformHandoff\.md' \
     'Documentation/Assets/README/Screenshots/onboarding-dark\.png' \
     'Documentation/Assets/README/Screenshots/paywall-light\.png' \
-    'Documentation/Assets/README/Screenshots/payment-methods-light\.png' \
+    'Documentation/Assets/README/Screenshots/ru-payment-sbp-light\.png' \
+    'Documentation/Assets/README/Screenshots/ru-payment-apple-light\.png' \
+    'Documentation/Assets/README/Screenshots/ru-subscription-active-light\.png' \
+    'Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light\.png' \
     'Documentation/Assets/README/Screenshots/main-dark\.png' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
     if ! rg -q "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
+    fi
+done
+
+for screenshot_path in \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-sbp-light.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-apple-light.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-subscription-active-light.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light.png"
+do
+    if [[ ! -s "$screenshot_path" ]]; then
+        record_failure "README screenshot is missing: ${screenshot_path#$platform_root/}"
+        continue
+    fi
+
+    screenshot_width="$(/usr/bin/sips -g pixelWidth "$screenshot_path" 2>/dev/null | /usr/bin/awk '/pixelWidth:/ { print $2 }')"
+    screenshot_height="$(/usr/bin/sips -g pixelHeight "$screenshot_path" 2>/dev/null | /usr/bin/awk '/pixelHeight:/ { print $2 }')"
+    if [[ "$screenshot_width" != "1206" || "$screenshot_height" != "2622" ]]; then
+        record_failure "README RU screenshot must be native 1206x2622: ${screenshot_path#$platform_root/} (${screenshot_width:-unknown}x${screenshot_height:-unknown})"
     fi
 done
 
@@ -113,7 +136,10 @@ do
 done
 
 for required_file in \
+    "$platform_root/Documentation/AccountRecovery.md" \
     "$platform_root/Documentation/AgentAutomation.md" \
+    "$platform_root/Documentation/NetworkInterruptions.md" \
+    "$platform_root/Documentation/PurchaseManagers.md" \
     "$platform_root/Documentation/PlatformHandoff.md" \
     "$platform_root/Examples/BroadAppTemplate/Configuration/Adapty5013.xcconfig" \
     "$platform_root/Examples/BroadAppTemplate/Configuration/Adapty5109Codex.xcconfig" \

@@ -34,6 +34,13 @@
   стандартный press-effect.
 - Special offer полностью опционален: отсутствие config не считается ошибкой.
 - Purchase/restore не открывают premium до подтверждения entitlement.
+- После переустановки subscription ownership восстанавливается через
+  StoreKit/backend, а token balance и RU purchases — только через стабильный app
+  account и server-authoritative ledger. Local cache не является источником
+  купленного доступа или баланса.
+- Offline/timeout не превращаются в inactive/success. Неопределённый финансовый
+  результат остаётся pending до reconciliation; появление сети не запускает
+  purchase, token charge, RU checkout или cancellation автоматически.
 
 ## Ограничения проверки
 

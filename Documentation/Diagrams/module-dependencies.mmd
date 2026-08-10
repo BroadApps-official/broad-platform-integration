@@ -1,5 +1,6 @@
 flowchart TB
     App["Host App"] --> UI["BroadUIFlows"]
+    App -. optional .-> Extensions["BroadExtensions"]
     UI --> Monetization["BroadMonetization"]
     UI --> Core["BroadCore"]
     Monetization --> Core["BroadCore"]
@@ -10,5 +11,6 @@ flowchart TB
     style UI fill:#EC4899,color:#FFFFFF,stroke:#BE185D
     style Monetization fill:#10B981,color:#052E16,stroke:#047857
     style Core fill:#3B82F6,color:#FFFFFF,stroke:#1D4ED8
+    style Extensions fill:#8B5CF6,color:#FFFFFF,stroke:#6D28D9
     style Adapty fill:#64748B,color:#FFFFFF,stroke:#334155
     style RU fill:#64748B,color:#FFFFFF,stroke:#334155

@@ -12,6 +12,7 @@ final class AppCompositionRoot {
     let paywallViewModel: PaywallViewModel
     let rootViewModel: RootViewModel
     let analyticsViewModel: ExampleAnalyticsViewModel
+    let ruSubscriptionViewModel: BroadRUSubscriptionManagementViewModel
 
     private let assembler: Assembler
 
@@ -55,6 +56,24 @@ final class AppCompositionRoot {
         rootViewModel = composition.rootViewModel
         analyticsViewModel = ExampleAnalyticsViewModel(
             recorder: monetizationEnvironment.analyticsRecorder
+        )
+        ruSubscriptionViewModel = Self.makeRUSubscriptionViewModel()
+    }
+
+    private static func makeRUSubscriptionViewModel()
+        -> BroadRUSubscriptionManagementViewModel {
+        let state = ExampleRUSubscriptionState(
+            isCancelled: ProcessInfo.processInfo.arguments.contains(
+                "-ru-subscription-cancelled"
+            )
+        )
+        return BroadRUSubscriptionManagementViewModel(
+            dependencies: BroadRUSubscriptionDependencies(
+                loadStatus: ExampleLoadRUSubscriptionStatusUseCase(state: state),
+                cancelSubscription: ExampleCancelRUSubscriptionUseCase(
+                    state: state
+                )
+            )
         )
     }
 

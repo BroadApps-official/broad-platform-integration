@@ -92,11 +92,12 @@ dependencies: [
 File → Add Package Dependencies… → Add Local…
 ```
 
-Выберите папку `BroadAppsIOSPlatform`, затем добавьте нужному app target три продукта:
+Выберите папку `BroadAppsIOSPlatform`, затем добавьте нужному app target продукты:
 
 - `BroadCore`;
 - `BroadMonetization`;
-- `BroadUIFlows`.
+- `BroadUIFlows`;
+- `BroadExtensions` — опционально, если нужны общие helpers.
 
 Если host сам является Swift Package, используйте относительный путь:
 
@@ -106,11 +107,15 @@ dependencies: [
 ]
 ```
 
-В обоих вариантах добавьте нужному iPhone target три продукта:
+В обоих вариантах добавьте нужному iPhone target основные продукты:
 
 - `BroadCore`;
 - `BroadMonetization`;
 - `BroadUIFlows`.
+
+`BroadExtensions` не является скрытой зависимостью платформы. Добавляйте его
+отдельно только тем target, которым нужны Hex Color, custom fonts, dismiss
+keyboard или scoped swipe-back.
 
 Не копируйте исходники модулей в app target: иначе исчезнут проверяемые границы зависимостей.
 
@@ -283,10 +288,9 @@ Adapty observer mode, не вызывайте этот factory для purchase: 
 собственную StoreKit purchase composition с теми же durable pending, gate и
 entitlement-инвариантами.
 
-Reference example хранит согласованные Adapty public SDK keys в tracked
-`.xcconfig` по требованию руководства. Не выводите их в README или логи и не
-смешивайте с backend credentials. `AdaptyPlatformConfiguration` и identity
-redacted при reflection.
+Reference example хранит согласованные client-visible Adapty public SDK keys в
+tracked `.xcconfig`. Не выводите их в логи и не смешивайте с backend credentials.
+`AdaptyPlatformConfiguration` и identity redacted при reflection.
 
 `AdaptyPaywallRepository` передаёт каждый product один к одному, сохраняя provider
 order, дубликаты и consumables. UI identity — `ProductPresentationID`, purchase
@@ -380,6 +384,32 @@ restore и RU checkout. Не очищайте его по timeout/logout и не
 не удаляя record. Blocker снимается лишь при definitive provider
 cancellation/failure до покупки либо после verified terminal transaction
 reconciliation (и authoritative entitlement для premium product).
+
+### Fresh install и переустановка
+
+После восстановления app login создайте ту же subject composition и запустите
+единый recovery до выбора premium route:
+
+```swift
+let recovery = services.makeCustomerAccessRecovery(
+    subject: entitlementSubject,
+    refreshEntitlement: entitlementEngine,
+    recoverTokenAccount: appTokenAccountRecovery,
+    loadRUSubscription: ruServices.checkout.loadSubscriptionStatus
+)
+
+let snapshot = await recovery()
+```
+
+Apple subscription проверяется через fresh entitlement generation. Токены и RU
+purchase возвращаются только из backend текущего app account. Не переносите
+`UserDefaults`-флаги между установками и не пытайтесь восстановить consumable
+tokens через StoreKit Restore. [Полный порядок →](AccountRecovery.md).
+
+Не запускайте purchase/checkout автоматически по событию восстановления сети.
+Idempotent reads можно повторить bounded policy, а неизвестный финансовый
+результат сначала требует pending/status/transaction reconciliation.
+[Network-loss guide →](NetworkInterruptions.md).
 
 Подробности: [Monetization](Monetization.md), [Remote Config](RemoteConfig.md), [Paywall UI](PaywallUI.md).
 
@@ -540,9 +570,12 @@ struct RootScene: View {
                     switch await paymentReturn.applicationDidBecomeActive() {
                     case .active:
                         appFlowCoordinator.subscriptionDidBecomeActive()
-                    case .pending, .unavailable:
+                    case .pending:
                         // Остаться без premium и показать app-owned notice.
                         break
+                    case let .unavailable(error):
+                        // Показать error.userMessage и оставить pending для Retry.
+                        showSafeNotice(error.userMessage)
                     case .inactive, .noPendingCheckout:
                         break
                     }
@@ -618,6 +651,9 @@ instant, поэтому последующий async save не добавляе�
 - [ ] durable Apple store использует production cache, а не in-memory fixture;
 - [ ] verified same-bundle purchase listener запущен до Adapty и не вызывает `finish()`;
 - [ ] pending Apple recovery вызывается на launch/active; UI не умеет вручную очистить Ask-to-Buy/outcome-unknown;
+- [ ] после login запускается customer access recovery; token/RU balance не читается из installation-local storage;
+- [ ] token и RU backend используют стабильный app account между переустановками;
+- [ ] offline/timeout показывают конечный Retry UI; ambiguous purchase/checkout не повторяется автоматически;
 - [ ] special offer `nil` не создаёт никакой работы;
 - [ ] presentable special offer передаёт `presentationAuthorization`, persistence fail-closed;
 - [ ] timed special offer получает trusted server clock; unavailable/rollback time скрывает offer;

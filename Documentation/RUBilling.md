@@ -12,6 +12,112 @@ The device region, application language and `Locale.current` never participate i
 eligibility. `Locale(identifier: "ru_RU")` is used only by `RUBPriceFormatter` to
 format an already loaded RUB price.
 
+## Что уже делает пакет
+
+Приложение передаёт endpoints, authorization, product mapping, русские legal
+URL и при необходимости свои encoder/decoder. Платформа делает остальное:
+
+```text
+storefront + remote gate → catalog mapping → payment UI → checkout URL
+→ durable pending → return/poll → entitlement refresh → subscription settings
+```
+
+| App Store | СБП/карта | Settings |
+|---|---|---|
+| RU-поля скрыты, Continue запускает Apple purchase | две обязательные галочки, опциональный чек и email | тариф, статус, дата, отмена, paid-through доступ |
+
+<p align="center">
+  <img src="Assets/README/Screenshots/ru-payment-sbp-light.png" alt="RU payment UI" width="31%">
+  <img src="Assets/README/Screenshots/ru-subscription-active-light.png" alt="Активная RU подписка" width="31%">
+  <img src="Assets/README/Screenshots/ru-subscription-cancelled-light.png" alt="RU подписка после отмены" width="31%">
+</p>
+
+Это реальные screenshots `BroadAppTemplate` с iPhone Simulator, а не макеты.
+
+## Восстановление после переустановки
+
+RU subscription и RU token purchase принадлежат backend customer, а не локальной
+установке. После того как host восстановил login, он обязан создать тот же
+fingerprinted `EntitlementSubject`, новый current authorization binding и вызвать
+`RecoverCustomerAccessUseCase`.
+
+- RU premium возвращает unified entitlement refresh через `.ruBilling` source;
+- тариф, paid-through дата и renewal state возвращает
+  `loadSubscriptionStatus`;
+- RU-токены возвращает общий server token ledger;
+- receipt email может исчезнуть: это form preference, не identity и не proof of
+  purchase.
+
+Не используйте locale, device ID или email из чека для поиска покупки. Без
+стабильного app account гарантированное восстановление RU-покупок невозможно.
+[Полный порядок →](AccountRecovery.md).
+
+Если сеть исчезла после открытия payment URL, pending session не очищается и
+новый checkout автоматически не создаётся. При возврате `applicationDidBecomeActive()`
+получит typed offline/timeout, остановит polling и оставит возможность безопасно
+повторить только status check. [Network-loss matrix →](NetworkInterruptions.md).
+
+## Payment UI: что передаёт приложение
+
+```swift
+let ruPresentation = BroadRUBillingPresentationConfiguration(
+    legalLinks: [
+        BroadPaywallLegalLink(
+            id: "ru-privacy",
+            title: "Политика конфиденциальности",
+            url: AppLinks.russianPrivacy
+        ),
+        BroadPaywallLegalLink(
+            id: "ru-offer",
+            title: "Публичная оферта и условия оплаты",
+            url: AppLinks.russianOffer
+        )
+    ]
+)
+
+let paywallConfiguration = BroadPaywallConfiguration(
+    placementID: .settings,
+    copy: .russian,
+    legalLinks: appStoreLegalLinks,
+    ruBilling: ruPresentation
+)
+```
+
+Для СБП и карты `BroadPaymentMethodSheet` требует:
+
+1. согласие с офертой и обработкой персональных данных;
+2. для auto-renewable subscription — согласие на регулярные списания с
+   фактическими display price и period;
+3. если пользователь запросил чек — корректный email.
+
+Чтобы email не вводили повторно, создайте adapter поверх уже существующего
+Core store и передайте его в paywall:
+
+```swift
+let receiptEmailStore = BroadKeyValueReceiptEmailStore(
+    store: UserDefaultsKeyValueStore(
+        namespace: "com.company.app.ru-billing-form"
+    )
+)
+
+BroadPaywallView(
+    viewModel: paywallViewModel,
+    receiptEmailStore: receiptEmailStore,
+    onClose: close,
+    onCompleted: complete
+)
+```
+
+Адрес хранится под app-configurable `receiptEmailStorageKey`; без переданного
+store форма просто не сохраняет его. В analytics/logger он не попадает. Apple
+скрывает все эти поля. Старого отдельного переключателя «включить
+автопродление» нет: consent на регулярное списание является обязательным
+условием конкретного RU checkout.
+
+Даже единственный доступный RU method открывает этот sheet. Единственный Apple
+method может стартовать сразу. Все интерактивные элементы используют
+`BroadNoPressEffectButtonStyle`: при tap нет dimming, scale или мерцания.
+
 ## Safe disabled composition
 
 An application without RU billing does not create fake URLs, credentials or an
@@ -202,9 +308,10 @@ the documented convenience schema. A backend with another schema replaces only
 the relevant protocols, for example `RUCheckoutRequestEncoderProtocol` and
 `RUCheckoutResponseDecoderProtocol`. It does not need to fork Domain or UI.
 
-A custom checkout encoder may add a receipt email from a host-owned transient
-provider. It should do so only after the user explicitly asks for a receipt. The
-platform never stores or logs the encoded request body.
+The standard checkout request includes optional `customerEmail` only after the
+user explicitly asks for a receipt. The UI may remember that address under the
+app-configurable form key; the request body itself is never stored or logged. A
+custom backend replaces only the checkout encoder.
 
 ### BroadApps convenience schema
 
@@ -274,6 +381,7 @@ Content-Type: application/json
   "product_id": "<backend-product-id>",
   "payment_method": "sbp",
   "accepts_auto_renewal": true,
+  "customer_email": "developer@example.com",
   "app_id": "<application-id>",
   "app_bundle": "<bundle-id>"
 }
@@ -287,7 +395,9 @@ Content-Type: application/json
 }
 ```
 
-`payment_method` is `sbp` or `card`. `expires_at` is optional. The response is
+`payment_method` is `sbp` or `card`. `customer_email` is optional and is sent
+only when the user explicitly requests a receipt. The package never fabricates
+an email. `expires_at` is optional. The response is
 rejected unless the session ID is valid and `payment_url` is HTTPS with a host
 and without embedded URL credentials. The URL remains memory-only and is never
 written into pending cache.
@@ -496,6 +606,30 @@ SwiftUI `onAppear`.
 
 ## Cancellation and paid-through access
 
+`BroadRUSubscriptionManagementView` is the ready-made Settings screen. Its
+ViewModel receives only two use cases:
+
+```swift
+let viewModel = BroadRUSubscriptionManagementViewModel(
+    dependencies: BroadRUSubscriptionDependencies(
+        loadStatus: ru.checkout.loadSubscriptionStatus,
+        cancelSubscription: ru.checkout.cancelSubscription
+    )
+)
+
+BroadRUSubscriptionManagementView(viewModel: viewModel)
+```
+
+`LoadRUSubscriptionStatusUseCase` reads current server status for the
+exact subject. The built-in convenience entitlement response accepts optional
+`subscription_id`, `subscription_plan_name` and
+`subscription_auto_renewal_cancelled`. Another API replaces only the entitlement
+decoder.
+
+The screen handles loading/error/retry, current plan, active/inactive status,
+paid-through date, confirmation before cancellation and the post-cancel state.
+No second paywall is opened from Settings.
+
 `URLSessionRUCancellationRepository` represents one endpoint.
 `RUCancellationRepositoryFactory` reads
 `RUBillingHTTPConfiguration.allowsLegacyCancellationFallback`. It composes
@@ -506,6 +640,10 @@ legacy path is supplied. There is no implicit legacy URL.
 cancellation. The cancellation itself does not revoke access immediately: a
 server-authoritative RU status may remain active with `expiresAt` until the end of
 the paid period.
+
+For an app-facing facade use `RUBillingManager`: it exposes start checkout,
+foreground return, load subscription status and cancel, while raw polling and
+HTTP repositories stay internal.
 
 ## RU entitlement source
 

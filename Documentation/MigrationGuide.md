@@ -25,8 +25,10 @@
 | Products | SKU, исторические premium SKU, periods, duplicates, sorting/filtering |
 | Purchase/restore | SDK entry points, double-tap guards, результат и access grant |
 | Entitlement | Apple/backend/RU authorities, TTL, offline behavior, user identity |
+| Reinstall recovery | login restore, subscription ownership, token ledger, RU customer binding |
+| Network interruption | обрыв до/во время/после каждого read и financial operation |
 | Remote config | keys, aliases, defaults, last-valid behavior |
-| RU billing | storefront logic, catalog mapping, endpoints, return/polling/cancel |
+| RU billing | storefront logic, catalog mapping, consent/receipt UI, endpoints, return/polling/cancel/settings |
 | Special offer | наличие feature, gate, window/cooldown, crossed-price fields |
 | Experiments | Adapty placements, обычные/cross-placement вариации и attribution |
 | Analytics | события, deduplication, PII/raw payload |
@@ -46,7 +48,8 @@
 
 ## 1. Подключите package без изменения UI
 
-Добавьте package из GitHub или локальной checkout-папки и три продукта. Создайте
+Добавьте package из GitHub или локальной checkout-папки, три основных продукта
+и при необходимости независимый `BroadExtensions`. Создайте
 один `AppCompositionRoot`, но сначала оставьте legacy screen builders.
 
 Проверка этапа:
@@ -111,6 +114,11 @@ Host Infrastructure/Configuration
 - нужен ли user/source scope.
 
 Сначала читайте старый формат через одноразовый app adapter, затем записывайте новый envelope. Не заставляйте shared repository угадывать legacy schema.
+
+Отдельно удалите предположение, что локальный cache переживёт переустановку.
+Premium ownership, token balance и RU purchases должны восстанавливаться из
+StoreKit или backend текущего app account. Cache нужен только для ограниченного
+offline UX.
 
 ### Logging
 
@@ -252,6 +260,11 @@ insert/compare-and-set/remove. Login/logout не должен перезапис
 
 Для каждого source задайте TTL и offline active grace. Проверьте матрицу active/inactive/unresolved до удаления legacy premium resolver.
 
+После восстановления login подключите `RecoverCustomerAccessUseCase`: fresh
+entitlement refresh, server token reconciliation и RU subscription status должны
+выполняться для того же `EntitlementSubject`. Без стабильного app account нельзя
+обещать восстановление consumable tokens и RU-покупок после переустановки.
+
 Во время перехода два verifier одной Apple authority объединяются внутри `AppleEntitlementRepository`, а не регистрируются как независимые logical sources.
 
 [Entitlement setup →](Entitlements.md) · [ADR →](ADR/0003-entitlement-authority.md)
@@ -316,6 +329,8 @@ monotonic instant, и открытый countdown не продлевается a
 - `RUBillingCompositionDependencies.applicationIdentifier` совпадает со
   стабильным app identifier Apple pending store;
 - Safari return → polling → unified entitlement refresh;
+- fresh install → RU status/entitlement по тому же server customer;
+- offline/timeout не удаляет pending RU session и не запускает новый checkout;
 - legacy cancellation fallback только явным flag + explicit repository.
 
 Собирайте production chain через `RUBillingCompositionFactory`: registration
@@ -368,6 +383,10 @@ Paywall provider lifecycle не переносите в analytics destination. V
 
 - включите новый route host feature flag;
 - пройдите success/empty/error/offline/pending fixtures;
+- оборвите сеть до, во время и после каждого financial boundary; неизвестный
+  результат сначала reconciliate, не повторяйте списание автоматически;
+- проверьте clean reinstall/login: Apple access, server token balance и RU status
+  возвращаются без installation-local флагов;
 - сравните analytics и entitlement outcomes;
 - оставьте старый adapter как краткосрочный rollback;
 - после стабильности удалите legacy screen + adapter вместе.
@@ -384,6 +403,9 @@ Paywall provider lifecycle не переносите в analytics destination. V
 - [ ] paywall tap/purchase без opacity/scale/dimming/flicker;
 - [ ] purchase/restore/RU подтверждают entitlement перед premium;
 - [ ] один app-wide financial gate, durable pending store и StoreKit recovery подключены;
+- [ ] после переустановки Apple ownership, token balance и RU status восстанавливаются из authoritative sources;
+- [ ] stable app account/subject связывает token и RU ledger между установками;
+- [ ] offline/timeout дают конечный UI state; ambiguous financial result не запускается повторно до reconciliation;
 - [ ] all configured entitlement combinations проверены;
 - [ ] RU определяется только storefront;
 - [ ] special offer отсутствует через `nil` там, где не нужен;

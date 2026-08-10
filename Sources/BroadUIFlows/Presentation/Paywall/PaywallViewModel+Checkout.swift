@@ -37,6 +37,13 @@ extension PaywallViewModel {
     }
 
     public func chooseCheckoutMethod(_ method: CheckoutMethod) {
+        submitCheckoutMethod(method, options: .standard)
+    }
+
+    public func submitCheckoutMethod(
+        _ method: CheckoutMethod,
+        options: CheckoutOptions
+    ) {
         guard
             !isBusy,
             !isFinancialOperationPending,
@@ -52,7 +59,8 @@ extension PaywallViewModel {
         beginCheckout(
             selection: selection,
             method: method,
-            remoteConfiguration: payload.remoteConfiguration
+            remoteConfiguration: payload.remoteConfiguration,
+            options: options
         )
     }
 
@@ -101,11 +109,18 @@ extension PaywallViewModel {
             inlineFeedback = .failure(checkoutUnavailableError)
         case 1:
             if let method = methods.first {
-                beginCheckout(
-                    selection: selection,
-                    method: method,
-                    remoteConfiguration: remoteConfiguration
-                )
+                if method == .apple {
+                    beginCheckout(
+                        selection: selection,
+                        method: method,
+                        remoteConfiguration: remoteConfiguration,
+                        options: .standard
+                    )
+                } else {
+                    // A single RU method still needs the legal-consent and
+                    // optional receipt step, so it must open the sheet.
+                    checkoutMethods = methods
+                }
             }
         default:
             checkoutMethods = methods
@@ -115,7 +130,8 @@ extension PaywallViewModel {
     func beginCheckout(
         selection: ProductSelection,
         method: CheckoutMethod,
-        remoteConfiguration: RemotePaywallConfiguration
+        remoteConfiguration: RemotePaywallConfiguration,
+        options: CheckoutOptions
     ) {
         guard purchaseTask == nil,
               !isRestoreInFlight,
@@ -133,7 +149,8 @@ extension PaywallViewModel {
             let outcome = await useCase(
                 selection,
                 using: method,
-                remoteConfiguration: remoteConfiguration
+                remoteConfiguration: remoteConfiguration,
+                options: options
             )
 
             guard let self, !Task.isCancelled else {

@@ -39,9 +39,21 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 - один shared non-blocking → deduplicating → composite analytics pipeline;
 - bounded typed recorder и debug-панель без PII/raw SDK data;
 - bootstrap/cache/timeout fixtures;
-- safe disabled RU billing без endpoint, token и `.ruBilling` source.
+- полный RU payment UI fixture без endpoint и реального списания;
+- экран RU subscription management до и после отмены;
+- safe disabled production RU adapter без fake endpoint/token/`.ruBilling` source.
 
-Example использует локальные monetization fixtures и `DisabledRUBillingCheckoutMethodsUseCase`. Это не production Adapty/RU configuration.
+Example использует локальные monetization fixtures и
+`DisabledRUBillingCheckoutMethodsUseCase` для production boundary. Отдельные RU
+launch arguments показывают настоящий platform UI, но не отправляют запросы и
+не выполняют списания.
+
+Переустановку нельзя честно сымитировать только локальным fixture: token balance и
+RU purchases обязаны вернуться из backend того же app account. Готовый
+platform-координатор и обязательный backend contract описаны в
+[Account Recovery](../../Documentation/AccountRecovery.md). Поведение при обрыве связи
+во время любого шага зафиксировано в
+[Network Interruptions](../../Documentation/NetworkInterruptions.md).
 
 Для real-catalog smoke доступны две готовые схемы:
 
@@ -69,6 +81,10 @@ fail-before-charge.
 | `-paywall-two-products` | два продукта в provider order |
 | `-paywall-many-products` | 12 products + sticky controls |
 | `-paywall-payment-methods` | UI-only Apple/SBP/Card sheet; RU adapter remains disabled |
+| `-ru-payment-sheet` | полный СБП экран: две обязательные галочки, русские legal links, чек и сохранённый email |
+| `-ru-payment-sheet-apple` | Apple выбран; RU consent/receipt поля отсутствуют |
+| `-ru-subscription-management` | активная RU подписка, дата и действие отмены |
+| `-ru-subscription-cancelled` | подписка активна до даты, автопродление отключено |
 | `-paywall-failure` | safe load error |
 | `-paywall-hard` | hard access policy |
 | `-purchase-cancelled` | user cancellation |

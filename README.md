@@ -22,6 +22,8 @@
     <a href="#installation">📦 Подключение</a> ·
     <a href="#architecture">🧭 Архитектура</a> ·
     <a href="#monetization">💳 Монетизация</a> ·
+    <a href="#recovery">♻️ Переустановка</a> ·
+    <a href="#network-loss">📡 Нет сети</a> ·
     <a href="#automation">🤖 Автопроверка</a> ·
     <a href="#documentation">📚 Документация</a>
   </p>
@@ -62,11 +64,11 @@
       <br><sub>Provider order · длинные строки · sticky CTA</sub>
     </td>
     <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/payment-methods-light.png">
-        <img src="Documentation/Assets/README/Screenshots/payment-methods-light.png" alt="Выбор Apple и RU способов оплаты" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/ru-payment-sbp-light.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-payment-sbp-light.png" alt="СБП с обязательными согласиями и email для чека" width="100%">
       </a>
-      <br><strong>Payment methods</strong>
-      <br><sub>App Store · СБП · банковская карта</sub>
+      <br><strong>RU payment</strong>
+      <br><sub>СБП/карта · две обязательные галочки · чек по email</sub>
     </td>
   </tr>
   <tr>
@@ -94,6 +96,38 @@
   </tr>
 </table>
 
+### Полный RU billing UI
+
+Один пакет получает app-specific данные и сам строит остальной flow. Для
+Apple RU-поля не показываются; для СБП/карты Continue включается только после
+обязательных согласий. Email чека опционален, проверяется и запоминается.
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/ru-payment-apple-light.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-payment-apple-light.png" alt="Apple payment без RU consent и receipt полей" width="100%">
+      </a>
+      <br><strong>Apple</strong>
+      <br><sub>Сразу системная покупка · без RU-галочек</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/ru-subscription-active-light.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-subscription-active-light.png" alt="Активная RU подписка с отменой" width="100%">
+      </a>
+      <br><strong>Активная подписка</strong>
+      <br><sub>Тариф · статус · paid-through дата · отмена</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light.png" alt="RU подписка после отключения автопродления" width="100%">
+      </a>
+      <br><strong>После отмены</strong>
+      <br><sub>Автопродление выключено · доступ сохранён до даты</sub>
+    </td>
+  </tr>
+</table>
+
 > [!TIP]
 > Хотите проверить конкретное состояние? Ниже есть готовые launch arguments
 > для `empty`, `error`, `12 products`, payment sheet, pending purchase и
@@ -107,8 +141,63 @@
 | Показать первый пользовательский flow | конфигурируемый onboarding → adaptive paywall → verified main |
 | Подключить монетизацию | Adapty + StoreKit contracts, placements, experiments, RU billing и analytics |
 | Не выдать доступ ошибочно | единый entitlement engine; `pending`, timeout и unresolved не становятся premium |
+| Не потерять покупки после переустановки | fresh Apple/RU entitlement refresh + server-authoritative token balance |
 | Не копировать UI между проектами | общие SwiftUI-компоненты с app-owned текстами, assets, цветами и конфигами |
 | Автоматически проверить результат | одна команда запускает Codex, полный iPhone/Xcode gate и независимую перепроверку |
+
+<a id="recovery"></a>
+## ♻️ Удалил приложение — покупки не пропали
+
+| Что купил пользователь | Как возвращаем после новой установки |
+|---|---|
+| 🍎 Apple subscription/lifetime | заново проверяем StoreKit, Adapty и общий entitlement engine |
+| 🪙 Apple или RU токены | загружаем полный баланс из backend ledger пользователя |
+| 🇷🇺 RU subscription/lifetime | заново проверяем RU backend по авторизованному customer |
+
+На launch после восстановления login приложение вызывает один
+`RecoverCustomerAccessUseCase`: он запускает свежую проверку Apple/primary/RU
+entitlements, server reconciliation токенов и загрузку RU subscription status.
+Локальный cache используется только для offline UX и никогда не является
+источником купленного доступа или баланса.
+
+> [!WARNING]
+> StoreKit Restore не восстанавливает consumable-токены. Для токенов и RU billing
+> нужен стабильный app account. Если после переустановки невозможно определить
+> того же пользователя, технически невозможно гарантировать возврат его server
+> balance и RU-покупок.
+
+```swift
+let recovery = monetizationServices.makeCustomerAccessRecovery(
+    subject: entitlementSubject,
+    refreshEntitlement: entitlementEngine,
+    recoverTokenAccount: appTokenAccountRecovery,
+    loadRUSubscription: ruServices.checkout.loadSubscriptionStatus
+)
+
+let snapshot = await recovery()
+// Premium — только snapshot.entitlement.state == .active.
+// Tokens — только .restored(TokenBalanceSnapshot) от backend.
+```
+
+[Полный сценарий переустановки, backend contract и порядок запуска →](Documentation/AccountRecovery.md)
+
+<a id="network-loss"></a>
+## 📡 Интернет может пропасть в любой момент
+
+| Ситуация | Безопасное поведение |
+|---|---|
+| Paywall/catalog не загрузился | cache/stale либо конечная offline-ошибка с Retry |
+| Сеть исчезла во время Apple purchase | результат `pending`, новый charge запрещён до StoreKit reconciliation |
+| StoreKit подтвердил токены, backend недоступен | JWS сохранён, баланс не меняется, fulfillment повторяется идемпотентно |
+| Пользователь вернулся из СБП/карты без сети | RU pending сохраняется, polling останавливается, Retry только проверяет status |
+| Recovery после переустановки офлайн | premium не обнуляется и не выдаётся заново; состояние unresolved до свежей проверки |
+
+Платформа различает `offline` и `timeout`, не держит бесконечный loader и не
+повторяет финансовые операции автоматически при появлении связи. Повторять
+автоматически можно только ограниченные идемпотентные чтения; любой неизвестный
+результат оплаты сначала нужно сверить с StoreKit или backend.
+
+[Матрица всех точек отказа и checklist для разработчика →](Documentation/NetworkInterruptions.md)
 
 ## Текущая готовность
 
@@ -134,11 +223,12 @@ https://github.com/BroadApps-official/BroadCore.git
 ```
 
 Выберите dependency rule `Branch`, укажите
-`vers_niiaz` и добавьте нужному iPhone target три продукта:
+`vers_niiaz` и добавьте нужному iPhone target необходимые продукты:
 
 - `BroadCore`;
 - `BroadMonetization`;
-- `BroadUIFlows`.
+- `BroadUIFlows`;
+- `BroadExtensions` — опционально, если нужны общие Color/font/keyboard/swipe helpers.
 
 Если host сам описан через `Package.swift`:
 
@@ -226,6 +316,7 @@ launch → onboarding (3 слайда) → paywall → purchase / restore → ma
 | ![Core](https://img.shields.io/badge/-%233B82F6-3B82F6) `#3B82F6` | `BroadCore` | bootstrap, cache/offline, retry, typed logging, общие состояния, ATT adapter |
 | ![Monetization](https://img.shields.io/badge/-%2310B981-10B981) `#10B981` | `BroadMonetization` | Adapty, StoreKit, entitlement, placements, remote config, RU billing, experiment attribution |
 | ![UIFlows](https://img.shields.io/badge/-%23EC4899-EC4899) `#EC4899` | `BroadUIFlows` | AppFlow, onboarding, loader/error/retry, адаптивный paywall |
+| ![Extensions](https://img.shields.io/badge/-%238B5CF6-8B5CF6) `#8B5CF6` | `BroadExtensions` | независимые Hex Color, custom fonts, dismiss keyboard и scoped swipe-back helpers |
 | ![App](https://img.shields.io/badge/-%23F59E0B-F59E0B) `#F59E0B` | Приложение | тексты, assets, реальные placement ID, URL, ключи, feature-флаги и composition root |
 | ![External](https://img.shields.io/badge/-%2364748B-64748B) `#64748B` | Внешние системы | Adapty, StoreKit, основной backend и RU billing backend |
 
@@ -242,11 +333,13 @@ Host App → BroadUIFlows
 BroadUIFlows → BroadMonetization
 BroadUIFlows → BroadCore
 BroadMonetization → BroadCore
+BroadExtensions → —
 ```
 
 - `BroadCore` не знает о UI и монетизации.
 - `BroadMonetization` не выпускает типы Adapty, StoreKit или HTTP DTO за границу Infrastructure.
 - `BroadUIFlows` получает готовые use cases и ViewModel через `init`; внутри View нет SDK и DI-container.
+- `BroadExtensions` ни от кого не зависит и подключается только там, где нужен.
 - Приложение остаётся владельцем продуктовых решений и собирает зависимости через Swinject.
 
 [Архитектура подробнее →](Documentation/Architecture.md) · [ADR о границах модулей →](Documentation/ADR/0001-module-boundaries.md)
@@ -258,12 +351,13 @@ BroadAppsIOSPlatform
 ├── 🔵 <a href="Sources/BroadCore">Sources/BroadCore</a>                 domain-основа, bootstrap, cache, ATT, logging
 ├── 🟢 <a href="Sources/BroadMonetization">Sources/BroadMonetization</a>         paywall, purchase, entitlement, Adapty, RU billing
 ├── 🩷 <a href="Sources/BroadUIFlows">Sources/BroadUIFlows</a>              AppFlow, onboarding, loadable UI, adaptive paywall
+├── 🟣 <a href="Sources/BroadExtensions">Sources/BroadExtensions</a>            Hex Color, fonts, keyboard и scoped swipe-back
 ├── 🟠 <a href="Examples/BroadAppTemplate">Examples/BroadAppTemplate</a>          локальное fixture-приложение без production credentials
 ├── 📘 <a href="Documentation">Documentation</a>                       подключение, контракты, ADR и manual QA
 ├── 🤖 <a href="AgentChecks">AgentChecks</a>                         инструкция auto-fix агента и его актуальный статус
 ├── 🛠️ <a href="Scripts">Scripts</a>                             agent cycle, format, lint, build и gates
 ├── 📝 <a href="CHANGELOG.md">CHANGELOG.md</a>                        изменения до будущего релиза 1.0.0
-└── 📦 <a href="Package.swift">Package.swift</a>                       три library products и exact dependencies
+└── 📦 <a href="Package.swift">Package.swift</a>                       четыре library products и exact dependencies
 </pre>
 
 Внутри каждого модуля идите от правил к деталям: `Domain → Application → Data/Infrastructure`; UI и DI появляются только на внешней границе.
@@ -296,7 +390,7 @@ BroadAppsIOSPlatform
 
 [AppFlow →](Documentation/AppFlow.md) · [Entitlement →](Documentation/Entitlements.md) · [ADR о доступе →](Documentation/ADR/0003-entitlement-authority.md)
 
-## Три модуля
+## Четыре package-продукта
 
 ### 🔵 BroadCore
 
@@ -313,6 +407,8 @@ BroadAppsIOSPlatform
 - загрузка Adapty paywall и remote config;
 - все продукты в исходном порядке, включая одинаковые SKU;
 - Apple purchase/restore contract с обязательной entitlement-проверкой;
+- независимые `SubscriptionPurchaseManager` и `TokenPurchaseManager`;
+- durable token intent → verified StoreKit JWS → idempotent backend fulfillment;
 - durable Apple pending/recovery и один app-wide financial gate для Apple/RU;
 - трёхсоставный Entitlement Engine: Apple, основной backend, RU billing;
 - storefront-gated RU billing;
@@ -326,8 +422,19 @@ BroadAppsIOSPlatform
 - onboarding с любым app-owned media;
 - loader/error/empty/stale/retry компоненты;
 - адаптивный paywall для 0, 1, 2, 12 или любого другого количества продуктов;
+- RU payment sheet с consent/receipt email и экран управления подпиской;
 - sticky close/CTA/restore/legal actions;
 - semantic accessibility hooks, light/dark tokens, Reduce Motion и адаптивный layout.
+
+### 🟣 BroadExtensions
+
+- `Color`/`UIColor` из `RGB`, `RGBA`, `RRGGBB` и `RRGGBBAA`;
+- регистрация custom fonts и scaled SwiftUI/UIKit helpers;
+- закрытие клавиатуры тапом вне поля без перехвата дочерних действий;
+- возврат edge swipe-back без global swizzling;
+- нулевая зависимость от остальных модулей платформы.
+
+[Примеры BroadExtensions →](Documentation/Extensions.md)
 
 ## Готовые recipe
 
@@ -605,6 +712,20 @@ Fallback `.enabled` применяется только когда ни одно
 
 Production-chain собирается через `RUBillingCompositionFactory`. Example намеренно использует `DisabledRUBillingCheckoutMethodsUseCase` и не добавляет RU source: никаких fake URL, keys или вечного unresolved.
 
+После eligibility платформа берёт на себя весь UI-флоу:
+
+- App Store — без RU consent/receipt полей, сразу системная покупка;
+- СБП/карта — выбор метода и отдельная кнопка Continue;
+- обязательное согласие с офертой/обработкой данных;
+- для auto-renewable subscription — отдельное согласие на регулярное списание с реальными ценой и периодом;
+- опциональный чек: email валидируется и при подключённом
+  `BroadKeyValueReceiptEmailStore` сохраняется для следующей покупки;
+- русские Privacy/оферта приходят от host app как HTTPS links;
+- после покупки Settings может показать тариф, статус, paid-through дату, отмену и состояние «автопродление отключено».
+
+Никакого фиктивного email платформа не подставляет. Если backend требует другое
+тело запроса, приложение заменяет только `RUCheckoutRequestEncoderProtocol`.
+
 Apple purchase, restore и RU checkout обязаны использовать один `MonetizationOperationGate`, созданный приложением на весь процесс. Перед открытием Apple sheet или RU browser flow platform атомарно сохраняет app-wide pending record. Ask-to-Buy, неизвестный результат provider-а, cold launch и смена login identity не освобождают этот blocker и не разрешают второй платёж. Подробная production-сборка и StoreKit recovery описаны в [Monetization](Documentation/Monetization.md#6-purchase-restore-и-durable-recovery).
 
 [RU billing →](Documentation/RUBilling.md) · [ADR о безопасных fallback →](Documentation/ADR/0004-ru-billing-fallback.md)
@@ -738,9 +859,13 @@ purchase и restore недоступны по правилам компании 
 | Запустить авто-проверку и исправление | [Agent Automation](Documentation/AgentAutomation.md) |
 | Понять слои и зависимости | [Architecture](Documentation/Architecture.md) · [ADR-0001](Documentation/ADR/0001-module-boundaries.md) |
 | Собрать monetization composition root | [Monetization](Documentation/Monetization.md) |
+| Выбрать subscriptions-only или subscriptions + tokens | [Purchase Managers](Documentation/PurchaseManagers.md) |
 | Настроить placements/remote keys | [Remote Config](Documentation/RemoteConfig.md) |
 | Настроить purchase entitlement | [Entitlements](Documentation/Entitlements.md) · [Monetization Domain](Documentation/MonetizationDomain.md) |
+| Восстановить подписки, токены и RU после переустановки | [Account Recovery](Documentation/AccountRecovery.md) |
+| Обработать внезапное отключение интернета | [Network Interruptions](Documentation/NetworkInterruptions.md) |
 | Подключить RU backend | [RU Billing](Documentation/RUBilling.md) |
+| Подключить общие extensions | [BroadExtensions](Documentation/Extensions.md) |
 | Настроить onboarding и ATT | [Onboarding & ATT](Documentation/OnboardingAndATT.md) |
 | Собрать adaptive paywall | [Paywall UI](Documentation/PaywallUI.md) |
 | Включить special offer | [Special Offer](Documentation/SpecialOffer.md) |

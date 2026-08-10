@@ -2,6 +2,16 @@
 
 `BroadCore` хранит небольшие локальные снапшоты так, чтобы приложение могло быстро открыть рабочий экран без сети. Кеш не подменяет сервер: он даёт последнее известное значение и явно сообщает, свежее оно или устаревшее. Допустим ли stale-значение как fallback, решает доменный feature, а не общий cache-слой.
 
+Удаление приложения удаляет этот cache целиком. Купленная подписка, token balance
+и RU entitlement не могут храниться только здесь: после новой установки они
+восстанавливаются через StoreKit/server account recovery. Локальный cache лишь
+ускоряет offline UX. [Account Recovery →](AccountRecovery.md).
+
+Если сеть исчезла во время запроса, adapter обязан закончить его конечным
+typed offline/timeout результатом. Cache не разрешает автоматически повторять
+финансовый write; такой flow сохраняет pending и сначала делает reconciliation.
+[Network Interruptions →](NetworkInterruptions.md).
+
 ## Что входит в слой
 
 | Тип | Ответственность |
@@ -160,6 +170,12 @@ Compare-and-remove защищает от удаления нового snapshot 
 содержат originating subject. Это позволяет новой login identity увидеть факт
 блокировки, не получая права reconcile/poll/clear чужую операцию.
 
+`app-wide` означает «на время существования installation», а не cloud backup.
+После удаления приложения эти записи пропадут. Backend notifications,
+idempotent purchase ledger и `RecoverCustomerAccessUseCase` закрывают reinstall
+сценарий; локальный pending store не может быть единственным доказательством
+покупки.
+
 Custom `KeyValueStoreProtocol` обязан сравнивать весь переданный
 `KeyValueStoreEntry` и выполнять compare+mutation атомарно в своём concurrency
 scope. Custom `CacheRepositoryProtocol` обязан сохранить те же свойства. Простая
@@ -175,7 +191,11 @@ actor вокруг `UserDefaults` недостаточно.
 - Для изображений, видео, больших каталогов и других тяжёлых payload нужен отдельный adapter к `KeyValueStoreProtocol`.
 - `UserDefaults` создаётся и используется только внутри actor-adapter. Вызов `synchronize()` не нужен.
 - Namespace, key name и schema ID — это безопасные стабильные идентификаторы. Не включайте в них email, user ID или другие PII.
-- Не сохраняйте API keys, bearer-токены, payment URL, email, receipt, полный user ID и другие секреты/PII.
+- Не сохраняйте API keys, bearer-токены, payment URL, receipt payload, полный
+  user ID и другие секреты/PII в общий cache. Единственное узкое исключение —
+  явно введённый receipt email из RU payment form: UI сохраняет его под
+  отдельным app-configurable key, не включает в cache envelope/log/analytics и
+  использует только для следующего запроса чека.
 - Entitlement-cache используется только по правилам `EntitlementEngine`: свежий assertion или ограниченный active-only grace. Сам факт наличия записи не является бессрочным доказательством premium.
 - Composite Adapty + StoreKit остаётся одним логическим source и пишет ровно один assertion `apple + subject`. Внутренний Adapty SDK-cache с provenance `.unqualified` не становится fresh engine assertion, не обновляет TTL и не создаёт отрицательную запись.
 

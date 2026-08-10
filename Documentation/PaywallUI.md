@@ -204,7 +204,7 @@ entitlement refresh.
 
 CTA сначала вызывает `ResolveCheckoutMethodsUseCaseProtocol` для выбранного точного `ProductSelection` и remote configuration:
 
-- один доступный method запускается сразу;
+- один Apple method запускается сразу; даже один RU method открывает consent sheet;
 - несколько показываются в `BroadPaymentMethodSheet` в порядке use case;
 - пустой список даёт безопасную retryable UI-ошибку;
 - `.cancelled` не показывает ложную ошибку;
@@ -212,7 +212,7 @@ CTA сначала вызывает `ResolveCheckoutMethodsUseCaseProtocol` дл
 - `.completedButUnverified` сообщает, что операция завершилась, но доступ ещё не подтверждён, и не закрывает paywall;
 - `.failed` показывает только безопасный `AppError.userMessage`.
 
-RU billing не определяется UI по языку, locale, IP или timezone. Sheet отображает только методы, разрешённые monetization use case после проверки App Store storefront и конфигурации.
+RU billing не определяется UI по языку, locale, IP или timezone. Sheet отображает только методы, разрешённые monetization use case после проверки App Store storefront и конфигурации. Для СБП/карты он собирает обязательные offer/data-processing и recurring-charge consent, а также опциональный receipt email; Apple эти поля скрывает. Русские legal links задаёт приложение через `BroadRUBillingPresentationConfiguration`.
 
 Renderer по-прежнему показывает occurrences без валидного `Money`, а также
 `.consumable`/`.unknown`, и не фильтрует их. Они остаются disabled/unselected.

@@ -1,12 +1,15 @@
 # Архитектура
 
-BroadApps iOS Platform разделена на три публичных модуля с однонаправленными зависимостями.
+BroadApps iOS Platform содержит три основных публичных модуля и один независимый
+utility product с однонаправленными зависимостями.
 
 ```text
 Host App → BroadUIFlows
 BroadUIFlows → BroadMonetization
 BroadUIFlows → BroadCore
 BroadMonetization → BroadCore
+Host App ⇢ BroadExtensions (optional)
+BroadExtensions → —
 ```
 
 ## BroadCore
@@ -45,6 +48,14 @@ Entitlement Engine и Apple source разделены по слоям:
 
 Кеш имеет конечный TTL. После TTL только ранее подтверждённый `active` может временно жить внутри отдельного конечного offline grace; `inactive` grace не получает. Subject либо anonymous, либо представлен непрозрачным 32-byte fingerprint, поэтому raw user ID и email не попадают в storage key. Поздний ответ после timeout не пишет cache от имени завершённого refresh.
 
+Удаление приложения стирает cache и pending-записи, поэтому installation-local
+storage не является источником подписки, токенов или RU-покупок.
+`RecoverCustomerAccessUseCase` после восстановления app account запускает новую
+entitlement generation, server-authoritative token reconciliation и загрузку RU
+status. Apple ownership возвращается через StoreKit/server sources, а токены и RU
+покупки — только по стабильному server customer. Подробнее:
+[Account Recovery](AccountRecovery.md).
+
 StoreKit `currentEntitlements` проверяет exact app bundle, product type и полный каталог текущих/исторических premium SKU. Публичный Adapty 3.17.3 client помечает profile как `unqualified`, потому что SDK скрывает cache fallback; fresh `active/inactive` возможны только через дополнительно переданный server-validated client.
 
 Production adapters основного backend и RU billing изолируют subject-bound authorization, HTTPS transport и wire contracts. `AdaptyPaywallRepository` сохраняет каждый provider product 1:1, включая одинаковые SKU и любое количество элементов. `LoadPaywallUseCase` использует requested placement/cache, затем общий fallback `.main`/его cache. Purchase и restore запускают новую entitlement generation; только подтверждённый `active` возвращает `.activated/.restored`. Optional special offer при `nil` не обращается ни к placement, ни к cache/timer/UI. `UnknownEntitlementStatusProvider` остаётся безопасным default для host, который не собрал engine. Подробности: [Monetization](Monetization.md) и [Entitlements](Entitlements.md).
@@ -56,6 +67,12 @@ exact variation/index/SKU/commercial-fingerprint match; generic consumable
 purchase fail-before-charge требует отдельного host fulfillment layer. Provider
 presentation lifecycle отделён от best-effort analytics и передаётся в UI вместе
 с `TrackPaywallEventUseCaseProtocol`.
+
+Transport failure классифицируется как offline/timeout/cancelled/other. Обрыв
+сети при чтении даёт конечное retryable состояние, а неопределённый финансовый
+результат остаётся pending до reconciliation. Возвращение сети само по себе не
+разрешает повторный purchase, token charge, RU checkout или cancellation.
+[Network Interruptions](NetworkInterruptions.md).
 
 ## BroadUIFlows
 
@@ -74,6 +91,13 @@ The implemented AppFlow slice has three distinct responsibilities:
 The configurable onboarding slice receives stable page IDs, app-owned copy, media descriptors and legal/restore footer links. `OnboardingViewModel` owns the ATT timing policy: the first page must actually be visible, the scene active and a visible window attached before its cancellable delay starts. The native SDK remains inside the Core adapter. See [Onboarding and ATT](OnboardingAndATT.md).
 
 The host starts AppFlow only after bootstrap reaches `ready` or `degraded`. A verified active entitlement skips the initial paywall. `unknown` is not converted to `inactive`: terminal uncertainty opens the free main route, grants no premium and does not persist the paywall checkpoint. Once the current session reaches `main`, late inactive results do not push it backwards. A verified activation received during onboarding is remembered for the session, but onboarding still finishes before the route advances. See [AppFlow](AppFlow.md).
+
+## BroadExtensions
+
+Независимые повторяющиеся iOS helpers: Hex Color, custom font registration,
+keyboard dismiss и scoped interactive swipe-back. Product не импортирует другие
+модули платформы и не добавляется в их dependency graph. Host подключает его
+только при необходимости. [Готовые примеры →](Extensions.md).
 
 ## Composition root
 

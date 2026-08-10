@@ -4,16 +4,19 @@
 
 ## Короткие правила
 
-1. Tracked reference configs могут хранить client-visible Adapty public SDK key
-   по требованию руководства; bearer, private keys, URL оплаты и пользовательские
-   данные в Git не кладутся.
+1. Tracked reference configs могут хранить client-visible Adapty public SDK key;
+   bearer, private keys, URL оплаты и пользовательские данные в Git не кладутся.
 2. Не логируйте raw `Error`, request/response body, SDK profile и arbitrary metadata.
 3. Не выдавайте premium по факту успешного checkout — только по authoritative entitlement `.active`.
 4. Не используйте locale/язык/IP как признак RU billing.
 5. Не кешируйте credentials в `UserDefaults`/`CacheRepositoryProtocol`.
 6. ATT вызывается только после видимого первого onboarding-слайда; Rate Us внутри onboarding запрещён.
 7. Apple purchase/restore/RU используют один app-wide gate и durable pending state.
-8. Перед передачей запускайте `lint.sh`, `build.sh` и ручные security fixtures.
+8. Premium/token/RU ownership хранится у StoreKit/backend, а не в install-local
+   flags или balance.
+9. Событие «сеть снова доступна» не разрешает автоматически повторять charge;
+   сначала выполняется reconciliation.
+10. Перед передачей запускайте `lint.sh`, `build.sh` и ручные security fixtures.
 
 ## Классы данных
 
@@ -21,7 +24,7 @@
 |---|---|---|
 | Client configuration | Adapty public SDK key, bundle, placements | разрешено в tracked reference configs |
 | Backend secret | bearer, refresh token, signing/private key | нет |
-| PII | email, raw user/customer ID, receipt fields | нет |
+| PII | email, raw user/customer ID, receipt fields | не логировать и не коммитить; receipt email можно хранить только как явно выбранную локальную UI-настройку |
 | Sensitive URL | checkout/payment URL с параметрами | нельзя логировать/кешировать |
 | Opaque identity | subject fingerprint | только scoped entitlement cache |
 | Safe diagnostics | typed error kind, diagnostic code, counters | да |
@@ -36,8 +39,8 @@ Example намеренно содержит две рабочие client-кон�
 - Adapty public SDK key;
 - bundle ID, access level и placements 5013/5109Codex.
 
-Это требование руководства и часть Git/source digest. Public SDK key уже
-присутствует в клиентском приложении и не используется как backend
+Эти client-visible значения являются частью Git/source digest. Public SDK key
+уже присутствует в клиентском приложении и не используется как backend
 authorization credential.
 
 Package по-прежнему не содержит:
@@ -70,6 +73,12 @@ Backend adapters получают credential через `SubjectAuthorizationPro
 
 Никогда не передавайте credential через query string, analytics property, error message или cache key.
 
+После переустановки server state можно вернуть только после доказанного login в
+тот же app account. Anonymous subject допустим для Apple ownership policy
+`.appStoreAccount`, но не даёт безопасной связи с token ledger или RU customer.
+Не подменяйте identity device ID, locale, receipt email или новым случайным ID
+каждой установки. [Account Recovery →](AccountRecovery.md).
+
 ## HTTP boundary
 
 Production URLSession adapters используют консервативные правила:
@@ -92,6 +101,8 @@ Backend с другой схемой реализует свой encoder/decoder
 - payment URL валидируется как HTTPS до открытия;
 - redirect и legacy cancellation fallback не включаются неявно;
 - pending context не содержит URL, email, bearer или raw identity;
+- receipt email живёт отдельно от pending context под app-owned key, только
+  после явного выбора пользователя; в analytics/log/cache envelope не попадает;
 - возвращение из Safari не считается оплатой без нового server status + entitlement refresh.
 
 [Primary backend entitlement →](Entitlements.md#основной-broadapps-backend) · [RU HTTP contract →](RUBilling.md#http-configuration-and-authorization)
@@ -156,6 +167,16 @@ Ask-to-Buy/outcome-unknown и никогда не очищают durable record.
 reconciliation; premium product дополнительно ждёт authoritative entitlement.
 Никогда не добавляйте «очистить pending» в UI или launch recovery.
 
+Token flow хранит отдельный `PendingTokenPurchaseStore`. До StoreKit sheet в нём
+находится только intent, а после verified transaction — подписанный StoreKit JWS,
+необходимый для идемпотентной backend-выдачи токенов. Такой record:
+
+- хранится только в app-owned durable store с ограниченным scope;
+- не попадает в логи, analytics, crash metadata и общий paywall cache;
+- очищается только после authoritative fulfillment/rejection;
+- восстанавливается на launch/foreground и блокирует повторную оплату;
+- не используется клиентом для самостоятельного изменения token balance.
+
 ## Logging
 
 `BroadLoggerProtocol` принимает закрытый `BroadLogEvent`, а не строку или dictionary. Поэтому caller не может случайно отправить payload.
@@ -206,16 +227,24 @@ App analytics destination обязан отдельно проверить:
 
 `CacheRepositoryProtocol` подходит только для небольших несекретных Codable snapshots. `UserDefaultsKeyValueStore` даёт actor isolation и namespace, но не является secret storage.
 
-Не сохраняйте туда:
+Не сохраняйте в общий cache:
 
 - API/bearer/refresh token;
 - payment URL;
-- receipt email;
+- receipt email; готовый RU payment UI хранит его отдельно как bounded
+  app-owned form preference, не как финансовый или entitlement snapshot;
 - raw user/customer ID;
 - SDK profile/transaction;
+- signed StoreKit JWS, кроме scoped `PendingTokenPurchaseStore` до завершения
+  idempotent token fulfillment;
 - private remote payload с PII.
 
 AppFlow progress хранит только монотонные checkpoints. Premium status туда не записывается. Special-offer persistence хранит только typed lifecycle state и app config fingerprint, а не paywall payload/identity.
+
+После удаления приложения все platform records могут исчезнуть. Backend обязан
+идемпотентно хранить Apple/RU purchase ledger и authoritative token balance;
+StoreKit/backend entitlement заново проверяется при login. Локальный cache не
+является disaster-recovery механизмом.
 
 При logout/switch account host обязан:
 

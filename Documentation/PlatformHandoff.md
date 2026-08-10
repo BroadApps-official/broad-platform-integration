@@ -90,6 +90,10 @@ offer. `5109Codex` удобен для main fallback и tokens placement. Меж
 - premium открывается только после authoritative `.active`;
 - повторный financial tap блокируется operation gate;
 - pending не превращается в success;
+- fresh-install recovery не использует local flags как ownership и не
+  придумывает нулевой token/RU state при недоступном backend;
+- offline/timeout завершают ожидание конечным состоянием, сохраняют pending и не
+  инициируют повторную финансовую операцию;
 - analytics получает attempt/product/variation без PII;
 - live Adapty scheme никогда не имитирует успешную реальную покупку.
 
@@ -117,6 +121,9 @@ source contracts, архитектуру, fixture wiring, документаци
 - [ ] analytics recorder пройден;
 - [ ] live Adapty catalog smoke пройден на `5013` или `5109Codex`;
 - [ ] purchase/restore в live scheme fail-before-charge;
+- [ ] account recovery contract для Apple, token backend и RU customer подключён
+  app-командой либо явно отмечен `REQUIRES_HOST`;
+- [ ] ручная network-loss matrix пройдена без auto-charge retry;
 - [ ] `agent_review_and_fix.sh` и независимый wrapper gate завершились `PASS`;
 - [ ] reference repositories не изменялись;
 - [x] GitHub-ветка `vers_niiaz` опубликована;

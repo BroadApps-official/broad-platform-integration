@@ -5,6 +5,13 @@
 > [!IMPORTANT]
 > StoreKit, основной backend и RU billing имеют отдельные production boundaries. Публичный Adapty profile API тоже изолирован adapter-ом, но не выдаётся за fresh server response: pinned Adapty 3.17.3 может молча вернуть внутренний кеш. Purchase/restore/RU return всегда запускают новую generation и открывают premium только после итогового `active`.
 
+После удаления приложения локальный entitlement cache исчезает, но право на
+покупку не исчезает. После login/identity preparation вызовите
+`RecoverCustomerAccessUseCase`: он запускает `.startNewGeneration` и заново
+опрашивает StoreKit, primary backend и подключённый RU backend. Apple subscription
+может восстановиться по тому же App Store account; server/RU entitlement требует
+того же app account. [Полный reinstall contract →](AccountRecovery.md).
+
 ## Что готово сейчас
 
 - три логических источника: `apple`, `primaryBackend`, `ruBilling`;
@@ -25,6 +32,8 @@
 - `PrimaryBackendEntitlementSourceFactory` для подключения `.primaryBackend` к engine;
 - subject-bound RU entitlement HTTP client и `RUBillingCompositionFactory`;
 - purchase/restore use cases с обязательным `refreshEntitlement(.startNewGeneration)`;
+- единый fresh-install recovery для Apple/primary/RU entitlement, token balance
+  и RU management status;
 - один typed `entitlementResolved` event на принятую generation: только state/freshness/source states и app-generated attempt ID;
 - локальные launch fixtures `active`, `inactive`, `unknown`, StoreKit fallback и timeout без test targets.
 

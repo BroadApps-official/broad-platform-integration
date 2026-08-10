@@ -306,6 +306,31 @@ require_file_pattern \
     "$platform_root/Examples/BroadAppTemplate/project.yml" \
     'LiveAdapty5109Codex:[[:space:]]+Configuration/Adapty5109Codex\.xcconfig'
 
+require_file_pattern \
+    "Fresh-install recovery must force a new entitlement generation:" \
+    "$platform_root/Sources/BroadMonetization/Application/Recovery/RecoverCustomerAccessUseCase.swift" \
+    'policy:[[:space:]]*\.startNewGeneration'
+
+require_file_pattern \
+    "Token recovery must remain a server-authoritative app boundary:" \
+    "$platform_root/Sources/BroadMonetization/Application/Recovery/CustomerAccessRecoveryModels.swift" \
+    'protocol[[:space:]]+RecoverTokenAccountUseCaseProtocol'
+
+require_file_pattern \
+    "Interrupted connections must be classified as offline:" \
+    "$platform_root/Sources/BroadCore/Infrastructure/Networking/NetworkFailureClassifier.swift" \
+    '\.networkConnectionLost'
+
+require_file_pattern \
+    "RU HTTP must fail with a bounded result instead of waiting indefinitely:" \
+    "$platform_root/Sources/BroadMonetization/Infrastructure/RUBilling/RUBillingAuthenticatedHTTPClient.swift" \
+    'waitsForConnectivity[[:space:]]*=[[:space:]]*false'
+
+require_file_pattern \
+    "RU polling must stop immediately on offline or timeout:" \
+    "$platform_root/Sources/BroadMonetization/Application/RUBilling/RefreshRUPaymentUseCase.swift" \
+    '(?s)error\.kind[[:space:]]*==[[:space:]]*\.offline.{0,100}error\.kind[[:space:]]*==[[:space:]]*\.timeout'
+
 if ((violation_count > 0)); then
     echo "Architecture checks failed: $violation_count rule group(s) found."
     exit 1

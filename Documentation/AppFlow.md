@@ -93,6 +93,16 @@ start → onboardingCompleted → initialPaywallResolved
 
 Доступ к premium даёт только подтверждённый `active`.
 
+На чистой установке host сначала восстанавливает login и тот же
+`EntitlementSubject`, затем запускает `RecoverCustomerAccessUseCase` и только
+после этого передаёт authoritative entitlement в AppFlow. Если сеть недоступна,
+результат остаётся `unknown`: бесплатный `main` доступен, premium закрыт, а
+recovery безопасно повторяется после появления связи. Token balance и RU status
+не принадлежат AppFlow и приходят только из backend snapshot.
+
+[Восстановление после переустановки →](AccountRecovery.md) ·
+[Обрыв сети →](NetworkInterruptions.md)
+
 ## Source of truth для entitlement
 
 Единый source of truth находится в `BroadMonetization` за границей `EntitlementStatusProviderProtocol`:

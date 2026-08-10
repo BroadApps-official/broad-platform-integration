@@ -44,6 +44,7 @@ enum AppConfiguration {
 
         if arguments.contains("-app-flow-paywall-only")
             || arguments.contains("-analytics-fixture")
+            || arguments.contains("-paywall-payment-methods")
             || arguments.contains("-live-adapty") {
             return AppFlowConfiguration(
                 onboarding: .disabled,
@@ -116,10 +117,26 @@ enum AppConfiguration {
                 title: "Terms",
                 url: termsOfUseURL
             )
-        ]
+        ],
+        ruBilling: BroadRUBillingPresentationConfiguration(
+            legalLinks: [
+                BroadPaywallLegalLink(
+                    id: "ru-privacy",
+                    title: "Политика конфиденциальности",
+                    url: russianPrivacyPolicyURL
+                ),
+                BroadPaywallLegalLink(
+                    id: "ru-offer",
+                    title: "Публичная оферта и условия оплаты",
+                    url: russianOfferURL
+                )
+            ]
+        )
     )
     static let privacyPolicyURL = legalURL(path: "privacy")
     static let termsOfUseURL = legalURL(path: "terms")
+    static let russianPrivacyPolicyURL = legalURL(path: "ru/privacy")
+    static let russianOfferURL = legalURL(path: "ru/offer")
     static let appFlowProgressKeyPrefix: String = {
         if ProcessInfo.processInfo.arguments.contains("-analytics-fixture") {
             return "broad-app-template.app-flow.analytics-fixture"

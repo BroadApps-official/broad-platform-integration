@@ -1,7 +1,7 @@
 # Текущий статус автоматической проверки
 
 Текущий source snapshot:
-`3242656f16f84ab330c52c8bf62c935546b8c45c61eac38723bc1441fe9c7589`.
+`9dfe0b9ed5acd05cb5ff5a7c4a1adbb7cd6359a75dceb9677c2611318b39263c`.
 
 ## Единый рабочий процесс
 
@@ -42,18 +42,22 @@ Manager либо используют локальную checkout-папку.
 
 ## Итог
 
-`PASS` — 9 августа 2026 года после обновления визуальной документации и
-fixture-режимов последовательно прошли `release_gate` и полный `agent_gate`.
+`PASS` — 10 августа 2026 года после добавления recovery после
+переустановки, server-authoritative token balance и защиты финансовых
+flow при внезапном обрыве сети. Полный `agent_gate` прошёл для
+указанного snapshot.
 
 Подтверждено для указанного snapshot:
 
 - `Scripts/release_gate.sh` — `PASS`;
 - `Scripts/agent_gate.sh` — `PASS`;
-- SwiftFormat — `0/242` файлов требуют форматирования;
+- SwiftFormat — `0/269` файлов требуют форматирования;
 - SwiftLint — `0` нарушений;
 - Xcode build matrix — `4/4`;
 - live Adapty compile-only configurations — `2/2` (`5013` и `5109Codex`);
-- documentation/link/asset validation проверяет девять настоящих iPhone PNG;
+- documentation/link/asset validation проверяет 13 настоящих iPhone PNG;
+- architecture guard требует fresh recovery, server token boundary,
+  `networkConnectionLost` classification и остановку RU polling при offline/timeout;
 - fixture paywall подтверждён для `0/1/2/12` продуктов.
 
 Подробный локальный runtime-отчёт создаётся в

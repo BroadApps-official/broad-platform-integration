@@ -249,12 +249,20 @@ exact ProductSelection
   возвращают safe unsupported-product failure **до provider sheet или RU API**;
 - только `.activated(snapshot)` разрешает `subscriptionDidBecomeActive()`.
 
-Generic premium pipeline намеренно не покупает consumables: в нём нет durable
-exactly-once fulfillment/ledger, который гарантирует выдачу tokens после cold
-launch/retry. Consumables подключаются отдельной host fulfillment composition с
-собственным verified transaction reconciliation и idempotent server-side delivery.
-Публичный `.completed(PurchaseConfirmation)` зарезервирован для такого корректно
-собранного adapter-а, а не является обещанием generic paywall purchase.
+Generic premium pipeline намеренно не покупает consumables. Для них платформа
+даёт отдельный `TokenPurchaseManager`, который не зависит от
+`SubscriptionPurchaseManager` и не открывает premium. Перед StoreKit sheet он
+атомарно сохраняет intent, после покупки принимает только verified transaction
+текущего bundle/ownership, сохраняет signed JWS и отправляет его в app-specific
+`TokenFulfillmentRepositoryProtocol`. Backend обязан идемпотентно обработать
+`transactionID` и вернуть authoritative balance; клиент никогда не прибавляет
+токены локально. Незавершённая доставка восстанавливается через
+`recoverPendingPurchase()` на launch и foreground и блокирует повторное списание
+через общий `MonetizationOperationGate`.
+
+`SubscriptionPurchaseManager` можно использовать отдельно, без token-протоколов
+и token backend. Если приложению нужны оба сценария, оба менеджера собираются
+рядом, но остаются независимыми. [Подробная сборка →](PurchaseManagers.md).
 
 `PendingApplePurchaseStore` использует один key на `applicationIdentifier`, но
 record хранит originating subject, attempt, SKU, product kind и две фазы:
@@ -491,6 +499,13 @@ let services = factory.makeServices(
     operationGate: operationGate
 )
 
+let customerRecovery = services.makeCustomerAccessRecovery(
+    subject: entitlementSubject,
+    refreshEntitlement: entitlementEngine,
+    recoverTokenAccount: appTokenAccountRecovery,
+    loadRUSubscription: optionalRUServices?.checkout.loadSubscriptionStatus
+)
+
 let assembly = BroadMonetizationAssembly(
     entitlementEngine: entitlementEngine,
     services: services
@@ -520,6 +535,13 @@ intent, verified transaction bridge и entitlement rules; standard
 - 0, 1, 2 одинаковых SKU и 20+ products;
 - cached rehydration: exact variation/index/SKU/fingerprint проходит, любое изменение terms fail-before-charge;
 - consumable остаётся в UI, но standard generic purchase fail-before-charge;
+- token purchase сохраняет intent до sheet, не выдаёт локальный баланс и после
+  cold launch повторяет только idempotent backend fulfillment verified JWS;
+- clean install после login делает fresh Apple/primary/RU entitlement refresh и
+  загружает authoritative token balance; install-local cache не считается
+  восстановлением;
+- внезапный offline/timeout в любой финансовой точке не запускает повторный
+  charge: Apple/RU/token pending сохраняется до reconciliation;
 - два concurrent caller одного placement получают два валидных result с уникальными presentation IDs, а cancellation одного waiter не портит общий provider load;
 - purchase cancelled/pending/failed/completed-but-unverified/active;
 - Ask-to-Buy и ambiguous provider failure переживают cold launch, блокируют второй financial flow и завершаются только после verified transaction + entitlement;

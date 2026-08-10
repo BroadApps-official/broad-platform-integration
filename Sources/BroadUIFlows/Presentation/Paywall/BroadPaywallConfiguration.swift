@@ -300,6 +300,7 @@ public struct BroadPaywallConfiguration: Equatable, Sendable {
     public let access: BroadPaywallAccessConfiguration
     public let copy: BroadPaywallCopy
     public let legalLinks: [BroadPaywallLegalLink]
+    public let ruBilling: BroadRUBillingPresentationConfiguration?
     public let specialOfferCopy: BroadPaywallSpecialOfferCopy
     public let specialOfferAuthorization: SpecialOfferPresentationAuthorization?
 
@@ -313,6 +314,7 @@ public struct BroadPaywallConfiguration: Equatable, Sendable {
         access: BroadPaywallAccessConfiguration = BroadPaywallAccessConfiguration(),
         copy: BroadPaywallCopy = .standard,
         legalLinks: [BroadPaywallLegalLink] = [],
+        ruBilling: BroadRUBillingPresentationConfiguration? = nil,
         specialOfferCopy: BroadPaywallSpecialOfferCopy = .english,
         specialOfferAuthorization: SpecialOfferPresentationAuthorization? = nil
     ) {
@@ -325,6 +327,7 @@ public struct BroadPaywallConfiguration: Equatable, Sendable {
         self.access = access
         self.copy = copy
         self.legalLinks = legalLinks
+        self.ruBilling = ruBilling
         self.specialOfferCopy = specialOfferCopy
         self.specialOfferAuthorization = specialOfferAuthorization
     }

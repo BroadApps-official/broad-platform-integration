@@ -1,3 +1,4 @@
+import BroadUIFlows
 import SwiftUI
 
 @main
@@ -6,14 +7,30 @@ struct BroadAppTemplateApp: App {
 
     var body: some Scene {
         WindowGroup {
-            AppFlowRootView(
-                coordinator: compositionRoot.appFlowCoordinator,
-                sceneViewModel: compositionRoot.appFlowSceneViewModel,
-                onboardingViewModel: compositionRoot.onboardingViewModel,
-                paywallViewModel: compositionRoot.paywallViewModel,
-                rootViewModel: compositionRoot.rootViewModel,
-                analyticsViewModel: compositionRoot.analyticsViewModel
-            )
+            if ProcessInfo.processInfo.arguments.contains("-ru-payment-sheet") {
+                ExampleRUPaymentSheetFixtureView(initialMethod: .sbp)
+            } else if ProcessInfo.processInfo.arguments.contains(
+                "-ru-payment-sheet-apple"
+            ) {
+                ExampleRUPaymentSheetFixtureView(initialMethod: .apple)
+            } else if ProcessInfo.processInfo.arguments.contains(
+                "-ru-subscription-management"
+            ) || ProcessInfo.processInfo.arguments.contains(
+                "-ru-subscription-cancelled"
+            ) {
+                BroadRUSubscriptionManagementView(
+                    viewModel: compositionRoot.ruSubscriptionViewModel
+                )
+            } else {
+                AppFlowRootView(
+                    coordinator: compositionRoot.appFlowCoordinator,
+                    sceneViewModel: compositionRoot.appFlowSceneViewModel,
+                    onboardingViewModel: compositionRoot.onboardingViewModel,
+                    paywallViewModel: compositionRoot.paywallViewModel,
+                    rootViewModel: compositionRoot.rootViewModel,
+                    analyticsViewModel: compositionRoot.analyticsViewModel
+                )
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ public struct BroadPaywallView: View {
 
     let theme: BroadPaywallTheme
     let productFormatter: BroadPaywallProductFormatter
+    let receiptEmailStore: (any BroadReceiptEmailStoreProtocol)?
     let onClose: @MainActor () -> Void
     let onCompleted: @MainActor (BroadPaywallCompletion) -> Void
 
@@ -16,18 +17,21 @@ public struct BroadPaywallView: View {
         viewModel: PaywallViewModel,
         theme: BroadPaywallTheme,
         productFormatter: BroadPaywallProductFormatter,
+        receiptEmailStore: (any BroadReceiptEmailStoreProtocol)? = nil,
         onClose: @escaping @MainActor () -> Void,
         onCompleted: @escaping @MainActor (BroadPaywallCompletion) -> Void
     ) {
         _viewModel = StateObject(wrappedValue: viewModel)
         self.theme = theme
         self.productFormatter = productFormatter
+        self.receiptEmailStore = receiptEmailStore
         self.onClose = onClose
         self.onCompleted = onCompleted
     }
 
     public init(
         viewModel: PaywallViewModel,
+        receiptEmailStore: (any BroadReceiptEmailStoreProtocol)? = nil,
         onClose: @escaping @MainActor () -> Void,
         onCompleted: @escaping @MainActor (BroadPaywallCompletion) -> Void
     ) {
@@ -35,6 +39,7 @@ public struct BroadPaywallView: View {
             viewModel: viewModel,
             theme: .standard,
             productFormatter: BroadPaywallProductFormatter(),
+            receiptEmailStore: receiptEmailStore,
             onClose: onClose,
             onCompleted: onCompleted
         )
@@ -72,15 +77,20 @@ public struct BroadPaywallView: View {
                 .ignoresSafeArea()
         }
         .sheet(isPresented: checkoutSheetBinding) {
-            BroadPaymentMethodSheet(
-                methods: viewModel.checkoutMethods,
-                copy: viewModel.configuration.copy,
-                theme: theme,
-                onSelect: viewModel.chooseCheckoutMethod,
-                onCancel: viewModel.cancelCheckoutMethodSelection
-            )
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
+            if let product = viewModel.selectedProduct {
+                BroadPaymentMethodSheet(
+                    methods: viewModel.checkoutMethods,
+                    product: product,
+                    copy: viewModel.configuration.copy,
+                    ruConfiguration: viewModel.configuration.ruBilling,
+                    theme: theme,
+                    receiptEmailStore: receiptEmailStore,
+                    onSubmit: viewModel.submitCheckoutMethod,
+                    onCancel: viewModel.cancelCheckoutMethodSelection
+                )
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+            }
         }
     }
 

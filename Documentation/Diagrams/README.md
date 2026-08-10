@@ -13,6 +13,10 @@
 | `paywall-two-dark.png` | два продукта в provider order |
 | `paywall-many-dark.png` | paywall с 12 provider products |
 | `payment-methods-light.png` | UI-only выбор App Store / СБП / карты |
+| `ru-payment-sbp-light.png` | СБП + две обязательные галочки + чек/email |
+| `ru-payment-apple-light.png` | Apple selected без RU consent/receipt полей |
+| `ru-subscription-active-light.png` | RU subscription management до отмены |
+| `ru-subscription-cancelled-light.png` | paid-through доступ после отмены |
 | `paywall-empty-dark.png` | безопасный empty state |
 | `paywall-error-dark.png` | безопасный error + retry state |
 | `main-dark.png` | main fixture после завершённого flow |
@@ -40,6 +44,7 @@ example, запустить соответствующий fixture и убеди
 BroadCore          #3B82F6
 BroadMonetization  #10B981
 BroadUIFlows       #EC4899
+BroadExtensions    #8B5CF6
 Host App           #F59E0B
 External           #64748B
 ```

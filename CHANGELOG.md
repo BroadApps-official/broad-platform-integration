@@ -8,6 +8,26 @@ production-ready версии.
 
 ### Added
 
+- `RecoverCustomerAccessUseCase`: fresh-install/reinstall recovery для Apple и
+  RU entitlements, server-authoritative token balance и RU subscription status;
+- [Account Recovery guide](Documentation/AccountRecovery.md) с обязательной
+  stable app identity, idempotent Apple/RU token ledger и launch-порядком;
+- typed `NetworkFailureClassifier`, RU offline/timeout errors и немедленная
+  остановка payment polling без очистки pending или повторного charge;
+- [Network Interruptions guide](Documentation/NetworkInterruptions.md) с
+  поведением для внезапного обрыва связи в каждой финансовой точке;
+- независимый `BroadExtensions` product: Hex Color, custom font registration,
+  keyboard dismiss и scoped interactive swipe-back;
+- независимые `SubscriptionPurchaseManager` и `TokenPurchaseManager`; token
+  flow сохраняет durable intent/evidence и передаёт verified StoreKit JWS в
+  app-owned idempotent backend fulfillment;
+- полный RU payment UI: СБП/карта, две обязательные consent-галочки,
+  опциональный чек, валидация и повторное использование email, русские legal
+  links; Apple скрывает RU-поля;
+- `RUBillingManager`, загрузка management status и готовый
+  `BroadRUSubscriptionManagementView` с paid-through датой и отменой;
+- четыре реальные RU billing screenshots с iPhone Simulator, отдельные guides
+  по Purchase Managers и BroadExtensions и единая карта документации;
 - автоматический Codex review-and-fix cycle одной командой с постоянными
   `AGENTS.md` guardrails, management-approved full Mac access для Xcode,
   максимум тремя correction attempts, повторным независимым Xcode/live gate и
@@ -37,6 +57,8 @@ production-ready версии.
 
 ### Changed
 
+- `RUPaymentReturnOutcome.unavailable` теперь переносит typed safe `AppError`,
+  чтобы host различал offline/timeout и показывал корректный Retry UI;
 - live Adapty purchase/restore fail-before-charge по company policy, при этом
   activation/load/show и products остаются настоящими;
 - Adapty paywall load budget стал конфигурируемым (`1...60` секунд, default

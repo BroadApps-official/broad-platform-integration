@@ -144,7 +144,7 @@ struct ExampleMonetizationEnvironment {
     }
 }
 
-private actor ExamplePremiumAccessState {
+actor ExamplePremiumAccessState {
     private var isActive = false
 
     func activate() {
@@ -222,7 +222,12 @@ private struct ExamplePaywallRepository: PaywallRepositoryProtocol {
                     resolvedPlacementID: placementID,
                     catalogSource: .adapty
                 ),
-                products: Self.products(count: productCount),
+                products: Self.products(
+                    count: productCount,
+                    usesRUBillingFixture: arguments.contains(
+                        "-paywall-payment-methods"
+                    )
+                ),
                 remoteConfiguration: RemotePaywallConfiguration(
                     isRUBillingEnabled: arguments.contains("-paywall-payment-methods"),
                     accessPolicy: isHardPaywall ? .hard : .soft,
@@ -251,7 +256,10 @@ private struct ExamplePaywallRepository: PaywallRepositoryProtocol {
         return 4
     }
 
-    private static func products(count: Int) -> [MonetizationProduct] {
+    private static func products(
+        count: Int,
+        usesRUBillingFixture: Bool
+    ) -> [MonetizationProduct] {
         let fixtures = ProductFixture.all
         return (0 ..< count).map { index in
             let fixture = fixtures[index % fixtures.count]
@@ -266,9 +274,11 @@ private struct ExamplePaywallRepository: PaywallRepositoryProtocol {
                 subtitle: fixture.subtitle,
                 price: Money(
                     amount: fixture.amount,
-                    currencyCode: "USD"
+                    currencyCode: usesRUBillingFixture ? "RUB" : "USD"
                 ),
-                displayPrice: fixture.displayPrice,
+                displayPrice: usesRUBillingFixture
+                    ? fixture.rubleDisplayPrice
+                    : fixture.displayPrice,
                 subscriptionPeriod: fixture.period,
                 catalogSource: .adapty
             )
@@ -284,6 +294,7 @@ private extension ExamplePaywallRepository {
         let subtitle: String?
         let amount: Decimal
         let displayPrice: String
+        let rubleDisplayPrice: String
         let period: SubscriptionPeriod
 
         static let all = [
@@ -294,6 +305,7 @@ private extension ExamplePaywallRepository {
                 subtitle: "Flexible access",
                 amount: 3.99,
                 displayPrice: "$3.99",
+                rubleDisplayPrice: "299 ₽",
                 period: .week()
             ),
             ProductFixture(
@@ -303,6 +315,7 @@ private extension ExamplePaywallRepository {
                 subtitle: "Most popular",
                 amount: 8.99,
                 displayPrice: "$8.99",
+                rubleDisplayPrice: "699 ₽",
                 period: .month()
             ),
             ProductFixture(
@@ -312,6 +325,7 @@ private extension ExamplePaywallRepository {
                 subtitle: "One payment for twelve months",
                 amount: 49.99,
                 displayPrice: "$49.99",
+                rubleDisplayPrice: "3 990 ₽",
                 period: .year()
             ),
             ProductFixture(
@@ -321,6 +335,7 @@ private extension ExamplePaywallRepository {
                 subtitle: "Unknown period remains visible",
                 amount: 12.49,
                 displayPrice: "$12.49",
+                rubleDisplayPrice: "999 ₽",
                 period: .unknown
             )
         ]
@@ -367,25 +382,5 @@ private struct ExamplePurchaseRepository: PurchaseRepositoryProtocol {
                 confirmedAt: Date()
             )
         )
-    }
-}
-
-private struct ExampleRestoreRepository: RestoreRepositoryProtocol {
-    let accessState: ExamplePremiumAccessState
-    let arguments: [String]
-
-    func restorePurchases() async -> RestoreAttemptOutcome {
-        if arguments.contains("-restore-failure") {
-            return .failed(
-                .example(
-                    message: "Restore is temporarily unavailable.",
-                    code: "example.restore.failed"
-                )
-            )
-        }
-        if !arguments.contains("-restore-nothing") {
-            await accessState.activate()
-        }
-        return .completed
     }
 }
