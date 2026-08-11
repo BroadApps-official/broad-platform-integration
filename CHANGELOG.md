@@ -57,6 +57,10 @@ production-ready версии.
 
 ### Changed
 
+- английские пояснения в документации по архитектуре, запуску, монетизации,
+  special offer и RU Billing
+  переведены на простой русский язык; имена Swift API и JSON-полей сохранены без
+  изменений, а старые ссылки на разделы RU Billing продолжают работать;
 - `RUPaymentReturnOutcome.unavailable` теперь переносит typed safe `AppError`,
   чтобы host различал offline/timeout и показывал корректный Retry UI;
 - live Adapty purchase/restore fail-before-charge по company policy, при этом

@@ -1,30 +1,31 @@
-# RU billing
+# RU Billing: российские способы оплаты
 
-RU billing is an optional adapter chain. It is enabled only when three independent
-conditions are true:
+RU Billing — опциональная цепочка адаптеров для СБП и банковской карты. Она
+включается, только если одновременно выполнены три условия:
 
-1. the host application enabled the feature;
-2. verified-fresh remote decision is `.enabled`, or the decision is genuinely
-   `.absent` and the host explicitly selected fallback `.enabled`;
-3. the current App Store storefront code is `RU` or `RUS`.
+1. приложение само включило feature;
+2. свежий и проверенный remote config вернул `.enabled`. Если поля в remote config вообще
+   нет (`.absent`), приложение должно явно разрешить fallback `.enabled`;
+3. текущий App Store storefront имеет код `RU` или `RUS`.
 
-The device region, application language and `Locale.current` never participate in
-eligibility. `Locale(identifier: "ru_RU")` is used only by `RUBPriceFormatter` to
-format an already loaded RUB price.
+Регион iPhone, язык приложения и `Locale.current` не дают право на RU-оплату.
+`Locale(identifier: "ru_RU")` используется только для форматирования уже загруженной цены
+в рублях.
 
 ## Что уже делает пакет
 
-Приложение передаёт endpoints, authorization, product mapping, русские legal
-URL и при необходимости свои encoder/decoder. Платформа делает остальное:
+Приложение передаёт адреса API, авторизацию, сопоставление продуктов, ссылки на
+русские юридические документы и, если формат API отличается, свои encoder/decoder.
+Всё остальное делает платформа:
 
 ```text
-storefront + remote gate → catalog mapping → payment UI → checkout URL
-→ durable pending → return/poll → entitlement refresh → subscription settings
+storefront + remote config → сопоставление каталога → экран оплаты → платёжная ссылка
+→ постоянная pending-запись → возврат и проверка → обновление entitlement → настройки подписки
 ```
 
-| App Store | СБП/карта | Settings |
+| App Store | СБП/карта | Настройки |
 |---|---|---|
-| RU-поля скрыты, Continue запускает Apple purchase | две обязательные галочки, опциональный чек и email | тариф, статус, дата, отмена, paid-through доступ |
+| RU-поля скрыты, кнопка запускает Apple purchase | две обязательные галочки, опциональный чек и email | тариф, статус, дата оплаченного доступа и отмена |
 
 <p align="center">
   <img src="Assets/README/Screenshots/ru-payment-sbp-light.png" alt="RU payment UI" width="31%">
@@ -32,32 +33,32 @@ storefront + remote gate → catalog mapping → payment UI → checkout URL
   <img src="Assets/README/Screenshots/ru-subscription-cancelled-light.png" alt="RU подписка после отмены" width="31%">
 </p>
 
-Это реальные screenshots `BroadAppTemplate` с iPhone Simulator, а не макеты.
+Это реальные скриншоты `BroadAppTemplate` из iPhone Simulator, а не макеты.
 
 ## Восстановление после переустановки
 
-RU subscription и RU token purchase принадлежат backend customer, а не локальной
-установке. После того как host восстановил login, он обязан создать тот же
-fingerprinted `EntitlementSubject`, новый current authorization binding и вызвать
+RU-подписка и RU-токены принадлежат серверному пользователю, а не конкретной установке
+приложения. После восстановления входа приложение обязано создать тот же fingerprinted
+`EntitlementSubject`, новую актуальную привязку авторизации и вызвать
 `RecoverCustomerAccessUseCase`.
 
-- RU premium возвращает unified entitlement refresh через `.ruBilling` source;
-- тариф, paid-through дата и renewal state возвращает
+- RU premium возвращается через общую entitlement-проверку с источником `.ruBilling`;
+- тариф, дату оплаченного доступа и статус автопродления возвращает
   `loadSubscriptionStatus`;
-- RU-токены возвращает общий server token ledger;
-- receipt email может исчезнуть: это form preference, не identity и не proof of
-  purchase.
+- RU-токены возвращает общий серверный token ledger;
+- email для чека может исчезнуть после удаления: это только настройка формы, а не ID
+  пользователя и не доказательство покупки.
 
-Не используйте locale, device ID или email из чека для поиска покупки. Без
+Не используйте регион устройства, device ID или email из чека для поиска покупки. Без
 стабильного app account гарантированное восстановление RU-покупок невозможно.
 [Полный порядок →](AccountRecovery.md).
 
-Если сеть исчезла после открытия payment URL, pending session не очищается и
+Если сеть исчезла после открытия платёжной ссылки, pending session не очищается и
 новый checkout автоматически не создаётся. При возврате `applicationDidBecomeActive()`
-получит typed offline/timeout, остановит polling и оставит возможность безопасно
-повторить только status check. [Network-loss matrix →](NetworkInterruptions.md).
+получит типизированный `offline`/`timeout`, остановит polling и оставит возможность безопасно
+повторить только проверку статуса. [Все сценарии обрыва сети →](NetworkInterruptions.md).
 
-## Payment UI: что передаёт приложение
+## Экран оплаты: что передаёт приложение
 
 ```swift
 let ruPresentation = BroadRUBillingPresentationConfiguration(
@@ -83,15 +84,16 @@ let paywallConfiguration = BroadPaywallConfiguration(
 )
 ```
 
-Для СБП и карты `BroadPaymentMethodSheet` требует:
+Для СБП и банковской карты `BroadPaymentMethodSheet` не разрешит продолжить оплату, пока
+пользователь не выполнит обязательные действия:
 
 1. согласие с офертой и обработкой персональных данных;
-2. для auto-renewable subscription — согласие на регулярные списания с
-   фактическими display price и period;
+2. для автоматически продлеваемой подписки — согласие на регулярные списания. В тексте
+   обязательно показываются настоящая цена и период выбранного продукта;
 3. если пользователь запросил чек — корректный email.
 
-Чтобы email не вводили повторно, создайте adapter поверх уже существующего
-Core store и передайте его в paywall:
+Чтобы пользователь не вводил email для чека каждый раз, создайте адаптер поверх уже
+существующего хранилища из `BroadCore` и передайте его в paywall:
 
 ```swift
 let receiptEmailStore = BroadKeyValueReceiptEmailStore(
@@ -108,20 +110,21 @@ BroadPaywallView(
 )
 ```
 
-Адрес хранится под app-configurable `receiptEmailStorageKey`; без переданного
-store форма просто не сохраняет его. В analytics/logger он не попадает. Apple
-скрывает все эти поля. Старого отдельного переключателя «включить
-автопродление» нет: consent на регулярное списание является обязательным
-условием конкретного RU checkout.
+Адрес хранится по ключу `receiptEmailStorageKey`, который задаёт приложение. Если хранилище
+не передано, форма просто не запоминает email. Адрес никогда не попадает в аналитику или логи.
+При оплате через Apple все RU-поля скрыты. Отдельного переключателя «включить автопродление»
+нет: согласие на регулярное списание — обязательное условие конкретной RU-оплаты.
 
-Даже единственный доступный RU method открывает этот sheet. Единственный Apple
-method может стартовать сразу. Все интерактивные элементы используют
-`BroadNoPressEffectButtonStyle`: при tap нет dimming, scale или мерцания.
+Даже если доступен только один RU-способ оплаты, пакет всё равно открывает этот экран с
+согласиями. Единственный Apple-способ можно запустить сразу. Все интерактивные элементы
+используют `BroadNoPressEffectButtonStyle`: при нажатии нет затемнения, уменьшения или
+мерцания.
 
-## Safe disabled composition
+<a id="safe-disabled-composition"></a>
+## Как отключить RU Billing
 
-An application without RU billing does not create fake URLs, credentials or an
-always-unresolved entitlement source:
+Если приложение не использует RU Billing, не создавайте фиктивные URL, токены или
+вечно неопределённый entitlement-источник. Передайте готовые disabled-адаптеры:
 
 ```swift
 let checkoutMethods: any ResolveCheckoutMethodsUseCaseProtocol =
@@ -134,25 +137,27 @@ let subscription: any RUSubscriptionRepositoryProtocol =
     DisabledRUSubscriptionRepository()
 ```
 
-`BroadMonetizationServices` also supplies an Apple-only
-`CheckoutSelectedProductUseCaseProtocol` by default. No RU assembly, endpoint or
-fake catalog is needed for an App Store-only application.
+`BroadMonetizationServices` по умолчанию уже даёт
+`CheckoutSelectedProductUseCaseProtocol`, который работает только с Apple. Для App Store-only
+приложения не нужны RU assembly, endpoint и фиктивный catalog.
 
-Most importantly, do not add a `.ruBilling` `EntitlementSourceRegistration` when
-the feature is disabled. The generic entitlement engine must contain only sources
-that the application can authoritatively verify.
+> [!IMPORTANT]
+> Когда RU Billing выключен, не добавляйте `.ruBilling`-регистрацию в Entitlement Engine.
+> Engine должен содержать только те источники, которые приложение реально умеет
+> проверить.
 
-## Storefront and cache
+<a id="storefront-and-cache"></a>
+## App Store storefront и кеш
 
-`StoreKitCurrentStorefrontClient` reads `StoreKit.Storefront.current`.
-`CachedStorefrontRepository` writes that verified result through the common
-`CacheRepositoryProtocol`. `currentStorefront()` and
-`liveCurrentStorefront()` are live-authoritative: when StoreKit cannot provide a
-current value, eligibility resolves as unavailable. A previous Russian value is
-never used to expose a payment method or create checkout after an account change.
+`StoreKitCurrentStorefrontClient` читает `StoreKit.Storefront.current`.
+`CachedStorefrontRepository` сохраняет этот проверенный результат через общий
+`CacheRepositoryProtocol`. Методы `currentStorefront()` и `liveCurrentStorefront()` разрешают
+RU-оплату только по текущему ответу StoreKit. Если StoreKit не вернул storefront, RU-оплата
+недоступна. Старое значение `RU` из кеша не может показать метод оплаты или создать
+checkout после смены App Store-аккаунта.
 
-`cachedStorefrontHint()` is a separate, explicitly non-authoritative API. A host
-may use it for explanatory UI only; it must never feed `RUBillingGate`.
+`cachedStorefrontHint()` — отдельная неавторитетная подсказка. Её можно показать в поясняющем
+UI, но нельзя передавать в `RUBillingGate` и использовать как разрешение на оплату.
 
 ```swift
 let storefrontRepository = CachedStorefrontRepository(
@@ -161,7 +166,7 @@ let storefrontRepository = CachedStorefrontRepository(
 )
 ```
 
-The default checkout gate is conservative:
+Безопасная настройка по умолчанию:
 
 ```swift
 let checkoutMethods = ResolveCheckoutMethodsUseCase(
@@ -172,20 +177,23 @@ let checkoutMethods = ResolveCheckoutMethodsUseCase(
 )
 ```
 
-`RemoteRUBillingGateDecision` has four states: `.absent`, `.enabled`, `.disabled`,
-`.invalid`. Parser scans every configured alias: all true → enabled; any false →
-disabled; no false plus malformed/conflicting data → invalid; no aliases → absent.
+`RemoteRUBillingGateDecision` имеет четыре состояния:
 
-With host fallback `.disabled`, absent never exposes an RU CTA. `.disabled` and
-`.invalid` fail-closed under either fallback and any provenance. `.enabled`
-requires `.verifiedFreshRemote`; provider-cache/platform-cache/legacy enabled
-does not authorize billing and does not fall through to host fallback. Explicit
-host fallback `.enabled` applies **only** to `.absent`.
+- `.absent` — поля в remote config нет;
+- `.enabled` — все найденные aliases имеют значение `true`;
+- `.disabled` — хотя бы один alias имеет `false`;
+- `.invalid` — данные повреждены или противоречат друг другу.
 
-## HTTP configuration and authorization
+При fallback `.disabled` состояние `.absent` не показывает RU-кнопку. `.disabled` и `.invalid`
+всегда закрывают RU Billing. `.enabled` разрешает оплату только при `.verifiedFreshRemote`.
+Значение из provider cache, platform cache или legacy payload не даёт право на оплату. Явный fallback
+`.enabled` применяется **только** к `.absent`.
 
-The package contains no production host, app identifier, endpoint path or token.
-The host supplies all of them:
+<a id="http-configuration-and-authorization"></a>
+## Настройка HTTP и авторизации
+
+В package нет зашитых production host, application ID, endpoint path или токена. Всё это передаёт
+конкретное приложение:
 
 ```swift
 let configuration = RUBillingHTTPConfiguration(
@@ -202,22 +210,29 @@ let configuration = RUBillingHTTPConfiguration(
 )
 ```
 
-Every URL must use HTTPS. Redirects, URL credentials, cookies, URL cache and
-unbounded responses are rejected. Authorization comes from the existing
-`SubjectAuthorizationProviderProtocol`; its bearer value is subject-bound,
-transient, redacted from reflection and never logged or persisted. Every
-successful authenticated response is accepted only if the provider still returns
-the exact same credential for the exact subject after the network suspension. A
-logout, account switch or token rotation makes the old response unavailable.
+Каждый URL обязан использовать HTTPS. Redirect, логин/пароль в URL, cookie, URL cache и ответ без
+ограничения размера отклоняются. Авторизацию даёт `SubjectAuthorizationProviderProtocol`. Bearer-значение:
 
-## Enabled composition in two steps
+- привязано к конкретному subject;
+- живёт только в памяти;
+- скрыто даже при reflection;
+- не пишется в лог и хранилище.
 
-`RUBillingCompositionFactory` builds the production adapters. The two-step API
-avoids a dependency cycle: the RU registration is needed to construct the common
-entitlement engine, while polling/cancel use cases need that completed engine.
+После сетевого `await` успешный ответ принимается, только если provider всё ещё возвращает
+ту же credential для того же subject. Logout, смена аккаунта или ротация токена делают старый ответ
+недоступным.
+
+<a id="enabled-composition-in-two-steps"></a>
+## Подключение RU Billing в два шага
+
+`RUBillingCompositionFactory` создаёт production-адаптеры. Два шага нужны, чтобы не получилась
+циклическая зависимость:
+
+1. сначала RU-регистрация добавляется в общий Entitlement Engine;
+2. затем готовый engine передаётся в polling и cancellation use cases.
 
 ```swift
-// One instance is owned by the app for its whole process lifetime.
+// Один экземпляр живёт всё время работы приложения.
 let authorizationSession = SubjectAuthorizationSession()
 let authorizationBinding = authorizationSession.begin(for: entitlementSubject)
 
@@ -253,81 +268,73 @@ let ru = ruFactory.makeServices(
 )
 ```
 
-Every replacement identity bundle calls `authorizationSession.begin(for:)` on
-that same app-wide instance before it creates new dependencies. This atomically
-invalidates bindings retained by old in-flight tasks, even if an old immutable
-provider still returns its previous token. Logout without a replacement bundle
-calls `authorizationSession.invalidate()`. A concurrent invalidation never traps:
-the dependency keeps its structurally matching binding, while HTTP and checkout
-boundaries reject it as no longer current.
+При каждой смене пользователя новый набор зависимостей сначала вызывает
+`authorizationSession.begin(for:)` на том же общем экземпляре `SubjectAuthorizationSession`. Это
+сразу отзывает привязки старых незавершённых задач, даже если старый provider всё ещё
+возвращает прежний токен. При logout без нового аккаунта вызовите `authorizationSession.invalidate()`.
+Одновременный logout не приведёт к crash: HTTP- и checkout-границы просто отклонят уже неактуальную
+привязку.
 
-The resulting `RUBillingServices` exposes two small bundles:
+Готовый `RUBillingServices` даёт два небольших набора:
 
 - `catalog.repository`, `catalog.resolveProduct`,
   `catalog.resolveCheckoutMethods`;
 - `checkout.startSelectedProduct`, `checkout.applicationReturn`,
   `checkout.cancelSubscription`, `checkout.operationGate`.
 
-Raw backend-session creation, payment-status polling and their repositories are
-module-internal. A host cannot skip exact catalog matching, storefront/remote
-eligibility, durable pending ownership or the subject check performed on return.
+Создание raw backend-session, polling статуса и их repository остаются внутри модуля.
+Приложение не может обойти точное сопоставление каталога, проверку storefront/remote config,
+владение pending-записью или проверку subject после возврата.
 
-Passing `monetizationServices.operationGate` is mandatory. The host originally
-created this gate once for the whole application process and reuses it across
-login/logout compositions. RU checkout registers its app-wide pending-session
-blocker there, so an opened or persisted RU attempt blocks a new Apple
-purchase/restore, while an Apple operation blocks creation of an RU backend
-session. Do not construct a second gate for RU or for a new identity.
+> [!IMPORTANT]
+> В `RUBillingCompositionFactory.makeServices` обязательно передайте тот же
+> `monetizationServices.operationGate`, который уже используют Apple purchase/restore. Не создавайте
+> второй gate для RU Billing или нового аккаунта.
 
-`applicationIdentifier` is a stable non-PII identifier for this app (normally the
-bundle identifier). Pending RU storage uses one key per application identifier,
-while the record retains the originating `EntitlementSubject`. A newly composed
-identity sees only an opaque app-wide blocker: it receives neither checkout
-session nor attempt identifiers and cannot poll or clear another subject's
-backend session. Even a caller that retained old identifiers cannot clear through
-a store composed for a different subject.
+Один общий gate гарантирует, что pending RU-оплата блокирует новый Apple purchase/restore, а
+незавершённая Apple-операция блокирует новую RU backend-session.
 
-Pass the bundle to `RUBillingAssembly(services:)` after
-`BroadMonetizationAssembly` when the host uses the platform Swinject assemblies.
-It replaces the Apple-only `CheckoutSelectedProductUseCaseProtocol` registration
-with the provider-neutral Apple/RU router, and registers the narrow RU protocols
-and lifecycle coordinators in container scope.
+`applicationIdentifier` — стабильный неперсональный ID приложения, обычно bundle ID. Pending-хранилище
+использует один ключ на application ID, но в записи сохраняет subject, который начал оплату.
+Новый аккаунт видит только непрозрачный блокер. Он не получает ID сессии или попытки и не может
+проверить или очистить чужую backend-session.
 
-For a custom backend, pass `RUBillingWireAdapters` with only the five grouped
-request/response pairs changed. For migrated status sources, pass additional
-authoritative clients through `RUBillingCompositionDependencies`.
+Если приложение использует Swinject-сборки платформы, добавьте `RUBillingAssembly(services:)`
+после `BroadMonetizationAssembly`. Сборка заменит Apple-only регистрацию
+`CheckoutSelectedProductUseCaseProtocol` на общий Apple/RU router и зарегистрирует узкие RU-протоколы.
 
-## Wire contracts
+Для backend с другим форматом передайте `RUBillingWireAdapters` и замените только нужные пары
+request/response. Если после миграции нужно проверять несколько источников статуса, передайте
+дополнительные authoritative clients в `RUBillingCompositionDependencies`.
 
-Endpoint paths and HTTP methods are configurable, and backend payloads remain at
-the infrastructure boundary. The package exposes separate request/response
-contracts for catalog, checkout, payment status, cancellation and entitlement.
+<a id="wire-contracts"></a>
+## Контракты HTTP-запросов и ответов
 
-`BroadAppsRUBillingWireContract` and `BroadAppsRUCatalogResponseDecoder` implement
-the documented convenience schema. A backend with another schema replaces only
-the relevant protocols, for example `RUCheckoutRequestEncoderProtocol` and
-`RUCheckoutResponseDecoderProtocol`. It does not need to fork Domain or UI.
+Пути endpoint и HTTP-методы настраиваются, а backend payload остаётся на границе Infrastructure.
+Для catalog, checkout, payment status, cancellation и entitlement есть отдельные request/response-контракты.
 
-The standard checkout request includes optional `customerEmail` only after the
-user explicitly asks for a receipt. The UI may remember that address under the
-app-configurable form key; the request body itself is never stored or logged. A
-custom backend replaces only the checkout encoder.
+`BroadAppsRUBillingWireContract` и `BroadAppsRUCatalogResponseDecoder` реализуют готовую схему ниже.
+Если backend возвращает другой JSON, замените только нужные протоколы, например
+`RUCheckoutRequestEncoderProtocol` и `RUCheckoutResponseDecoderProtocol`. Менять Domain или UI не нужно.
 
-### BroadApps convenience schema
+Стандартный checkout-запрос добавляет `customerEmail` только когда пользователь сам запросил
+чек. UI может запомнить адрес по app-configurable ключу, но body запроса не хранится и не логируется.
+Другому backend достаточно заменить checkout encoder.
 
-The following schema is the complete contract implemented by
-`BroadAppsRUBillingWireContract` and `BroadAppsRUCatalogResponseDecoder`. All
-requests are authenticated by the HTTP client with a transient subject-bound
-authorization value. JSON keys use `snake_case`; dates are ISO-8601 strings with
-or without fractional seconds. Endpoint paths remain host configuration.
+### Готовая JSON-схема BroadApps
 
-#### Catalog
+Ниже — полный контракт `BroadAppsRUBillingWireContract` и `BroadAppsRUCatalogResponseDecoder`.
+Все запросы авторизуются в HTTP client временным значением, привязанным к subject. JSON-ключи
+имеют формат `snake_case`, даты — ISO-8601 с дробными секундами или без них. Endpoint path по-прежнему
+задаёт приложение.
+
+#### Каталог
 
 ```http
 GET <catalog-path>?app_id=<application-id>&app_bundle=<bundle-id>
 ```
 
-The preferred response wraps products in `products`:
+Предпочтительный ответ хранит массив в `products`:
 
 ```json
 {
@@ -351,7 +358,7 @@ The preferred response wraps products in `products`:
 }
 ```
 
-The decoder also accepts a top-level array or partitioned object:
+Декодер также принимает массив в корне JSON или объект, разделённый по категориям:
 
 ```json
 {
@@ -361,15 +368,13 @@ The decoder also accepts a top-level array or partitioned object:
 }
 ```
 
-Partition names force the corresponding kind. In a flat response `kind` accepts
-`subscription`, `tokens`, `coupon` and `unknown`; an absent kind becomes
-`unknown`. `app_store_product_id`, `price`, `display_price` and
-`subscription_period` are optional. Supported period units are `day`, `week`,
-`month`, `year` or a non-empty custom unit. Unknown payment-method strings are
-ignored; the built-in generic premium checkout understands only `sbp` and
-`card`.
+Название секции жёстко задаёт `kind`. В плоском ответе `kind` принимает `subscription`, `tokens`,
+`coupon` и `unknown`; если `kind` нет, получается `unknown`. Поля `app_store_product_id`, `price`,
+`display_price` и `subscription_period` опциональны. Единица периода: `day`, `week`, `month`, `year`
+или своя непустая строка. Неизвестные способы оплаты игнорируются. Готовый premium checkout
+понимает только `sbp` и `card`.
 
-#### Create checkout
+#### Создание checkout
 
 ```http
 POST <checkout-path>
@@ -395,14 +400,15 @@ Content-Type: application/json
 }
 ```
 
-`payment_method` is `sbp` or `card`. `customer_email` is optional and is sent
-only when the user explicitly requests a receipt. The package never fabricates
-an email. `expires_at` is optional. The response is
-rejected unless the session ID is valid and `payment_url` is HTTPS with a host
-and without embedded URL credentials. The URL remains memory-only and is never
-written into pending cache.
+`payment_method` может быть только `sbp` или `card`. Поле `customer_email` опционально:
+оно отправляется, только если пользователь сам запросил чек. Пакет никогда не придумывает
+email за пользователя. Поле `expires_at` тоже опционально.
 
-#### Payment status
+Ответ отклоняется, если ID сессии некорректен или `payment_url` не является безопасным
+HTTPS-адресом с указанным host. Логин и пароль внутри URL запрещены. Платёжная ссылка живёт
+только в памяти и никогда не сохраняется в pending-кеш.
+
+#### Статус оплаты
 
 ```http
 POST <payment-status-path>
@@ -424,11 +430,11 @@ Content-Type: application/json
 }
 ```
 
-`status` accepts exactly `pending`, `paid`, `failed`, `cancelled` or `expired`.
-The response session ID must equal the requested ID. Even `paid` does not grant
-access directly: it only starts the common authoritative entitlement refresh.
+Поле `status` принимает только `pending`, `paid`, `failed`, `cancelled` или `expired`.
+ID сессии в ответе должен точно совпасть с запрошенным ID. Даже статус `paid` не открывает
+доступ напрямую: он только запускает общую авторитетную проверку entitlement.
 
-#### Cancellation
+#### Отмена подписки
 
 ```http
 POST <cancellation-path>
@@ -450,11 +456,11 @@ Content-Type: application/json
 }
 ```
 
-`status` accepts `cancelled`, `already_inactive` or `failed`;
-`effective_until` is optional. The optional legacy endpoint uses this same wire
-shape and is called only when the host explicitly enables legacy fallback.
+Поле `status` принимает `cancelled`, `already_inactive` или `failed`.
+Поле `effective_until` опционально. Старый endpoint, если он нужен приложению, использует
+такой же формат. Он вызывается только после явного включения legacy fallback.
 
-#### Entitlement
+#### Проверка доступа
 
 ```http
 GET <entitlement-status-path>?app_id=<application-id>&app_bundle=<bundle-id>
@@ -468,108 +474,113 @@ GET <entitlement-status-path>?app_id=<application-id>&app_bundle=<bundle-id>
 }
 ```
 
-`subscription_expires_at` and `subscription_lifetime` are optional; an absent
-lifetime flag is `false`. Subject identity is never accepted from this JSON: it
-comes from the authenticated composition and is attached locally after decode.
-Network, authorization, type, date or consistency failures stay unresolved.
+`subscription_expires_at` и `subscription_lifetime` опциональны. Если флага lifetime нет,
+его значение считается равным `false`. Личность пользователя никогда не берётся из этого
+JSON. Она приходит из уже авторизованной композиции и добавляется локально после декодирования.
+Ошибки сети, авторизации, типов, дат или противоречивые данные дают `unresolved`, а не
+ложный `inactive`.
 
-Do not silently change these payloads on one side. A backend with a different
-shape must inject the matching encoder/decoder protocol pair and document that
-app-owned contract separately.
+Не меняйте эти payload только на одной стороне. Если backend использует другой JSON,
+приложение обязано передать соответствующую пару encoder/decoder и отдельно описать свой
+контракт.
 
-## Catalog and matching
+<a id="catalog-and-matching"></a>
+## Каталог и сопоставление продуктов
 
-Every catalog row has an explicit `RUCatalogProductKind`:
+Каждая строка каталога имеет явный `RUCatalogProductKind`:
 
 - `subscription`;
 - `tokens`;
 - `coupon`;
 - `unknown`.
 
-`RUCatalogSections` keeps the categories separate. `RUCatalogProductMatcher`
-uses this deterministic order:
+`RUCatalogSections` не смешивает эти категории. `RUCatalogProductMatcher` ищет продукт
+в строго определённом порядке:
 
-1. exact case-sensitive match against backend product ID or mapped App Store ID;
-2. an exact backend ID returned by an explicitly injected app-owned
+1. точное совпадение с учётом регистра по backend product ID или связанному App Store ID;
+2. точный backend ID, который вернула явно переданная приложением политика
    `RUCatalogProductMappingPolicyProtocol`;
-3. the first row in backend order wins when several exact rows match.
+3. если точных совпадений несколько, побеждает первая строка в порядке backend.
 
-`ExactOnlyRUCatalogProductMappingPolicy` is the default. The platform never maps
-by period or price and never sends a guessed server ID. An application that owns
-an explicit SKU-to-backend-ID table may inject
-`AppOwnedRUCatalogProductMappingPolicy`; a custom period policy is also possible,
-but it is entirely host-owned and opt-in.
+По умолчанию используется `ExactOnlyRUCatalogProductMappingPolicy`. Платформа никогда не
+угадывает продукт по цене или периоду и не отправляет придуманный server ID. Если у приложения
+есть собственная точная таблица «SKU → backend ID», передайте
+`AppOwnedRUCatalogProductMappingPolicy`. Свою политику по периоду тоже можно передать, но она
+полностью находится под ответственностью приложения и сама не включается.
 
-The generic premium paywall exposes RU methods only for auto-renewing,
-non-renewing and non-consumable entitlement products matched to a
-`subscription` catalog row. Consumables, token packs, coupons and unknown
-products are deliberately excluded because `RefreshRUPaymentUseCase` is a
-premium-entitlement authority, not a token/coupon fulfillment authority. The
-catalog taxonomy and read-only catalog boundary remain public so an app can build
-a separate typed token fulfillment flow. Raw premium-session creation and status
-polling remain internal and cannot be reused as a token-crediting shortcut.
+Общий premium paywall показывает RU-оплату только для автоматически продлеваемых,
+непродлеваемых и non-consumable продуктов, которые дают доступ и точно сопоставлены со строкой
+`subscription`. Расходуемые продукты, наборы токенов, купоны и неизвестные продукты намеренно
+исключены. Причина простая: `RefreshRUPaymentUseCase` подтверждает premium-доступ, но не начисляет
+токены и не активирует купоны.
 
-`CachedRUCatalogRepository` keeps the last valid catalog for a finite configured
-stale window. A partial network failure does not overwrite it. `RUBPriceFormatter`
-formats valid `Money(currencyCode: "RUB")`; no price is invented in UI.
+Типы каталога и read-only доступ к нему остаются публичными, поэтому приложение может построить
+отдельный типизированный flow начисления токенов. Внутренние создание premium-сессии и polling
+нельзя использовать как короткий путь для начисления токенов.
 
-## Checkout, external page and pending context
+`CachedRUCatalogRepository` хранит последний корректный каталог в течение настроенного stale-периода.
+Частичная сетевая ошибка не перезаписывает его. `RUBPriceFormatter` форматирует только настоящую
+`Money(currencyCode: "RUB")`; UI никогда не придумывает цену.
 
-The production chain is:
+<a id="checkout-external-page-and-pending-context"></a>
+## Checkout, внешняя платёжная страница и pending-запись
+
+Рабочая цепочка выглядит так:
 
 ```text
-create checkout -> validate HTTPS URL -> persist pending context -> open URL
-                -> app becomes active -> poll -> authoritative entitlement refresh
+создать checkout → проверить HTTPS-ссылку → сохранить pending-запись → открыть ссылку
+                 → приложение снова активно → проверить статус → обновить entitlement
 ```
 
-`RUCheckoutFlowCoordinator` stores only the checkout session ID, an app-generated
-attempt ID, catalog product ID, payment method, finite start date, optional backend
-expiry, opaque originating-subject scope and safe paywall attribution
-(`presentationID`, optional provider variation, requested/resolved placement).
-That attribution remains local and survives cold launch so created/returned/
-confirmed/timed-out app events describe the same paywall. It is never added to
-`RUCheckoutRequest` or sent to the billing backend. The record does not store the
-payment URL, email, bearer, raw provider payload or user identity.
+`RUCheckoutFlowCoordinator` сохраняет только безопасный минимум: ID checkout-сессии,
+созданный приложением attempt ID, ID продукта каталога, способ оплаты, конечную дату начала,
+опциональный срок от backend, непрозрачный scope исходного пользователя и атрибуцию paywall
+(`presentationID`, опциональную variation провайдера, requested/resolved placement).
 
-`UIApplicationPaymentURLOpener` treats `UIApplication.open == false` as a failure.
-An `.opened` flow outcome means only that the external page opened. It never grants
-premium and never calls AppFlow activation.
+Атрибуция остаётся только на устройстве и переживает холодный запуск. Благодаря этому события
+created/returned/confirmed/timed-out относятся к тому же paywall. Она никогда не добавляется в
+`RUCheckoutRequest` и не отправляется платёжному backend. Запись не хранит платёжный URL, email,
+bearer-токен, сырой payload провайдера или личность пользователя.
 
-The authenticated HTTP client revalidates the exact subject and exact credential
-after the checkout response. The flow revalidates again before pending persistence
-and once more after that `await`, immediately before opening Safari. If identity
-changes before persistence, no external page opens. If it changes while persistence
-is in flight, the old subject's durable blocker is deliberately retained and the
-page still does not open; an uncertain financial attempt is never erased merely
-because login state changed.
+`UIApplicationPaymentURLOpener` считает `UIApplication.open == false` ошибкой. Результат `.opened`
+означает только одно: внешняя страница открылась. Он не выдаёт premium и не активирует AppFlow.
 
-`CheckoutSelectedProductUseCaseProtocol` is the provider-neutral paywall
-boundary. `.apple` delegates to the existing verified
-`PurchaseSelectedProductUseCaseProtocol`. `.sbp` and `.card` delegate to
-`StartSelectedRUCheckoutUseCase`, which resolves the exact selected occurrence to
-an `RUCatalogProductID` and then starts `RUCheckoutFlowCoordinator`. `.opened` is
-mapped to `.pending`, so presentation shows a notice and never emits completion.
+После ответа checkout авторизованный HTTP-клиент ещё раз проверяет точного пользователя и его
+актуальную credential. Flow повторяет эту проверку перед сохранением pending-записи и ещё раз
+после `await`, прямо перед открытием Safari.
 
-The pending record is created with atomic insert-if-missing before the URL opens
-and cleared with compare-and-remove for the exact session + attempt only. A
-second identity/composition cannot inspect, overwrite or delete it. Storage
-failure/corruption is `.unavailable` and remains a financial blocker. Cache TTL and
-`expiresAt` compared with mutable device wall-clock time are only UI/review hints;
-they never clear the blocker. Only a terminal backend result may clear it.
+- если аккаунт сменился до сохранения, внешняя страница не откроется;
+- если аккаунт сменился во время сохранения, блокер старого пользователя намеренно остаётся,
+  но страница всё равно не откроется;
+- неопределённую финансовую попытку нельзя удалять только потому, что изменился login state.
 
-The coordinator checks the same `RUBillingGate` and a fresh
-`StoreKit.Storefront.current` again immediately before creating checkout. Cached
-storefront data cannot authorize it. The coordinator is single-flight and also
-rejects a new start while a pending context exists, so concurrent taps cannot
-create two backend sessions or overwrite the tracked attempt.
+`CheckoutSelectedProductUseCaseProtocol` — единая граница paywall, которая не зависит от способа
+оплаты. `.apple` передаёт работу проверенному `PurchaseSelectedProductUseCaseProtocol`. `.sbp` и
+`.card` вызывают `StartSelectedRUCheckoutUseCase`: он находит точный `RUCatalogProductID` выбранной
+строки и запускает `RUCheckoutFlowCoordinator`. Результат `.opened` преобразуется в `.pending`,
+поэтому экран показывает уведомление и не сообщает об успешной покупке раньше времени.
 
-## Polling after return
+До открытия URL pending-запись создаётся атомарной операцией «добавить, только если её ещё нет».
+Удалить её можно только операцией «сравнить и удалить» для точной пары session + attempt. Другой
+аккаунт или другая композиция не могут прочитать, перезаписать или удалить эту запись. Ошибка или
+повреждение хранилища дают `.unavailable` и продолжают блокировать новую финансовую операцию.
+Значения TTL и `expiresAt`, сравнённые с изменяемыми часами iPhone, служат только подсказкой для UI
+и разбора проблемы. Они не снимают блокировку. Сделать это может только финальный ответ backend.
 
-The host calls `RUPaymentReturnCoordinator.applicationDidBecomeActive()` after an
-actual transition back to active. The coordinator first verifies that the opaque
-pending record belongs to its exact subject, then its internal polling use case
-runs the configured number of attempts and delay. The host configures that policy
-on the composition rather than receiving a raw session-polling service:
+Прямо перед созданием checkout координатор повторно проверяет тот же `RUBillingGate` и свежий
+`StoreKit.Storefront.current`. Значение storefront из кеша не даёт разрешение на оплату.
+Координатор допускает только одну операцию одновременно и отклоняет новый запуск при существующей
+pending-записи. Поэтому несколько одновременных нажатий не создадут две backend-сессии и не
+перезапишут отслеживаемую попытку.
+
+<a id="polling-after-return"></a>
+## Проверка оплаты после возврата в приложение
+
+После настоящего возврата приложения в активное состояние вызовите
+`RUPaymentReturnCoordinator.applicationDidBecomeActive()`. Сначала координатор проверит, что
+непрозрачная pending-запись принадлежит именно текущему пользователю. Затем внутренний polling
+выполнит настроенное количество попыток с заданной паузой. Политика задаётся в композиции;
+приложение не получает прямой доступ к низкоуровневому сервису polling:
 
 ```swift
 let ruConfiguration = RUBillingCompositionConfiguration(
@@ -583,31 +594,31 @@ let ruConfiguration = RUBillingCompositionConfiguration(
 )
 ```
 
-Each attempt first checks the exact checkout session status. Only `.paid` starts a
-new unified entitlement generation. Pending, unavailable or mismatched status
-cannot be confirmed by an unrelated pre-existing entitlement. The generation
-checks all configured authorities, including primary backend and RU billing, and
-only a refreshed authoritative `active` snapshot confirms purchase. A paid
-payment without active entitlement remains pending; transport failure is
-unavailable, not inactive.
+Каждая попытка сначала запрашивает статус именно этой checkout-сессии. Только `.paid` запускает
+новое поколение общей entitlement-проверки. Старый entitlement не может подтвердить сессию со
+статусом pending, unavailable или с несовпадающим ID. Новое поколение проверяет все настроенные
+авторитетные источники, включая основной backend и RU Billing. Покупка подтверждается только
+свежим авторитетным результатом `active`. Оплата со статусом `paid`, но без активного entitlement,
+остаётся pending. Сетевая ошибка означает unavailable, а не inactive.
 
-Concurrent foreground callbacks join one in-flight operation for the same
-attempt, so they cannot start duplicate polling loops or duplicate confirmation
-analytics. The host still owns the lifecycle call and must pass `.active` to its
-AppFlow coordinator; `.pending`, `.inactive` and `.unavailable` do not unlock UI.
-RU app analytics preserves the original paywall variation and both logical
-placements through this cold-launch path. Adapty does not automatically attribute
-an external SBP/card payment; the host analytics destination owns that conversion
-mapping and must treat the variation as opaque.
-The return coordinator and paywall use the same `MonetizationOperationGate`.
-After terminal `.active` or `.inactive`, the coordinator publishes a status change;
-an already visible `PaywallViewModel` re-evaluates its CTA without relying on
-SwiftUI `onAppear`.
+Несколько одновременных foreground-callback присоединяются к одной уже выполняющейся операции
+для той же попытки. Они не запускают повторные polling-циклы и не дублируют аналитику подтверждения.
+Приложение всё равно само передаёт результат в AppFlow: только `.active` открывает доступ.
+`.pending`, `.inactive` и `.unavailable` не разблокируют основной UI.
 
-## Cancellation and paid-through access
+При холодном запуске аналитика сохраняет исходную variation paywall и оба логических placement.
+Adapty сам не связывает внешнюю оплату по СБП/карте со своей конверсией. Это сопоставление делает
+аналитика приложения, а variation хранится как непрозрачное значение провайдера.
 
-`BroadRUSubscriptionManagementView` is the ready-made Settings screen. Its
-ViewModel receives only two use cases:
+Координатор возврата и paywall используют один `MonetizationOperationGate`. После финального
+`.active` или `.inactive` координатор публикует изменение статуса. Уже открытый `PaywallViewModel`
+заново вычисляет состояние CTA и не зависит от повторного SwiftUI `onAppear`.
+
+<a id="cancellation-and-paid-through-access"></a>
+## Отмена подписки и доступ до оплаченной даты
+
+`BroadRUSubscriptionManagementView` — готовый экран для раздела «Настройки». Его ViewModel нужны
+только два use case:
 
 ```swift
 let viewModel = BroadRUSubscriptionManagementViewModel(
@@ -620,40 +631,39 @@ let viewModel = BroadRUSubscriptionManagementViewModel(
 BroadRUSubscriptionManagementView(viewModel: viewModel)
 ```
 
-`LoadRUSubscriptionStatusUseCase` reads current server status for the
-exact subject. The built-in convenience entitlement response accepts optional
-`subscription_id`, `subscription_plan_name` and
-`subscription_auto_renewal_cancelled`. Another API replaces only the entitlement
-decoder.
+`LoadRUSubscriptionStatusUseCase` загружает с сервера актуальный статус именно текущего
+пользователя. Готовый entitlement-ответ понимает опциональные поля `subscription_id`,
+`subscription_plan_name` и `subscription_auto_renewal_cancelled`. Если API приложения имеет
+другой формат, замените только entitlement decoder.
 
-The screen handles loading/error/retry, current plan, active/inactive status,
-paid-through date, confirmation before cancellation and the post-cancel state.
-No second paywall is opened from Settings.
+Экран сам показывает загрузку, ошибку и повтор, текущий тариф, статусы active/inactive, дату
+окончания оплаченного доступа, подтверждение перед отменой и состояние после отмены. Из раздела
+«Настройки» второй paywall не открывается.
 
-`URLSessionRUCancellationRepository` represents one endpoint.
-`RUCancellationRepositoryFactory` reads
-`RUBillingHTTPConfiguration.allowsLegacyCancellationFallback`. It composes
-`FallbackRUSubscriptionRepository` only when that flag is `true` and an explicit
-legacy path is supplied. There is no implicit legacy URL.
+`URLSessionRUCancellationRepository` работает с одним endpoint.
+`RUCancellationRepositoryFactory` читает флаг
+`RUBillingHTTPConfiguration.allowsLegacyCancellationFallback`. Он добавляет
+`FallbackRUSubscriptionRepository`, только если флаг равен `true` и приложение явно передало
+путь к старому endpoint. Скрытого legacy URL в пакете нет.
 
-`CancelRUSubscriptionUseCase` refreshes the unified entitlement after a confirmed
-cancellation. The cancellation itself does not revoke access immediately: a
-server-authoritative RU status may remain active with `expiresAt` until the end of
-the paid period.
+После подтверждённой отмены `CancelRUSubscriptionUseCase` заново проверяет общий entitlement.
+Отмена автопродления не должна сразу закрывать уже оплаченный доступ: серверный RU-статус может
+остаться active с `expiresAt` до конца оплаченного периода.
 
-For an app-facing facade use `RUBillingManager`: it exposes start checkout,
-foreground return, load subscription status and cancel, while raw polling and
-HTTP repositories stay internal.
+В коде приложения используйте фасад `RUBillingManager`. Он даёт четыре понятных действия: начать
+оплату, обработать возврат в приложение, загрузить статус подписки и отменить её. Низкоуровневые
+polling и HTTP-repository остаются внутри пакета.
 
-## RU entitlement source
+<a id="ru-entitlement-source"></a>
+## Источник RU-доступа
 
-`URLSessionRUBillingEntitlementClient` accepts `active` or `inactive` only from a
-successfully decoded current server response for the exact subject. Network,
-authorization, decoding and contradictory date failures resolve as `unresolved`.
+`URLSessionRUBillingEntitlementClient` принимает `active` или `inactive` только из свежего,
+успешно декодированного ответа сервера для точного текущего пользователя. Ошибка сети,
+авторизации или декодирования, а также противоречивые даты дают `unresolved`.
 
-Several authoritative clients can be passed to `RUBillingEntitlementRepository`
-for migrated identities or endpoints. Any confirmed active result wins. Inactive
-is returned only when every configured client explicitly confirms inactive.
+Для миграции пользователей или endpoint в `RUBillingEntitlementRepository` можно передать
+несколько авторитетных clients. Любой подтверждённый active побеждает. Результат inactive
+возвращается только тогда, когда каждый настроенный client явно подтвердил inactive.
 
 ```swift
 let ruRegistration = RUBillingEntitlementSourceFactory(
@@ -667,12 +677,11 @@ let ruRegistration = RUBillingEntitlementSourceFactory(
 )
 ```
 
-This factory always creates exactly one logical `.ruBilling` registration. Add it
-to `EntitlementEngine` only for an enabled, fully configured RU backend.
+Эта фабрика всегда создаёт ровно одну логическую регистрацию `.ruBilling`. Добавляйте её в
+`EntitlementEngine`, только когда RU backend включён и полностью настроен.
 
-The RU cache record carries the binding's logical authorization epoch. Its
-physical cache key uses one fixed authorization-session partition per
-subject/source, so repeated login/logout does not create an unbounded number of
-keys. A response or delayed write from a revoked bundle may only leave an
-old-epoch record: a new binding rejects that record exactly and fails closed
-instead of granting cached access.
+Запись RU-кеша хранит логическую эпоху авторизации текущей binding. Физический ключ кеша использует
+один постоянный раздел authorization session для пары пользователь/источник, поэтому повторные
+login/logout не создают бесконечное число ключей. Ответ или отложенная запись от уже отозванного
+набора зависимостей могут оставить только запись старой эпохи. Новая binding точно её отклонит и
+закроет доступ, а не выдаст premium по устаревшему кешу.

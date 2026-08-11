@@ -200,11 +200,11 @@ typed placement registry. Экран этот ID не знает.
 
 Платформа не вычисляет и не подставляет:
 
-- crossed price;
-- crossed numeric value;
-- price multiplier;
-- period text;
-- badge.
+- зачёркнутую цену;
+- зачёркнутое числовое значение;
+- множитель цены;
+- текст периода;
+- бейдж.
 
 Каждое поле остаётся optional. UI показывает его только когда оно реально
 пришло в valid remote config. Product array передаётся без фильтрации, сортировки

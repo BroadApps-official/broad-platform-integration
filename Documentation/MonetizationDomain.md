@@ -76,11 +76,11 @@ ID, но сохраняет порядок, дубли SKU, product references, 
 
 `RemotePaywallConfiguration` содержит только typed поля:
 
-- RU billing gate;
-- hard/soft policy;
-- close delay;
-- UI variant;
-- optional `SpecialOfferRemoteConfiguration`.
+- разрешение или запрет RU Billing;
+- жёсткая или мягкая политика доступа;
+- задержка перед появлением кнопки закрытия;
+- вариант интерфейса;
+- опциональная `SpecialOfferRemoteConfiguration`.
 
 `nil` у обычного поля означает «значение не пришло». Data-слой может сохранить
 последнее валидное значение вместо молчаливого reset. Некорректная строка или

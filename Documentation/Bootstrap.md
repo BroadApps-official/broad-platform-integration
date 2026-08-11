@@ -1,8 +1,10 @@
-# Bootstrap
+# Запуск приложения
 
-`BroadCore` provides one deterministic startup engine. It coordinates app-specific work without importing SwiftUI, Adapty, StoreKit or any host application type.
+`BroadCore` содержит один предсказуемый механизм запуска. Он выполняет шаги,
+которые передало приложение, и не импортирует SwiftUI, Adapty, StoreKit или типы
+конкретного приложения.
 
-## State lifecycle
+## Состояния запуска
 
 ```text
 idle → starting ─┬→ ready
@@ -10,37 +12,55 @@ idle → starting ─┬→ ready
                  └→ failed(error) → retry → starting
 ```
 
-- `ready`: every critical step completed normally.
-- `degraded`: a critical step used a safe fallback, or a background step failed/timed out after the route opened.
-- `failed`: a critical step exhausted its retry schedule or timeout budget without a fallback.
-- Repeated `start()` calls join the active run. They do not activate an SDK twice.
-- `retry()` starts a new generation only from `failed`. Late results from an older generation are ignored.
+- `ready` — все критические шаги успешно завершились;
+- `degraded` — приложение может работать, но критический шаг использовал безопасный
+  fallback или фоновый шаг закончился ошибкой/timeout уже после открытия экрана;
+- `failed` — критический шаг исчерпал все попытки и время, а безопасного fallback нет;
+- повторный `start()` присоединяется к уже идущему запуску и не активирует SDK второй раз;
+- `retry()` начинает новую generation только из `failed`. Поздние ответы старой generation игнорируются.
 
-## Step contract
+## Что такое `BootstrapStep`
 
-Every `BootstrapStep` has a unique `BootstrapStepID`, name, criticality, `TimeoutPolicy`, `RetryPolicy` and `@Sendable` async operation.
+Каждый `BootstrapStep` имеет:
 
-### Critical
+- уникальный `BootstrapStepID`;
+- имя;
+- признак критичности;
+- `TimeoutPolicy`;
+- `RetryPolicy`;
+- `@Sendable` async-операцию.
 
-Critical steps execute sequentially in declaration order. Use them only for work required to choose and safely display the first route.
+### Критические шаги
 
-- `.completed` continues normally.
-- `.degraded(AppError)` means the step deliberately used a valid fallback or cache. It is not retried.
-- A thrown error follows `RetryPolicy`; the final failure produces `.failed`.
+Они выполняются по очереди, в том порядке, в котором их передало приложение.
+Делайте шаг критическим только тогда, когда без него нельзя безопасно выбрать и показать
+первый экран.
 
-### Background
+- `.completed` — шаг закончился, идём дальше;
+- `.degraded(AppError)` — шаг осознанно использовал валидный fallback или кеш; повторять его не нужно;
+- брошенная ошибка обрабатывается по `RetryPolicy`; если попытки закончились, состояние становится
+  `.failed`.
 
-Background steps start after the critical gate has produced `ready` or `degraded`. They run concurrently and never hold the loader. A failure can update `ready` to `degraded`, but never to `failed`.
+### Фоновые шаги
 
-## Timeout semantics
+Они начинаются после того, как критическая часть вернула `ready` или `degraded`.
+Фоновые шаги выполняются параллельно и никогда не держат loader. Их ошибка может изменить
+`ready` на `degraded`, но не на `failed`.
 
-`TimeoutPolicy.limit` is the total budget for one step, including all attempts and retry delays. There is no infinite timeout.
+## Как работает timeout
 
-The coordinator uses a one-shot race instead of a structured task group. When the timeout wins, the coordinator immediately stops waiting and ignores any late result. Every `BootstrapStep` also owns a single-flight gate: if an SDK ignores cancellation, a later retry joins that still-running execution instead of starting a duplicate. Swift cannot forcibly terminate such an SDK call, so non-idempotent activation should normally use `RetryPolicy.none` and keep its own idempotency guard inside the adapter as a second line of protection.
+`TimeoutPolicy.limit` — общее время одного шага. В него уже входят все попытки и задержки
+между ними. Бесконечного timeout нет.
 
-## Retry semantics
+Если время вышло, координатор сразу прекращает ждать и игнорирует поздний ответ. Если SDK
+игнорирует cancellation, следующая попытка присоединяется к ещё идущему вызову, а не создаёт
+дубль. Swift не может насильно остановить такой SDK-вызов. Поэтому неидемпотентная активация
+обычно использует `RetryPolicy.none` и дополнительную защиту внутри адаптера.
 
-`RetryPolicy.delays` contains delays before each retry. Therefore total attempts equal `delays.count + 1`.
+## Как работают повторы
+
+`RetryPolicy.delays` хранит задержку перед каждым повтором. Общее количество попыток равно
+`delays.count + 1`.
 
 ```swift
 let noRetry = RetryPolicy.none
@@ -53,38 +73,50 @@ let backoff = RetryPolicy.exponential(
 )
 ```
 
-Only explicitly retryable `AppError` values are retried. Unknown errors are sanitized and treated as non-retryable until an adapter classifies them. `CancellationError` is control flow and never becomes a user-facing failure.
+Повторяются только ошибки `AppError` с `isRetryable == true`. Неизвестная ошибка сначала
+очищается от небезопасных данных и не повторяется, пока адаптер её не классифицирует.
+`CancellationError` управляет потоком выполнения и не показывается как ошибка пользователю.
 
-## Error safety
+## Безопасные ошибки
 
-`AppError` stores only:
+`AppError` хранит только:
 
-- a typed kind;
-- a user-facing message;
-- a sanitized diagnostic code;
-- retryability.
+- тип ошибки;
+- безопасное сообщение для пользователя;
+- очищенный diagnostic code;
+- признак возможности повтора.
 
-Raw SDK errors, payment URLs, access tokens, API keys and full user identifiers do not cross the public boundary.
+Raw SDK errors, payment URL, access token, API key и полный ID пользователя не выходят в публичный
+контракт. Тексты для timeout и unknown error передаёт само приложение через
+`BootstrapErrorMessages`. Поэтому локализация и тон текста не зашиты в `BroadCore`.
 
-The host supplies timeout and unknown-error messages through `BootstrapErrorMessages`. This keeps localization and product tone outside `BroadCore`.
+## Логирование
 
-## Logging
+Координатор передаёт в `BroadLoggerProtocol` только закрытые `BroadLogEvent`. Он логирует этап
+жизненного цикла, переход состояния, тип/индекс шага, номер попытки и безопасный
+`AppError.Kind`.
 
-The coordinator emits closed `BroadLogEvent` values through `BroadLoggerProtocol`. It records lifecycle, state transitions, step kind/index, attempt count and safe `AppError.Kind`. It deliberately does not record `BootstrapStepID`, step name, user-facing message, diagnostic code or raw error.
+В лог не попадают `BootstrapStepID`, имя шага, текст для пользователя, diagnostic code и raw error.
+Событие о завершении шага пишется только после завершения timeout-race. Поздний ответ SDK не
+создаст ложный success. Подробнее: [логирование](Logging.md).
 
-A terminal step event is emitted only after the timeout race has resolved. A non-cooperative SDK that finishes after timeout cannot create a false success event. See [Logging](Logging.md) for the complete privacy contract and OSLog setup.
+## Как состояние запуска попадает в UI
 
-## Presentation mapping
+`AppBootstrapState` остаётся контрактом engine и хранит `ready/degraded/failed`. Example ViewModel
+хранит контент модулей в `LoadableState<[ModuleItem]>`:
 
-`AppBootstrapState` remains the engine contract and carries bootstrap-specific `ready/degraded/failed` lifecycle semantics. The coordinator tracks run generations internally. The example ViewModel keeps module content in `LoadableState<[ModuleItem]>`: `ready` and `degraded` both make the synchronously built list `loaded`, while a separate render state shows degraded bootstrap health. `failed` maps to content `error`. The module list comes from the associated value, so a refresh can retain already rendered content without changing the coordinator.
+- `ready` и `degraded` дают `loaded`-контент;
+- отдельное render-состояние показывает, что bootstrap находится в `degraded`;
+- `failed` преобразуется в `error`.
 
-Never map every bootstrap `degraded` to content `stale`: a background SDK timeout does not make unrelated content old. Only a typed feature result that explicitly accepts cached data may create `LoadableState.stale`.
+Не превращайте каждый bootstrap `degraded` в content `stale`. Timeout фонового SDK не делает
+остальной контент устаревшим. `LoadableState.stale` создаёт только feature-результат, который явно
+разрешает использовать кеш. Подробнее: [состояния UI](LoadableState.md).
 
-See [Loadable state](LoadableState.md) for the complete state table and the distinction between accepted stale fallback and an error that merely retains previous value.
+## Сборка зависимостей
 
-## Dependency injection
-
-Resolve concrete dependencies synchronously, construct steps, and then pass them to `BroadCoreAssembly`.
+Сначала синхронно получите конкретные зависимости, затем создайте шаги и передайте их
+в `BroadCoreAssembly`.
 
 ```swift
 let steps: [BootstrapStep] = [
@@ -98,22 +130,27 @@ let assembler = Assembler([
 ])
 ```
 
-Never capture Swinject `Resolver` or `Container` inside a step. They are composition-root tools, not async dependencies.
+Не захватывайте Swinject `Resolver` или `Container` внутрь шага. Они нужны только в composition root,
+а не внутри async-операции.
 
-## ATT boundary
+## Где запрашивать ATT
 
-ATT must not be included in bootstrap. The tracking request belongs to a dedicated adapter and is triggered only after the first onboarding slide has actually appeared.
+ATT нельзя добавлять в bootstrap. ATT-запрос живёт в отдельном адаптере и вызывается только
+после того, как первый onboarding-слайд реально появился на экране.
 
-## Example scenarios
+## Готовые сценарии example-приложения
 
-The local `BroadAppTemplate` provides deterministic fake steps without live SDKs:
+`BroadAppTemplate` содержит детерминированные фиктивные шаги без живых SDK:
 
-- no argument: `idle → starting → ready`;
-- `-bootstrap-degraded`: a background operation ignores cancellation, the timeout releases the coordinator, and the UI remains available in `degraded`;
-- `-bootstrap-failed-once`: the first critical run fails; tapping `Try again` reuses the same registered step and reaches `ready`;
-- `-bootstrap-seed-cache`: writes a persisted configuration snapshot with TTL `0` and reaches `ready`;
-- `-bootstrap-stale-cache`: reads that snapshot in a new process, simulates a network timeout and reaches `degraded` without deleting the stale value.
+- без аргумента: `idle → starting → ready`;
+- `-bootstrap-degraded`: фоновая операция игнорирует cancellation, timeout освобождает
+  координатор, UI остаётся доступным в `degraded`;
+- `-bootstrap-failed-once`: первый критический запуск падает, нажатие `Try again` доводит его до
+  `ready`;
+- `-bootstrap-seed-cache`: записывает снимок конфигурации с TTL `0` и возвращает `ready`;
+- `-bootstrap-stale-cache`: в новом процессе читает этот снимок, имитирует network timeout и даёт
+  `degraded`, не удаляя stale-значение.
 
-No test targets are included. These scenarios are launchable manual acceptance fixtures.
-
-The two cache scenarios must run in separate app processes. See [Cache and offline](CachingAndOffline.md) for the exact manual sequence.
+Тестовых target в package нет. Эти сценарии запускаются вручную как acceptance fixtures.
+Сценарии с кешем нужно запускать в двух разных процессах. Точный порядок: [кеш и
+offline](CachingAndOffline.md).
