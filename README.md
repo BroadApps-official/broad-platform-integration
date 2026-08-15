@@ -32,15 +32,18 @@
 <a id="start"></a>
 ## Что это такое — за 30 секунд
 
-`BroadAppsIOSPlatform` — это Swift Package, который убирает из каждого нового
-iPhone-проекта одинаковую работу: запуск, общие состояния, onboarding,
-paywall, Adapty, StoreKit, RU Billing, purchase/restore и проверку доступа.
+`BroadAppsIOSPlatform` — это инженерная основа, **поверх которой собирается новое
+iPhone-приложение**. Она уже решает повторяющуюся работу: запуск, общие состояния,
+onboarding, paywall, Adapty, StoreKit, RU Billing, purchase/restore и проверку
+доступа. Разработчик не начинает каждый проект с нуля — он добавляет поверх
+платформы конкретный бренд, дизайн, контент и бизнес-функции.
 
-`BroadAppTemplate` — это не приложение, которое нужно отдать в App Store. Это
-**запускаемая шпаргалка**: в ней видно, как собрать модули, передать конфиги,
-запустить flow и без реальной оплаты проверить сложные состояния.
+`BroadAppTemplate` — запускаемый пример этой основы. Он показывает правильную
+структуру нового приложения, сборку зависимостей и полный flow. Его можно
+использовать как карту старта, но демонстрационные экраны не являются дизайном
+будущего продукта.
 
-| Платформа уже даёт | Разработчик приложения передаёт |
+| Основа уже даёт | Разработчик строит поверх неё |
 |---|---|
 | Clean Architecture + MVVM границы | Тексты, цвета, шрифты и assets |
 | Bootstrap, cache, offline, loading/error/retry | Bundle ID, minimum iOS target и точку входа приложения |
@@ -53,51 +56,106 @@ paywall, Adapty, StoreKit, RU Billing, purchase/restore и проверку до
   <img alt="Полный flow: launch, onboarding, paywall, purchase или restore, entitlement и main" src="Documentation/Assets/README/full-flow.gif" width="100%">
 </div>
 
-## Выберите свой путь
+## Сначала определите, откуда начинается проект
+
+Платформа поддерживает три обычные исходные ситуации; они могут сочетаться. В
+любом случае итогом будет **новое приложение на единых правилах BroadApps**, а
+не копия случайной архитектуры из старого проекта.
+
+| Исходная точка | Что делает разработчик | Что берём из платформы |
+|---|---|---|
+| 🆕 Новое приложение | Создаёт экраны и функции поверх готовой основы | Архитектуру, запуск, монетизацию, общие сценарии и проверки |
+| 📦 Выдан reference-проект | Смотрит, как должен работать продукт, переносит нужный контент и поведение в новое приложение | Новую чистую структуру; плохую архитектуру reference не копирует |
+| 🎨 No-code-проект | Если есть Figma — следует ей; если Figma нет — готовит дизайн в Claude Design/Pencil | Техническую основу под экраны, состояния, оплату и аналитику |
+
+### Как обращаться с reference-проектом
+
+Reference часто уже содержит нужные экраны, сценарии, тексты, assets и рабочие
+конфиги, но может быть написан как угодно. Он нужен как **read-only источник
+продуктового поведения**, а не как архитектурный шаблон:
+
+```text
+reference: что должно получиться визуально и продуктово
+                         ↓
+BroadAppsIOSPlatform: как это должно быть устроено технически
+                         ↓
+новое приложение: новый дизайн + единые правила платформы
+```
+
+Reference-проект не исправляем и не превращаем в платформу. Новые экраны и
+сценарии создаются в рабочем приложении поверх `BroadCore`,
+`BroadMonetization`, `BroadUIFlows` и, при необходимости, `BroadExtensions`.
+
+### Откуда брать дизайн
+
+- если есть Figma — экран, стили и assets берутся из неё;
+- если Figma нет, это no-code-сценарий: разработчик подготавливает дизайн через
+  **Claude Design** или **Pencil**, согласует его и затем реализует;
+- дизайн не придумывается вручную прямо в SwiftUI «на глаз»;
+- платформа задаёт поведение и технические границы, но не навязывает бренду
+  конкретные цвета, шрифты или композицию экранов.
+
+## Теперь выберите способ работы
 
 <table>
   <tr>
     <td width="50%" valign="top">
       <h3 align="center">🤖 С Codex или Claude</h3>
-      <p align="center"><strong>Рекомендуется для обычного внедрения</strong></p>
-      <p>Вы даёте агенту папку приложения, конфиги и готовый промпт. Агент сам изучает проект, подключает package, собирает composition и проверяет сборку.</p>
+      <p align="center"><strong>Рекомендуется для нового приложения и переноса reference</strong></p>
+      <p>Вы даёте агенту рабочую папку, платформу, исходные данные и при наличии reference/Figma. Агент создаёт основу приложения, собирает зависимости и проверяет результат.</p>
       <p align="center"><a href="#agent-setup"><strong>Открыть инструкцию с агентом →</strong></a></p>
     </td>
     <td width="50%" valign="top">
       <h3 align="center">🛠️ Вручную</h3>
-      <p align="center"><strong>Для точечной или нетиповой интеграции</strong></p>
-      <p>Вы сами добавляете SPM dependency, собираете composition root, передаёте app-owned конфиги и подключаете lifecycle. Ниже есть порядок шагов и ссылки на полные контракты.</p>
+      <p align="center"><strong>Если агент не используется</strong></p>
+      <p>Вы сами создаёте iPhone-проект, добавляете SPM package, собираете зависимости и передаёте конфиги конкретного приложения. Ниже есть порядок шагов и ссылки на полные контракты.</p>
       <p align="center"><a href="#manual-setup"><strong>Открыть ручную инструкцию →</strong></a></p>
     </td>
   </tr>
 </table>
 
 <a id="agent-setup"></a>
-## 🤖 Вариант A: подключить через Codex или Claude
+## 🤖 Вариант A: сделать приложение через Codex или Claude
 
-### 1. Откройте агенту два проекта
+### 1. Покажите агенту рабочую папку и исходные материалы
 
 Агент должен видеть:
 
-1. ваше iPhone-приложение, в которое нужно внедрить платформу;
-2. этот repository или его SPM URL:
+1. папку, где создаётся **новое приложение**, либо существующий проект, который
+   постепенно переводится на платформу;
+2. этот repository локально или его SPM URL;
+3. выданные reference-проекты — только если они нужны для текущего продукта;
+4. Figma, результат Claude Design/Pencil или другой утверждённый источник
+   дизайна.
+
+Платформа доступна по адресу:
 
 ```text
 https://github.com/BroadApps-official/BroadCore.git
 branch: vers_niiaz
 ```
 
+Если рабочего Xcode-проекта ещё нет, агент создаёт iPhone-проект и строит его
+поверх модулей платформы. Если выдан reference, агент сначала изучает его
+экраны, сценарии и данные конкретного приложения, но **не меняет reference и
+не копирует из него архитектуру**.
+
 Codex автоматически читает `AGENTS.md`, когда рабочая папка его включает. Claude
 нужно прямо попросить прочитать `AGENTS.md`, `README.md` и релевантные файлы из
-`Documentation` до правок. Для Xcode и Simulator агенту нужен доступ к Mac в рамках
-ваших корпоративных правил.
+`Documentation` до правок. Для Xcode и Simulator агенту нужен доступ к Mac в
+рамках ваших корпоративных правил.
 
-### 2. Подготовьте «паспорт интеграции»
+### 2. Подготовьте «паспорт приложения»
 
 | Что передать | Пример | Обязательно |
 |---|---|:---:|
-| Путь к project/workspace и нужный target | `MyApp/MyApp.xcworkspace`, scheme `MyApp` | ✅ |
+| Тип работы | Новое приложение / перенос reference / существующий проект | ✅ |
+| Рабочая папка | `Projects/MyNewApp` | ✅ |
+| Reference-проекты | Пути к примерам и что именно из них использовать | Если выданы |
+| Источник дизайна | Figma URL / Claude Design / Pencil / конкретный reference | ✅ |
+| Путь к project/workspace и target | Готовый путь или «создать новый MyApp» | ✅ |
 | Bundle ID и minimum iOS | `com.company.myapp`, iOS 17+ | ✅ |
+| Данные для выпуска | Display name, Team, signing/app record и переданный release brief | Когда выданы |
 | Где создаётся root UI | `App`, `SceneDelegate` или coordinator | ✅ |
 | Onboarding | Тексты, assets, количество слайдов, ATT on/off | ✅ |
 | Adapty | Public SDK key, access level ID | ✅ |
@@ -110,20 +168,31 @@ Codex автоматически читает `AGENTS.md`, когда рабоч
 | Special offer | Есть config или feature полностью отсутствует | Если нужен |
 | Analytics | Куда отправлять typed monetization events | Если нужна |
 
-Public Adapty SDK key может храниться в app configuration. Backend bearer, private keys,
-платёжные URL и другие server secrets не вставляйте в промпт или README: агенту
-нужно указать точку получения защищённой авторизации в host app.
+Если каких-то данных для публикации пока нет, это не блокирует создание
+архитектуры и fixture-flow: агент явно перечисляет недостающее в конце. Когда
+руководитель выдаёт отдельный release brief, значения переносятся в app-owned
+configuration и настройки target без изменения модулей платформы.
+
+Public Adapty SDK key может храниться в app configuration. Backend bearer,
+private keys и токены серверного доступа не вставляйте в README: агенту нужно
+указать безопасную точку получения авторизации в приложении.
 
 ### 3. Скопируйте промпт
 
 ```text
-Ты подключаешь BroadApps iOS Platform к моему iPhone-приложению.
+Ты создаёшь iPhone-приложение на основе BroadApps iOS Platform.
 
-Приложение:
-- project/workspace: <ПУТЬ>
-- scheme/target: <SCHEME И TARGET>
+Исходная точка:
+- тип работы: <НОВОЕ ПРИЛОЖЕНИЕ / REFERENCE / СУЩЕСТВУЮЩИЙ PROJECT>
+- рабочая папка нового приложения: <ПУТЬ>
+- project/workspace: <СОЗДАТЬ НОВЫЙ ИЛИ ПУТЬ>
+- scheme/target: <СОЗДАТЬ ИЛИ SCHEME И TARGET>
 - bundle ID: <BUNDLE_ID>
 - deployment target: iOS <VERSION>, только iPhone
+- reference-проекты, только для чтения: <ПУТИ ИЛИ НЕТ>
+- что взять из каждого reference: <ЭКРАНЫ / FLOW / ASSETS / КОНФИГИ>
+- источник дизайна: <FIGMA URL / CLAUDE DESIGN / PENCIL / REFERENCE>
+- данные для выпуска: <ПУТЬ К BRIEF / ДАННЫЕ / ПОКА НЕТ>
 
 Платформа:
 - repository: https://github.com/BroadApps-official/BroadCore.git
@@ -146,34 +215,37 @@ Public Adapty SDK key может храниться в app configuration. Backen
 
 Перед изменениями:
 1. Прочитай AGENTS.md, README.md и нужные файлы Documentation.
-2. Изучи архитектуру моего приложения и не ломай её границы.
-3. Не копируй UI BroadAppTemplate как дизайн продукта: используй его как пример composition и fixtures.
+2. Если рабочий проект отсутствует — создай новый iPhone-проект поверх платформы.
+3. Если есть reference — изучи его продуктовый flow, но не изменяй его и не копируй плохую архитектуру.
+4. Если есть Figma — следуй ей. Если Figma нет — используй только согласованный результат Claude Design/Pencil; не придумывай UI вручную «на глаз».
+5. Используй BroadAppTemplate как пример структуры, composition и fixtures, а не как дизайн бренда.
 
 Что сделать:
-1. Подключи package products BroadCore, BroadMonetization, BroadUIFlows
-   и BroadExtensions, если он нужен.
+1. Подготовь рабочее приложение и подключи package products BroadCore,
+   BroadMonetization, BroadUIFlows и BroadExtensions, если он нужен.
 2. Создай один app composition root и собери зависимости в порядке Core → Monetization → UIFlows.
-3. Подключи launch → onboarding → paywall → fresh entitlement → main.
+3. Реализуй утверждённый product UI поверх платформы и подключи
+   launch → onboarding → paywall → fresh entitlement → main.
 4. Подключи lifecycle recovery для Apple pending и RU return, если RU Billing включён.
 5. Не фильтруй и не переупорядочивай Adapty products; main обязан быть fallback placement.
 6. ATT запрашивай только после появления первого onboarding-слайда; Rate Us в onboarding не добавляй.
 7. Purchase/restore/pending не должны открывать premium до authoritative entitlement refresh.
 8. Сначала проверь fixture-режим, затем compile-only/live catalog без финансовых операций.
-9. Собери host app в Debug и Release. Запусти релевантные safe fixtures.
+9. Собери рабочее приложение в Debug и Release. Запусти релевантные safe fixtures.
 10. В конце напиши просто: что подключил, какие файлы изменил,
     какие команды прошли и чего не хватает от backend/продукта.
 
-Не запускай реальные purchase, restore или RU-платёж. Не трогай reference-проекты.
+Не запускай реальные purchase, restore или RU-платёж. Reference-проекты только читай.
 ```
 
 ### 4. Что сделает агент
 
 ```text
-изучит host app
+определит исходную точку и изучит материалы
         ↓
-подключит Swift Package
+создаст или подготовит рабочее приложение
         ↓
-создаст app-owned configuration и adapters
+подключит Swift Package и app-owned configuration
         ↓
 соберёт composition root
         ↓
@@ -185,18 +257,21 @@ Public Adapty SDK key может храниться в app configuration. Backen
 ```
 
 > [!IMPORTANT]
-> `Scripts/agent_review_and_fix.sh` проверяет и исправляет **саму платформу**. Для внедрения
-> в ваше приложение нужно открыть агента в host project и дать ему промпт выше.
+> `Scripts/agent_review_and_fix.sh` проверяет и исправляет **саму платформу**. Чтобы
+> создать или перенести приложение, откройте агента в рабочей папке будущего
+> продукта и дайте ему промпт выше.
 
 [Подробнее об автопроверке самой платформы →](Documentation/AgentAutomation.md)
 
 <a id="manual-setup"></a>
 <a id="installation"></a>
-## 🛠️ Вариант B: подключить вручную
+## 🛠️ Вариант B: собрать приложение вручную
 
-Этот путь нужен, если вы хотите сами контролировать каждый adapter или ваше приложение
-имеет нетиповый backend/архитектуру. Ниже — полный порядок подключения; детали
-каждого контракта лежат в ссылках на каждом шаге.
+Этот путь нужен, если вы хотите сами контролировать каждый adapter или продукт
+имеет нетиповый backend. Создайте обычный iPhone-проект, добавьте платформу как
+основу и собирайте экраны поверх неё. Если у вас есть reference, переносите из
+него поведение и данные конкретного приложения, но не его архитектуру. Ниже —
+полный порядок; детали каждого контракта лежат в ссылках на каждом шаге.
 
 ### Шаг 1. Добавьте package
 
@@ -209,7 +284,7 @@ https://github.com/BroadApps-official/BroadCore.git
 До version tag выберите `Branch` → `vers_niiaz`. Repository приватный, поэтому GitHub-аккаунту
 разработчика нужен доступ к `BroadApps-official`.
 
-Если host описан через `Package.swift`:
+Если рабочее приложение описано через `Package.swift`:
 
 ```swift
 dependencies: [
@@ -242,7 +317,7 @@ dependencies: [
 | [`AppConfiguration.swift`](Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Configuration/AppConfiguration.swift) | Где лежат app-owned тексты, URL, placements и feature flags |
 | [`AppCompositionRoot.swift`](Examples/BroadAppTemplate/BroadAppTemplate/Application/AppCompositionRoot.swift) | Где один раз собираются Core → Monetization → UIFlows |
 | [`BroadAppTemplateApp.swift`](Examples/BroadAppTemplate/BroadAppTemplate/Application/BroadAppTemplateApp.swift) | Как готовый root View получает dependencies |
-| [`AppFlowRootView.swift`](Examples/BroadAppTemplate/BroadAppTemplate/Presentation/AppFlow/AppFlowRootView.swift) | Как маршруты связываются с вашим UI |
+| [`AppFlowRootView.swift`](Examples/BroadAppTemplate/BroadAppTemplate/Presentation/AppFlow/AppFlowRootView.swift) | Как маршруты платформы связываются с product UI |
 
 ### Шаг 4. Соберите один composition root
 
@@ -310,8 +385,8 @@ Apple premium catalog и опциональные RU/tokens/special-offer adapte
 
 ### Шаг 7. Соберите и проверьте
 
-1. Debug Simulator build host app.
-2. Release Simulator build host app.
+1. Debug Simulator build рабочего приложения.
+2. Release Simulator build рабочего приложения.
 3. Чистый first run: onboarding → paywall → fixture purchase/restore → main.
 4. Paywall с `0/1/2/12` продуктами, empty, error, pending и offline.
 5. Live Adapty catalog — только load/show; без реальных purchase/restore.
@@ -543,9 +618,9 @@ BroadAppsIOSPlatform
 
 > [!IMPORTANT]
 > Здесь речь о **проверяющем агенте платформы**. Он проверяет сам
-> `BroadAppsIOSPlatform`. Агент из раздела [«Подключить через Codex или
-> Claude»](#agent-setup) выполняет другую работу — внедряет готовую платформу в
-> конкретное приложение.
+> `BroadAppsIOSPlatform`. Агент из раздела [«Сделать приложение через Codex или
+> Claude»](#agent-setup) выполняет другую работу — создаёт или переносит
+> конкретное приложение поверх готовой платформы.
 
 ### Что именно проверяет агент
 
