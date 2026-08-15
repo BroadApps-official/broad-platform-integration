@@ -73,14 +73,21 @@ if ! CLANG_MODULE_CACHE_PATH="$swift_module_cache" \
 fi
 
 for required_pattern in \
-    '^## Текущая готовность$' \
+    '^## Перед завершением задачи$' \
+    '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
+    '^## 🛠️ Вариант B: собрать приложение вручную$' \
+    'Этапы в обоих вариантах одинаковые' \
+    '^### Шаг 0\. Создайте новый iPhone-проект$' \
+    '^### Шаг 9\. Проверьте, меняли ли вы саму платформу$' \
+    '^## Короткий словарь$' \
     'Documentation/Traceability\.md' \
     'Documentation/Analytics\.md' \
     'Documentation/AccountRecovery\.md' \
     'Documentation/NetworkInterruptions\.md' \
     'Documentation/AgentAutomation\.md' \
-    'Documentation/PlatformHandoff\.md' \
-    '^## ✅ Как проверять платформу после изменений$' \
+    '^## 💳 RU Billing: последовательность экранов$' \
+    '^## ✅ Если вы изменили код платформы$' \
+    '^### 6\. ✅ Обязательная проверка перед сдачей$' \
     'AgentChecks/AUTOMATION_PROMPT\.md' \
     'agent_review_and_fix\.sh --doctor' \
     '^### Вариант 2 — запустить проверяющего агента вручную$' \
@@ -114,14 +121,14 @@ for reference_path in \
     "$platform_root/Documentation/Assets/README/References/5115-hosted-checkout-light.png"
 do
     if [[ ! -s "$reference_path" ]]; then
-        record_failure "README visual reference is missing: ${reference_path#$platform_root/}"
+        record_failure "README RU Billing flow screenshot is missing: ${reference_path#$platform_root/}"
         continue
     fi
 
     reference_width="$(/usr/bin/sips -g pixelWidth "$reference_path" 2>/dev/null | /usr/bin/awk '/pixelWidth:/ { print $2 }')"
     reference_height="$(/usr/bin/sips -g pixelHeight "$reference_path" 2>/dev/null | /usr/bin/awk '/pixelHeight:/ { print $2 }')"
     if [[ "$reference_width" != "645" || "$reference_height" != "1398" ]]; then
-        record_failure "README visual reference must be 645x1398: ${reference_path#$platform_root/} (${reference_width:-unknown}x${reference_height:-unknown})"
+        record_failure "README RU Billing flow screenshot must be 645x1398: ${reference_path#$platform_root/} (${reference_width:-unknown}x${reference_height:-unknown})"
     fi
 done
 
@@ -178,7 +185,7 @@ for required_file in \
     "$platform_root/Examples/BroadAppTemplate/Configuration/LiveAdaptyInfo.plist"
 do
     if [[ ! -f "$required_file" ]]; then
-        record_failure "Platform handoff file is missing: ${required_file#$platform_root/}"
+        record_failure "Required documentation or example configuration is missing: ${required_file#$platform_root/}"
     fi
 done
 

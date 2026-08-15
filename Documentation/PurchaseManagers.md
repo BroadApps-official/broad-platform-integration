@@ -111,7 +111,7 @@ account и server ledger восстановить токены после пер
 `recoverPendingPurchase()`. [Все network cases →](NetworkInterruptions.md).
 
 StoreKit sandbox и реальные списания не входят в локальную приёмку компании.
-Для package handoff используются сборка и fixture-сценарии; production backend
+Для проверки package используются сборка и fixture-сценарии; production backend
 проверяет команда конкретного приложения.
 
 ## Какой вариант выбрать

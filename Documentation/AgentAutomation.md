@@ -2,10 +2,10 @@
 
 ## Самое короткое объяснение
 
-Это проверяющий агент из задания Никиты. Он не подключает package к новому
-приложению, а следит за качеством самого `BroadAppsIOSPlatform`: проверяет
-стандартизированные onboarding, paywall, Adapty, RU Billing, общие ошибки,
-архитектуру, code style, документацию и сборку.
+Этот агент проверяет только саму `BroadAppsIOSPlatform`. Он не создаёт новое
+приложение и не проверяет чужой app target. Его задача — найти и исправить
+нарушения в onboarding, paywall, Adapty, RU Billing, архитектуре, code style,
+документации и сборке платформы.
 
 Разработчик запускает одну команду:
 
@@ -16,8 +16,7 @@
 После этого Codex сам:
 
 1. читает правила платформы;
-2. с полным доступом к Mac запускает Xcode, CoreSimulator и обе live
-   Adapty-сборки;
+2. запускает Xcode, CoreSimulator и две live Adapty-сборки;
 3. находит причину ошибки и исправляет только `BroadAppsIOSPlatform`;
 4. повторяет полный gate после каждой коррекции;
 5. wrapper независимо запускает тот же gate ещё раз и при необходимости даёт
@@ -35,7 +34,7 @@
 | Privacy и documentation | Manifest валиден, README-assets и локальные ссылки существуют |
 | SwiftFormat и SwiftLint | Код соответствует единому стилю |
 | Package/example builds | Swift Package и iPhone example собираются в Debug/Release |
-| Live Adapty compile | Конфигурации 5013 и 5109Codex компилируются без запуска финансовых операций |
+| Live Adapty compile | Две рабочие конфигурации компилируются без запуска финансовых операций |
 
 Внутри architecture guardrails отдельно зафиксированы ATT/Rate Us, fallback на
 `main`, отсутствие фильтрации Adapty products, безопасные purchase/restore,
@@ -65,10 +64,10 @@ flowchart LR
 | `./Scripts/agent_gate.sh` | Только запускает все проверки и live-config builds | Нет |
 | `./Scripts/agent_review_and_fix.sh` | Запускает Codex, разрешает локальные исправления, затем перепроверяет | Да, если найдена проблема |
 
-Automation использует Codex sandbox `danger-full-access`, чтобы агент сам работал с Xcode и
-CoreSimulatorService. При этом `AGENTS.md` жёстко сохраняет scope: менять можно
-только `BroadAppsIOSPlatform`, нельзя трогать reference-проекты, делать
-commit/push или запускать настоящие платежи.
+Для Xcode и CoreSimulatorService агенту нужен полный локальный доступ к Mac.
+При этом `AGENTS.md` жёстко сохраняет границы: менять можно только
+`BroadAppsIOSPlatform`, нельзя трогать reference-проекты, делать commit/push или
+запускать настоящие платежи.
 
 Platform policy — только iPhone. Example хранит `TARGETED_DEVICE_FAMILY = 1`,
 а validation отклоняет iPad, Mac, Mac Catalyst и visionOS configurations.
@@ -115,7 +114,7 @@ Xcode 16+, XcodeGen `2.45.4`, SwiftLint `0.62.2` и локальный SwiftForm
 Откройте агенту корень `BroadAppsIOSPlatform`. Codex прочитает `AGENTS.md`
 автоматически; Claude нужно явно попросить это сделать. Готовый copy-paste prompt
 находится в разделе
-[«Как проверять платформу после изменений»](../README.md#automation).
+[«Если вы изменили код платформы»](../README.md#automation).
 
 В таком режиме агент должен запускать `bash Scripts/agent_gate.sh`, а не
 `agent_review_and_fix.sh`, чтобы не создавать рекурсивный запуск агента.
@@ -159,7 +158,7 @@ AgentChecks/AutomationReports/latest.md
 
 ## Чего агент не делает
 
-- не трогает `5013`, `5109Codex`, `Claude232` и `Шаблон`;
+- не трогает reference-проекты за пределами `BroadAppsIOSPlatform`;
 - не делает commit, push, tag или release;
 - не добавляет тестовые targets;
 - не удаляет tracked Adapty configurations;

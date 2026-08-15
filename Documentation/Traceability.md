@@ -1,77 +1,61 @@
-# Матрица готовности BroadApps iOS Platform
+# Что уже умеет BroadApps iOS Platform
 
-Этот документ связывает исходные требования к платформе с реализацией и честно
-отделяет готовность package от будущей интеграции конкретного приложения.
-Матрица относится **только** к `BroadAppsIOSPlatform`; reference repositories
-используются read-only для local Adapty smoke и не изменяются.
+Найдите нужную задачу и откройте инструкцию рядом.
 
-## Как читать статусы
+## Возможности платформы
 
-| Статус | Значение |
-|---|---|
-| `IMPLEMENTED` | Контракт и production-код находятся в package |
-| `FIXTURE_VERIFIED` | Поведение воспроизводится локальным example-сценарием |
-| `REQUIRES_HOST` | Нужны app-owned IDs, тексты, credentials, backend или composition |
-| `REQUIRES_LIVE_EVIDENCE` | Нужен разрешённый live provider/backend smoke без финансовой операции |
-| `PARTIAL` | Безопасная часть готова, но заявлять полный продуктовый сценарий нельзя |
-| `OUT_OF_SCOPE` | Пункт сознательно передан app-разработчикам или исключён company policy |
-| `PUBLISHED` | Package опубликован в отдельной GitHub-ветке и доступен как branch dependency |
+| Задача приложения | Что использовать | Инструкция |
+|---|---|---|
+| Запуск, cache, offline, timeout и retry | `BroadCore` | [Bootstrap](Bootstrap.md), [Caching & Offline](CachingAndOffline.md) |
+| Onboarding и правильный момент ATT | `BroadUIFlows` + tracking adapter из `BroadCore` | [Onboarding & ATT](OnboardingAndATT.md) |
+| Paywall для любого количества продуктов | `BroadUIFlows` + `BroadMonetization` | [Paywall UI](PaywallUI.md) |
+| Adapty placements, fallback на `main` и experiments | `BroadMonetization` | [Monetization](Monetization.md), [Experiments](Experiments.md) |
+| Подписка без tokens | `SubscriptionPurchaseManager` | [Purchase Managers](PurchaseManagers.md) |
+| Подписка и покупка tokens | Независимые subscription и token managers | [Purchase Managers](PurchaseManagers.md) |
+| Проверка premium после purchase/restore | Entitlement engine | [Entitlements](Entitlements.md) |
+| СБП, карта, чек, согласия и управление RU-подпиской | RU Billing adapters и UI | [RU Billing](RUBilling.md) |
+| Опциональный special offer | Special offer contracts | [Special Offer](SpecialOffer.md) |
+| Общая аналитика показов и покупок | Monetization analytics pipeline | [Analytics](Analytics.md) |
+| Восстановление после переустановки | Account recovery + server-authoritative ledger | [Account Recovery](AccountRecovery.md) |
+| Безопасное поведение при обрыве сети | Typed network failures и pending reconciliation | [Network Interruptions](NetworkInterruptions.md) |
+| Hex Color, fonts, keyboard и swipe-back | `BroadExtensions` | [BroadExtensions](Extensions.md) |
 
-`IMPLEMENTED` не означает готовую интеграцию приложения. Platform handoff
-фиксируется для exact source snapshot по
-[Platform Handoff](PlatformHandoff.md).
+## Что всё равно задаёт конкретное приложение
 
-## Требования → код → проверка
+- тип проекта: Figma или no-code;
+- тексты, изображения, цвета, шрифты и экраны бренда;
+- bundle ID, ссылки и public Adapty configuration из документа Kaiten;
+- product IDs, placements и feature flags;
+- app account и backend-контракты для tokens и RU Billing;
+- основной экран и бизнес-функции продукта.
 
-| Требование | Где реализовано | Как проверить | Статус |
-|---|---|---|---|
-| Три независимых модуля, Clean Architecture, MVVM, SOLID и DI | [Package.swift](../Package.swift), [BroadCore](../Sources/BroadCore), [BroadMonetization](../Sources/BroadMonetization), [BroadUIFlows](../Sources/BroadUIFlows) | [Architecture](Architecture.md), [ADR-0001](ADR/0001-module-boundaries.md), `Scripts/check_architecture.sh` | `IMPLEMENTED` |
-| Единый code style и строгие базовые проверки без test targets | [.swiftformat](../.swiftformat), [.swiftlint.yml](../.swiftlint.yml), [Scripts](../Scripts) | `format.sh --lint`, `lint.sh`, `build.sh`, `release_gate.sh` | `IMPLEMENTED` |
-| Стандартный launch/bootstrap и порядок SDK | [Bootstrap Application](../Sources/BroadCore/Application/Bootstrap), [ActivateMonetizationUseCase](../Sources/BroadMonetization/Application/Monetization/ActivateMonetizationUseCase.swift) | [Bootstrap](Bootstrap.md), bootstrap arguments example | `IMPLEMENTED`, `FIXTURE_VERIFIED` |
-| Единый cache/offline/degraded contract | [Cache](../Sources/BroadCore/Data/Cache), [LoadableState](../Sources/BroadCore/Domain/States/LoadableState.swift), monetization caches | [Caching & Offline](CachingAndOffline.md), seed/stale/offline fixtures | `IMPLEMENTED`, `FIXTURE_VERIFIED` |
-| Сквозной launch → onboarding → paywall → purchase/restore → main | [AppFlow](../Sources/BroadUIFlows/Application/AppFlow), [BroadAppFlowView](../Sources/BroadUIFlows/Presentation/AppFlow/BroadAppFlowView.swift), [Example](../Examples/BroadAppTemplate) | [AppFlow](AppFlow.md), example launch arguments | Локальный flow — `FIXTURE_VERIFIED`; StoreKit sandbox — `OUT_OF_SCOPE` |
-| Configurable onboarding | [Onboarding](../Sources/BroadUIFlows/Presentation/Onboarding) | [Onboarding & ATT](OnboardingAndATT.md), 1…N page configurations | `IMPLEMENTED`; app copy/media — `REQUIRES_HOST` |
-| ATT только после появления первого onboarding-слайда, никогда в loader | [OnboardingViewModel](../Sources/BroadUIFlows/Presentation/Onboarding/OnboardingViewModel.swift), [Tracking adapter](../Sources/BroadCore/Infrastructure/Tracking) | [ADR-0002](ADR/0002-att-and-rate-us.md), architecture guard | Код и fixture wiring — `IMPLEMENTED`; real-host run выполнят app-разработчики |
-| Rate Us разрешён вне onboarding, но отсутствует внутри onboarding | Onboarding footer и flow не импортируют review API; guard запрещает review-вызов в onboarding | [ADR-0002](ADR/0002-att-and-rate-us.md), source scan | `IMPLEMENTED`; app-owned Rate Us вне onboarding — `REQUIRES_HOST` |
-| Общие loader/error/empty/stale/retry состояния | [BroadCore state](../Sources/BroadCore/Domain/States), [Loadable UI](../Sources/BroadUIFlows/Presentation/Loadable) | [Loadable State](LoadableState.md), [Loadable UI](LoadableUI.md) | `IMPLEMENTED`, `FIXTURE_VERIFIED` |
-| Loader/error/retry непосредственно на paywall | [Paywall presentation](../Sources/BroadUIFlows/Presentation/Paywall) | [Paywall UI](PaywallUI.md), empty/failure/retry fixtures | `IMPLEMENTED`, `FIXTURE_VERIFIED` |
-| Любое количество provider products, порядок и duplicates 1:1, без filter/sort/dedup | [Adapty product mapping](../Sources/BroadMonetization/Data/Adapty/AdaptyPaywallRepository+ProductMapping.swift), [PaywallPayload](../Sources/BroadMonetization/Domain/Paywalls/PaywallPayload.swift) | 0/1/2/12, duplicate и malformed fixtures; architecture source guard | `IMPLEMENTED`, `FIXTURE_VERIFIED` |
-| UI не ломается на malformed/unknown/consumable product | [MonetizationProduct](../Sources/BroadMonetization/Domain/Products/MonetizationProduct.swift), purchase eligibility guards | [Monetization Domain](MonetizationDomain.md), [Paywall UI](PaywallUI.md) | Безопасный display/fail-before-charge — `IMPLEMENTED`; consumable подключается через отдельный TokenPurchaseManager |
-| Product row и CTA без dimming/opacity/scale/pressed flicker | [BroadNoPressEffectButtonStyle](../Sources/BroadUIFlows/Presentation/Paywall/BroadNoPressEffectButtonStyle.swift), paywall controls | Static guard + Simulator fixture | `IMPLEMENTED`, `FIXTURE_VERIFIED`; physical device — `OUT_OF_SCOPE` |
-| Typed placements: onboarding/main/settings/feature/tokens/discount/custom | [PlacementID](../Sources/BroadMonetization/Domain/Identifiers/MonetizationIdentifiers.swift), [AdaptyPlacementRegistry](../Sources/BroadMonetization/Infrastructure/Adapty/AdaptyPlacementRegistry.swift) | [Monetization](Monetization.md), [Platform Handoff](PlatformHandoff.md) | `IMPLEMENTED`; working IDs 5013/5109Codex хранятся в tracked configs |
-| Общий provider-neutral fallback на `main` | [LoadPaywallUseCase](../Sources/BroadMonetization/Application/Paywalls/LoadPaywallUseCase.swift), [repository protocol](../Sources/BroadMonetization/Domain/Repositories/MonetizationRepositoryProtocols.swift) | [Fallback diagram](Diagrams/paywall-fallback.mmd), requested/resolved analytics | `IMPLEMENTED`; live provider/cache — `REQUIRES_LIVE_EVIDENCE` |
-| Typed remote config и безопасные aliases | [Remote models](../Sources/BroadMonetization/Domain/Paywalls/RemotePaywallConfiguration.swift), [parser](../Sources/BroadMonetization/Infrastructure/RemoteConfig/RemotePaywallConfigurationParser.swift) | [Remote Config](RemoteConfig.md) | `IMPLEMENTED`; positive financial gate требует host-owned fresh provenance |
-| Special offer может существовать или полностью отсутствовать | [ResolveSpecialOfferUseCase](../Sources/BroadMonetization/Application/SpecialOffers/ResolveSpecialOfferUseCase.swift) | [Special Offer](SpecialOffer.md), enabled/absent fixtures, optional `5013` placement | Contract — `IMPLEMENTED`; app campaign rollout — `OUT_OF_SCOPE` |
-| Единый Adapty/StoreKit слой: paywall, purchase, restore, entitlement | [Adapty adapters](../Sources/BroadMonetization/Data/Adapty), [Apple entitlement adapters](../Sources/BroadMonetization/Infrastructure/AppleEntitlements) | [Monetization](Monetization.md), [Entitlements](Entitlements.md), company-policy fixtures | Код — `IMPLEMENTED`; live Adapty catalog — local smoke; StoreKit sandbox — `OUT_OF_SCOPE` |
-| Два независимых Purchase Manager: subscriptions-only и subscriptions + tokens | [Purchase Managers](../Sources/BroadMonetization/Application/PurchaseManagers), [durable token store](../Sources/BroadMonetization/Data/Purchase/PendingTokenPurchaseStore.swift) | [Purchase Managers guide](PurchaseManagers.md) | `IMPLEMENTED`; app backend adapter — `REQUIRES_HOST`; StoreKit sandbox — `OUT_OF_SCOPE` |
-| Переустановка восстанавливает Apple/RU access и server token balance | [Customer recovery](../Sources/BroadMonetization/Application/Recovery), unified Entitlement Engine и RU status loader | [Account Recovery](AccountRecovery.md), clean-install/login/account-switch checklist | Координатор — `IMPLEMENTED`; stable app identity, token ledger и RU backend — `REQUIRES_HOST` |
-| Внезапная потеря сети не создаёт вечный loader, ложный inactive или повторный charge | [Network classifier](../Sources/BroadCore/Infrastructure/Networking/NetworkFailureClassifier.swift), RU HTTP/polling, durable Apple/RU/token recovery | [Network Interruptions](NetworkInterruptions.md), offline-at-each-step checklist | Typed handling — `IMPLEMENTED`; host/backend idempotency и live network-loss run — `REQUIRES_HOST` |
-| Обычные и cross-placement эксперименты | Adapty SDK — единственный assignment authority; [PaywallVariationID](../Sources/BroadMonetization/Domain/Identifiers/MonetizationIdentifiers.swift), exact raw paywall/product lifecycle | [Experiments](Experiments.md), normal/cross-placement/fallback/cache checklist | Контракт — `IMPLEMENTED`; Dashboard/identity/live attribution — `REQUIRES_HOST`, `REQUIRES_LIVE_EVIDENCE` |
-| Variation проходит в Apple и внешнюю RU conversion analytics | [analytics contexts](../Sources/BroadMonetization/Domain/Analytics/MonetizationAnalyticsEvent.swift), [pending RU store](../Sources/BroadMonetization/Data/RUBilling/PendingRUCheckoutStore.swift) | Purchase + cold-launch RU return scenarios | `IMPLEMENTED`; analytics export — `REQUIRES_HOST` |
-| Общий RU billing adapter, полный consent/receipt UI, storefront gate, catalog, Safari return, polling, Settings/cancel | [RU Application](../Sources/BroadMonetization/Application/RUBilling), [RU Infrastructure](../Sources/BroadMonetization/Infrastructure/RUBilling), [RU UI](../Sources/BroadUIFlows/Presentation/RUBilling) | [RU Billing](RUBilling.md), iPhone screenshots, [ADR-0004](ADR/0004-ru-billing-fallback.md) | Flow/UI — `IMPLEMENTED`, `FIXTURE_VERIFIED`; реальный backend/payment — `OUT_OF_SCOPE` для package handoff |
-| Общие app extensions | [BroadExtensions](../Sources/BroadExtensions) | [BroadExtensions guide](Extensions.md), strict package build | Hex Color/fonts/keyboard/swipe-back — `IMPLEMENTED` |
-| Единая typed analytics без PII/raw errors | [analytics domain](../Sources/BroadMonetization/Domain/Analytics), [analytics adapters](../Sources/BroadMonetization/Infrastructure/Analytics), [example recorder](../Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Analytics) | [Analytics](Analytics.md), `-analytics-fixture`, [Security](Security.md), agent review/export allow-list | Pipeline и локальный recorder — `IMPLEMENTED`, `FIXTURE_VERIFIED`; production destination/export — `REQUIRES_HOST` |
-| Автоматическая проверка агентом | [Automation prompt](../AgentChecks/AUTOMATION_PROMPT.md), [agent script](../Scripts/agent_review_and_fix.sh), [agent gate](../Scripts/agent_gate.sh) | [Current status](../AgentChecks/STATUS.md), `./Scripts/agent_review_and_fix.sh` | `IMPLEMENTED` — один агент проверяет, исправляет и повторно подтверждает полный gate |
-| Developer-first README, схемы, GIF, реальные iPhone screenshots и профильные guides | [README](../README.md), [README assets](Assets/README), эта матрица и документация | Link/XML/GIF validation + developer walkthrough | Документация и реальные Simulator screenshots — `IMPLEMENTED`; отдельная video-запись — `OUT_OF_SCOPE` |
-| Внедрение в текущие приложения | Platform даёт migration/handoff contracts, но не меняет reference projects | [Migration Guide](MigrationGuide.md), [Platform Handoff](PlatformHandoff.md) | `OUT_OF_SCOPE` — выполнят app-разработчики после передачи |
-| Git repository и подключение package | [BroadApps-official/BroadCore](https://github.com/BroadApps-official/BroadCore), branch `vers_niiaz` | GitHub branch + SPM branch dependency из [Getting Started](GettingStarted.md) | `PUBLISHED`; version tag создаётся после согласования и не блокирует developer handoff |
-| Не писать unit/UI test targets | [Package.swift](../Package.swift) содержит только library products; validate запрещает `Tests/` и test targets | `Scripts/validate.sh` | `IMPLEMENTED` — это согласованная policy, а не дефект |
+Если финальные данные ещё не готовы, временно используется конфигурация
+похожего live-приложения. Перед выпуском она заменяется данными текущего проекта.
 
-## Границы текущей передачи
+## Как проверить изменение платформы
 
-Platform handoff подтверждается единым автоматическим agent cycle, локальными
-fixtures и двумя tracked Xcode configurations для `5013` и `5109Codex`.
-Интеграция конкретных приложений и их release pipeline выполняются отдельно.
+С Codex и автоматическим исправлением:
 
-Внедрение в реальные приложения, StoreKit sandbox, physical-device
-VoiceOver/Dynamic Type, distribution-signed `.ipa` и host attestations не
-являются требованиями платформы. Первое выполнят app-разработчики позднее,
-остальное исключено текущей company policy.
+```bash
+./Scripts/agent_review_and_fix.sh
+```
 
-## Kaiten
+Без автоматического исправления:
 
-9 августа 2026 года поиск через подключённый Kaiten по названию платформы и
-формулировкам исходной задачи не нашёл отдельной карточки/эпика. Поэтому README
-не содержит выдуманной ссылки. Когда карточка будет создана или передан её ID,
-сюда и в README нужно добавить прямую ссылку на epic, integration cards и
-production checklist.
+```bash
+bash Scripts/agent_gate.sh
+```
+
+Готовый результат заканчивается строкой:
+
+```text
+BroadApps iOS Platform agent gate passed.
+```
+
+[Подробная инструкция по проверяющему агенту →](AgentAutomation.md)
+
+## Что проверяется отдельно в приложении
+
+Platform gate не собирает чужой app target. В конкретном приложении разработчик
+отдельно проверяет Debug/Release build, выбранный дизайн, ссылки, backend,
+fixture-сценарии и свои production-конфигурации.

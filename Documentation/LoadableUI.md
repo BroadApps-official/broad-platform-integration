@@ -155,5 +155,5 @@ Loader не запускает собственный timeout. Timeout/retry pol
 - быстрый double tap запускает один retry благодаря ViewModel single-flight guard;
 - длинная локализация, light/dark mode и Reduce Motion не ломают доступные
   fixture-сценарии;
-- semantic accessibility и scalable layout проверяются по source contract;
-  device VoiceOver/Dynamic Type matrix не входит в company acceptance.
+- semantic accessibility и scalable layout проверяются по коду;
+  отдельный прогон VoiceOver/Dynamic Type на устройствах не обязателен.

@@ -16,7 +16,7 @@
    flags или balance.
 9. Событие «сеть снова доступна» не разрешает автоматически повторять charge;
    сначала выполняется reconciliation.
-10. Перед передачей запускайте `lint.sh`, `build.sh` и ручные security fixtures.
+10. После изменения платформы запускайте полный `agent_gate.sh`.
 
 ## Классы данных
 
@@ -37,7 +37,7 @@ Product ID может раскрывать внутреннюю структур
 Example намеренно содержит две рабочие client-конфигурации:
 
 - Adapty public SDK key;
-- bundle ID, access level и placements 5013/5109Codex.
+- bundle ID, access level и placements для live catalog smoke.
 
 Эти client-visible значения являются частью Git/source digest. Public SDK key
 уже присутствует в клиентском приложении и не используется как backend
@@ -327,10 +327,10 @@ API key и customer identity redacted в строковом представле
 
 Проверяет exact tool versions, format/lint/architecture rules, privacy source, package с `strict-concurrency=complete` + `warnings-as-errors`, Debug/Release Simulator и unsigned Release `iphoneos`. Device product обязан содержать BroadCore privacy manifest. Test targets не используются.
 
-Это local engineering gate и основа platform handoff. Distribution-signed
-`.ipa`, provisioning review и host attestations не используются для приёмки
-Swift Package. Exact source binding, local fixtures и границы будущей
-app-интеграции описаны в [Platform Handoff](PlatformHandoff.md).
+Для полной проверки после изменения платформы используйте
+`bash Scripts/agent_gate.sh`: он добавляет документацию и обе live Adapty
+configurations. Короткий порядок действий описан в
+[checklist перед передачей изменений](PlatformHandoff.md).
 
 ## Ручной security checklist
 

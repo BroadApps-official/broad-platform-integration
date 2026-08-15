@@ -50,7 +50,10 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 
 `lint.sh` запускает SwiftLint и проверку границ модулей. `build.sh` собирает package с `strict-concurrency=complete` и `warnings-as-errors`, затем example в Debug Simulator, Release Simulator и unsigned Release `iphoneos`. После device-build он проверяет, что `PrivacyInfo.xcprivacy` реально попал в `.app`. Test targets намеренно отсутствуют.
 
-Для одной полной **локальной engineering** команды используйте `./Scripts/release_gate.sh`. Она проверяет package, Debug/Release Simulator и unsigned generic-device compile, но не создаёт archive или `.ipa`. Platform handoff не требует StoreKit sandbox, physical-device accessibility matrix или host attestations. Единый автоматический review-and-fix cycle и live Adapty catalog smoke описаны в [Platform Handoff](PlatformHandoff.md).
+Если вы меняли код самой платформы, выполните
+`./Scripts/agent_review_and_fix.sh`. Команда запускает готовую автоматическую
+проверку, исправляет platform-owned ошибки и повторно подтверждает результат.
+[Короткий checklist перед передачей изменений →](PlatformHandoff.md).
 
 ## 3. Подключите package
 

@@ -13,7 +13,7 @@ Reference-проект — это готовое похожее приложен
 отсутствии проект считается no-code и использует согласованный результат Claude
 Design или Pencil.
 Внешний вид RU-оплаты сверяйте с
-[продуктовым визуальным ориентиром](../../README.md#visual-reference).
+[описанием полного RU Billing flow](../../README.md#visual-reference).
 
 > Example предназначен только для iPhone и генерируется с
 > `TARGETED_DEVICE_FAMILY = 1`. iPad, Mac, Mac Catalyst и visionOS не входят в

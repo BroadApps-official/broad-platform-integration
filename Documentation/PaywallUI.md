@@ -259,11 +259,11 @@ Product row, CTA, restore, close, legal links и payment methods использ�
 - semantic colors поддерживают light/dark mode;
 - выбор продукта не использует motion, поэтому Reduce Motion не требует альтернативы.
 
-Локальная приёмка использует доступные Simulator/fixture-сценарии и source
-review semantic labels/traits. Device VoiceOver/Dynamic Type matrix не входит в
-company acceptance и не блокирует передачу package. Light/dark с app-owned
-colors, реальные payment-method sheet detents и RU Safari-return разработчики
-проверяют позднее при интеграции конкретного приложения.
+Локальная проверка использует доступные сценарии в Simulator и просмотр
+semantic labels/traits в коде. Отдельный прогон VoiceOver/Dynamic Type на
+устройствах не обязателен. Light/dark с цветами приложения, реальные окна
+выбора оплаты и возврат из RU-оплаты проверяются при сборке конкретного
+приложения.
 
 ## Legal links
 

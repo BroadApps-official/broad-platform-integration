@@ -19,7 +19,7 @@
 | Подключить аналитику | [Analytics](Analytics.md) |
 | Перенести старое приложение | [Migration Guide](MigrationGuide.md) |
 | Запустить агента-проверяющего | [Agent Automation](AgentAutomation.md) |
-| Сверить готовность | [Traceability](Traceability.md) |
+| Посмотреть, что уже умеет платформа | [Карта возможностей](Traceability.md) |
 
 ## Самый короткий маршрут для нового разработчика
 
@@ -29,7 +29,7 @@
 4. [Account Recovery](AccountRecovery.md) — привяжите покупки к account/backend,
    а не к одной установке приложения.
 5. Откройте профильный guide: RU billing, tokens, onboarding или paywall.
-6. Запустите `./Scripts/agent_review_and_fix.sh` перед передачей изменений.
+6. Если меняли код платформы, запустите `./Scripts/agent_review_and_fix.sh`.
 
 Все реальные идентификаторы приложения, Adapty placements, legal URL, API
 paths и тексты остаются app-owned. Платформа даёт типы, порядок действий,
