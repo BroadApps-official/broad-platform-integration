@@ -1,5 +1,10 @@
 # BroadAppTemplate
 
+`BroadAppTemplate` — технический пример подключения платформы. Он нужен, чтобы
+разработчик увидел рабочий composition root, маршрутизацию и fixture-состояния.
+Это не готовый продуктовый дизайн: внешний вид своего приложения и RU-оплаты
+сверяйте с [продуктовым визуальным ориентиром](../../README.md#visual-reference).
+
 > Example предназначен только для iPhone и генерируется с
 > `TARGETED_DEVICE_FAMILY = 1`. iPad, Mac, Mac Catalyst и visionOS не входят в
 > platform scope.
@@ -39,7 +44,7 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 - один shared non-blocking → deduplicating → composite analytics pipeline;
 - bounded typed recorder и debug-панель без PII/raw SDK data;
 - bootstrap/cache/timeout fixtures;
-- полный RU payment UI fixture без endpoint и реального списания;
+- технический RU payment fixture без endpoint и реального списания;
 - экран RU subscription management до и после отмены;
 - safe disabled production RU adapter без fake endpoint/token/`.ruBilling` source.
 
@@ -81,7 +86,7 @@ fail-before-charge.
 | `-paywall-two-products` | два продукта в provider order |
 | `-paywall-many-products` | 12 products + sticky controls |
 | `-paywall-payment-methods` | UI-only Apple/SBP/Card sheet; RU adapter remains disabled |
-| `-ru-payment-sheet` | полный СБП экран: две обязательные галочки, русские legal links, чек и сохранённый email |
+| `-ru-payment-sheet` | технический СБП fixture: две обязательные галочки, чек и сохранённый email; без отдельных строк legal links |
 | `-ru-payment-sheet-apple` | Apple выбран; RU consent/receipt поля отсутствуют |
 | `-ru-subscription-management` | активная RU подписка, дата и действие отмены |
 | `-ru-subscription-cancelled` | подписка активна до даты, автопродление отключено |

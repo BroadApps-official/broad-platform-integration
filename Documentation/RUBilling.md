@@ -14,8 +14,8 @@ RU Billing — опциональная цепочка адаптеров для
 
 ## Что уже делает пакет
 
-Приложение передаёт адреса API, авторизацию, сопоставление продуктов, ссылки на
-русские юридические документы и, если формат API отличается, свои encoder/decoder.
+Приложение передаёт адреса API, авторизацию, сопоставление продуктов и,
+если формат API отличается, свои encoder/decoder.
 Всё остальное делает платформа:
 
 ```text
@@ -28,7 +28,7 @@ storefront + remote config → сопоставление каталога → �
 | RU-поля скрыты, кнопка запускает Apple purchase | две обязательные галочки, опциональный чек и email | тариф, статус, дата оплаченного доступа и отмена |
 
 <p align="center">
-  <img src="Assets/README/Screenshots/ru-payment-sbp-dark.png" alt="RU payment UI" width="23%">
+  <img src="Assets/README/Screenshots/ru-payment-methods-v3.png" alt="Выбор App Store, СБП или карты без отдельных legal-ссылок" width="23%">
   <img src="Assets/README/Screenshots/ru-payment-receipt-dark.png" alt="Отдельный ввод email для чека" width="23%">
   <img src="Assets/README/Screenshots/ru-subscription-active-dark.png" alt="Активная RU подписка" width="23%">
   <img src="Assets/README/Screenshots/ru-subscription-cancelled-dark.png" alt="RU подписка после отмены" width="23%">
@@ -62,20 +62,7 @@ RU-подписка и RU-токены принадлежат серверном
 ## Экран оплаты: что передаёт приложение
 
 ```swift
-let ruPresentation = BroadRUBillingPresentationConfiguration(
-    legalLinks: [
-        BroadPaywallLegalLink(
-            id: "ru-privacy",
-            title: "Политика конфиденциальности",
-            url: AppLinks.russianPrivacy
-        ),
-        BroadPaywallLegalLink(
-            id: "ru-offer",
-            title: "Публичная оферта и условия оплаты",
-            url: AppLinks.russianOffer
-        )
-    ]
-)
+let ruPresentation = BroadRUBillingPresentationConfiguration()
 
 let paywallConfiguration = BroadPaywallConfiguration(
     placementID: .settings,
@@ -84,6 +71,12 @@ let paywallConfiguration = BroadPaywallConfiguration(
     ruBilling: ruPresentation
 )
 ```
+
+Важно: окно выбора способа оплаты **не показывает отдельные ссылки**
+«Политика конфиденциальности» и «Публичная оферта». Это компактный экран
+с тремя способами оплаты и галочками согласия. Обычные ссылки «Политика» и
+«Условия» задаются в `BroadPaywallConfiguration.legalLinks` и остаются в подвале
+самого paywall.
 
 Для СБП и банковской карты `BroadPaymentMethodSheet` не разрешит продолжить оплату, пока
 пользователь не выполнит обязательные действия:

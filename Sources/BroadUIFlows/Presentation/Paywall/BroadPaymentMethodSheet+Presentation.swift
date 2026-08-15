@@ -100,25 +100,6 @@ private extension BroadPaymentMethodSheet {
                 isRequired: true
             )
 
-            if !ruConfiguration.legalLinks.isEmpty {
-                VStack(alignment: .leading, spacing: theme.metrics.spacing.text) {
-                    ForEach(ruConfiguration.legalLinks) { link in
-                        Link(link.title, destination: link.url)
-                            .font(theme.typography.footer)
-                            .foregroundStyle(theme.palette.accent)
-                            .frame(
-                                minHeight: BroadPaywallTheme.Sizing
-                                    .minimumInteractiveDimension,
-                                alignment: .leading
-                            )
-                            .accessibilityLabel(
-                                link.accessibilityLabel ?? link.title
-                            )
-                    }
-                }
-                .padding(.leading, BroadPaywallTheme.Sizing.minimumInteractiveDimension)
-            }
-
             if requiresRecurringConsent {
                 consentRow(
                     isAccepted: $acceptsRecurringCharge,

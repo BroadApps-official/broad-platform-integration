@@ -1,7 +1,7 @@
 # Текущий статус автоматической проверки
 
 Текущий source snapshot:
-`eff57610e49543a84d8ccdae45814753ad1033695b8ebceea65fd1cc39f2b419`.
+`5d8f8278d731bb4196cd30d9d3c3945c479f9d932f1d7f88eaf52b5b14357856`.
 
 ## Единый рабочий процесс
 
@@ -42,17 +42,18 @@ Manager либо используют локальную checkout-папку.
 
 ## Итог
 
-`PASS` — 11 августа 2026 года после перевода пояснений по архитектуре,
-запуску и RU Billing на простой русский язык. Условия recovery после
-переустановки, server-authoritative token balance и защиты финансовых
-flow при внезапном обрыве сети сохранены. Полный `agent_gate` прошёл для
-указанного snapshot.
+`PASS` — 15 августа 2026 года. README разделяет агента внедрения и
+проверяющего агента платформы, даёт готовый prompt и три понятных способа
+проверки: автоматическое исправление, ручной запуск через Codex/Claude и gate
+без агента. Условия recovery после переустановки, server-authoritative token
+balance и защиты финансовых flow при внезапном обрыве сети сохранены. Полный
+`agent_gate` прошёл для указанного snapshot.
 
 Подтверждено для указанного snapshot:
 
 - `Scripts/release_gate.sh` — `PASS`;
 - `Scripts/agent_gate.sh` — `PASS`;
-- SwiftFormat — `0/269` файлов требуют форматирования;
+- SwiftFormat — `0/270` файлов требуют форматирования;
 - SwiftLint — `0` нарушений;
 - Xcode build matrix — `4/4`;
 - live Adapty compile-only configurations — `2/2` (`5013` и `5109Codex`);

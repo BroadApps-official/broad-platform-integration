@@ -2,6 +2,11 @@
 
 ## Самое короткое объяснение
 
+Это проверяющий агент из задания Никиты. Он не подключает package к новому
+приложению, а следит за качеством самого `BroadAppsIOSPlatform`: проверяет
+стандартизированные onboarding, paywall, Adapty, RU Billing, общие ошибки,
+архитектуру, code style, документацию и сборку.
+
 Разработчик запускает одну команду:
 
 ```bash
@@ -21,6 +26,24 @@
 
 Обычная кнопка **Run** в Xcode агента не запускает. Автоматика начинает работу
 только после явного запуска команды выше.
+
+## Что входит в полный gate
+
+| Проверка | Что она подтверждает |
+|---|---|
+| Contracts и architecture guardrails | Границы модулей и обязательные продуктовые правила не нарушены |
+| Privacy и documentation | Manifest валиден, README-assets и локальные ссылки существуют |
+| SwiftFormat и SwiftLint | Код соответствует единому стилю |
+| Package/example builds | Swift Package и iPhone example собираются в Debug/Release |
+| Live Adapty compile | Конфигурации 5013 и 5109Codex компилируются без запуска финансовых операций |
+
+Внутри architecture guardrails отдельно зафиксированы ATT/Rate Us, fallback на
+`main`, отсутствие фильтрации Adapty products, безопасные purchase/restore,
+optional special offer, recovery после переустановки и поведение при обрыве сети.
+
+Это локальная инженерная проверка. Она намеренно не выполняет реальные
+платежи, StoreKit sandbox, test targets, iPad-сборку, `.ipa` или проверки на
+физическом устройстве.
 
 ## Как это устроено
 
@@ -74,6 +97,38 @@ codex login status
 Xcode 16+, XcodeGen `2.45.4`, SwiftLint `0.62.2` и локальный SwiftFormat
 `0.62.1` всё равно обязательны: агент использует те же project scripts, что и
 разработчик.
+
+## Три способа запуска
+
+### 1. Рекомендуемый: готовая автоматика без своего промпта
+
+```bash
+./Scripts/agent_review_and_fix.sh
+```
+
+Готовый prompt уже хранится в `AgentChecks/AUTOMATION_PROMPT.md`. Разработчику
+не нужно придумывать формулировку: wrapper сам передаст prompt в Codex, дождётся
+исправлений и независимо повторит gate.
+
+### 2. Вручную из чата Codex или Claude
+
+Откройте агенту корень `BroadAppsIOSPlatform`. Codex прочитает `AGENTS.md`
+автоматически; Claude нужно явно попросить это сделать. Готовый copy-paste prompt
+находится в разделе
+[«Как проверять платформу после изменений»](../README.md#automation).
+
+В таком режиме агент должен запускать `bash Scripts/agent_gate.sh`, а не
+`agent_review_and_fix.sh`, чтобы не создавать рекурсивный запуск агента.
+
+### 3. Без агента
+
+```bash
+bash Scripts/agent_gate.sh
+```
+
+Gate ничего не исправляет и не создаёт agent-отчёт. Он только проверяет текущее
+состояние. Если Swift-код пришлось исправить вручную, выполните
+`bash Scripts/format.sh` и снова запустите полный gate.
 
 ## Где смотреть результат
 

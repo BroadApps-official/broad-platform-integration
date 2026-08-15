@@ -52,7 +52,7 @@ public struct BroadPaymentMethodSheet: View {
         )
 
         let resolvedRUConfiguration = ruConfiguration
-            ?? BroadRUBillingPresentationConfiguration(legalLinks: [])
+            ?? BroadRUBillingPresentationConfiguration()
         let savedEmail = initialRUDetails?.receiptEmail ?? ""
 
         self.methods = methods

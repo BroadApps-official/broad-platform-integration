@@ -43,21 +43,15 @@ public struct BroadRUBillingCopy: Equatable, Sendable {
 }
 
 /// App-specific presentation data for the Russian payment flow. The platform
-/// owns validation and UI; the host supplies its Russian legal documents.
+/// owns validation and UI; the host can override copy and receipt email storage.
 public struct BroadRUBillingPresentationConfiguration: Equatable, Sendable {
     public let copy: BroadRUBillingCopy
-    public let legalLinks: [BroadPaywallLegalLink]
     public let receiptEmailStorageKey: String
 
     public init(
         copy: BroadRUBillingCopy = .russian,
-        legalLinks: [BroadPaywallLegalLink],
         receiptEmailStorageKey: String = "broad.ru-billing.receipt-email"
     ) {
-        precondition(
-            Set(legalLinks.map(\.id)).count == legalLinks.count,
-            "RU billing legal links require unique IDs"
-        )
         precondition(
             !receiptEmailStorageKey.trimmingCharacters(
                 in: .whitespacesAndNewlines
@@ -65,7 +59,6 @@ public struct BroadRUBillingPresentationConfiguration: Equatable, Sendable {
             "RU billing receipt email key must not be empty"
         )
         self.copy = copy
-        self.legalLinks = legalLinks
         self.receiptEmailStorageKey = receiptEmailStorageKey
     }
 }

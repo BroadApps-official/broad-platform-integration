@@ -35,7 +35,7 @@ PNG `645×1398` — половины исходного Retina-размера.
 | `paywall-two-ru-v2.png` | два продукта в порядке провайдера |
 | `paywall-many-ru-v2.png` | paywall с 12 продуктами провайдера |
 | `payment-methods-light.png` | UI-only выбор App Store / СБП / карты |
-| `ru-payment-sbp-v2.png` | СБП + две обязательные галочки, кнопка всегда видна |
+| `ru-payment-methods-v3.png` | Apple/СБП/карта, согласия без отдельных legal-ссылок, кнопка всегда видна |
 | `ru-payment-apple-v2.png` | Apple без RU-полей согласия и чека |
 | `ru-payment-receipt-v2.png` | отдельный шаг email для кассового чека |
 | `ru-subscription-active-v2.png` | управление активной RU-подпиской |

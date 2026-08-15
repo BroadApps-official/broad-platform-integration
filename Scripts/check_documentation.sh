@@ -80,13 +80,15 @@ for required_pattern in \
     'Documentation/NetworkInterruptions\.md' \
     'Documentation/AgentAutomation\.md' \
     'Documentation/PlatformHandoff\.md' \
+    '^## ✅ Как проверять платформу после изменений$' \
+    'AgentChecks/AUTOMATION_PROMPT\.md' \
+    'agent_review_and_fix\.sh --doctor' \
+    '^### Вариант 2 — запустить проверяющего агента вручную$' \
+    'bash Scripts/agent_gate\.sh' \
+    '^## BroadAppTemplate: зачем запускать example$' \
+    'технический пример подключения' \
     'Documentation/Assets/README/Screenshots/onboarding-ru-v2\.png' \
     'Documentation/Assets/README/Screenshots/paywall-showcase-ru-v2\.png' \
-    'Documentation/Assets/README/Screenshots/ru-payment-sbp-v2\.png' \
-    'Documentation/Assets/README/Screenshots/ru-payment-apple-v2\.png' \
-    'Documentation/Assets/README/Screenshots/ru-payment-receipt-v2\.png' \
-    'Documentation/Assets/README/Screenshots/ru-subscription-active-v2\.png' \
-    'Documentation/Assets/README/Screenshots/ru-subscription-cancelled-v2\.png' \
     'Documentation/Assets/README/References/5115-paywall-dark\.png' \
     'Documentation/Assets/README/References/5115-payment-methods-dark\.png' \
     'Documentation/Assets/README/References/5115-receipt-email-dark\.png' \
@@ -124,7 +126,7 @@ do
 done
 
 for screenshot_path in \
-    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-sbp-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-methods-v3.png" \
     "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-apple-v2.png" \
     "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-receipt-v2.png" \
     "$platform_root/Documentation/Assets/README/Screenshots/ru-subscription-active-v2.png" \

@@ -119,26 +119,11 @@ enum AppConfiguration {
                 url: privacyPolicyURL
             )
         ],
-        ruBilling: BroadRUBillingPresentationConfiguration(
-            legalLinks: [
-                BroadPaywallLegalLink(
-                    id: "ru-privacy",
-                    title: "Политика конфиденциальности",
-                    url: russianPrivacyPolicyURL
-                ),
-                BroadPaywallLegalLink(
-                    id: "ru-offer",
-                    title: "Публичная оферта и условия оплаты",
-                    url: russianOfferURL
-                )
-            ]
-        ),
+        ruBilling: BroadRUBillingPresentationConfiguration(),
         specialOfferCopy: .russian
     )
     static let privacyPolicyURL = legalURL(path: "privacy")
     static let termsOfUseURL = legalURL(path: "terms")
-    static let russianPrivacyPolicyURL = legalURL(path: "ru/privacy")
-    static let russianOfferURL = legalURL(path: "ru/offer")
     static let appFlowProgressKeyPrefix: String = {
         if ProcessInfo.processInfo.arguments.contains("-analytics-fixture") {
             return "broad-app-template.app-flow.analytics-fixture"
