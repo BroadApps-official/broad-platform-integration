@@ -49,7 +49,9 @@ private extension Bundle {
     var liveAdaptyPlacementMappings: [PlacementID: AdaptyPlacementID] {
         let keys: [(PlacementID, String)] = [
             (.onboarding, "BroadAppsAdaptyOnboardingPlacementID"),
+            (.proIcon, "BroadAppsAdaptyProIconPlacementID"),
             (.settings, "BroadAppsAdaptySettingsPlacementID"),
+            (.ctr, "BroadAppsAdaptyCTRPlacementID"),
             (.feature, "BroadAppsAdaptyFeaturePlacementID"),
             (.tokens, "BroadAppsAdaptyTokensPlacementID"),
             (.discount, "BroadAppsAdaptyDiscountPlacementID"),

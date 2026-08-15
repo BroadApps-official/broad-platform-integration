@@ -46,8 +46,12 @@
     <string>$(BROADAPPS_ADAPTY_MAIN_PLACEMENT_ID)</string>
     <key>BroadAppsAdaptyOnboardingPlacementID</key>
     <string>$(BROADAPPS_ADAPTY_ONBOARDING_PLACEMENT_ID)</string>
+    <key>BroadAppsAdaptyProIconPlacementID</key>
+    <string>$(BROADAPPS_ADAPTY_PRO_ICON_PLACEMENT_ID)</string>
     <key>BroadAppsAdaptySettingsPlacementID</key>
     <string>$(BROADAPPS_ADAPTY_SETTINGS_PLACEMENT_ID)</string>
+    <key>BroadAppsAdaptyCTRPlacementID</key>
+    <string>$(BROADAPPS_ADAPTY_CTR_PLACEMENT_ID)</string>
     <key>BroadAppsAdaptyFeaturePlacementID</key>
     <string>$(BROADAPPS_ADAPTY_FEATURE_PLACEMENT_ID)</string>
     <key>BroadAppsAdaptyTokensPlacementID</key>

@@ -218,18 +218,20 @@ let entitlementEngine = EntitlementEngine(
 
 ```swift
 let placementRegistry = AdaptyPlacementRegistry(
-    main: AdaptyPlacementID(rawValue: "app-main"),
+    main: AdaptyPlacementID(rawValue: "main"),
     mappings: [
-        .onboarding: AdaptyPlacementID(rawValue: "app-onboarding"),
-        .settings: AdaptyPlacementID(rawValue: "app-settings"),
-        .feature: AdaptyPlacementID(rawValue: "app-feature"),
-        .tokens: AdaptyPlacementID(rawValue: "app-tokens"),
-        .discount: AdaptyPlacementID(rawValue: "app-discount")
+        .onboarding: AdaptyPlacementID(rawValue: "onboarding"),
+        .proIcon: AdaptyPlacementID(rawValue: "pro_icon"),
+        .settings: AdaptyPlacementID(rawValue: "settings"),
+        .ctr: AdaptyPlacementID(rawValue: "CTR"),
+        .specialOffer: AdaptyPlacementID(rawValue: "special_offer")
     ]
 )
 ```
 
-`.main` обязателен: это общий fallback. Конкретные provider ID не должны попадать в View или shared screen configuration.
+`.main` обязателен: это общий fallback. Это базовый набор новых приложений;
+уникальные placements добавляются по документу проекта через typed/custom
+mapping. Provider ID не должны попадать в View или shared screen configuration.
 
 ### Adapty services
 

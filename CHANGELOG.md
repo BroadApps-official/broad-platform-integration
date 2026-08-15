@@ -57,6 +57,11 @@ production-ready версии.
 
 ### Changed
 
+- Стартовая инструкция теперь берёт данные приложения из Kaiten, поддерживает
+  временную development-конфигурацию похожего live-приложения и фиксирует новые
+  базовые правила Adapty для products, paywalls, placements и Remote Config;
+- стандартный Remote Config распознаёт `ru_pay` и `auto_revenue_view` вместе с
+  legacy aliases, а typed placements включают `pro_icon` и `CTR`;
 - README теперь начинает работу с реального сценария команды: новое приложение
   строится поверх платформы, старые reference-проекты используются только как
   read-only продуктовый ориентир, а дизайн берётся из Figma либо из

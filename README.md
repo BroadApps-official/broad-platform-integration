@@ -70,9 +70,14 @@ onboarding, paywall, Adapty, StoreKit, RU Billing, purchase/restore и пров�
 
 ### Как обращаться с reference-проектом
 
-Reference часто уже содержит нужные экраны, сценарии, тексты, assets и рабочие
-конфиги, но может быть написан как угодно. Он нужен как **read-only источник
-продуктового поведения**, а не как архитектурный шаблон:
+**Reference-проект** — это уже готовое приложение из такой же или похожей ниши,
+которое раньше сделал коллега и сохранил в Git-репозитории компании. Его выдают
+разработчику, чтобы быстро понять, какие экраны, функции, тексты, assets,
+настройки и пользовательские сценарии нужны новому приложению.
+
+Reference часто уже содержит всё необходимое для понимания продукта, но его код
+может быть написан как угодно. Поэтому он используется только как **read-only
+источник продуктового поведения**, а не как архитектурный шаблон:
 
 ```text
 reference: что должно получиться визуально и продуктово
@@ -90,10 +95,7 @@ Reference-проект не исправляем и не превращаем в
 
 - если есть Figma — экран, стили и assets берутся из неё;
 - если Figma нет, это no-code-сценарий: разработчик подготавливает дизайн через
-  **Claude Design** или **Pencil**, согласует его и затем реализует;
-- дизайн не придумывается вручную прямо в SwiftUI «на глаз»;
-- платформа задаёт поведение и технические границы, но не навязывает бренду
-  конкретные цвета, шрифты или композицию экранов.
+  **Claude Design** или **Pencil**, согласует его и затем реализует.
 
 ## Теперь выберите способ работы
 
@@ -145,80 +147,142 @@ Codex автоматически читает `AGENTS.md`, когда рабоч
 `Documentation` до правок. Для Xcode и Simulator агенту нужен доступ к Mac в
 рамках ваших корпоративных правил.
 
-### 2. Подготовьте «паспорт приложения»
+### 2. Откройте документ проекта в Kaiten
 
-| Что передать | Пример | Обязательно |
-|---|---|:---:|
-| Тип работы | Новое приложение / перенос reference / существующий проект | ✅ |
-| Рабочая папка | `Projects/MyNewApp` | ✅ |
-| Reference-проекты | Пути к примерам и что именно из них использовать | Если выданы |
-| Источник дизайна | Figma URL / Claude Design / Pencil / конкретный reference | ✅ |
-| Путь к project/workspace и target | Готовый путь или «создать новый MyApp» | ✅ |
-| Bundle ID и minimum iOS | `com.company.myapp`, iOS 17+ | ✅ |
-| Данные для выпуска | Display name, Team, signing/app record и переданный release brief | Когда выданы |
-| Где создаётся root UI | `App`, `SceneDelegate` или coordinator | ✅ |
-| Onboarding | Тексты, assets, количество слайдов, ATT on/off | ✅ |
-| Adapty | Public SDK key, access level ID | ✅ |
-| Placements | `main`, `onboarding`, `settings`, `feature`, `tokens`, `discount`, custom | ✅ |
-| Paywall | Политика/Условия, локализация, цвета, hard/soft close policy | ✅ |
-| Premium ownership | Текущие и исторические Apple product IDs, backend source | ✅ |
-| Стабильный account ID | Как узнаём того же user после переустановки | Для tokens/RU |
-| RU Billing | Включён или нет; API endpoints, auth adapter, catalog mapping | Если нужен |
-| Tokens | Только subscriptions или subscriptions + tokens; backend ledger API | Если нужны |
-| Special offer | Есть config или feature полностью отсутствует | Если нужен |
-| Analytics | Куда отправлять typed monetization events | Если нужна |
-
-Если каких-то данных для публикации пока нет, это не блокирует создание
-архитектуры и fixture-flow: агент явно перечисляет недостающее в конце. Когда
-руководитель выдаёт отдельный release brief, значения переносятся в app-owned
-configuration и настройки target без изменения модулей платформы.
-
-Public Adapty SDK key может храниться в app configuration. Backend bearer,
-private keys и токены серверного доступа не вставляйте в README: агенту нужно
-указать безопасную точку получения авторизации в приложении.
-
-### 3. Скопируйте промпт
+Отдельный «паспорт приложения» вручную составлять не нужно. Основной источник
+данных команды находится в Kaiten:
 
 ```text
-Ты создаёшь iPhone-приложение на основе BroadApps iOS Platform.
+Документы → Документы по проектам → <номер и название проекта>
+```
 
-Исходная точка:
-- тип работы: <НОВОЕ ПРИЛОЖЕНИЕ / REFERENCE / СУЩЕСТВУЮЩИЙ PROJECT>
-- рабочая папка нового приложения: <ПУТЬ>
-- project/workspace: <СОЗДАТЬ НОВЫЙ ИЛИ ПУТЬ>
-- scheme/target: <СОЗДАТЬ ИЛИ SCHEME И TARGET>
-- bundle ID: <BUNDLE_ID>
-- deployment target: iOS <VERSION>, только iPhone
-- reference-проекты, только для чтения: <ПУТИ ИЛИ НЕТ>
-- что взять из каждого reference: <ЭКРАНЫ / FLOW / ASSETS / КОНФИГИ>
-- источник дизайна: <FIGMA URL / CLAUDE DESIGN / PENCIL / REFERENCE>
-- данные для выпуска: <ПУТЬ К BRIEF / ДАННЫЕ / ПОКА НЕТ>
+<table>
+  <tr>
+    <td width="36%" align="center" valign="top">
+      <a href="Documentation/Assets/README/Kaiten/project-documents-folder.png">
+        <img src="Documentation/Assets/README/Kaiten/project-documents-folder.png" alt="Папка Документы по проектам в Kaiten" width="100%">
+      </a>
+      <br><strong>1. Найдите папку</strong>
+      <br><sub>«Документы по проектам»</sub>
+    </td>
+    <td width="64%" align="center" valign="top">
+      <a href="Documentation/Assets/README/Kaiten/project-document-team-data.png">
+        <img src="Documentation/Assets/README/Kaiten/project-document-team-data.png" alt="Общая часть документа проекта в Kaiten" width="100%">
+      </a>
+      <br><strong>2. Откройте документ своего приложения</strong>
+      <br><sub>В нём команда постепенно собирает все материалы</sub>
+    </td>
+  </tr>
+</table>
 
-Платформа:
-- repository: https://github.com/BroadApps-official/BroadCore.git
-- branch: vers_niiaz
-- локальный путь, если есть: <ПУТЬ К BroadAppsIOSPlatform>
+В первой части документа ПМ, backend-разработчик, дизайнер, iOS-разработчик и
+тестировщик добавляют доступные материалы: TS, reference, API, Figma, Git,
+запись экрана и bug report. В блоке аккаунт-менеджера появляются данные самого
+приложения: название, bundle, Apple/Team ID, ссылки, Adapty key, продукты и
+остальные данные для выпуска.
 
-Мои данные:
-- Adapty public SDK key: <KEY ИЛИ ПУТЬ К CONFIG>
-- access level: <ACCESS_LEVEL>
-- placements: main=<ID>, onboarding=<ID>, settings=<ID>,
-  feature=<ID ИЛИ НЕТ>, tokens=<ID ИЛИ НЕТ>, discount=<ID ИЛИ НЕТ>
-- Apple premium product IDs, включая исторические: <IDS>
-- onboarding: <СЛАЙДЫ / ASSETS / ATT ON ИЛИ OFF>
-- paywall links: Условия=<URL>, Политика=<URL>
-- RU Billing: <OFF ИЛИ API/AUTH/CATALOG КОНТРАКТЫ>
-- purchase manager: <SUBSCRIPTIONS ONLY ИЛИ SUBSCRIPTIONS + TOKENS>
-- special offer: <OFF ИЛИ CONFIG>
-- analytics destination: <НЕТ ИЛИ АДАПТЕР>
-- stable app account / entitlement subject: <КАК ПОЛУЧИТЬ>
+<details>
+<summary><strong>Показать пример блока аккаунт-менеджера</strong></summary>
+<br>
+<div align="center">
+  <a href="Documentation/Assets/README/Kaiten/project-document-account-data.png">
+    <img src="Documentation/Assets/README/Kaiten/project-document-account-data.png" alt="Блок аккаунт-менеджера в документе проекта Kaiten" width="68%">
+  </a>
+</div>
+</details>
+
+> [!IMPORTANT]
+> В начале разработки этот документ часто заполнен не полностью — это нормальная
+> ситуация. Финальные bundle, Adapty и App Store данные нового приложения обычно
+> появляются ближе к завершению работы.
+
+#### Как работать, пока финальные данные ещё не готовы
+
+```text
+начало разработки
+        ↓
+берём рабочую development-конфигурацию похожего приложения из live
+        ↓
+проверяем загрузку Adapty-продуктов, paywall и fixture-flow
+        ↓
+аккаунт-менеджер заполняет данные нового приложения в Kaiten
+        ↓
+перед выпуском заменяем временные значения на данные текущего приложения
+```
+
+- Похожее live-приложение или его Git-репозиторий обычно указывает ПМ либо lead.
+- Агент сам читает из его конфигурации рабочие bundle/Adapty/placement/product
+  значения. Разработчику не нужно перепечатывать их в промпт.
+- Эти значения используются как **временная development-конфигурация**, чтобы
+  продукты загружались и UI можно было собрать до появления новых данных.
+- Все такие значения должны лежать в app-owned configuration и заменяться без
+  изменения модулей платформы.
+- Перед релизом агент повторно открывает документ текущего проекта в Kaiten,
+  заменяет временные значения и отдельно перечисляет, что было заменено.
+- Реальные purchase, restore и RU-платёж при такой проверке не запускаются.
+
+Если у агента подключён Kaiten MCP, достаточно дать название или ссылку на
+документ. Без Kaiten MCP разработчик передаёт экспорт документа либо ссылку на
+него и открывает агенту доступ — вручную переносить каждое поле всё равно не
+нужно.
+
+### 3. Учтите базовые правила Adapty
+
+Это стартовые правила для новых приложений. Если у конкретного проекта в Kaiten
+указана дополнительная схема эксперимента или placement, добавьте её поверх
+базовой конфигурации.
+
+| Что настраиваем | Базовое правило |
+|---|---|
+| Product ID без trial | `nottrial` пишется слитно, например `weekly_9.99_nottrial` |
+| Paywall names | Используем только базовые имена `main`, `tokens`, `special_offer`; optional paywall создаётся только когда функция нужна проекту |
+| Placement IDs | `onboarding`, `pro_icon`, `settings`, `main`, `CTR`, `special_offer` |
+| Paywall для базовых placements | В Adapty указываем paywall `main`; отдельную проектную схему берём из документа проекта |
+| Порядок продуктов | Показываем все продукты, которые вернул Adapty, без фильтрации и перестановки |
+
+Для paywall `main` сразу создайте Remote Config с тремя ключами:
+
+```json
+{
+  "ru_pay": false,
+  "auto_revenue_view": false,
+  "special_offer": false
+}
+```
+
+`false` — безопасное стартовое значение. Флаг меняется только когда соответствующая
+возможность действительно подключена в конкретном приложении.
+
+<details open>
+<summary><strong>Исходное сообщение с правилами Adapty</strong></summary>
+<br>
+<div align="center">
+  <a href="Documentation/Assets/README/Kaiten/adapty-rules.png">
+    <img src="Documentation/Assets/README/Kaiten/adapty-rules.png" alt="Правила настройки Adapty для новых приложений" width="78%">
+  </a>
+</div>
+</details>
+
+### 4. Скопируйте короткий промпт
+
+```text
+Создай iPhone-приложение <НОМЕР И НАЗВАНИЕ> на основе BroadApps iOS Platform.
+
+Документ проекта в Kaiten: <ССЫЛКА ИЛИ ТОЧНОЕ НАЗВАНИЕ>.
+Reference, если выдан отдельно: <ССЫЛКА / ПУТЬ / НЕТ>.
+Рабочая папка приложения уже открыта в агенте.
+
+Платформа: https://github.com/BroadApps-official/BroadCore.git,
+ветка vers_niiaz.
 
 Перед изменениями:
 1. Прочитай AGENTS.md, README.md и нужные файлы Documentation.
-2. Если рабочий проект отсутствует — создай новый iPhone-проект поверх платформы.
-3. Если есть reference — изучи его продуктовый flow, но не изменяй его и не копируй плохую архитектуру.
-4. Если есть Figma — следуй ей. Если Figma нет — используй только согласованный результат Claude Design/Pencil; не придумывай UI вручную «на глаз».
-5. Используй BroadAppTemplate как пример структуры, composition и fixtures, а не как дизайн бренда.
+2. Через Kaiten MCP открой «Документы по проектам» и прочитай документ текущего приложения. Не проси меня вручную переписывать scheme, target, bundle, ключи, product ID, placements и ссылки, если они уже есть в документе.
+3. Если данных текущего приложения пока нет, возьми временную development-конфигурацию из указанного похожего live-приложения. Пометь все такие значения как временные и сохрани их в app-owned configuration для простой замены перед релизом.
+4. Если рабочего проекта нет — создай iPhone-проект поверх платформы. Названия scheme/target возьми из названия проекта; остальные доступные значения — из Kaiten.
+5. Если есть reference — изучи его продуктовый flow и конфиги, но не изменяй проект и не копируй его архитектуру.
+6. Источник дизайна возьми из документа проекта: Figma либо согласованный результат Claude Design/Pencil.
+7. Используй BroadAppTemplate как пример структуры, composition и fixtures, а не как дизайн бренда.
 
 Что сделать:
 1. Подготовь рабочее приложение и подключи package products BroadCore,
@@ -227,23 +291,30 @@ private keys и токены серверного доступа не встав
 3. Реализуй утверждённый product UI поверх платформы и подключи
    launch → onboarding → paywall → fresh entitlement → main.
 4. Подключи lifecycle recovery для Apple pending и RU return, если RU Billing включён.
-5. Не фильтруй и не переупорядочивай Adapty products; main обязан быть fallback placement.
-6. ATT запрашивай только после появления первого onboarding-слайда; Rate Us в onboarding не добавляй.
-7. Purchase/restore/pending не должны открывать premium до authoritative entitlement refresh.
-8. Сначала проверь fixture-режим, затем compile-only/live catalog без финансовых операций.
-9. Собери рабочее приложение в Debug и Release. Запусти релевантные safe fixtures.
-10. В конце напиши просто: что подключил, какие файлы изменил,
-    какие команды прошли и чего не хватает от backend/продукта.
+5. Настрой Adapty по базовым правилам из README: product `nottrial`, paywalls `main`/`tokens`/`special_offer`, placements `onboarding`/`pro_icon`/`settings`/`main`/`CTR`/`special_offer` и обязательный Remote Config для `main`.
+6. Не фильтруй и не переупорядочивай Adapty products; main обязан быть fallback placement.
+7. ATT запрашивай только после появления первого onboarding-слайда; Rate Us в onboarding не добавляй.
+8. Purchase/restore/pending не должны открывать premium до authoritative entitlement refresh.
+9. Сначала проверь fixture-режим, затем compile-only/live catalog без финансовых операций.
+10. Собери рабочее приложение в Debug и Release. Запусти релевантные safe fixtures.
+11. В конце напиши простым языком: что взял из Kaiten, какие временные данные использовал, что нужно заменить перед релизом, какие файлы изменил и какие проверки прошли.
 
 Не запускай реальные purchase, restore или RU-платёж. Reference-проекты только читай.
 ```
 
-### 4. Что сделает агент
+Разработчику нужно заменить только название приложения, ссылку на Kaiten и при
+необходимости reference. Остальные значения агент находит сам.
+
+### 5. Что сделает агент
 
 ```text
-определит исходную точку и изучит материалы
+откроет документ приложения в Kaiten
         ↓
-создаст или подготовит рабочее приложение
+найдёт TS, reference, дизайн и доступные конфиги
+        ↓
+при необходимости возьмёт временные live-данные
+        ↓
+создаст или подготовит iPhone-приложение
         ↓
 подключит Swift Package и app-owned configuration
         ↓
@@ -251,9 +322,9 @@ private keys и токены серверного доступа не встав
         ↓
 подключит UI flow и lifecycle recovery
         ↓
-соберёт Debug/Release и прогонит safe fixtures
+соберёт Debug/Release и проверит fixture/live catalog
         ↓
-напишет отчёт и точно назовёт недостающие данные
+перечислит временные значения и данные, ожидаемые перед релизом
 ```
 
 > [!IMPORTANT]
@@ -272,6 +343,14 @@ private keys и токены серверного доступа не встав
 основу и собирайте экраны поверх неё. Если у вас есть reference, переносите из
 него поведение и данные конкретного приложения, но не его архитектуру. Ниже —
 полный порядок; детали каждого контракта лежат в ссылках на каждом шаге.
+
+### Перед началом. Возьмите данные из Kaiten
+
+Откройте `Документы → Документы по проектам → <ваше приложение>` и используйте
+всё, что уже заполнено. Не создавайте второй список с bundle, Adapty, products и
+ссылками. Если финального блока аккаунт-менеджера ещё нет, временно подключите
+development-конфигурацию указанного похожего live-приложения и запишите, какие
+значения потребуется заменить перед выпуском.
 
 ### Шаг 1. Добавьте package
 
@@ -349,16 +428,20 @@ app-owned config / account / backend adapters
 
 ```swift
 let placements = AdaptyPlacementRegistry(
-    main: AdaptyPlacementID(rawValue: "app-main"),
+    main: AdaptyPlacementID(rawValue: "main"),
     mappings: [
-        .onboarding: AdaptyPlacementID(rawValue: "app-onboarding"),
-        .settings: AdaptyPlacementID(rawValue: "app-settings"),
-        .tokens: AdaptyPlacementID(rawValue: "app-tokens")
+        .onboarding: AdaptyPlacementID(rawValue: "onboarding"),
+        .proIcon: AdaptyPlacementID(rawValue: "pro_icon"),
+        .settings: AdaptyPlacementID(rawValue: "settings"),
+        .ctr: AdaptyPlacementID(rawValue: "CTR"),
+        .specialOffer: AdaptyPlacementID(rawValue: "special_offer")
     ]
 )
 ```
 
-`main` обязателен как общий fallback. Конкретные provider ID не хардкодятся во View.
+Это базовые provider IDs. Дополнительные значения берутся из документа проекта
+и добавляются через typed/custom mapping. `main` обязателен как общий fallback;
+provider ID не хардкодятся во View.
 Дальше передайте onboarding pages, paywall copy/theme/legal links, Adapty config,
 Apple premium catalog и опциональные RU/tokens/special-offer adapters.
 

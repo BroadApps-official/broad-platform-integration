@@ -80,7 +80,9 @@ Infrastructure (Adapty, StoreKit, URLSession)
 |---|---|
 | `.onboarding` | initial paywall после onboarding |
 | `.main` | общий fallback и основной paywall |
+| `.proIcon` | paywall из кнопки или иконки Pro |
 | `.settings` | premium из settings |
+| `.ctr` | campaign/CTR entry point с provider ID `CTR` |
 | `.feature` | закрытая feature |
 | `.tokens` | consumable/token catalog |
 | `.discount` | скидочное предложение |
@@ -91,16 +93,21 @@ Infrastructure (Adapty, StoreKit, URLSession)
 
 ```swift
 let registry = AdaptyPlacementRegistry(
-    main: AdaptyPlacementID(rawValue: "app-main"),
+    main: AdaptyPlacementID(rawValue: "main"),
     mappings: [
-        .onboarding: AdaptyPlacementID(rawValue: "app-onboarding"),
-        .settings: AdaptyPlacementID(rawValue: "app-settings"),
-        .feature: AdaptyPlacementID(rawValue: "app-feature"),
-        .tokens: AdaptyPlacementID(rawValue: "app-tokens"),
-        .discount: AdaptyPlacementID(rawValue: "app-discount")
+        .onboarding: AdaptyPlacementID(rawValue: "onboarding"),
+        .proIcon: AdaptyPlacementID(rawValue: "pro_icon"),
+        .settings: AdaptyPlacementID(rawValue: "settings"),
+        .ctr: AdaptyPlacementID(rawValue: "CTR"),
+        .specialOffer: AdaptyPlacementID(rawValue: "special_offer")
     ]
 )
 ```
+
+Базовые provider IDs для новых приложений — `onboarding`, `pro_icon`, `settings`,
+`main`, `CTR`, `special_offer`. В Adapty они сначала связываются с paywall
+`main`; уникальная схема конкретного приложения добавляется по его документу в
+Kaiten. Дополнительные логические точки остаются typed/custom mappings.
 
 Не передавайте provider ID в `BroadPaywallConfiguration`: экран получает только логический `PlacementID`.
 

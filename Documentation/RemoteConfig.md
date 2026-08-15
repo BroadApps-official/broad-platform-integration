@@ -8,6 +8,7 @@ Remote config приходит вместе с provider paywall и преобр�
 public struct RemotePaywallConfiguration {
     let isRUBillingEnabled: Bool?
     let ruBillingGateDecision: RemoteRUBillingGateDecision
+    let isAutomaticRevenueViewEnabled: Bool?
     let accessPolicy: PaywallAccessPolicy?
     let closeDelay: TimeInterval?
     let uiVariantID: PaywallUIVariantID?
@@ -31,7 +32,8 @@ view (`true/false/nil`) и не различает absent/invalid, поэтом�
 
 | Typed field | Стандартные ключи | Допустимое значение |
 |---|---|---|
-| `ruBillingGateDecision` | `pay`, `russian_payment`, `ru_billing` | все aliases; bool/number/boolean string |
+| `ruBillingGateDecision` | `ru_pay`, `pay`, `russian_payment`, `ru_billing` | все aliases; bool/number/boolean string |
+| `isAutomaticRevenueViewEnabled` | `auto_revenue_view`, legacy `auto_revnue_view`, `auto_revinue_view` | bool/number/boolean string |
 | `accessPolicy` | `hardPaywall`, `hard_paywall`, `isHard`, `is_hard`, `hard` | bool или `hard`/`soft` |
 | `closeDelay` | `closeDelay`, `close_delay`, `close_delay_seconds` | конечное число секунд `>= 0` |
 | `uiVariantID` | `ui_variant`, `uiVariant` | непустая строка |
@@ -80,6 +82,7 @@ Special-offer aliases используют ещё более простой fail
 ```swift
 let keys = RemoteConfigKeyRegistry(
     ruBillingGate: ["billing_enabled"],
+    automaticRevenueView: ["show_revenue_screen"],
     hardPaywall: ["access_mode"],
     closeDelay: ["close_after_seconds"],
     uiVariant: ["layout"],
@@ -102,8 +105,8 @@ let parser = RemotePaywallConfigurationParser(keys: keys)
 
 `LastValidRemoteConfigurationStore` работает отдельно для каждого логического placement.
 
-Для display/navigation полей (`accessPolicy`, `closeDelay`,
-`uiVariantID`) применяется merge:
+Для display/navigation полей (`isAutomaticRevenueViewEnabled`, `accessPolicy`,
+`closeDelay`, `uiVariantID`) применяется merge:
 
 ```text
 fresh valid value → заменить предыдущее
@@ -218,7 +221,8 @@ config не содержит второй cohort authority.
 {
   "hard_paywall": "soft",
   "close_delay_seconds": 0,
-  "ru_billing": false,
+  "ru_pay": false,
+  "auto_revenue_view": false,
   "ui_variant": "adaptive-default",
   "special_offer": false
 }
