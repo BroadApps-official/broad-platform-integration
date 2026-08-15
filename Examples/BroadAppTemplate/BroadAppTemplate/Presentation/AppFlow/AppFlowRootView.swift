@@ -1,4 +1,5 @@
 import BroadUIFlows
+import Foundation
 import SwiftUI
 
 struct AppFlowRootView: View {
@@ -67,6 +68,11 @@ struct AppFlowRootView: View {
     private func paywallContent() -> some View {
         BroadPaywallView(
             viewModel: paywallViewModel,
+            theme: AppTokens.paywallTheme,
+            productFormatter: BroadPaywallProductFormatter(
+                locale: Locale(identifier: "ru_RU"),
+                periodCopy: .russian
+            ),
             onClose: sceneViewModel.paywallClosed,
             onCompleted: sceneViewModel.paywallCompleted
         )

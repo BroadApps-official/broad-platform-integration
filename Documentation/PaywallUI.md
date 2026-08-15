@@ -32,6 +32,11 @@ ForEach(payload.products, id: \.presentationID) { product in
 
 Он ничего не фильтрует, не сортирует и не дедуплицирует. Два элемента с одинаковым `productID` или `ProductReference` остаются двумя строками, потому что UI identity — уникальный `ProductPresentationID`. Поэтому paywall безопасен для 0, 1, 2 и любого большего количества продуктов.
 
+Все карточки продуктов имеют одинаковую высоту `minimumProductHeight`. Длинный
+заголовок занимает не больше двух строк, подзаголовок, цена и период — по одной.
+Полный текст всё равно остаётся в accessibility label. Поэтому длинные данные
+провайдера не растягивают одну карточку и не ломают сетку paywall.
+
 Даже malformed `vendorProductId` не отменяет всю Adapty-выдачу и не
 удаляет одну строку. Adapter даёт такому occurrence детерминированный
 ограниченный opaque surrogate, построенный из SHA-256 commercial fingerprint
@@ -262,7 +267,7 @@ colors, реальные payment-method sheet detents и RU Safari-return раз
 
 ## Legal links
 
-Приложение передаёт массив `BroadPaywallLegalLink` с уникальными ID и HTTPS URL. Footer не знает названий «Privacy»/«Terms» и использует app-supplied локализованный текст. По умолчанию ссылка открывается внутри приложения через `BroadInAppSafariView`; внешний Safari и собственный web-router можно использовать отдельно вне готового View.
+Приложение передаёт массив `BroadPaywallLegalLink` с уникальными ID и HTTPS URL. Footer не хардкодит названия «Политика»/«Условия» и использует локализованный текст приложения. По умолчанию ссылка открывается внутри приложения через `BroadInAppSafariView`; внешний Safari и собственный web-router можно использовать отдельно вне готового View.
 
 ## Ручная приёмка без test target
 

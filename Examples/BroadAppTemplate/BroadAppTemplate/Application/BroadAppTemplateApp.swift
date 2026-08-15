@@ -19,7 +19,9 @@ struct BroadAppTemplateApp: App {
                 "-ru-subscription-cancelled"
             ) {
                 BroadRUSubscriptionManagementView(
-                    viewModel: compositionRoot.ruSubscriptionViewModel
+                    viewModel: compositionRoot.ruSubscriptionViewModel,
+                    copy: .russian,
+                    theme: AppTokens.paywallTheme
                 )
             } else {
                 AppFlowRootView(

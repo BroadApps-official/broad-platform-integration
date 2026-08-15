@@ -87,17 +87,17 @@ final class AppFlowSceneViewModel: ObservableObject {
         case .restored:
             coordinator.subscriptionDidBecomeActive()
             notice = AppFlowNotice(
-                title: "Purchase restored",
-                message: "Access was verified. Finish onboarding to open the main screen."
+                title: "Покупка восстановлена",
+                message: "Доступ подтверждён. Завершите онбординг, чтобы открыть основной экран."
             )
         case .nothingFound:
             notice = AppFlowNotice(
-                title: "Nothing to restore",
-                message: "No verified purchase was found for this fixture."
+                title: "Восстанавливать нечего",
+                message: "Подтверждённых покупок не найдено."
             )
         case let .unavailable(error), let .failed(error):
             notice = AppFlowNotice(
-                title: "Restore unavailable",
+                title: "Восстановление недоступно",
                 message: error.userMessage
             )
         }

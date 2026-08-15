@@ -80,7 +80,7 @@ struct ExampleMonetizationEnvironment {
                 repository: ExamplePaywallRepository(arguments: arguments),
                 analytics: analytics,
                 staleLoadError: .example(
-                    message: "The previous paywall request was replaced. Please try again.",
+                    message: "Предыдущий запрос пейвола отменён новым. Попробуйте ещё раз.",
                     code: "example.paywall.stale"
                 )
             ),
@@ -95,7 +95,7 @@ struct ExampleMonetizationEnvironment {
                 pendingStore: pendingApplePurchaseStore,
                 operationGate: operationGate,
                 inProgressError: .example(
-                    message: "A purchase is already in progress.",
+                    message: "Покупка уже выполняется.",
                     code: "example.purchase.in-progress"
                 )
             ),
@@ -108,7 +108,7 @@ struct ExampleMonetizationEnvironment {
                 analytics: analytics,
                 operationGate: operationGate,
                 verificationUnavailableError: .example(
-                    message: "The purchase could not be verified. Please try again.",
+                    message: "Не удалось проверить покупку. Попробуйте ещё раз.",
                     code: "example.restore.verification-unavailable"
                 )
             ),
@@ -202,7 +202,7 @@ private struct ExamplePaywallRepository: PaywallRepositoryProtocol {
         if arguments.contains("-paywall-failure") {
             return .unavailable(
                 .example(
-                    message: "Plans are temporarily unavailable.",
+                    message: "Тарифы временно недоступны.",
                     code: "example.paywall.unavailable"
                 )
             )
@@ -301,8 +301,8 @@ private extension ExamplePaywallRepository {
             ProductFixture(
                 productID: "example.premium.weekly",
                 kind: .autoRenewableSubscription,
-                title: "Weekly",
-                subtitle: "Flexible access",
+                title: "Недельная подписка",
+                subtitle: "Гибкий доступ",
                 amount: 3.99,
                 displayPrice: "$3.99",
                 rubleDisplayPrice: "299 ₽",
@@ -311,8 +311,8 @@ private extension ExamplePaywallRepository {
             ProductFixture(
                 productID: "example.premium.monthly",
                 kind: .autoRenewableSubscription,
-                title: "Monthly",
-                subtitle: "Most popular",
+                title: "Месячная подписка",
+                subtitle: "Самый популярный тариф",
                 amount: 8.99,
                 displayPrice: "$8.99",
                 rubleDisplayPrice: "699 ₽",
@@ -321,8 +321,8 @@ private extension ExamplePaywallRepository {
             ProductFixture(
                 productID: "example.premium.yearly",
                 kind: .autoRenewableSubscription,
-                title: "Annual plan with a deliberately long localized title",
-                subtitle: "One payment for twelve months",
+                title: "Годовая подписка с намеренно длинным локализованным названием",
+                subtitle: "Один платёж за двенадцать месяцев",
                 amount: 49.99,
                 displayPrice: "$49.99",
                 rubleDisplayPrice: "3 990 ₽",
@@ -331,8 +331,8 @@ private extension ExamplePaywallRepository {
             ProductFixture(
                 productID: "example.premium.unknown",
                 kind: .unknown,
-                title: "Provider-defined access",
-                subtitle: "Unknown period remains visible",
+                title: "Доступ, заданный провайдером",
+                subtitle: "Продукт без известного периода остаётся видимым",
                 amount: 12.49,
                 displayPrice: "$12.49",
                 rubleDisplayPrice: "999 ₽",
@@ -352,7 +352,7 @@ private struct ExamplePurchaseRepository: PurchaseRepositoryProtocol {
         guard request.checkoutMethod == .apple else {
             return .failed(
                 .example(
-                    message: "RU billing is disabled until the host app provides its configuration.",
+                    message: "RU billing отключён, пока приложение не передаст конфигурацию.",
                     code: "example.purchase.ru-disabled"
                 ),
                 disposition: .definitivelyNotPurchased
@@ -367,7 +367,7 @@ private struct ExamplePurchaseRepository: PurchaseRepositoryProtocol {
         if arguments.contains("-purchase-failure") {
             return .failed(
                 .example(
-                    message: "The fixture purchase failed. Please retry.",
+                    message: "Не удалось выполнить тестовую покупку. Попробуйте ещё раз.",
                     code: "example.purchase.failed"
                 ),
                 disposition: .definitivelyNotPurchased

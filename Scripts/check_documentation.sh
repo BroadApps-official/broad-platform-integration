@@ -80,13 +80,21 @@ for required_pattern in \
     'Documentation/NetworkInterruptions\.md' \
     'Documentation/AgentAutomation\.md' \
     'Documentation/PlatformHandoff\.md' \
-    'Documentation/Assets/README/Screenshots/onboarding-dark\.png' \
-    'Documentation/Assets/README/Screenshots/paywall-light\.png' \
-    'Documentation/Assets/README/Screenshots/ru-payment-sbp-light\.png' \
-    'Documentation/Assets/README/Screenshots/ru-payment-apple-light\.png' \
-    'Documentation/Assets/README/Screenshots/ru-subscription-active-light\.png' \
-    'Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light\.png' \
-    'Documentation/Assets/README/Screenshots/main-dark\.png' \
+    'Documentation/Assets/README/Screenshots/onboarding-ru-v2\.png' \
+    'Documentation/Assets/README/Screenshots/paywall-showcase-ru-v2\.png' \
+    'Documentation/Assets/README/Screenshots/ru-payment-sbp-v2\.png' \
+    'Documentation/Assets/README/Screenshots/ru-payment-apple-v2\.png' \
+    'Documentation/Assets/README/Screenshots/ru-payment-receipt-v2\.png' \
+    'Documentation/Assets/README/Screenshots/ru-subscription-active-v2\.png' \
+    'Documentation/Assets/README/Screenshots/ru-subscription-cancelled-v2\.png' \
+    'Documentation/Assets/README/References/5115-paywall-dark\.png' \
+    'Documentation/Assets/README/References/5115-payment-methods-dark\.png' \
+    'Documentation/Assets/README/References/5115-receipt-email-dark\.png' \
+    'Documentation/Assets/README/References/5115-consent-alert-dark\.png' \
+    'Documentation/Assets/README/References/5115-payment-ready-dark\.png' \
+    'Documentation/Assets/README/References/5115-cloudpayments-light\.png' \
+    'Documentation/Assets/README/References/5115-hosted-checkout-light\.png' \
+    'Documentation/Assets/README/Screenshots/main-ru-v2\.png' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
     if ! rg -q "$required_pattern" "$platform_root/README.md"; then
@@ -94,11 +102,33 @@ for required_pattern in \
     fi
 done
 
+for reference_path in \
+    "$platform_root/Documentation/Assets/README/References/5115-paywall-dark.png" \
+    "$platform_root/Documentation/Assets/README/References/5115-payment-methods-dark.png" \
+    "$platform_root/Documentation/Assets/README/References/5115-receipt-email-dark.png" \
+    "$platform_root/Documentation/Assets/README/References/5115-consent-alert-dark.png" \
+    "$platform_root/Documentation/Assets/README/References/5115-payment-ready-dark.png" \
+    "$platform_root/Documentation/Assets/README/References/5115-cloudpayments-light.png" \
+    "$platform_root/Documentation/Assets/README/References/5115-hosted-checkout-light.png"
+do
+    if [[ ! -s "$reference_path" ]]; then
+        record_failure "README visual reference is missing: ${reference_path#$platform_root/}"
+        continue
+    fi
+
+    reference_width="$(/usr/bin/sips -g pixelWidth "$reference_path" 2>/dev/null | /usr/bin/awk '/pixelWidth:/ { print $2 }')"
+    reference_height="$(/usr/bin/sips -g pixelHeight "$reference_path" 2>/dev/null | /usr/bin/awk '/pixelHeight:/ { print $2 }')"
+    if [[ "$reference_width" != "645" || "$reference_height" != "1398" ]]; then
+        record_failure "README visual reference must be 645x1398: ${reference_path#$platform_root/} (${reference_width:-unknown}x${reference_height:-unknown})"
+    fi
+done
+
 for screenshot_path in \
-    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-sbp-light.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-apple-light.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/ru-subscription-active-light.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light.png"
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-sbp-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-apple-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-payment-receipt-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-subscription-active-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/ru-subscription-cancelled-v2.png"
 do
     if [[ ! -s "$screenshot_path" ]]; then
         record_failure "README screenshot is missing: ${screenshot_path#$platform_root/}"
@@ -113,15 +143,15 @@ do
 done
 
 for screenshot_path in \
-    "$platform_root/Documentation/Assets/README/Screenshots/onboarding-dark.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/paywall-light.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/paywall-one-light.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/paywall-two-dark.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/paywall-many-dark.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/onboarding-ru-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-showcase-ru-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-one-ru-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-two-ru-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-many-ru-v2.png" \
     "$platform_root/Documentation/Assets/README/Screenshots/payment-methods-light.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/paywall-empty-dark.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/paywall-error-dark.png" \
-    "$platform_root/Documentation/Assets/README/Screenshots/main-dark.png"
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-empty-ru-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/paywall-error-ru-v2.png" \
+    "$platform_root/Documentation/Assets/README/Screenshots/main-ru-v2.png"
 do
     if [[ ! -s "$screenshot_path" ]]; then
         record_failure "README screenshot is missing: ${screenshot_path#$platform_root/}"

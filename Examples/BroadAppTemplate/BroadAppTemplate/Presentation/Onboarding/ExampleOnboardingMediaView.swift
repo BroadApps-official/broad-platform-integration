@@ -64,13 +64,13 @@ struct ExampleOnboardingMediaView: View {
     private var accessibilityLabel: String {
         switch descriptor.identifier {
         case "foundation":
-            "Shared platform foundation"
+            "Общая основа платформы"
         case "monetization":
-            "Adaptive product list"
+            "Адаптивный список продуктов"
         case "verified-access":
-            "Verified premium access"
+            "Проверенный премиум-доступ"
         default:
-            "Platform illustration"
+            "Иллюстрация платформы"
         }
     }
 }

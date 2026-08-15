@@ -45,10 +45,26 @@ extension BroadPaywallView {
     }
 
     var stateContent: some View {
-        ScrollView {
-            stateBodyContent
+        GeometryReader { proxy in
+            ScrollView {
+                stateBodyContent
+                    .frame(maxWidth: .infinity)
+                    .frame(
+                        minHeight: proxy.size.height,
+                        alignment: stateBodyAlignment
+                    )
+            }
+            .scrollBounceBehavior(.basedOnSize)
         }
-        .scrollBounceBehavior(.basedOnSize)
+    }
+
+    var stateBodyAlignment: Alignment {
+        switch viewModel.state {
+        case .content:
+            .bottom
+        case .idle, .loading, .empty, .failure:
+            .center
+        }
     }
 
     @ViewBuilder

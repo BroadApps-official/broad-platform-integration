@@ -8,7 +8,7 @@ struct ExampleRestoreRepository: RestoreRepositoryProtocol {
         if arguments.contains("-restore-failure") {
             return .failed(
                 .example(
-                    message: "Restore is temporarily unavailable.",
+                    message: "Восстановление временно недоступно.",
                     code: "example.restore.failed"
                 )
             )

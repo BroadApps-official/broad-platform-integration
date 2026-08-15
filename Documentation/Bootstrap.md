@@ -145,7 +145,7 @@ ATT нельзя добавлять в bootstrap. ATT-запрос живёт в
 - без аргумента: `idle → starting → ready`;
 - `-bootstrap-degraded`: фоновая операция игнорирует cancellation, timeout освобождает
   координатор, UI остаётся доступным в `degraded`;
-- `-bootstrap-failed-once`: первый критический запуск падает, нажатие `Try again` доводит его до
+- `-bootstrap-failed-once`: первый критический запуск падает, нажатие «Повторить» доводит его до
   `ready`;
 - `-bootstrap-seed-cache`: записывает снимок конфигурации с TTL `0` и возвращает `ready`;
 - `-bootstrap-stale-cache`: в новом процессе читает этот снимок, имитирует network timeout и даёт

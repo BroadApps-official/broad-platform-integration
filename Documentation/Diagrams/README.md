@@ -1,5 +1,27 @@
 # Визуальные материалы README
 
+## Продуктовый референс 5115Copilot
+
+`Documentation/Assets/README/References` хранит уменьшенные копии семи реальных
+iPhone-экранов `5115Copilot`: paywall, выбор RU-оплаты, заполненные согласия,
+сообщение об обязательном согласии, отдельный ввод email и два варианта внешней
+оплаты. Это только визуальный ориентир. Код и архитектура reference-приложения
+не являются частью платформы.
+
+| Файл | Что показывает |
+|---|---|
+| `5115-paywall-dark.png` | продуктовый paywall |
+| `5115-payment-methods-dark.png` | выбор способа оплаты |
+| `5115-payment-ready-dark.png` | заполненные обязательные согласия |
+| `5115-consent-alert-dark.png` | сообщение о пропущенном согласии |
+| `5115-receipt-email-dark.png` | отдельный ввод email для чека |
+| `5115-cloudpayments-light.png` | внешняя форма банковской карты |
+| `5115-hosted-checkout-light.png` | компактная внешняя форма оплаты |
+
+При обновлении этих изображений не добавляйте экраны с платёжными реквизитами,
+персональными данными или внутренними идентификаторами. Для README достаточно
+PNG `645×1398` — половины исходного Retina-размера.
+
 ## Реальные экраны example
 
 `Documentation/Assets/README/Screenshots` содержит настоящие снимки
@@ -7,19 +29,20 @@
 
 | Файл | Fixture |
 |---|---|
-| `onboarding-dark.png` | первый onboarding-слайд, `-tracking-disabled` |
-| `paywall-light.png` | обычный adaptive paywall |
-| `paywall-one-light.png` | один продукт + automatic selection |
-| `paywall-two-dark.png` | два продукта в provider order |
-| `paywall-many-dark.png` | paywall с 12 provider products |
+| `onboarding-ru-v2.png` | первый русский onboarding-слайд, `-tracking-disabled` |
+| `paywall-showcase-ru-v2.png` | русский адаптивный paywall с одинаковыми карточками |
+| `paywall-one-ru-v2.png` | один продукт + автоматический выбор |
+| `paywall-two-ru-v2.png` | два продукта в порядке провайдера |
+| `paywall-many-ru-v2.png` | paywall с 12 продуктами провайдера |
 | `payment-methods-light.png` | UI-only выбор App Store / СБП / карты |
-| `ru-payment-sbp-light.png` | СБП + две обязательные галочки + чек/email |
-| `ru-payment-apple-light.png` | Apple selected без RU consent/receipt полей |
-| `ru-subscription-active-light.png` | RU subscription management до отмены |
-| `ru-subscription-cancelled-light.png` | paid-through доступ после отмены |
-| `paywall-empty-dark.png` | безопасный empty state |
-| `paywall-error-dark.png` | безопасный error + retry state |
-| `main-dark.png` | main fixture после завершённого flow |
+| `ru-payment-sbp-v2.png` | СБП + две обязательные галочки, кнопка всегда видна |
+| `ru-payment-apple-v2.png` | Apple без RU-полей согласия и чека |
+| `ru-payment-receipt-v2.png` | отдельный шаг email для кассового чека |
+| `ru-subscription-active-v2.png` | управление активной RU-подпиской |
+| `ru-subscription-cancelled-v2.png` | доступ после отключения автопродления |
+| `paywall-empty-ru-v2.png` | безопасное состояние без тарифов |
+| `paywall-error-ru-v2.png` | безопасная ошибка с повтором |
+| `main-ru-v2.png` | основной экран после завершённого сценария |
 
 Скриншоты снимаются с фиксированным status bar `9:41`, без системных prompt и
 без настоящего платежа. Перед обновлением изображения нужно заново собрать

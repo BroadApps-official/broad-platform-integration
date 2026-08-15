@@ -204,7 +204,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                 weight: .bold
             )
             drawText(
-                "Every provider product stays visible and in order",
+                "Все продукты провайдера остаются видимыми и сохраняют порядок",
                 in: NSRect(x: 36, y: 347, width: 500, height: 24),
                 size: 14,
                 color: Palette.secondary
@@ -218,7 +218,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                 fill: Palette.external
             )
             drawText(
-                count == 0 ? "No plans available" : "Choose your plan",
+                count == 0 ? "Нет доступных тарифов" : "Выберите тариф",
                 in: NSRect(x: 114, y: 265, width: 248, height: 28),
                 size: 18,
                 color: Palette.text,
@@ -234,7 +234,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                     stroke: Palette.uiFlows.withAlphaComponent(0.45)
                 )
                 drawText(
-                    "safe empty • retry • restore • close",
+                    "пусто • повторить • восстановить • закрыть",
                     in: NSRect(x: 132, y: 177, width: 212, height: 24),
                     size: 12,
                     color: Palette.secondary,
@@ -253,14 +253,14 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                         lineWidth: 2
                     )
                     drawText(
-                        "Provider product \(row + 1)",
+                        "Продукт \(row + 1)",
                         in: NSRect(x: 130, y: rowY + 11, width: 150, height: 18),
                         size: 12,
                         color: Palette.text,
                         weight: selected ? .bold : .regular
                     )
                     drawText(
-                        "real price",
+                        "цена",
                         in: NSRect(x: 274, y: rowY + 11, width: 70, height: 18),
                         size: 11,
                         color: Palette.secondary,
@@ -269,7 +269,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                 }
                 if count > visibleRows {
                     drawText(
-                        "+ \(count - visibleRows) more in scroll",
+                        "+ ещё \(count - visibleRows) при прокрутке",
                         in: NSRect(x: 116, y: 45, width: 244, height: 18),
                         size: 11,
                         color: Palette.secondary,
@@ -284,7 +284,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                 fill: Palette.uiFlows
             )
             drawText(
-                count == 0 ? "TRY AGAIN" : "CONTINUE",
+                count == 0 ? "ПОВТОРИТЬ" : "ПРОДОЛЖИТЬ",
                 in: NSRect(x: 128, y: 87, width: 220, height: 18),
                 size: 13,
                 color: Palette.text,
@@ -293,7 +293,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
             )
 
             drawText(
-                "\(count) products",
+                "\(count) продуктов",
                 in: NSRect(x: 478, y: 274, width: 330, height: 54),
                 size: 38,
                 color: Palette.uiFlows,

@@ -18,6 +18,7 @@
   <p><strong>Один Swift Package для запуска приложения, монетизации и общих SwiftUI-флоу.</strong></p>
 
   <p>
+    <a href="#visual-reference">✨ Визуальный ориентир</a> ·
     <a href="#showcase">📱 Живой example</a> ·
     <a href="#installation">📦 Подключение</a> ·
     <a href="#architecture">🧭 Архитектура</a> ·
@@ -40,6 +41,71 @@
 > `TARGETED_DEVICE_FAMILY = 1`; iPad, Mac, Mac Catalyst и visionOS не входят в
 > поддерживаемый scope.
 
+<a id="visual-reference"></a>
+## Продуктовый визуальный ориентир
+
+Эти семь экранов сняты в `5115Copilot`. Это наш **продуктовый референс**:
+спокойная иерархия, компактные карточки, нижняя панель, отдельный шаг для почты,
+понятная ошибка при отсутствии согласия и аккуратный переход во внешнюю оплату.
+Архитектура и исходный код `5115Copilot` в платформу не переносятся — те же
+сценарии реализованы общими компонентами `BroadUIFlows` с Clean Architecture + MVVM.
+
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/References/5115-paywall-dark.png">
+        <img src="Documentation/Assets/README/References/5115-paywall-dark.png" alt="Продуктовый референс paywall из 5115Copilot" width="100%">
+      </a>
+      <br><strong>Пейвол</strong>
+      <br><sub>Контент сверху · действие снизу · без визуального шума</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/References/5115-payment-methods-dark.png">
+        <img src="Documentation/Assets/README/References/5115-payment-methods-dark.png" alt="Продуктовый референс способов RU оплаты из 5115Copilot" width="100%">
+      </a>
+      <br><strong>Способ оплаты</strong>
+      <br><sub>Компактная нижняя панель · способы и согласия без переполнения</sub>
+    </td>
+    <td align="center" width="33%">
+      <a href="Documentation/Assets/README/References/5115-payment-ready-dark.png">
+        <img src="Documentation/Assets/README/References/5115-payment-ready-dark.png" alt="Способ оплаты с заполненными согласиями" width="100%">
+      </a>
+      <br><strong>Готово к оплате</strong>
+      <br><sub>Все обязательные согласия заполнены и видны</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/References/5115-consent-alert-dark.png">
+        <img src="Documentation/Assets/README/References/5115-consent-alert-dark.png" alt="Продуктовый референс ошибки обязательного согласия" width="100%">
+      </a>
+      <br><strong>Нет согласия</strong>
+      <br><sub>Короткое объяснение · пользователь понимает, что исправить</sub>
+    </td>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/References/5115-receipt-email-dark.png">
+        <img src="Documentation/Assets/README/References/5115-receipt-email-dark.png" alt="Продуктовый референс отдельного шага email для чека" width="100%">
+      </a>
+      <br><strong>Почта для чека</strong>
+      <br><sub>Отдельный короткий шаг · клавиатура ничего не перекрывает</sub>
+    </td>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/References/5115-cloudpayments-light.png">
+        <img src="Documentation/Assets/README/References/5115-cloudpayments-light.png" alt="Внешняя форма банковской карты" width="100%">
+      </a>
+      <br><strong>Банковская карта</strong>
+      <br><sub>Понятная внешняя форма · чек на email · безопасное закрытие</sub>
+    </td>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/References/5115-hosted-checkout-light.png">
+        <img src="Documentation/Assets/README/References/5115-hosted-checkout-light.png" alt="Компактная внешняя форма оплаты" width="100%">
+      </a>
+      <br><strong>Внешняя оплата</strong>
+      <br><sub>Сумма, назначение и одно понятное действие</sub>
+    </td>
+  </tr>
+</table>
+
 <a id="showcase"></a>
 ## Живой example
 
@@ -50,48 +116,48 @@
 <table>
   <tr>
     <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/onboarding-dark.png">
-        <img src="Documentation/Assets/README/Screenshots/onboarding-dark.png" alt="Первый onboarding-слайд в dark mode" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/onboarding-ru-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/onboarding-ru-v2.png" alt="Первый русский экран онбординга" width="100%">
       </a>
-      <br><strong>Onboarding</strong>
-      <br><sub>App-owned контент · ATT только после первого слайда</sub>
+      <br><strong>Онбординг</strong>
+      <br><sub>Контент приложения · ATT только после первого слайда</sub>
     </td>
     <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/paywall-light.png">
-        <img src="Documentation/Assets/README/Screenshots/paywall-light.png" alt="Адаптивный paywall в light mode" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-showcase-ru-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/paywall-showcase-ru-v2.png" alt="Русский пейвол с одинаковыми карточками продуктов" width="100%">
       </a>
-      <br><strong>Adaptive paywall</strong>
-      <br><sub>Provider order · длинные строки · sticky CTA</sub>
+      <br><strong>Адаптивный пейвол</strong>
+      <br><sub>Одинаковые карточки · длинные названия · кнопка всегда видна</sub>
     </td>
     <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/ru-payment-sbp-light.png">
-        <img src="Documentation/Assets/README/Screenshots/ru-payment-sbp-light.png" alt="СБП с обязательными согласиями и email для чека" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/ru-payment-sbp-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-payment-sbp-v2.png" alt="СБП с обязательными согласиями и закреплённой кнопкой" width="100%">
       </a>
-      <br><strong>RU payment</strong>
-      <br><sub>СБП/карта · две обязательные галочки · чек по email</sub>
+      <br><strong>RU-оплата</strong>
+      <br><sub>СБП/карта · обязательные согласия · кнопка всегда видна</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/paywall-empty-dark.png">
-        <img src="Documentation/Assets/README/Screenshots/paywall-empty-dark.png" alt="Безопасный empty state paywall" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-empty-ru-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/paywall-empty-ru-v2.png" alt="Пейвол без доступных тарифов" width="100%">
       </a>
-      <br><strong>Empty</strong>
-      <br><sub>0 продуктов · retry · restore · close</sub>
+      <br><strong>Нет тарифов</strong>
+      <br><sub>Повтор · восстановление · безопасное закрытие</sub>
     </td>
     <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/paywall-error-dark.png">
-        <img src="Documentation/Assets/README/Screenshots/paywall-error-dark.png" alt="Безопасное error state paywall" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-error-ru-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/paywall-error-ru-v2.png" alt="Русский экран ошибки загрузки тарифов" width="100%">
       </a>
-      <br><strong>Error + retry</strong>
-      <br><sub>Без raw SDK error и ложного premium</sub>
+      <br><strong>Ошибка и повтор</strong>
+      <br><sub>Без технического текста SDK и ложного доступа</sub>
     </td>
     <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/main-dark.png">
-        <img src="Documentation/Assets/README/Screenshots/main-dark.png" alt="Main после завершённого AppFlow" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/main-ru-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/main-ru-v2.png" alt="Русский основной экран после завершения сценария" width="100%">
       </a>
-      <br><strong>Verified main</strong>
-      <br><sub>Доступ только после authoritative entitlement refresh</sub>
+      <br><strong>Основной экран</strong>
+      <br><sub>Доступ только после повторной проверки</sub>
     </td>
   </tr>
 </table>
@@ -99,28 +165,36 @@
 ### Полный RU billing UI
 
 Один пакет получает app-specific данные и сам строит остальной flow. Для
-Apple RU-поля не показываются; для СБП/карты Continue включается только после
-обязательных согласий. Email чека опционален, проверяется и запоминается.
+Apple RU-поля не показываются; для СБП/карты кнопка «Продолжить» включается только после
+обязательных согласий. Если нужен чек, email вводится на отдельном коротком
+шаге, проверяется и запоминается.
 
 <table>
   <tr>
-    <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/ru-payment-apple-light.png">
-        <img src="Documentation/Assets/README/Screenshots/ru-payment-apple-light.png" alt="Apple payment без RU consent и receipt полей" width="100%">
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/ru-payment-apple-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-payment-apple-v2.png" alt="Оплата Apple без RU-полей" width="100%">
       </a>
       <br><strong>Apple</strong>
       <br><sub>Сразу системная покупка · без RU-галочек</sub>
     </td>
-    <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/ru-subscription-active-light.png">
-        <img src="Documentation/Assets/README/Screenshots/ru-subscription-active-light.png" alt="Активная RU подписка с отменой" width="100%">
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/ru-payment-receipt-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-payment-receipt-v2.png" alt="Отдельный шаг ввода email для кассового чека" width="100%">
+      </a>
+      <br><strong>Email для чека</strong>
+      <br><sub>Отдельный шаг · проверка адреса · CTA над клавиатурой</sub>
+    </td>
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/ru-subscription-active-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-subscription-active-v2.png" alt="Активная RU-подписка с отменой" width="100%">
       </a>
       <br><strong>Активная подписка</strong>
       <br><sub>Тариф · статус · paid-through дата · отмена</sub>
     </td>
-    <td align="center" width="33%">
-      <a href="Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light.png">
-        <img src="Documentation/Assets/README/Screenshots/ru-subscription-cancelled-light.png" alt="RU подписка после отключения автопродления" width="100%">
+    <td align="center" width="25%">
+      <a href="Documentation/Assets/README/Screenshots/ru-subscription-cancelled-v2.png">
+        <img src="Documentation/Assets/README/Screenshots/ru-subscription-cancelled-v2.png" alt="RU-подписка после отключения автопродления" width="100%">
       </a>
       <br><strong>После отмены</strong>
       <br><sub>Автопродление выключено · доступ сохранён до даты</sub>
@@ -587,32 +661,32 @@ UI rows          [A, B, A, C, ...]
 <table>
   <tr>
     <td align="center" width="25%">
-      <a href="Documentation/Assets/README/Screenshots/paywall-empty-dark.png">
-        <img alt="Paywall без продуктов" src="Documentation/Assets/README/Screenshots/paywall-empty-dark.png" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-empty-ru-v2.png">
+        <img alt="Пейвол без продуктов" src="Documentation/Assets/README/Screenshots/paywall-empty-ru-v2.png" width="100%">
       </a>
       <br><strong>0 продуктов</strong>
-      <br><sub>empty · retry · restore</sub>
+      <br><sub>Нет продуктов · повтор · восстановление</sub>
     </td>
     <td align="center" width="25%">
-      <a href="Documentation/Assets/README/Screenshots/paywall-one-light.png">
-        <img alt="Paywall с одним продуктом" src="Documentation/Assets/README/Screenshots/paywall-one-light.png" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-one-ru-v2.png">
+        <img alt="Пейвол с одним продуктом" src="Documentation/Assets/README/Screenshots/paywall-one-ru-v2.png" width="100%">
       </a>
       <br><strong>1 продукт</strong>
       <br><sub>выбирается автоматически</sub>
     </td>
     <td align="center" width="25%">
-      <a href="Documentation/Assets/README/Screenshots/paywall-two-dark.png">
-        <img alt="Paywall с двумя продуктами" src="Documentation/Assets/README/Screenshots/paywall-two-dark.png" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-two-ru-v2.png">
+        <img alt="Пейвол с двумя продуктами" src="Documentation/Assets/README/Screenshots/paywall-two-ru-v2.png" width="100%">
       </a>
       <br><strong>2 продукта</strong>
-      <br><sub>provider order сохранён</sub>
+      <br><sub>Порядок провайдера сохранён</sub>
     </td>
     <td align="center" width="25%">
-      <a href="Documentation/Assets/README/Screenshots/paywall-many-dark.png">
-        <img alt="Paywall с двенадцатью продуктами" src="Documentation/Assets/README/Screenshots/paywall-many-dark.png" width="100%">
+      <a href="Documentation/Assets/README/Screenshots/paywall-many-ru-v2.png">
+        <img alt="Пейвол с двенадцатью продуктами" src="Documentation/Assets/README/Screenshots/paywall-many-ru-v2.png" width="100%">
       </a>
       <br><strong>12 продуктов</strong>
-      <br><sub>scroll + sticky footer</sub>
+      <br><sub>Прокрутка · нижняя панель всегда видна</sub>
     </td>
   </tr>
 </table>
@@ -624,7 +698,7 @@ semantic disabled без визуального dimming.
 
 Массив может содержать продукты без корректной числовой цены, consumables и
 unknown kinds — UI их не скрывает. Такая строка остаётся на своём месте и показывает
-`Price unavailable`, но не выбирается автоматически, недоступна для выбора и не
+«Цена недоступна», но не выбирается автоматически, недоступна для выбора и не
 активирует CTA. Generic checkout повторно проверяет eligibility до любого Apple/RU
 вызова. Для tokens нужен отдельный host-owned durable exactly-once
 fulfillment/ledger. Cached Adapty product также нельзя молча подменить: rehydration
@@ -715,12 +789,12 @@ Production-chain собирается через `RUBillingCompositionFactory`. 
 После eligibility платформа берёт на себя весь UI-флоу:
 
 - App Store — без RU consent/receipt полей, сразу системная покупка;
-- СБП/карта — выбор метода и отдельная кнопка Continue;
+- СБП/карта — выбор метода и отдельная кнопка «Продолжить»;
 - обязательное согласие с офертой/обработкой данных;
 - для auto-renewable subscription — отдельное согласие на регулярное списание с реальными ценой и периодом;
 - опциональный чек: email валидируется и при подключённом
   `BroadKeyValueReceiptEmailStore` сохраняется для следующей покупки;
-- русские Privacy/оферта приходят от host app как HTTPS links;
+- русские «Политика»/«Оферта» приходят от host app как HTTPS-ссылки;
 - после покупки Settings может показать тариф, статус, paid-through дату, отмену и состояние «автопродление отключено».
 
 Никакого фиктивного email платформа не подставляет. Если backend требует другое

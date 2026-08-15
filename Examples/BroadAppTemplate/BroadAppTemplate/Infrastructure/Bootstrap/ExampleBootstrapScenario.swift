@@ -43,7 +43,7 @@ enum ExampleBootstrapScenario: String {
         return [
             BootstrapStep(
                 id: BootstrapStepID(rawValue: "local-configuration"),
-                name: "Configuration cache and refresh",
+                name: "Кеш и обновление конфигурации",
                 criticality: .critical,
                 timeoutPolicy: .seconds(1),
                 retryPolicy: .none
@@ -60,7 +60,7 @@ enum ExampleBootstrapScenario: String {
             },
             BootstrapStep(
                 id: BootstrapStepID(rawValue: "required-services"),
-                name: "Required services",
+                name: "Обязательные сервисы",
                 criticality: .critical,
                 timeoutPolicy: .seconds(1),
                 retryPolicy: .none
@@ -182,7 +182,7 @@ enum ExampleBootstrapScenario: String {
     private func makeBackgroundStep() -> BootstrapStep {
         BootstrapStep(
             id: BootstrapStepID(rawValue: "optional-telemetry"),
-            name: "Optional telemetry",
+            name: "Дополнительная телеметрия",
             criticality: .background,
             timeoutPolicy: .seconds(self == .degraded ? 0.25 : 1),
             retryPolicy: .none

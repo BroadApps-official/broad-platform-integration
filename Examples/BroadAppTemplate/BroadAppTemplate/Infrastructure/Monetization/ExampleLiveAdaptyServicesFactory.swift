@@ -28,7 +28,7 @@ enum ExampleLiveAdaptyServicesFactory {
                 analytics: analytics,
                 presentationLifecycle: provider.lifecycle,
                 staleLoadError: .example(
-                    message: "The live Adapty paywall request was replaced.",
+                    message: "Запрос Live Adapty-пейвола был заменён новым.",
                     code: "example.live-adapty.paywall.stale"
                 )
             ),
@@ -46,11 +46,11 @@ enum ExampleLiveAdaptyServicesFactory {
     ) -> LiveAdaptyProvider {
         let identityProvider = ExampleAnonymousAdaptyIdentityProvider()
         let messages = AdaptyMonetizationMessages(
-            activationUnavailable: "The live Adapty fixture could not start.",
-            paywallUnavailable: "The live Adapty paywall is unavailable.",
-            productUnavailable: "This live Adapty product is unavailable.",
-            purchaseFailed: "Purchases are disabled by company policy.",
-            restoreFailed: "Restore is disabled by company policy."
+            activationUnavailable: "Не удалось запустить Live Adapty-режим.",
+            paywallUnavailable: "Live Adapty-пейвол недоступен.",
+            productUnavailable: "Этот продукт Live Adapty недоступен.",
+            purchaseFailed: "Покупки отключены по правилам компании.",
+            restoreFailed: "Восстановление отключено по правилам компании."
         )
         let context = AdaptyRepositoryContext()
         let factory = AdaptyMonetizationFactory(
@@ -93,7 +93,7 @@ enum ExampleLiveAdaptyServicesFactory {
             pendingStore: pendingStore,
             operationGate: operationGate,
             inProgressError: .example(
-                message: "A financial operation is already in progress.",
+                message: "Финансовая операция уже выполняется.",
                 code: "example.live-adapty.purchase.in-progress"
             )
         )
@@ -110,7 +110,7 @@ enum ExampleLiveAdaptyServicesFactory {
             analytics: analytics,
             operationGate: operationGate,
             verificationUnavailableError: .example(
-                message: "Restore verification is unavailable.",
+                message: "Проверка восстановления недоступна.",
                 code: "example.live-adapty.restore.unavailable"
             )
         )
@@ -130,7 +130,7 @@ enum ExampleLiveAdaptyServicesFactory {
                 repository: MissingLiveConfigPaywallRepository(),
                 analytics: analytics,
                 staleLoadError: .example(
-                    message: "The live Adapty configuration is unavailable.",
+                    message: "Конфигурация Live Adapty недоступна.",
                     code: "example.live-adapty.configuration-missing"
                 )
             ),
@@ -173,7 +173,7 @@ private struct RestrictedPurchaseRepository: PurchaseRepositoryProtocol {
     ) async -> PurchaseAttemptOutcome {
         .failed(
             .example(
-                message: "StoreKit purchase is disabled by company policy.",
+                message: "Покупка через StoreKit отключена по правилам компании.",
                 code: "example.company-policy.storekit-purchase-disabled"
             ),
             disposition: .definitivelyNotPurchased
@@ -185,7 +185,7 @@ private struct RestrictedRestoreRepository: RestoreRepositoryProtocol {
     func restorePurchases() async -> RestoreAttemptOutcome {
         .failed(
             .example(
-                message: "StoreKit restore is disabled by company policy.",
+                message: "Восстановление через StoreKit отключено по правилам компании.",
                 code: "example.company-policy.storekit-restore-disabled"
             )
         )
@@ -204,7 +204,7 @@ private struct MissingLiveConfigPaywallRepository: PaywallRepositoryProtocol {
     ) async -> PaywallLoadOutcome {
         .unavailable(
             .example(
-                message: "Import a local Adapty configuration before using this scheme.",
+                message: "Перед использованием этой схемы добавьте конфигурацию Adapty.",
                 code: "example.live-adapty.configuration-missing"
             )
         )

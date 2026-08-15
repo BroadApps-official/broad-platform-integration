@@ -19,7 +19,7 @@ struct ExampleRUPaymentSheetFixtureView: View {
                 ),
             copy: .russian,
             ruConfiguration: AppConfiguration.paywallConfiguration.ruBilling,
-            theme: .standard,
+            theme: AppTokens.paywallTheme,
             onSubmit: { _, _ in },
             onCancel: {}
         )

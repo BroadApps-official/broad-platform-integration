@@ -84,7 +84,7 @@ server-side reconciliation по связанному `appAccountToken`. Лока
 StoreKit current entitlements и server-backed источники проверяются заново, поэтому
 отсутствие локального cache не означает отсутствие подписки.
 
-Кнопка «Восстановить покупки» остаётся обязательным ручным fallback. Она вызывает
+Кнопка «Восстановить» остаётся обязательным ручным fallback. Она вызывает
 `RestorePurchasesUseCase`, а затем тот же общий entitlement refresh. Никогда не
 открывайте premium только по результату SDK restore.
 

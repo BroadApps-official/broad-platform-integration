@@ -1,3 +1,4 @@
+import BroadUIFlows
 import SwiftUI
 
 @MainActor
@@ -71,4 +72,47 @@ enum AppTokens {
     enum Scale {
         static let minimumTitle = 0.8
     }
+
+    static let paywallTheme = BroadPaywallTheme(
+        palette: BroadPaywallTheme.Palette(
+            background: Color.background,
+            surface: Color.surface,
+            primaryText: Color.primaryText,
+            secondaryText: Color.secondaryText,
+            accent: Color.accent,
+            actionForeground: .white,
+            border: Color.border,
+            selectedBorder: Color.accent,
+            selectedSurface: Color.accent.opacity(0.2)
+        ),
+        typography: BroadPaywallTheme.Typography(
+            title: .largeTitle.bold(),
+            subtitle: .body,
+            productTitle: .headline,
+            productDetail: .subheadline,
+            productPrice: .headline,
+            action: .headline,
+            footer: .footnote
+        ),
+        metrics: BroadPaywallTheme.Metrics(
+            spacing: BroadPaywallTheme.Spacing(
+                screen: 16.0.scale,
+                header: 12.0.scale,
+                content: 16.0.scale,
+                product: 8.0.scale,
+                productContent: 14.0.scale,
+                footer: 8.0.scale,
+                text: 6.0.scale
+            ),
+            sizing: BroadPaywallTheme.Sizing(
+                cornerRadius: 20.0.scale,
+                minimumProductHeight: 88.0.scale,
+                minimumActionHeight: 54.0.scale,
+                closeButton: 44.0.scale,
+                borderWidth: 1.0.scale,
+                maximumContentWidth: 680.0.scale,
+                maximumRetryWidth: 320.0.scale
+            )
+        )
+    )
 }

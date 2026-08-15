@@ -88,8 +88,9 @@ public struct BroadPaywallView: View {
                     onSubmit: viewModel.submitCheckoutMethod,
                     onCancel: viewModel.cancelCheckoutMethodSelection
                 )
-                .presentationDetents([.medium, .large])
+                .presentationDetents([.large])
                 .presentationDragIndicator(.visible)
+                .presentationCornerRadius(theme.metrics.sizing.cornerRadius * 1.5)
             }
         }
     }

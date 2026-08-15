@@ -34,27 +34,18 @@ public struct BroadSelectableProductRow: View {
 
     public var body: some View {
         Button(action: action) {
-            ViewThatFits(in: .horizontal) {
-                HStack(alignment: .center, spacing: theme.metrics.spacing.productContent) {
-                    description
-                    Spacer(minLength: theme.metrics.spacing.text)
-                    priceBlock
-                }
+            HStack(alignment: .center, spacing: theme.metrics.spacing.productContent) {
+                selectionIndicator
 
-                VStack(alignment: .leading, spacing: theme.metrics.spacing.productContent) {
-                    description
-                    priceBlock
-                }
+                description
+                    .layoutPriority(1)
+
+                priceBlock
+                    .layoutPriority(2)
             }
-            .frame(
-                maxWidth: .infinity,
-                minHeight: max(
-                    theme.metrics.sizing.minimumProductHeight,
-                    BroadPaywallTheme.Sizing.minimumInteractiveDimension
-                ),
-                alignment: .leading
-            )
-            .padding(theme.metrics.spacing.productContent)
+            .padding(.horizontal, theme.metrics.spacing.productContent)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: productRowHeight, alignment: .leading)
             .background(rowBackground)
             .contentShape(Rectangle())
         }
@@ -68,27 +59,54 @@ public struct BroadSelectableProductRow: View {
 
     private var description: some View {
         VStack(alignment: .leading, spacing: theme.metrics.spacing.text) {
-            HStack(alignment: .firstTextBaseline, spacing: theme.metrics.spacing.text) {
-                Text(title)
-                    .font(theme.typography.productTitle)
-                    .foregroundStyle(theme.palette.primaryText)
-                    .multilineTextAlignment(.leading)
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(theme.palette.accent)
-                        .accessibilityHidden(true)
-                }
-            }
+            Text(title)
+                .font(theme.typography.productTitle)
+                .foregroundStyle(theme.palette.primaryText)
+                .multilineTextAlignment(.leading)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+                .allowsTightening(true)
 
             if let subtitle {
                 Text(subtitle)
                     .font(theme.typography.productDetail)
                     .foregroundStyle(theme.palette.secondaryText)
                     .multilineTextAlignment(.leading)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .minimumScaleFactor(0.8)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var selectionIndicator: some View {
+        Circle()
+            .fill(isSelected ? theme.palette.accent : Color.clear)
+            .overlay {
+                Circle()
+                    .stroke(
+                        isSelected
+                            ? theme.palette.accent
+                            : theme.palette.secondaryText,
+                        lineWidth: isSelected ? 6 : theme.metrics.sizing.borderWidth
+                    )
+            }
+            .overlay {
+                if isSelected {
+                    Circle()
+                        .fill(theme.palette.actionForeground)
+                        .frame(
+                            width: BroadPaywallTheme.Sizing.selectionIndicatorDotDimension,
+                            height: BroadPaywallTheme.Sizing.selectionIndicatorDotDimension
+                        )
+                }
+            }
+            .frame(
+                width: BroadPaywallTheme.Sizing.selectionIndicatorDimension,
+                height: BroadPaywallTheme.Sizing.selectionIndicatorDimension
+            )
+            .accessibilityHidden(true)
     }
 
     private var priceBlock: some View {
@@ -97,15 +115,20 @@ public struct BroadSelectableProductRow: View {
                 .font(theme.typography.productPrice)
                 .foregroundStyle(theme.palette.primaryText)
                 .multilineTextAlignment(.trailing)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .allowsTightening(true)
 
             if let period {
                 Text(period)
                     .font(theme.typography.productDetail)
                     .foregroundStyle(theme.palette.secondaryText)
                     .multilineTextAlignment(.trailing)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
         }
-        .fixedSize(horizontal: false, vertical: true)
+        .fixedSize(horizontal: true, vertical: false)
     }
 
     private var rowBackground: some View {
@@ -130,6 +153,13 @@ public struct BroadSelectableProductRow: View {
         [title, subtitle, price, period]
             .compactMap { value in value }
             .joined(separator: ", ")
+    }
+
+    private var productRowHeight: CGFloat {
+        max(
+            theme.metrics.sizing.minimumProductHeight,
+            BroadPaywallTheme.Sizing.minimumInteractiveDimension
+        )
     }
 }
 

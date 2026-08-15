@@ -62,38 +62,38 @@ enum AppConfiguration {
         pages: [
             OnboardingPageConfiguration(
                 id: "platform-foundation",
-                title: "Start with a stable foundation",
-                subtitle: "Bootstrap, offline cache and shared states are ready before your feature screen opens.",
+                title: "Надёжная основа приложения",
+                subtitle: "Запуск, работа без сети и общие состояния готовы до открытия основного экрана.",
                 media: OnboardingMediaDescriptor(identifier: "foundation")
             ),
             OnboardingPageConfiguration(
                 id: "adaptive-monetization",
-                title: "Show every plan",
-                subtitle: "The paywall adapts to the products returned by the provider without filtering or fixed limits.",
+                title: "Показываем все тарифы",
+                subtitle: "Пейвол принимает продукты провайдера без фильтрации и ограничений по количеству.",
                 media: OnboardingMediaDescriptor(identifier: "monetization")
             ),
             OnboardingPageConfiguration(
                 id: "verified-access",
-                title: "Unlock only verified access",
-                subtitle: "Purchase and restore finish the flow only after entitlement is checked again.",
+                title: "Доступ только после проверки",
+                subtitle: "Покупка и восстановление завершаются только после повторной проверки доступа.",
                 media: OnboardingMediaDescriptor(identifier: "verified-access")
             )
         ],
-        continueTitle: "Continue",
-        completionTitle: "See plans",
-        progressAccessibilityLabel: "Onboarding progress",
+        continueTitle: "Продолжить",
+        completionTitle: "Смотреть тарифы",
+        progressAccessibilityLabel: "Прогресс онбординга",
         footerLinks: [
             OnboardingFooterLinkConfiguration(
+                destination: .termsOfUse,
+                title: "Условия"
+            ),
+            OnboardingFooterLinkConfiguration(
                 destination: .restorePurchases,
-                title: "Restore purchases"
+                title: "Восстановить"
             ),
             OnboardingFooterLinkConfiguration(
                 destination: .privacyPolicy,
-                title: "Privacy"
-            ),
-            OnboardingFooterLinkConfiguration(
-                destination: .termsOfUse,
-                title: "Terms"
+                title: "Политика"
             )
         ],
         trackingAuthorizationPolicy: ProcessInfo.processInfo.arguments.contains("-tracking-disabled")
@@ -106,16 +106,17 @@ enum AppConfiguration {
         access: BroadPaywallAccessConfiguration(
             defaultPolicy: .soft
         ),
+        copy: .russian,
         legalLinks: [
             BroadPaywallLegalLink(
-                id: "privacy",
-                title: "Privacy",
-                url: privacyPolicyURL
+                id: "terms",
+                title: "Условия",
+                url: termsOfUseURL
             ),
             BroadPaywallLegalLink(
-                id: "terms",
-                title: "Terms",
-                url: termsOfUseURL
+                id: "privacy",
+                title: "Политика",
+                url: privacyPolicyURL
             )
         ],
         ruBilling: BroadRUBillingPresentationConfiguration(
@@ -131,7 +132,8 @@ enum AppConfiguration {
                     url: russianOfferURL
                 )
             ]
-        )
+        ),
+        specialOfferCopy: .russian
     )
     static let privacyPolicyURL = legalURL(path: "privacy")
     static let termsOfUseURL = legalURL(path: "terms")
@@ -152,12 +154,12 @@ enum AppConfiguration {
     }()
 
     static let loggingSubsystem: StaticString = "com.broadapps.platform.template"
-    static let requiredServiceFailureMessage = "A required startup service is temporarily unavailable."
-    static let bootstrapTimeoutMessage = "Startup took too long. Please try again."
-    static let bootstrapUnknownErrorMessage = "Something went wrong. Please try again."
-    static let staleCacheMessage = "The network refresh timed out. The app is using the last saved configuration."
-    static let missingCacheMessage = "No saved configuration is available. Run the cache seed scenario first."
-    static let invalidCacheMessage = "The saved configuration cannot be used."
+    static let requiredServiceFailureMessage = "Обязательный сервис запуска временно недоступен."
+    static let bootstrapTimeoutMessage = "Запуск занял слишком много времени. Попробуйте ещё раз."
+    static let bootstrapUnknownErrorMessage = "Что-то пошло не так. Попробуйте ещё раз."
+    static let staleCacheMessage = "Обновить данные по сети не удалось. Используем последнюю сохранённую конфигурацию."
+    static let missingCacheMessage = "Сохранённой конфигурации нет. Сначала запустите сценарий создания кеша."
+    static let invalidCacheMessage = "Сохранённую конфигурацию нельзя использовать."
     static let cacheFixture = CacheFixture(
         suiteName: "com.broadapps.platform.template.cache-fixture",
         namespace: "bootstrap-fixture",
@@ -166,7 +168,7 @@ enum AppConfiguration {
         version: 1,
         timeToLive: 0,
         maximumDataSize: 64 * 1024,
-        value: ExampleCachedConfiguration(source: "Persisted local bootstrap configuration")
+        value: ExampleCachedConfiguration(source: "Сохранённая локальная конфигурация запуска")
     )
 
     private static func legalURL(path: String) -> URL {
@@ -182,34 +184,34 @@ enum AppConfiguration {
 
         switch scenario {
         case .seedCache:
-            readyMessage = "A local configuration snapshot was saved. Relaunch with the stale-cache scenario to verify offline fallback."
-            degradedMessage = "The main route is available with reduced functionality."
+            readyMessage = "Локальная конфигурация сохранена. Перезапустите сценарий устаревшего кеша, чтобы проверить работу без сети."
+            degradedMessage = "Основной экран доступен с ограниченными возможностями."
         case .staleCache:
-            readyMessage = "The saved configuration is still fresh."
+            readyMessage = "Сохранённая конфигурация ещё актуальна."
             degradedMessage = staleCacheMessage
         case .ready, .degraded, .failedOnce:
-            readyMessage = "Critical steps completed. Background services no longer block this screen."
-            degradedMessage = "The main route is available, but an optional service timed out."
+            readyMessage = "Обязательные шаги завершены. Фоновые сервисы больше не блокируют экран."
+            degradedMessage = "Основной экран доступен, но дополнительный сервис не ответил вовремя."
         }
 
         return RootContent(
             eyebrow: "BROADAPPS iOS PLATFORM",
-            title: "A predictable app launch",
-            subtitle: "Critical work is bounded by timeout. Optional services continue after the first route is available.",
-            coreDescription: "Bootstrap, cache, retry, logging and shared contracts.",
-            monetizationDescription: "Adapty, StoreKit, RU billing and entitlement boundaries.",
-            uiFlowsDescription: "Onboarding, loader, paywall and common UI states.",
-            connectedDetail: "Connected",
-            adaptyLinkedDetail: "Adapty linked",
-            adaptyUnavailableDetail: "Adapty unavailable",
-            loadingTitle: "Starting platform",
-            loadingMessage: "Running the required bootstrap steps…",
-            readyTitle: "Bootstrap ready",
+            title: "Предсказуемый запуск приложения",
+            subtitle: "Обязательные операции ограничены по времени, а дополнительные продолжаются в фоне.",
+            coreDescription: "Запуск, кеш, повтор, логирование и общие контракты.",
+            monetizationDescription: "Adapty, StoreKit, RU billing и проверка доступа.",
+            uiFlowsDescription: "Онбординг, загрузка, пейвол и общие состояния интерфейса.",
+            connectedDetail: "Подключено",
+            adaptyLinkedDetail: "Adapty подключён",
+            adaptyUnavailableDetail: "Adapty недоступен",
+            loadingTitle: "Запускаем платформу",
+            loadingMessage: "Выполняем обязательные шаги запуска…",
+            readyTitle: "Платформа готова",
             readyMessage: readyMessage,
-            degradedTitle: "Running in safe mode",
+            degradedTitle: "Безопасный режим",
             degradedMessage: degradedMessage,
-            failedTitle: "Startup needs attention",
-            retryTitle: "Try again"
+            failedTitle: "Не удалось завершить запуск",
+            retryTitle: "Повторить"
         )
     }
 }

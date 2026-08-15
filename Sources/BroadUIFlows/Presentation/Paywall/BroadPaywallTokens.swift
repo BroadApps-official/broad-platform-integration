@@ -96,6 +96,8 @@ public struct BroadPaywallTheme {
     public struct Sizing {
         public static let minimumInteractiveDimension: CGFloat =
             BroadInteractiveMetrics.minimumHitDimension
+        static let selectionIndicatorDimension: CGFloat = 24
+        static let selectionIndicatorDotDimension: CGFloat = 6
 
         public let cornerRadius: CGFloat
         public let minimumProductHeight: CGFloat

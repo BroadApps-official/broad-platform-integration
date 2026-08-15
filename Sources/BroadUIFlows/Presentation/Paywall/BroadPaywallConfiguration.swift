@@ -266,8 +266,8 @@ public struct BroadPaywallCopy: Equatable, Sendable {
         ),
         actions: Actions(
             purchaseTitle: "Continue",
-            restoreTitle: "Restore purchases",
-            restoringTitle: "Restoring purchases",
+            restoreTitle: "Restore",
+            restoringTitle: "Restoring",
             retryTitle: "Try again",
             closeAccessibilityLabel: "Close paywall",
             cancelTitle: "Cancel"

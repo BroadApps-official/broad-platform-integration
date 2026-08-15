@@ -31,11 +31,11 @@ struct ExampleMainView: View {
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: AppTokens.Spacing.tiny) {
-                Text("Flow complete")
+                Text("Сценарий завершён")
                     .font(AppTokens.Font.cardTitle)
                     .foregroundStyle(AppTokens.Color.primaryText)
 
-                Text("Onboarding and verified monetization are resolved.")
+                Text("Онбординг завершён, доступ после покупки проверен.")
                     .font(AppTokens.Font.caption)
                     .foregroundStyle(AppTokens.Color.secondaryText)
             }
@@ -55,7 +55,7 @@ struct ExampleMainView: View {
                         )
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Open debug scenarios")
+                .accessibilityLabel("Открыть отладочные сценарии")
             #endif
         }
         .padding(.horizontal, AppTokens.Spacing.screenHorizontal)
@@ -74,37 +74,37 @@ struct ExampleMainView: View {
         @ObservedObject var analyticsViewModel: ExampleAnalyticsViewModel
 
         private let scenarios = [
-            "-live-adapty            real catalog; purchase/restore disabled",
-            "-analytics-fixture       paywall + typed recording sink",
-            "-paywall-one-product     1 product, automatic selection",
-            "-paywall-two-products    2 products, original order",
-            "-paywall-many-products   12 products, original order",
-            "-paywall-payment-methods Apple/SBP/Card sheet fixture",
-            "-ru-subscription-management active RU subscription",
-            "-ru-subscription-cancelled active until date; renewal off",
-            "-ru-payment-sheet       SBP consent + receipt UI",
-            "-ru-payment-sheet-apple Apple UI without RU fields",
-            "-paywall-empty           safe empty paywall",
-            "-paywall-failure         retryable load error",
-            "-purchase-cancelled      cancellation without error",
-            "-purchase-pending        pending without premium",
-            "-purchase-failure        retryable purchase error",
-            "-restore-nothing         explicit inactive restore"
+            "-live-adapty            реальный каталог; покупка и восстановление отключены",
+            "-analytics-fixture       пейвол и запись типизированной аналитики",
+            "-paywall-one-product     1 продукт, выбирается автоматически",
+            "-paywall-two-products    2 продукта в исходном порядке",
+            "-paywall-many-products   12 продуктов в исходном порядке",
+            "-paywall-payment-methods тестовый экран Apple/СБП/карта",
+            "-ru-subscription-management активная RU-подписка",
+            "-ru-subscription-cancelled доступ до даты, автопродление выключено",
+            "-ru-payment-sheet       согласия СБП и чек по email",
+            "-ru-payment-sheet-apple Apple без RU-полей",
+            "-paywall-empty           безопасное состояние без продуктов",
+            "-paywall-failure         ошибка загрузки с повтором",
+            "-purchase-cancelled      отмена покупки без ошибки",
+            "-purchase-pending        ожидание без выдачи премиум-доступа",
+            "-purchase-failure        ошибка покупки с повтором",
+            "-restore-nothing         восстановление без активной покупки"
         ]
 
         var body: some View {
             NavigationStack {
                 List {
-                    Section("Launch arguments") {
+                    Section("Аргументы запуска") {
                         ForEach(scenarios, id: \.self) { scenario in
                             Text(scenario)
                                 .font(AppTokens.Font.caption)
                         }
                     }
 
-                    Section("Recorded analytics") {
+                    Section("Записанная аналитика") {
                         if analyticsViewModel.events.isEmpty {
-                            Text("No monetization events recorded yet.")
+                            Text("Событий монетизации пока нет.")
                                 .font(AppTokens.Font.caption)
                                 .foregroundStyle(AppTokens.Color.secondaryText)
                         } else {
@@ -121,20 +121,20 @@ struct ExampleMainView: View {
                             }
                         }
 
-                        Button("Refresh recorded events") {
+                        Button("Обновить события") {
                             Task {
                                 await analyticsViewModel.refresh()
                             }
                         }
 
-                        Button("Clear recorded events", role: .destructive) {
+                        Button("Очистить события", role: .destructive) {
                             Task {
                                 await analyticsViewModel.reset()
                             }
                         }
                     }
                 }
-                .navigationTitle("Debug scenarios")
+                .navigationTitle("Отладочные сценарии")
                 .task {
                     await analyticsViewModel.refresh()
                 }

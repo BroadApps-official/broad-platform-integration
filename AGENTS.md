@@ -10,7 +10,6 @@
   чтобы Xcode видел CoreSimulatorService. Полный доступ не разрешает менять
   файлы за пределами `BroadAppsIOSPlatform`.
 - Не изменяй reference-проекты `5013`, `5109Codex`, `Claude232` и `Шаблон`.
-- Не выполняй `git commit`, `git push`, публикацию, создание tag или release.
 - Не создавай `Tests`, test targets и код на XCTest/Swift Testing.
 - Платформа и example — только для iPhone. Не добавляй iPad, Mac, Mac Catalyst
   или visionOS targets/configurations. Example обязан хранить

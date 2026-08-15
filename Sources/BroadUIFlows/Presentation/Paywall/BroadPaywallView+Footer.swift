@@ -14,14 +14,7 @@ extension BroadPaywallView {
             }
 
             inlineFeedback
-            restoreButton
-
-            BroadPaywallLegalFooter(
-                links: viewModel.configuration.legalLinks,
-                theme: theme
-            ) { link in
-                safariDestination = BroadPaywallSafariDestination(url: link.url)
-            }
+            compactFooterActions
         }
         .padding(.horizontal, theme.metrics.spacing.screen)
         .padding(.top, theme.metrics.spacing.footer)
@@ -31,6 +24,32 @@ extension BroadPaywallView {
             Rectangle()
                 .fill(theme.palette.border)
                 .frame(height: theme.metrics.sizing.borderWidth)
+                .shadow(color: .black.opacity(0.08), radius: 8, y: -4)
+        }
+    }
+
+    @ViewBuilder
+    var compactFooterActions: some View {
+        let links = viewModel.configuration.legalLinks
+
+        if links.count == 2 {
+            HStack(spacing: 0) {
+                compactLegalButton(links[0], alignment: .leading)
+                compactRestoreButton
+                compactLegalButton(links[1], alignment: .trailing)
+            }
+            .frame(maxWidth: .infinity)
+        } else {
+            VStack(spacing: theme.metrics.spacing.footer) {
+                restoreButton
+
+                BroadPaywallLegalFooter(
+                    links: links,
+                    theme: theme
+                ) { link in
+                    openLegalLink(link)
+                }
+            }
         }
     }
 
@@ -77,6 +96,35 @@ extension BroadPaywallView {
         .accessibilityLabel(Text(restoreTitle))
     }
 
+    var compactRestoreButton: some View {
+        Button(action: viewModel.restorePurchases) {
+            HStack(spacing: theme.metrics.spacing.text) {
+                if viewModel.isRestoreInFlight {
+                    ProgressView()
+                        .tint(theme.palette.secondaryText)
+                        .accessibilityHidden(true)
+                }
+
+                Text(restoreTitle)
+                    .font(theme.typography.footer)
+                    .foregroundStyle(theme.palette.secondaryText)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(
+                maxWidth: .infinity,
+                minHeight: BroadPaywallTheme.Sizing.minimumInteractiveDimension
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(BroadNoPressEffectButtonStyle())
+        .allowsHitTesting(
+            !viewModel.isBusy && !viewModel.isFinancialOperationPending
+        )
+        .disabled(viewModel.isBusy || viewModel.isFinancialOperationPending)
+        .accessibilityLabel(Text(restoreTitle))
+    }
+
     var retryButton: some View {
         BroadPaywallPrimaryButton(
             title: viewModel.configuration.copy.actions.retryTitle,
@@ -103,5 +151,32 @@ extension BroadPaywallView {
             .foregroundStyle(isFailure ? theme.palette.primaryText : theme.palette.secondaryText)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
+    }
+
+    func compactLegalButton(
+        _ link: BroadPaywallLegalLink,
+        alignment: Alignment
+    ) -> some View {
+        Button {
+            openLegalLink(link)
+        } label: {
+            Text(link.title)
+                .font(theme.typography.footer)
+                .foregroundStyle(theme.palette.secondaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(
+                    maxWidth: .infinity,
+                    minHeight: BroadPaywallTheme.Sizing.minimumInteractiveDimension,
+                    alignment: alignment
+                )
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(BroadNoPressEffectButtonStyle())
+        .accessibilityLabel(Text(link.accessibilityLabel ?? link.title))
+    }
+
+    func openLegalLink(_ link: BroadPaywallLegalLink) {
+        safariDestination = BroadPaywallSafariDestination(url: link.url)
     }
 }

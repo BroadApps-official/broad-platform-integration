@@ -28,9 +28,10 @@ storefront + remote config → сопоставление каталога → �
 | RU-поля скрыты, кнопка запускает Apple purchase | две обязательные галочки, опциональный чек и email | тариф, статус, дата оплаченного доступа и отмена |
 
 <p align="center">
-  <img src="Assets/README/Screenshots/ru-payment-sbp-light.png" alt="RU payment UI" width="31%">
-  <img src="Assets/README/Screenshots/ru-subscription-active-light.png" alt="Активная RU подписка" width="31%">
-  <img src="Assets/README/Screenshots/ru-subscription-cancelled-light.png" alt="RU подписка после отмены" width="31%">
+  <img src="Assets/README/Screenshots/ru-payment-sbp-dark.png" alt="RU payment UI" width="23%">
+  <img src="Assets/README/Screenshots/ru-payment-receipt-dark.png" alt="Отдельный ввод email для чека" width="23%">
+  <img src="Assets/README/Screenshots/ru-subscription-active-dark.png" alt="Активная RU подписка" width="23%">
+  <img src="Assets/README/Screenshots/ru-subscription-cancelled-dark.png" alt="RU подписка после отмены" width="23%">
 </p>
 
 Это реальные скриншоты `BroadAppTemplate` из iPhone Simulator, а не макеты.
@@ -90,7 +91,12 @@ let paywallConfiguration = BroadPaywallConfiguration(
 1. согласие с офертой и обработкой персональных данных;
 2. для автоматически продлеваемой подписки — согласие на регулярные списания. В тексте
    обязательно показываются настоящая цена и период выбранного продукта;
-3. если пользователь запросил чек — корректный email.
+3. если пользователь запросил чек — корректный email на отдельном втором шаге.
+
+Экран сначала показывает способы оплаты и обязательные согласия. Поле email не
+занимает место в этом списке: оно появляется только после нажатия «Продолжить» и
+только если пользователь включил получение чека. Основная кнопка закреплена над
+Home Indicator и клавиатурой, поэтому её не нужно искать прокруткой.
 
 Чтобы пользователь не вводил email для чека каждый раз, создайте адаптер поверх уже
 существующего хранилища из `BroadCore` и передайте его в paywall:

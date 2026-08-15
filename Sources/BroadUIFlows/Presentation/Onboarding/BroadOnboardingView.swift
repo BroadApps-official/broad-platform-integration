@@ -191,34 +191,40 @@ public struct BroadOnboardingView<Media: View>: View {
     private var footerLinks: some View {
         if !viewModel.configuration.footerLinks.isEmpty {
             ViewThatFits(in: .horizontal) {
-                HStack(spacing: theme.metrics.controlSpacing) {
-                    footerButtons
+                HStack(spacing: 0) {
+                    ForEach(viewModel.configuration.footerLinks) { link in
+                        footerButton(link)
+                    }
                 }
 
                 VStack(spacing: theme.metrics.textSpacing) {
-                    footerButtons
+                    ForEach(viewModel.configuration.footerLinks) { link in
+                        footerButton(link)
+                    }
                 }
             }
         }
     }
 
-    private var footerButtons: some View {
-        ForEach(viewModel.configuration.footerLinks) { link in
-            Button {
-                onFooterAction(link.destination)
-            } label: {
-                Text(link.title)
-                    .font(theme.typography.footer)
-                    .foregroundStyle(theme.palette.secondaryText)
-                    .frame(
-                        minWidth: BroadOnboardingTheme.Metrics.minimumInteractiveDimension,
-                        minHeight: BroadOnboardingTheme.Metrics.minimumInteractiveDimension
-                    )
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text(link.accessibilityLabel ?? link.title))
+    private func footerButton(
+        _ link: OnboardingFooterLinkConfiguration
+    ) -> some View {
+        Button {
+            onFooterAction(link.destination)
+        } label: {
+            Text(link.title)
+                .font(theme.typography.footer)
+                .foregroundStyle(theme.palette.secondaryText)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(
+                    maxWidth: .infinity,
+                    minHeight: BroadOnboardingTheme.Metrics.minimumInteractiveDimension
+                )
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(link.accessibilityLabel ?? link.title))
     }
 
     private var windowVisibilityObserver: some View {

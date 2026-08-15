@@ -11,8 +11,8 @@ public extension BroadPaywallCopy {
         ),
         actions: Actions(
             purchaseTitle: "Продолжить",
-            restoreTitle: "Восстановить покупки",
-            restoringTitle: "Восстанавливаем покупки",
+            restoreTitle: "Восстановить",
+            restoringTitle: "Восстанавливаем",
             retryTitle: "Повторить",
             closeAccessibilityLabel: "Закрыть пейвол",
             cancelTitle: "Отмена"
@@ -37,5 +37,26 @@ public extension BroadPaywallCopy {
             sbpTitle: "СБП",
             cardTitle: "Банковская карта"
         )
+    )
+}
+
+public extension BroadPaywallPeriodCopy {
+    static let russian = BroadPaywallPeriodCopy(
+        perPrefix: "в",
+        everyPrefix: "каждые",
+        day: UnitCopy(singular: "день", plural: "дн."),
+        week: UnitCopy(singular: "неделю", plural: "нед."),
+        month: UnitCopy(singular: "месяц", plural: "мес."),
+        year: UnitCopy(singular: "год", plural: "г."),
+        unknownTitle: nil
+    )
+}
+
+public extension BroadPaywallSpecialOfferCopy {
+    static let russian = BroadPaywallSpecialOfferCopy(
+        crossedValueAccessibilityLabel: "Предыдущая цена",
+        multiplierAccessibilityLabel: "Во сколько раз больше выгода",
+        countdownAccessibilityLabel: "До конца предложения",
+        expiredMessage: "Предложение закончилось. Закройте экран или выберите другой тариф."
     )
 }
