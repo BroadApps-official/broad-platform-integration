@@ -2,7 +2,7 @@
 
 ## Результат
 
-`PASS` — полный local gate прошёл 15 августа 2026 года.
+`PASS` — полный local gate прошёл 16 августа 2026 года.
 
 Проверено:
 
@@ -33,6 +33,6 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-`397579a18e23a96b74e31d782d2dc9c58338d4c26165db53ab6f21c3665e17ac`
+`898c09682de122416e6f01f26ed82fdd7374d26b60dc5b45cb68707a6e68825a`
 
 </details>

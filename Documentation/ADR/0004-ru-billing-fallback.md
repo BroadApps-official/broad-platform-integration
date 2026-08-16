@@ -1,51 +1,52 @@
-# ADR-0004: RU billing, storefront и явные fallback
+# ADR-0004: обязательный `ru_pay` и контекст iPhone для RU Billing
 
-- Статус: принято
+- Статус: принято, обновлено
 - Дата: 2026-08-09
+- Обновлено: 2026-08-16
 
 ## Контекст
 
-RU billing нужен как optional способ оплаты рядом с Apple, но язык/locale/регион устройства не доказывают App Store market пользователя. Legacy backend и cancellation endpoint также могут существовать во время миграции, однако неявный fallback способен отправить credential или subscription ID не туда.
+RU Billing нужен как опциональный способ оплаты рядом с Apple. В production-
+приложении 5115 его доступность определяется флагом Adapty `ru_pay`, регионом
+iPhone и первым системным языком. Платформа должна использовать то же правило и
+не разрешать СБП/карту из кешированного или отсутствующего флага.
+
+Legacy backend и cancellation endpoint могут существовать во время миграции,
+однако их fallback остаётся отдельным решением и не меняет eligibility.
 
 ## Решение
 
-RU methods доступны только при трёх независимых gates:
+RU methods доступны только при трёх gates:
 
 ```text
 host feature enabled
-AND remote decision allows billing
-AND StoreKit.Storefront.current.countryCode == RU/RUS
+AND verified-fresh Adapty ru_pay == true
+AND (iPhone region == RU/RUS OR first system language starts with ru)
 ```
+
+В последней строке достаточно одного совпадения. App Store storefront, IP,
+timezone и формат валюты в eligibility не участвуют.
 
 Remote decision имеет четыре состояния: `absent`, `enabled`, `disabled`,
 `invalid`. Parser читает все aliases; любой explicit `false` побеждает,
-malformed или conflicting values дают `invalid`. `enabled` разрешает RU
-только с provenance `verifiedFreshRemote`; provider/platform cache не может
-включить финансовую feature. Explicit host fallback применяется
-только к genuinely `absent`.
+malformed или conflicting values дают `invalid`. Только `enabled` с provenance
+`verifiedFreshRemote` может разрешить финансовую feature. Provider/platform
+cache не может включить RU Billing.
 
-Запрещено использовать для eligibility:
+Host fallback без явного `ru_pay = true` не поддерживается:
 
-- `Locale.current`;
-- preferred language;
-- device region;
-- IP/timezone;
-- формат валюты.
+- `absent`, `disabled` и `invalid` всегда выключают feature;
+- cached/unqualified `enabled` не показывает RU methods;
+- российский регион или русский язык без `ru_pay = true` оставляет только Apple.
 
-`ru_RU` locale разрешён только для отображения уже загруженной цены RUB.
-
-Default `RUBillingRemoteGateFallbackPolicy` — `.disabled`:
-
-- `disabled` и `invalid` всегда выключают feature;
-- `enabled` требует `verifiedFreshRemote` provenance;
-- `.enabled` fallback может выбрать только host как осознанную policy и только для `absent`;
-- storefront RU/RUS остаётся обязательным при любой policy.
-
-Storefront cache имеет конечный TTL. Missing/stale/unavailable не трактуется как Russian.
+`SystemRUBillingDeviceContextProvider` читает
+`Locale.current.region?.identifier` и `Locale.preferredLanguages.first`.
+`RUBillingGate` проверяется при построении способов оплаты и повторно перед
+созданием внешнего checkout.
 
 ## Disabled composition
 
-Если RU billing не настроен:
+Если RU Billing не настроен:
 
 - используются explicit disabled repositories/use case;
 - fake URLs/tokens не создаются;
@@ -56,7 +57,8 @@ Storefront cache имеет конечный TTL. Missing/stale/unavailable не
 
 ## Checkout и entitlement
 
-RU catalog product выбирается deterministic typed matcher, а не guessed period/SKU. External URL должен быть HTTPS.
+RU catalog product выбирается deterministic typed matcher, а не guessed
+period/SKU. External URL должен быть HTTPS.
 
 ```text
 create checkout
@@ -68,60 +70,66 @@ create checkout
 → only active unlocks premium
 ```
 
-`.opened` и `paid` без active entitlement не выдают доступ.
-Cache TTL и сравнение server `expiresAt` с изменяемыми часами устройства
-не снимают финансовый blocker; его очищает только terminal backend status.
+`.opened` и `paid` без active entitlement не выдают доступ. Регион и язык
+решают только, можно ли начать новый RU checkout; они не доказывают покупку и не
+используются для восстановления доступа.
 
 ## Explicit legacy cancellation fallback
 
-Основной cancellation repository используется всегда первым. Legacy fallback разрешён только если одновременно:
+Основной cancellation repository используется всегда первым. Legacy fallback
+разрешён только если одновременно:
 
 - `allowsLegacyCancellationFallback == true`;
 - host передал explicit legacy path/repository;
 - primary outcome имеет `.unavailable` или `.failed`.
 
-`cancelled` и `alreadyInactive` не вызывают legacy endpoint. Нет hidden URL или автоматического переключения.
-
-Cancellation не отзывает paid-through access немедленно: authoritative status может оставаться active до `expiresAt`.
+`cancelled` и `alreadyInactive` не вызывают legacy endpoint. Нет hidden URL или
+автоматического переключения. Cancellation не отзывает paid-through access
+немедленно: authoritative status может оставаться active до `expiresAt`.
 
 ## Связь с paywall fallback `main`
 
-Paywall может перейти с requested placement на `.main`. Это не обходит RU gates:
+Paywall может перейти с requested placement на `.main`. Это не обходит RU
+gates:
 
-- remote RU field берётся из реально resolved payload;
+- `ru_pay` берётся из реально resolved payload;
 - host feature gate остаётся обязательным;
-- storefront RU/RUS остаётся обязательным;
+- RU region или русский первый системный язык остаётся обязательным;
 - mapping в RU catalog остаётся обязательным;
 - analytics сохраняет requested и resolved placements.
 
-Provider fallback paywall и authority fallback — разные решения.
+Provider fallback paywall и entitlement authority fallback — разные решения.
 
 ## Последствия
 
 Положительные:
 
-- язык интерфейса не раскрывает недоступный payment method;
-- absent remote config безопасно выключает RU;
+- правило совпадает с production-поведением 5115;
+- русского региона или русского языка достаточно, но только вместе с `ru_pay`;
+- absent/false/invalid/cached remote config безопасно выключает RU;
 - disabled app не получает лишний unresolved entitlement source;
-- legacy endpoint включается только осознанно;
 - открытие Safari не считается premium.
 
 Цена решения:
 
-- при недоступном storefront RU methods скрываются даже у русскоязычного пользователя;
-- host должен явно настроить catalog/endpoints/auth/polling;
+- изменение региона или языка может изменить доступные способы следующей
+  оплаты, поэтому gate повторяется непосредственно перед checkout;
+- host должен настроить catalog/endpoints/auth/polling;
 - migration legacy cancellation требует отдельной временной policy;
-- external checkout требует lifecycle callback после реального возврата app active.
+- external checkout требует lifecycle callback после реального возврата app
+  active.
 
 ## Отклонённые варианты
 
-### Проверять `Locale.current` или язык
+### Использовать App Store storefront как обязательный gate
 
-Отклонён: это пользовательское оформление, а не StoreKit storefront.
+Отклонён: принятое продуктовое правило использует регион iPhone или первый
+системный язык, как в 5115.
 
-### Считать absent remote gate включённым по умолчанию
+### Считать отсутствующий `ru_pay` включённым
 
-Отклонён: частичный config неожиданно раскрывает альтернативную оплату.
+Отклонён: частичный или недоступный config не должен раскрывать альтернативную
+оплату.
 
 ### Всегда регистрировать RU entitlement source
 
@@ -133,21 +141,22 @@ Provider fallback paywall и authority fallback — разные решения.
 
 ### Открытая payment page сразу выдаёт premium
 
-Отклонён: пользователь может закрыть страницу или backend ещё не подтвердил entitlement.
+Отклонён: пользователь может закрыть страницу или backend ещё не подтвердил
+entitlement.
 
 ## Проверка решения
 
-- RU storefront + host/remote true → matched RU methods;
-- non-RU storefront при `ru_RU` locale → только Apple;
-- storefront unavailable/stale → только Apple;
-- absent remote gate с default policy → только Apple;
-- explicit remote false при host fallback enabled → только Apple;
-- malformed/conflicting aliases при host fallback enabled → только Apple;
-- absent remote gate при explicit host fallback enabled → RU только при live RU storefront;
+- `ru_pay = true` + RU region + любой язык → matched RU methods;
+- `ru_pay = true` + non-RU region + русский язык → matched RU methods;
+- `ru_pay = true` + non-RU region + нерусский язык → только Apple;
+- `ru_pay = false` + RU region + русский язык → только Apple;
+- absent/malformed/conflicting/cached `ru_pay` → только Apple;
+- повторная проверка перед checkout использует актуальный контекст iPhone;
 - RU backend disabled → source отсутствует в engine;
 - URL open failure очищает pending context;
 - Safari return без active → pending/unavailable, не premium;
 - primary cancellation success не вызывает legacy;
 - legacy вызывается только при explicit flag + primary failure.
 
-Полная настройка: [RU Billing](../RUBilling.md). Remote keys: [Remote Config](../RemoteConfig.md).
+Полная настройка: [RU Billing](../RUBilling.md). Remote keys:
+[Remote Config](../RemoteConfig.md).

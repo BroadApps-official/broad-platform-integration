@@ -4,13 +4,13 @@ RU Billing — опциональная цепочка адаптеров для
 включается, только если одновременно выполнены три условия:
 
 1. приложение само включило feature;
-2. свежий и проверенный remote config вернул `.enabled`. Если поля в remote config вообще
-   нет (`.absent`), приложение должно явно разрешить fallback `.enabled`;
-3. текущий App Store storefront имеет код `RU` или `RUS`.
+2. свежий и проверенный Adapty Remote Config вернул `ru_pay = true`;
+3. регион iPhone равен `RU` **или** первый системный язык начинается с `ru`.
 
-Регион iPhone, язык приложения и `Locale.current` не дают право на RU-оплату.
-`Locale(identifier: "ru_RU")` используется только для форматирования уже загруженной цены
-в рублях.
+В третьем условии достаточно одного совпадения. Страна App Store storefront не
+участвует в разрешении RU-оплаты. Если `ru_pay` отсутствует, равен `false`,
+повреждён или получен не из свежего подтверждённого Remote Config, СБП и карта
+скрыты даже на российском iPhone.
 
 ## Что уже делает пакет
 
@@ -19,7 +19,7 @@ RU Billing — опциональная цепочка адаптеров для
 Всё остальное делает платформа:
 
 ```text
-storefront + remote config → сопоставление каталога → экран оплаты → платёжная ссылка
+ru_pay + регион/язык iPhone → сопоставление каталога → экран оплаты → платёжная ссылка
 → постоянная pending-запись → возврат и проверка → обновление entitlement → настройки подписки
 ```
 
@@ -50,7 +50,9 @@ RU-подписка и RU-токены принадлежат серверном
 - email для чека может исчезнуть после удаления: это только настройка формы, а не ID
   пользователя и не доказательство покупки.
 
-Не используйте регион устройства, device ID или email из чека для поиска покупки. Без
+Не используйте регион устройства, системный язык, device ID или email из чека
+для поиска уже совершённой покупки. Регион и язык нужны только для решения,
+показывать ли RU-способы оплаты сейчас. Без
 стабильного app account гарантированное восстановление RU-покупок невозможно.
 [Полный порядок →](AccountRecovery.md).
 
@@ -145,18 +147,32 @@ let subscription: any RUSubscriptionRepositoryProtocol =
 > Engine должен содержать только те источники, которые приложение реально умеет
 > проверить.
 
-<a id="storefront-and-cache"></a>
-## App Store storefront и кеш
+<a id="device-context"></a>
+## Как проверяются регион и язык iPhone
 
-`StoreKitCurrentStorefrontClient` читает `StoreKit.Storefront.current`.
-`CachedStorefrontRepository` сохраняет этот проверенный результат через общий
-`CacheRepositoryProtocol`. Методы `currentStorefront()` и `liveCurrentStorefront()` разрешают
-RU-оплату только по текущему ответу StoreKit. Если StoreKit не вернул storefront, RU-оплата
-недоступна. Старое значение `RU` из кеша не может показать метод оплаты или создать
-checkout после смены App Store-аккаунта.
+`SystemRUBillingDeviceContextProvider` повторяет правило production-приложения
+5115:
 
-`cachedStorefrontHint()` — отдельная неавторитетная подсказка. Её можно показать в поясняющем
-UI, но нельзя передавать в `RUBillingGate` и использовать как разрешение на оплату.
+```swift
+let context = RUBillingDeviceContext(
+    regionCode: Locale.current.region?.identifier,
+    primaryLanguageIdentifier: Locale.preferredLanguages.first
+)
+```
+
+`context.isRussian` становится `true`, если регион равен `RU`/`RUS` **или**
+первый системный язык равен `ru`, `ru-RU` либо другому варианту с префиксом
+`ru`. App Store storefront можно по-прежнему читать как информационные данные,
+но он не включает и не выключает RU Billing.
+
+Проверка выполняется в двух местах:
+
+1. `ResolveCheckoutMethodsUseCase` — до показа пользователю СБП и карты;
+2. `RUCheckoutFlowCoordinator` — повторно перед созданием внешней оплаты.
+
+Для воспроизводимого fixture-сценария можно передать свой
+`RUBillingDeviceContextProviderProtocol`; production composition по умолчанию
+использует системный provider.
 
 ```swift
 let storefrontRepository = CachedStorefrontRepository(
@@ -171,22 +187,22 @@ let storefrontRepository = CachedStorefrontRepository(
 let checkoutMethods = ResolveCheckoutMethodsUseCase(
     storefrontRepository: storefrontRepository,
     catalogRepository: catalogRepository,
-    isFeatureEnabled: true,
-    remoteGateFallback: .disabled
+    isFeatureEnabled: true
 )
 ```
 
 `RemoteRUBillingGateDecision` имеет четыре состояния:
 
-- `.absent` — поля в remote config нет;
+- `.absent` — поля `ru_pay` в remote config нет;
 - `.enabled` — все найденные aliases имеют значение `true`;
 - `.disabled` — хотя бы один alias имеет `false`;
 - `.invalid` — данные повреждены или противоречат друг другу.
 
-При fallback `.disabled` состояние `.absent` не показывает RU-кнопку. `.disabled` и `.invalid`
-всегда закрывают RU Billing. `.enabled` разрешает оплату только при `.verifiedFreshRemote`.
-Значение из provider cache, platform cache или legacy payload не даёт право на оплату. Явный fallback
-`.enabled` применяется **только** к `.absent`.
+`.absent`, `.disabled` и `.invalid` всегда закрывают RU Billing. `.enabled`
+разрешает оплату только при `.verifiedFreshRemote` и российском регионе либо
+русском первом системном языке. Значение из provider cache, platform cache или
+legacy payload не даёт право на оплату. Host fallback без `ru_pay = true` не
+поддерживается.
 
 <a id="http-configuration-and-authorization"></a>
 ## Настройка HTTP и авторизации
@@ -282,7 +298,8 @@ let ru = ruFactory.makeServices(
   `checkout.cancelSubscription`, `checkout.operationGate`.
 
 Создание raw backend-session, polling статуса и их repository остаются внутри модуля.
-Приложение не может обойти точное сопоставление каталога, проверку storefront/remote config,
+Приложение не может обойти точное сопоставление каталога, проверку `ru_pay` и
+контекста iPhone,
 владение pending-записью или проверку subject после возврата.
 
 > [!IMPORTANT]
@@ -567,7 +584,8 @@ bearer-токен, сырой payload провайдера или личност
 и разбора проблемы. Они не снимают блокировку. Сделать это может только финальный ответ backend.
 
 Прямо перед созданием checkout координатор повторно проверяет тот же `RUBillingGate` и свежий
-`StoreKit.Storefront.current`. Значение storefront из кеша не даёт разрешение на оплату.
+регион iPhone и первый системный язык. Значение App Store storefront или его
+кеша не даёт разрешение на оплату.
 Координатор допускает только одну операцию одновременно и отклоняет новый запуск при существующей
 pending-записи. Поэтому несколько одновременных нажатий не создадут две backend-сессии и не
 перезапишут отслеживаемую попытку.

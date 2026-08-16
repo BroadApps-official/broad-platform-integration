@@ -28,7 +28,7 @@
 | Reinstall recovery | login restore, subscription ownership, token ledger, RU customer binding |
 | Network interruption | обрыв до/во время/после каждого read и financial operation |
 | Remote config | keys, aliases, defaults, last-valid behavior |
-| RU billing | storefront logic, catalog mapping, consent/receipt UI, endpoints, return/polling/cancel/settings |
+| RU billing | `ru_pay`, регион/язык iPhone, catalog mapping, consent/receipt UI, endpoints, return/polling/cancel/settings |
 | Special offer | наличие feature, gate, window/cooldown, crossed-price fields |
 | Experiments | Adapty placements, обычные/cross-placement вариации и attribution |
 | Analytics | события, deduplication, PII/raw payload |
@@ -39,7 +39,7 @@
 - вызывает ATT из loader;
 - показывает Rate Us/review внутри onboarding;
 - выдаёт premium сразу после SDK purchase;
-- определяет RU по locale/языку;
+- определяет RU только по языку/региону без обязательного `ru_pay = true`;
 - фильтрует или сортирует provider products;
 - меняет opacity/scale при product tap;
 - хранит keys/PII/raw errors.
@@ -321,8 +321,8 @@ monotonic instant, и открытый countdown не продлевается a
 
 Если готова:
 
-- eligibility только App Store storefront RU/RUS;
-- remote fallback default disabled;
+- eligibility требует свежий `ru_pay = true` и RU-регион iPhone или русский первый системный язык;
+- absent/false/invalid/cached `ru_pay` fail-closed;
 - catalog match typed/deterministic;
 - HTTPS endpoints и subject-bound auth;
 - pending context без URL/email/token;
@@ -407,7 +407,7 @@ Paywall provider lifecycle не переносите в analytics destination. V
 - [ ] stable app account/subject связывает token и RU ledger между установками;
 - [ ] offline/timeout дают конечный UI state; ambiguous financial result не запускается повторно до reconciliation;
 - [ ] all configured entitlement combinations проверены;
-- [ ] RU определяется только storefront;
+- [ ] RU требует свежий `ru_pay = true` и RU region или русский первый системный язык;
 - [ ] special offer отсутствует через `nil` там, где не нужен;
 - [ ] remote config keys/defaults задокументированы;
 - [ ] analytics typed, дедуплицированы и без PII;

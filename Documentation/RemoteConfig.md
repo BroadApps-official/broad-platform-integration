@@ -176,11 +176,8 @@ Remote field — только одно из трёх условий:
 
 ```text
 host feature enabled
-AND (
-    verified-fresh remote decision == enabled
-    OR decision == absent + явный host fallback .enabled
-)
-AND App Store storefront RU/RUS
+AND verified-fresh ru_pay == true
+AND (iPhone region == RU/RUS OR first system language starts with ru)
 ```
 
 Decision `.enabled` может авторизовать billing только когда payload provenance
@@ -188,14 +185,14 @@ Decision `.enabled` может авторизовать billing только к�
 `.providerCacheFallbackPossible`, поэтому cached/unqualified `.enabled` не даёт
 RU methods и **не** откатывается к host fallback.
 
-`.disabled` и `.invalid` всегда fail-closed при любой provenance/fallback;
-cached/provider `false` безопасно работает как kill switch. Explicit host-owned
-`RUBillingRemoteGateFallbackPolicy.enabled` применяется **только** к genuinely
-`.absent` decision. Он не переопределяет disabled, invalid, conflicting,
-malformed или unqualified enabled. Default fallback `.disabled` оставляет absent
-выключенным.
+`.absent`, `.disabled` и `.invalid` всегда fail-closed. Cached/provider `false`
+безопасно работает как kill switch, а cached/provider `true` не разрешает
+финансовую функцию. Host fallback без явного свежего `ru_pay = true` не
+поддерживается.
 
-Ни этот parser, ни UI не используют язык, device region или locale для eligibility. [RU Billing →](RUBilling.md).
+Parser отвечает только за `ru_pay`. Регион и первый системный язык iPhone
+проверяет `RUBillingGate`: достаточно региона `RU/RUS` **или** языка с префиксом
+`ru`. [RU Billing →](RUBilling.md).
 
 ## UI variants и Adapty experiments
 

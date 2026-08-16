@@ -489,11 +489,11 @@ let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 
 ### RU billing нужен
 
-Eligibility определяется только App Store storefront `RU/RUS` плюс host/remote
-gates. Remote decision различает absent/enabled/disabled/invalid: любой false alias
-выключает RU, malformed/conflict fail-closed, verified enabled разрешает, а host
-fallback действует только при genuinely absent. Cached/unqualified enabled не
-авторизует оплату. Язык и locale запрещено использовать как признак доступности.
+Eligibility требует host opt-in, свежий `ru_pay = true` и хотя бы один признак
+iPhone: регион `RU/RUS` **или** первый системный язык с префиксом `ru`. Remote
+decision различает absent/enabled/disabled/invalid: отсутствующий, false,
+malformed или conflicting флаг выключает RU. Cached/unqualified enabled не
+авторизует оплату. App Store storefront в этой проверке не участвует.
 [Настройка RU billing](RUBilling.md).
 
 Production adapters собирайте через `RUBillingCompositionFactory`: сначала `makeEntitlementRegistration()` добавляется в общий engine, затем `makeServices(refreshEntitlement:operationGate:)` получает уже созданный engine и тот же financial operation gate, что Apple purchase/restore. Это разрывает цикл «RU source нужен engine → RU checkout нужен refresh engine» и не позволяет Apple/RU оплатам идти параллельно.
@@ -664,7 +664,7 @@ instant, поэтому последующий async save не добавляе�
 - [ ] special offer `nil` не создаёт никакой работы;
 - [ ] presentable special offer передаёт `presentationAuthorization`, persistence fail-closed;
 - [ ] timed special offer получает trusted server clock; unavailable/rollback time скрывает offer;
-- [ ] RU CTA зависит только от App Store storefront и gates;
+- [ ] RU CTA требует свежий `ru_pay = true` и RU region или русский системный язык;
 - [ ] real credentials и PII отсутствуют в source/cache/logs/analytics;
 - [ ] `./Scripts/lint.sh` и `./Scripts/build.sh` проходят;
 - [ ] ручные fixtures на 0, 1, много products и error/pending scenarios пройдены.

@@ -151,10 +151,13 @@ Adapter не зависит от `EntitlementEngine`.
   отсутствие покупки не доказано;
 - `failed` — сама restore-операция завершилась ошибкой.
 
-## Storefront и RU billing
+## Контекст iPhone и RU billing
 
-`Storefront.isRussian` проверяет только App Store storefront code `RU`/`RUS`.
-Язык приложения, `Locale.current` и регион устройства в этом решении не участвуют.
+`RUBillingDeviceContext.isRussian` проверяет два независимых сигнала: регион
+iPhone `RU`/`RUS` и первый системный язык с префиксом `ru`. Одного совпадения
+достаточно, но оно разрешает RU Billing только вместе со свежим
+`ru_pay = true`. `Storefront` остаётся информационной моделью App Store и не
+участвует в этом решении.
 
 RU billing намеренно не имеет одного большого `RUBillingRepositoryProtocol`.
 Внутри модуля реализация разделена на четыре узкие границы:

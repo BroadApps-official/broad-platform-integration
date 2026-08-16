@@ -217,7 +217,13 @@ CTA сначала вызывает `ResolveCheckoutMethodsUseCaseProtocol` дл
 - `.completedButUnverified` сообщает, что операция завершилась, но доступ ещё не подтверждён, и не закрывает paywall;
 - `.failed` показывает только безопасный `AppError.userMessage`.
 
-RU billing не определяется UI по языку, locale, IP или timezone. Sheet отображает только методы, разрешённые monetization use case после проверки App Store storefront и конфигурации. Для СБП/карты он собирает обязательные offer/data-processing и recurring-charge consent, а также опциональный receipt email; Apple эти поля скрывает. Русские legal links задаёт приложение через `BroadRUBillingPresentationConfiguration`.
+RU billing не определяется самим UI. Sheet отображает только методы,
+разрешённые monetization use case после проверки свежего `ru_pay = true` и
+контекста iPhone: RU-регион **или** русский первый системный язык. IP, timezone
+и App Store storefront не участвуют. Для СБП/карты sheet собирает обязательные
+offer/data-processing и recurring-charge consent, а также опциональный receipt
+email; Apple эти поля скрывает. Русские legal links задаёт приложение через
+`BroadRUBillingPresentationConfiguration`.
 
 Renderer по-прежнему показывает occurrences без валидного `Money`, а также
 `.consumable`/`.unknown`, и не фильтрует их. Они остаются disabled/unselected.

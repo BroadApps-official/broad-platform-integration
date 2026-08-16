@@ -338,12 +338,16 @@ Adapty profile можно добавить как Apple verifier только к
 RU billing — optional adapter chain, не автоматическая замена Apple:
 
 ```text
-host enabled + remote enabled + App Store storefront RU/RUS
+host enabled + verified-fresh ru_pay = true
+    + (iPhone region RU/RUS OR first system language starts with ru)
     → match exact RU catalog product
     → Apple / SBP / card methods
 ```
 
-Locale, язык, IP и timezone не участвуют в eligibility. External checkout считается только `.opened`, пока backend и новый общий entitlement refresh не подтвердили active.
+Регион iPhone и первый системный язык — независимые признаки: одного совпадения
+достаточно. IP, timezone и App Store storefront не участвуют в eligibility.
+External checkout считается только `.opened`, пока backend и новый общий
+entitlement refresh не подтвердили active.
 
 Если feature отключена, используйте disabled adapters и не добавляйте `.ruBilling` authority в engine. [RU Billing guide →](RUBilling.md).
 
@@ -559,7 +563,9 @@ intent, verified transaction bridge и entitlement rules; standard
 - все sources inactive;
 - timeout и late active;
 - special offer `nil` без побочных обращений;
-- RU storefront RU и non-RU при одинаковом locale;
+- `ru_pay = true` + RU region при нерусском языке;
+- `ru_pay = true` + русский язык при non-RU region;
+- `ru_pay = false` при RU region и русском языке;
 - analytics без дублей и чувствительных полей.
 
 Для UI fixtures используйте [BroadAppTemplate](../README.md#example-и-ручные-сценарии). Test targets не добавляются.
