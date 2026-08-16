@@ -40,7 +40,7 @@
   <text x="112" y="168" fill="#1D4ED8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800" letter-spacing="1.8">1  ПОДГОТОВЬТЕ ИСХОДНЫЕ МАТЕРИАЛЫ</text>
   <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="700" text-anchor="middle">
     <rect x="112" y="190" width="220" height="36" rx="18" fill="#DBEAFE"/><text x="222" y="214" fill="#1E3A8A">Документ Kaiten</text>
-    <rect x="352" y="190" width="220" height="36" rx="18" fill="#EDE9FE"/><text x="462" y="214" fill="#5B21B6">Figma или NO-CODE</text>
+    <rect x="352" y="190" width="220" height="36" rx="18" fill="#EDE9FE"/><text x="462" y="214" fill="#5B21B6" font-size="14">Метка Kaiten → дизайн</text>
     <rect x="592" y="190" width="220" height="36" rx="18" fill="#FFEDD5"/><text x="702" y="214" fill="#9A3412">Reference или «НАЙДИ»</text>
     <rect x="832" y="190" width="336" height="36" rx="18" fill="#D1FAE5"/><text x="1000" y="214" fill="#065F46">Папка приложения + доступ к Git</text>
   </g>

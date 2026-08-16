@@ -1,15 +1,15 @@
 flowchart TD
-    Request["Logical placement request"] --> RequestedRemote["Requested remote"]
-    RequestedRemote -->|"usable products"| Result["Paywall payload"]
-    RequestedRemote -->|"empty / unavailable"| RequestedCache["Requested cache"]
-    RequestedCache -->|"usable"| Result
-    RequestedCache -->|"miss / unusable"| IsMain{"Requested = main?"}
-    IsMain -->|"yes"| Safe["Safe empty / unavailable"]
-    IsMain -->|"no"| MainRemote["Main remote"]
-    MainRemote -->|"usable"| Result
-    MainRemote -->|"empty / unavailable"| MainCache["Main cache"]
-    MainCache -->|"usable"| Result
-    MainCache -->|"miss / unusable"| Safe
+    Request["Запрошенный logical placement"] --> RequestedRemote["Remote для запрошенного placement"]
+    RequestedRemote -->|"есть продукты"| Result["Данные paywall"]
+    RequestedRemote -->|"пусто / недоступно"| RequestedCache["Кеш запрошенного placement"]
+    RequestedCache -->|"пригоден"| Result
+    RequestedCache -->|"нет / непригоден"| IsMain{"Запрошен main?"}
+    IsMain -->|"да"| Safe["Безопасно: пусто / недоступно"]
+    IsMain -->|"нет"| MainRemote["Remote для main"]
+    MainRemote -->|"есть продукты"| Result
+    MainRemote -->|"пусто / недоступно"| MainCache["Кеш main"]
+    MainCache -->|"пригоден"| Result
+    MainCache -->|"нет / непригоден"| Safe
 
     style Request fill:#F59E0B,color:#422006,stroke:#B45309
     style RequestedRemote fill:#10B981,color:#052E16,stroke:#047857

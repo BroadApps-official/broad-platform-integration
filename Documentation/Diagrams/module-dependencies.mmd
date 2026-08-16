@@ -1,11 +1,11 @@
 flowchart TB
-    App["Host App"] --> UI["BroadUIFlows"]
-    App -. optional .-> Extensions["BroadExtensions"]
+    App["Приложение\ncomposition root"] --> UI["BroadUIFlows"]
+    App -. опционально .-> Extensions["BroadExtensions\nнезависимые helpers"]
     UI --> Monetization["BroadMonetization"]
     UI --> Core["BroadCore"]
     Monetization --> Core["BroadCore"]
     Monetization --> Adapty["Adapty / StoreKit"]
-    Monetization --> RU["RU Billing Backend"]
+    Monetization --> RU["backend приложения / RU"]
 
     style App fill:#F59E0B,color:#111827,stroke:#B45309
     style UI fill:#EC4899,color:#FFFFFF,stroke:#BE185D

@@ -37,4 +37,5 @@
   <circle cx="1136" cy="309" r="7" fill="#10B981"/>
   <rect x="934" y="438" width="222" height="48" rx="16" fill="#EC4899"/>
   <text x="1045" y="468" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="800">КНОПКА ВСЕГДА ВИДНА</text>
+  <text x="640" y="542" text-anchor="middle" fill="#FBBF24" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="800">Карточки продуктов не меняют opacity или scale и не мерцают при нажатии</text>
 </svg>

@@ -1,10 +1,10 @@
 flowchart LR
-    Launch["Launch\nbounded bootstrap"] --> Onboarding["Onboarding\n1...N slides, ATT if enabled"]
-    Onboarding --> Paywall["Adaptive paywall\n0...N products"]
-    Paywall --> Checkout["Purchase / Restore\nApple or RU"]
-    Checkout --> Entitlement["Authoritative entitlement\nactive / inactive / unresolved"]
-    Entitlement -->|"active"| Main["Main\nverified premium"]
-    Entitlement -->|"inactive / unresolved"| Safe["Safe free state\nno false premium"]
+    Launch["Запуск\nконечный timeout"] --> Onboarding["Onboarding\nATT после 1-го слайда"]
+    Onboarding --> Paywall["Адаптивный paywall\n0...N продуктов Adapty"]
+    Paywall --> Checkout["Покупка / Restore\nApple или RU"]
+    Checkout --> Entitlement["Свежая проверка доступа\nactive / inactive / unresolved"]
+    Entitlement -->|"active"| Main["Главный экран\nподтверждённый premium"]
+    Entitlement -->|"inactive / unresolved"| Safe["Безопасное состояние\npremium не открывается"]
 
     style Launch fill:#3B82F6,color:#FFFFFF,stroke:#1D4ED8
     style Onboarding fill:#EC4899,color:#FFFFFF,stroke:#BE185D

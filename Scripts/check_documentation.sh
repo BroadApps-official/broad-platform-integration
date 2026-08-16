@@ -109,6 +109,10 @@ for required_pattern in \
     'Documentation/Assets/README/developer-roadmap-dark\.svg' \
     'Documentation/Assets/README/reference-workflow-light\.svg' \
     'Documentation/Assets/README/reference-workflow-dark\.svg' \
+    'Documentation/Assets/README/project-inputs-light\.svg' \
+    'Documentation/Assets/README/project-inputs-dark\.svg' \
+    'Documentation/Assets/README/composition-root-light\.svg' \
+    'Documentation/Assets/README/composition-root-dark\.svg' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
     if ! rg -q "$required_pattern" "$platform_root/README.md"; then

@@ -1,10 +1,10 @@
 flowchart LR
-    Apple["Apple\nStoreKit + qualified verifier"] --> Engine["Entitlement Engine"]
-    Backend["Primary backend"] --> Engine
-    RU["RU billing backend\nonly when configured"] --> Engine
-    Engine --> Active["active\nany valid active wins"]
-    Engine --> Inactive["inactive\nall configured sources inactive"]
-    Engine --> Unresolved["unresolved\ntimeout / offline / invalid"]
+    Apple["Apple\nStoreKit + проверяющий сервис"] --> Engine["Движок проверки доступа"]
+    Backend["Backend приложения"] --> Engine
+    RU["RU backend\nтолько когда настроен"] --> Engine
+    Engine --> Active["active\nлюбой подтверждённый active побеждает"]
+    Engine --> Inactive["inactive\nвсе настроенные источники дали inactive"]
+    Engine --> Unresolved["unresolved\ntimeout / нет сети / некорректный ответ"]
 
     style Apple fill:#64748B,color:#FFFFFF,stroke:#334155
     style Backend fill:#64748B,color:#FFFFFF,stroke:#334155

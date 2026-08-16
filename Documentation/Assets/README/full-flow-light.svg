@@ -1,35 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="360" viewBox="0 0 1400 360" role="img" aria-labelledby="title description">
-  <title id="title">Полный flow приложения</title>
-  <desc id="description">Launch, onboarding, paywall, purchase или restore, authoritative entitlement refresh и main.</desc>
-  <defs>
-    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#64748B"/></marker>
-    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#0F172A" flood-opacity="0.10"/></filter>
-  </defs>
-  <rect width="1400" height="360" rx="28" fill="#F8FAFC"/>
-  <text x="50" y="52" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="25" font-weight="800">Первый запуск до основного экрана</text>
-  <text x="50" y="80" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">Premium открывается только после нового authoritative entitlement refresh.</text>
-  <g filter="url(#shadow)">
-    <rect x="50" y="132" width="170" height="96" rx="22" fill="#3B82F6"/>
-    <rect x="270" y="132" width="170" height="96" rx="22" fill="#EC4899"/>
-    <rect x="490" y="132" width="170" height="96" rx="22" fill="#EC4899"/>
-    <rect x="710" y="132" width="190" height="96" rx="22" fill="#10B981"/>
-    <rect x="950" y="132" width="190" height="96" rx="22" fill="#10B981"/>
-    <rect x="1190" y="132" width="160" height="96" rx="22" fill="#F59E0B"/>
-  </g>
-  <path d="M220 180H256M440 180H476M660 180H696M900 180H936M1140 180H1176" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
-  <text x="135" y="171" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Launch</text>
-  <text x="135" y="198" text-anchor="middle" fill="#DBEAFE" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">bounded bootstrap</text>
-  <text x="355" y="171" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Onboarding</text>
-  <text x="355" y="198" text-anchor="middle" fill="#FCE7F3" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">1…N slides • ATT if enabled</text>
-  <text x="575" y="171" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Paywall</text>
-  <text x="575" y="198" text-anchor="middle" fill="#FCE7F3" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">0…N products</text>
-  <text x="805" y="171" text-anchor="middle" fill="#052E16" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">Purchase / Restore</text>
-  <text x="805" y="198" text-anchor="middle" fill="#064E3B" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">Apple or RU checkout</text>
-  <text x="1045" y="171" text-anchor="middle" fill="#052E16" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">Entitlement</text>
-  <text x="1045" y="198" text-anchor="middle" fill="#064E3B" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">active / inactive / unresolved</text>
-  <text x="1270" y="171" text-anchor="middle" fill="#422006" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Main</text>
-  <text x="1270" y="198" text-anchor="middle" fill="#713F12" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">verified access</text>
-  <rect x="708" y="278" width="434" height="48" rx="16" fill="#64748B"/>
-  <text x="925" y="308" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="700">StoreKit • Primary backend • RU billing authority</text>
-  <path d="M925 278V244" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="430" viewBox="0 0 1400 430" role="img" aria-labelledby="title description">
+  <title id="title">Первый запуск и подтверждение доступа</title>
+  <desc id="description">Запуск, onboarding, paywall, покупка или восстановление, свежая проверка доступа и переход на основной экран только при active.</desc>
+  <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#64748B"/></marker><filter id="shadow" x="-20%" y="-30%" width="140%" height="170%"><feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#0F172A" flood-opacity="0.10"/></filter></defs>
+  <rect width="1400" height="430" rx="28" fill="#F8FAFC"/>
+  <text x="50" y="52" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="25" font-weight="800">Первый запуск и подтверждение доступа</text>
+  <text x="50" y="80" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">Premium открывается только после свежего подтверждения active. Кеш сам по себе доступ не выдаёт.</text>
+  <g filter="url(#shadow)"><rect x="50" y="132" width="170" height="100" rx="22" fill="#3B82F6"/><rect x="270" y="132" width="170" height="100" rx="22" fill="#EC4899"/><rect x="490" y="132" width="170" height="100" rx="22" fill="#EC4899"/><rect x="710" y="132" width="190" height="100" rx="22" fill="#10B981"/><rect x="950" y="132" width="190" height="100" rx="22" fill="#10B981"/><rect x="1190" y="132" width="160" height="100" rx="22" fill="#F59E0B"/></g>
+  <path d="M220 182H256M440 182H476M660 182H696M900 182H936M1140 182H1176" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
+  <text x="135" y="171" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Запуск</text><text x="135" y="199" text-anchor="middle" fill="#DBEAFE" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12">конечный timeout</text>
+  <text x="355" y="171" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Onboarding</text><text x="355" y="199" text-anchor="middle" fill="#FCE7F3" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12">ATT после 1-го слайда</text>
+  <text x="575" y="171" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Paywall</text><text x="575" y="199" text-anchor="middle" fill="#FCE7F3" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12">0…N продуктов Adapty</text>
+  <text x="805" y="171" text-anchor="middle" fill="#052E16" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="800">Покупка / Restore</text><text x="805" y="199" text-anchor="middle" fill="#064E3B" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12">Apple или RU</text>
+  <text x="1045" y="171" text-anchor="middle" fill="#052E16" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="800">Проверка доступа</text><text x="1045" y="199" text-anchor="middle" fill="#064E3B" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12">только свежий ответ</text>
+  <text x="1270" y="171" text-anchor="middle" fill="#422006" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="19" font-weight="800">Главный</text><text x="1270" y="199" text-anchor="middle" fill="#713F12" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12">только при active</text>
+  <rect x="950" y="280" width="400" height="48" rx="16" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/><text x="1150" y="310" text-anchor="middle" fill="#991B1B" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="700">inactive / unresolved → premium не открывается</text><path d="M1045 232V266" stroke="#EF4444" stroke-width="4" marker-end="url(#arrow)"/>
+  <rect x="710" y="352" width="430" height="48" rx="16" fill="#64748B"/><text x="925" y="382" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="700">StoreKit • backend приложения • RU backend</text><path d="M805 352V248" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
 </svg>

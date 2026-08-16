@@ -24,7 +24,8 @@
 
 ## Что всё равно задаёт конкретное приложение
 
-- тип проекта: Figma или no-code;
+- тип проекта по метке карточки Kaiten: `no-code` означает отсутствие Figma,
+  без этой метки проект работает по Figma;
 - тексты, изображения, цвета, шрифты и экраны бренда;
 - bundle ID, ссылки и public Adapty configuration из документа Kaiten;
 - product IDs, placements и feature flags;

@@ -96,35 +96,35 @@ private func makeImage(
 }
 
 private func flowFrames() -> [GIFFrame] {
-    let size = NSSize(width: 1_100, height: 280)
+    let size = NSSize(width: 1_200, height: 340)
     let stages: [(String, String, NSColor)] = [
-        ("Launch", "bounded bootstrap", Palette.core),
-        ("Onboarding", "1...N • ATT if enabled", Palette.uiFlows),
-        ("Paywall", "0...N products", Palette.uiFlows),
-        ("Purchase / Restore", "Apple or RU", Palette.monetization),
-        ("Entitlement", "authoritative refresh", Palette.monetization),
-        ("Main", "verified access", Palette.app)
+        ("Запуск", "конечный timeout", Palette.core),
+        ("Onboarding", "ATT после 1-го слайда", Palette.uiFlows),
+        ("Paywall", "0...N продуктов", Palette.uiFlows),
+        ("Покупка / Restore", "Apple или RU", Palette.monetization),
+        ("Проверка доступа", "только свежий ответ", Palette.monetization),
+        ("Главный экран", "только при active", Palette.app)
     ]
-    let nodeWidth: CGFloat = 150
-    let nodeHeight: CGFloat = 78
+    let nodeWidth: CGFloat = 165
+    let nodeHeight: CGFloat = 90
     let spacing: CGFloat = 25
-    let startX: CGFloat = 37.5
-    let nodeY: CGFloat = 94
+    let startX: CGFloat = 42.5
+    let nodeY: CGFloat = 132
 
     return stages.indices.map { activeIndex in
         let image = makeImage(size: size) {
             Palette.background.setFill()
             NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
             drawText(
-                "BroadApps full flow",
-                in: NSRect(x: 38, y: 224, width: 420, height: 34),
+                "Первый запуск и подтверждение доступа",
+                in: NSRect(x: 42, y: 286, width: 600, height: 34),
                 size: 24,
                 color: Palette.text,
                 weight: .bold
             )
             drawText(
-                "Premium only after a fresh active entitlement",
-                in: NSRect(x: 38, y: 198, width: 560, height: 24),
+                "Premium открывается только после свежего подтверждения active",
+                in: NSRect(x: 42, y: 258, width: 700, height: 24),
                 size: 14,
                 color: Palette.secondary
             )
@@ -157,29 +157,37 @@ private func flowFrames() -> [GIFFrame] {
                 roundedRect(rect, radius: 18, fill: fill, stroke: stroke, lineWidth: isActive ? 3 : 1)
                 drawText(
                     stage.0,
-                    in: NSRect(x: x + 7, y: nodeY + 43, width: nodeWidth - 14, height: 23),
-                    size: stage.0.count > 14 ? 13 : 16,
+                    in: NSRect(x: x + 7, y: nodeY + 50, width: nodeWidth - 14, height: 23),
+                    size: stage.0.count > 14 ? 12 : 16,
                     color: primaryText,
                     weight: .bold,
                     alignment: .center
                 )
                 drawText(
                     stage.1,
-                    in: NSRect(x: x + 7, y: nodeY + 16, width: nodeWidth - 14, height: 20),
-                    size: 11,
+                    in: NSRect(x: x + 7, y: nodeY + 18, width: nodeWidth - 14, height: 20),
+                    size: stage.1.count > 18 ? 10 : 11,
                     color: secondaryText,
                     alignment: .center
                 )
             }
 
-            let progressWidth = (size.width - 76) * CGFloat(activeIndex + 1) / CGFloat(stages.count)
+            drawText(
+                "inactive / unresolved → premium не открывается",
+                in: NSRect(x: 42, y: 76, width: 500, height: 22),
+                size: 13,
+                color: Palette.uiFlows,
+                weight: .semibold
+            )
+
+            let progressWidth = (size.width - 84) * CGFloat(activeIndex + 1) / CGFloat(stages.count)
             roundedRect(
-                NSRect(x: 38, y: 42, width: size.width - 76, height: 8),
+                NSRect(x: 42, y: 42, width: size.width - 84, height: 8),
                 radius: 4,
                 fill: Palette.external.withAlphaComponent(0.30)
             )
             roundedRect(
-                NSRect(x: 38, y: 42, width: progressWidth, height: 8),
+                NSRect(x: 42, y: 42, width: progressWidth, height: 8),
                 radius: 4,
                 fill: stages[activeIndex].2
             )
@@ -197,7 +205,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
             Palette.background.setFill()
             NSBezierPath(rect: NSRect(origin: .zero, size: size)).fill()
             drawText(
-                "Adaptive paywall",
+                "Адаптивный paywall",
                 in: NSRect(x: 36, y: 374, width: 360, height: 34),
                 size: 25,
                 color: Palette.text,
@@ -234,7 +242,7 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                     stroke: Palette.uiFlows.withAlphaComponent(0.45)
                 )
                 drawText(
-                    "пусто • повторить • восстановить • закрыть",
+                    "повтор • Restore • закрыть",
                     in: NSRect(x: 132, y: 177, width: 212, height: 24),
                     size: 12,
                     color: Palette.secondary,
@@ -300,8 +308,8 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                 weight: .bold
             )
             let notes = count == 0
-                ? ["safe exit even for hard policy", "no fake product or price", "restore stays available"]
-                : ["provider order is unchanged", "duplicate SKU stays a separate row", "sticky CTA never dims"]
+                ? ["понятное пустое состояние", "нет выдуманного продукта или цены", "Restore остаётся доступен"]
+                : ["порядок провайдера не меняется", "повторный SKU остаётся отдельной строкой", "нижняя кнопка не мерцает"]
             for (index, note) in notes.enumerated() {
                 let y = 221 - CGFloat(index) * 48
                 Palette.monetization.setFill()
@@ -309,12 +317,12 @@ private func adaptivePaywallFrames() -> [GIFFrame] {
                 drawText(
                     note,
                     in: NSRect(x: 508, y: y, width: 340, height: 24),
-                    size: 15,
+                    size: note.count > 36 ? 13 : 15,
                     color: Palette.text
                 )
             }
             drawText(
-                "No opacity • no scale • no flicker",
+                "Без затемнения • без scale • без мерцания",
                 in: NSRect(x: 478, y: 66, width: 350, height: 28),
                 size: 16,
                 color: Palette.app,

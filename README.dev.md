@@ -151,9 +151,13 @@ final class FeatureViewModel: ObservableObject {
 
 ### Источник интерфейса
 
-- Если у проекта есть Figma, сверяйте с ней размеры, отступы и состояния.
-- В no-code-проекте используйте согласованный preview из Pencil/Claude Design и
-  материалы проекта.
+- Сначала прочитайте метку карточки проекта в Kaiten.
+- Метка `no-code` есть — Figma у проекта нет; используйте согласованный preview
+  из Pencil/Claude Design и материалы проекта.
+- Метки `no-code` нет — это проект с Figma. Откройте ссылку из документа
+  проекта; если ссылки или доступа нет, запросите их у проектного менеджера.
+- Не определяйте no-code по пустому полю Figma: источником истины является
+  метка карточки Kaiten.
 - Проверяйте не только общий вид: font size, weight, line height, padding,
   spacing, icon size, button height, card size, corner radius, header, sheet и
   tab bar.
