@@ -76,10 +76,10 @@ for required_pattern in \
     '^## Перед завершением задачи$' \
     '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
     '^## 🛠️ Вариант B: собрать приложение вручную$' \
-    'Этапы в обоих вариантах одинаковые' \
-    '^### Шаг 0\. Создайте новый iPhone-проект$' \
-    '^### Шаг 9\. Проверьте, меняли ли вы саму платформу$' \
-    '^## Короткий словарь$' \
+    'Один результат — два способа работы' \
+    '^### Шаг 0\. 🆕 Создайте новый iPhone-проект$' \
+    '^### Шаг 9\. 🔍 Проверьте, меняли ли вы саму платформу$' \
+    '^## 📖 Словарь: что означают термины$' \
     'Documentation/Traceability\.md' \
     'Documentation/Analytics\.md' \
     'Documentation/AccountRecovery\.md' \
@@ -87,12 +87,12 @@ for required_pattern in \
     'Documentation/AgentAutomation\.md' \
     '^## 💳 RU Billing: последовательность экранов$' \
     '^## ✅ Если вы изменили код платформы$' \
-    '^### 6\. ✅ Обязательная проверка перед сдачей$' \
+    '^### 6\. ✅ Запустите обязательную проверку перед сдачей$' \
     'AgentChecks/AUTOMATION_PROMPT\.md' \
     'agent_review_and_fix\.sh --doctor' \
     '^### Вариант 2 — запустить проверяющего агента вручную$' \
     'bash Scripts/agent_gate\.sh' \
-    '^## BroadAppTemplate: зачем запускать example$' \
+    '^## BroadAppTemplate: зачем запускать пример$' \
     'технический пример подключения' \
     'Documentation/Assets/README/Screenshots/onboarding-ru-v2\.png' \
     'Documentation/Assets/README/Screenshots/paywall-showcase-ru-v2\.png' \
@@ -104,6 +104,8 @@ for required_pattern in \
     'Documentation/Assets/README/References/5115-cloudpayments-light\.png' \
     'Documentation/Assets/README/References/5115-hosted-checkout-light\.png' \
     'Documentation/Assets/README/Screenshots/main-ru-v2\.png' \
+    'Documentation/Assets/README/developer-roadmap-light\.svg' \
+    'Documentation/Assets/README/developer-roadmap-dark\.svg' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
     if ! rg -q "$required_pattern" "$platform_root/README.md"; then
