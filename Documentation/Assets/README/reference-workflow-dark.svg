@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="690" viewBox="0 0 1280 690" role="img" aria-labelledby="title description">
+  <title id="title">Как работать с reference-проектом</title>
+  <desc id="description">Reference сначала находят в документах, Git и live-приложениях компании, затем изучают только для чтения, сопоставляют каждую функцию с backend API и принимают решение: использовать достаточный контракт или остановиться и уточнить недостающий функционал.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#071426"/>
+      <stop offset="0.5" stop-color="#111827"/>
+      <stop offset="1" stop-color="#2B170E"/>
+    </linearGradient>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2563EB"/>
+      <stop offset="0.5" stop-color="#7C3AED"/>
+      <stop offset="1" stop-color="#EA580C"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <rect width="1280" height="690" rx="36" fill="url(#background)"/>
+  <circle cx="1210" cy="80" r="150" fill="#F97316" opacity="0.12"/>
+  <circle cx="70" cy="650" r="170" fill="#3B82F6" opacity="0.11"/>
+
+  <rect x="54" y="42" width="1172" height="92" rx="28" fill="url(#header)" filter="url(#shadow)"/>
+  <text x="640" y="80" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="31" font-weight="800">REFERENCE — ИСТОЧНИК ФАКТОВ, А НЕ ОСНОВА ПРОЕКТА</text>
+  <text x="640" y="110" text-anchor="middle" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="600">Смотрим продукт и backend • не копируем архитектуру • ничего не изменяем</text>
+
+  <g filter="url(#shadow)">
+    <rect x="54" y="174" width="258" height="314" rx="28" fill="#172033" stroke="#3B82F6" stroke-width="3"/>
+    <rect x="338" y="174" width="278" height="314" rx="28" fill="#172033" stroke="#8B5CF6" stroke-width="3"/>
+    <rect x="642" y="174" width="278" height="314" rx="28" fill="#172033" stroke="#F97316" stroke-width="3"/>
+    <rect x="946" y="174" width="280" height="314" rx="28" fill="#172033" stroke="#22C55E" stroke-width="3"/>
+  </g>
+
+  <circle cx="88" cy="212" r="20" fill="#2563EB"/><text x="88" y="219" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">1</text>
+  <text x="120" y="220" fill="#93C5FD" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" font-weight="800">НАЙТИ</text>
+  <text x="80" y="263" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">Сначала проверить:</text>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="700" text-anchor="middle">
+    <rect x="80" y="286" width="206" height="42" rx="21" fill="#1E3A5F"/><text x="183" y="313" fill="#DBEAFE">Документ в Kaiten</text>
+    <rect x="80" y="340" width="206" height="42" rx="21" fill="#312E5F"/><text x="183" y="367" fill="#E0E7FF">Git компании</text>
+    <rect x="80" y="394" width="206" height="42" rx="21" fill="#12354A"/><text x="183" y="421" fill="#E0F2FE">Live-приложения</text>
+  </g>
+  <text x="183" y="464" text-anchor="middle" fill="#94A3B8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Не нашли — спросить тимлида-</text>
+  <text x="183" y="481" text-anchor="middle" fill="#94A3B8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">разработчика или ПМ</text>
+
+  <circle cx="372" cy="212" r="20" fill="#7C3AED"/><text x="372" y="219" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">2</text>
+  <text x="404" y="220" fill="#C4B5FD" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" font-weight="800">ПРОЧИТАТЬ</text>
+  <text x="366" y="264" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="700">Продукт</text>
+  <text x="366" y="291" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">• экраны и переходы</text>
+  <text x="366" y="316" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">• тексты, assets, поведение</text>
+  <text x="366" y="341" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">• рабочие dev-настройки</text>
+  <rect x="366" y="366" width="222" height="2" fill="#4C3B76"/>
+  <text x="366" y="397" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="700">Backend</text>
+  <text x="366" y="424" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">• реальные API-ручки</text>
+  <text x="366" y="449" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">• request / response / auth</text>
+  <text x="366" y="474" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">• ошибки и безопасный retry</text>
+
+  <circle cx="676" cy="212" r="20" fill="#EA580C"/><text x="676" y="219" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">3</text>
+  <text x="708" y="220" fill="#FDBA74" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" font-weight="800">СОПОСТАВИТЬ</text>
+  <text x="670" y="264" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="700">Каждую функцию из:</text>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="700" text-anchor="middle">
+    <rect x="670" y="286" width="94" height="38" rx="19" fill="#4A2C1B"/><text x="717" y="311" fill="#FFEDD5">Kaiten</text>
+    <rect x="774" y="286" width="94" height="38" rx="19" fill="#4A1F3A"/><text x="821" y="311" fill="#FCE7F3">Figma</text>
+    <rect x="722" y="336" width="94" height="38" rx="19" fill="#493A16"/><text x="769" y="361" fill="#FEF3C7">ТЗ</text>
+  </g>
+  <path d="M795 393V421" stroke="#F97316" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <rect x="670" y="424" width="222" height="48" rx="16" fill="#3B2B1F" stroke="#F97316" stroke-width="2"/>
+  <text x="781" y="447" text-anchor="middle" fill="#FED7AA" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="800">ЕСТЬ ЛИ РЕАЛЬНАЯ РУЧКА?</text>
+  <text x="781" y="465" text-anchor="middle" fill="#FDBA74" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">Достаточен ли её контракт?</text>
+
+  <circle cx="980" cy="212" r="20" fill="#059669"/><text x="980" y="219" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">4</text>
+  <text x="1012" y="220" fill="#86EFAC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" font-weight="800">РЕШИТЬ</text>
+  <rect x="974" y="252" width="224" height="62" rx="18" fill="#123C36"/>
+  <text x="992" y="278" fill="#A7F3D0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">✓ Контракт достаточен</text>
+  <text x="992" y="299" fill="#6EE7B7" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">Использовать в новом app</text>
+  <rect x="974" y="326" width="224" height="70" rx="18" fill="#493A16"/>
+  <text x="992" y="352" fill="#FDE68A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">! Контракт неполный</text>
+  <text x="992" y="373" fill="#FCD34D" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">Остановиться и уточнить</text>
+  <rect x="974" y="408" width="224" height="70" rx="18" fill="#4A2025"/>
+  <text x="992" y="434" fill="#FCA5A5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">× Ручки нет</text>
+  <text x="992" y="455" fill="#FB7185" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">Не придумывать API</text>
+
+  <path d="M312 331H330" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M616 331H634" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <path d="M920 331H938" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
+
+  <rect x="54" y="530" width="1172" height="112" rx="26" fill="#3A1822" stroke="#E11D48" stroke-width="3"/>
+  <text x="88" y="568" fill="#FDA4AF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">НЕ ДЕЛАЕМ С REFERENCE</text>
+  <g fill="#FFE4E6" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="700">
+    <text x="88" y="603">× не изменяем проект</text>
+    <text x="354" y="603">× не копируем архитектуру</text>
+    <text x="664" y="603">× не выдумываем endpoint</text>
+    <text x="956" y="603">× не оставляем временные ключи в релизе</text>
+  </g>
+</svg>

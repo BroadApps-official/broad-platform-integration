@@ -15,6 +15,7 @@ link_failures="$(
       root = File.expand_path(ARGV.fetch(0))
       files = [
         File.join(root, "README.md"),
+        File.join(root, "README.dev.md"),
         File.join(root, "CHANGELOG.md"),
         *Dir.glob(File.join(root, "Documentation/**/*.md")),
         *Dir.glob(File.join(root, "AgentChecks/**/*.md")),
@@ -106,6 +107,8 @@ for required_pattern in \
     'Documentation/Assets/README/Screenshots/main-ru-v2\.png' \
     'Documentation/Assets/README/developer-roadmap-light\.svg' \
     'Documentation/Assets/README/developer-roadmap-dark\.svg' \
+    'Documentation/Assets/README/reference-workflow-light\.svg' \
+    'Documentation/Assets/README/reference-workflow-dark\.svg' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
     if ! rg -q "$required_pattern" "$platform_root/README.md"; then

@@ -19,7 +19,9 @@
    сначала выполняется reconciliation.
 10. Usedesk API token не помещается в приложение; user chat token хранится на
     backend конкретного app account, а не только в `UserDefaults`.
-11. После изменения платформы запускайте полный `agent_gate.sh`.
+11. Support email может показать ID в системной форме только после действия
+    пользователя; support log не содержит токены, payment URL и raw payload.
+12. После изменения платформы запускайте полный `agent_gate.sh`.
 
 ## Классы данных
 

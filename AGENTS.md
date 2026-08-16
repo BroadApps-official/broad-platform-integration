@@ -46,6 +46,10 @@
   `api_token` остаётся `nil`; user chat token хранится на backend текущего app
   account при `isSaveTokensInUserDefaults = false`, чтобы история переживала
   переустановку и не смешивалась между аккаунтами.
+- Письмо в поддержку заполняется строго по `Documentation/SupportEmail.md`.
+  Стандартная и RU/ЮKassa-формы отличаются только `(ukassa)` в первой строке;
+  остальные заголовки и порядок полей не меняются. Support log очищается от
+  токенов, payment URL, receipt/JWS и raw payload.
 
 ## Ограничения проверки
 

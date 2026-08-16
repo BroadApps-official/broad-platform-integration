@@ -20,6 +20,7 @@
 | Безопасное поведение при обрыве сети | Typed network failures и pending reconciliation | [Network Interruptions](NetworkInterruptions.md) |
 | Hex Color, fonts, keyboard и swipe-back | `BroadExtensions` | [BroadExtensions](Extensions.md) |
 | Онлайн-чат поддержки из Settings | App-owned Usedesk CocoaPods adapter + backend chat token | [Usedesk](Usedesk.md) |
+| Письмо в поддержку, распознаваемое ботом | Единый app/device/ID/diagnostics body + `(ukassa)` variant | [Support Email](SupportEmail.md) |
 
 ## Что всё равно задаёт конкретное приложение
 
