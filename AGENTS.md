@@ -40,6 +40,12 @@
 - Offline/timeout не превращаются в inactive/success. Неопределённый финансовый
   результат остаётся pending до reconciliation; появление сети не запускает
   purchase, token charge, RU checkout или cancellation автоматически.
+- Usedesk подключается только когда он нужен конкретному приложению. Готовый GUI
+  устанавливается через CocoaPods в app target и открывается только действием
+  `Настройки → Онлайн-чат`, не в loader/bootstrap. Для обычного чата
+  `api_token` остаётся `nil`; user chat token хранится на backend текущего app
+  account при `isSaveTokensInUserDefaults = false`, чтобы история переживала
+  переустановку и не смешивалась между аккаунтами.
 
 ## Ограничения проверки
 

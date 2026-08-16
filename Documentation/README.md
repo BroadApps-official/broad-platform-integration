@@ -17,6 +17,7 @@
 | Настроить placements и remote config | [Remote Config](RemoteConfig.md) |
 | Проверить эксперименты | [Experiments](Experiments.md) |
 | Подключить аналитику | [Analytics](Analytics.md) |
+| Добавить онлайн-чат Usedesk в Settings | [Usedesk](Usedesk.md) |
 | Перенести старое приложение | [Migration Guide](MigrationGuide.md) |
 | Запустить агента-проверяющего | [Agent Automation](AgentAutomation.md) |
 | Посмотреть, что уже умеет платформа | [Карта возможностей](Traceability.md) |
@@ -28,7 +29,7 @@
 3. [Monetization](Monetization.md) — соберите один composition root.
 4. [Account Recovery](AccountRecovery.md) — привяжите покупки к account/backend,
    а не к одной установке приложения.
-5. Откройте профильный guide: RU billing, tokens, onboarding или paywall.
+5. Откройте профильный guide: RU billing, tokens, onboarding, paywall или Usedesk.
 6. Если меняли код платформы, запустите `./Scripts/agent_review_and_fix.sh`.
 
 Все реальные идентификаторы приложения, Adapty placements, legal URL, API

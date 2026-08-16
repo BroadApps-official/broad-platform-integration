@@ -17,7 +17,9 @@
    flags или balance.
 9. Событие «сеть снова доступна» не разрешает автоматически повторять charge;
    сначала выполняется reconciliation.
-10. После изменения платформы запускайте полный `agent_gate.sh`.
+10. Usedesk API token не помещается в приложение; user chat token хранится на
+    backend конкретного app account, а не только в `UserDefaults`.
+11. После изменения платформы запускайте полный `agent_gate.sh`.
 
 ## Классы данных
 
@@ -30,6 +32,7 @@
 | Opaque identity | subject fingerprint | только scoped entitlement cache |
 | Safe diagnostics | typed error kind, diagnostic code, counters | да |
 | Catalog metadata | logical placement, product ID, product count | только через typed analytics policy |
+| Usedesk chat identity | user chat token, имя, email, телефон, `additional_id` | не логировать; token хранить через backend app account |
 
 Product ID может раскрывать внутреннюю структуру каталога. Он разрешён в typed monetization analytics, но destination приложения должен применять собственную data-retention policy.
 
@@ -73,6 +76,13 @@ Backend adapters получают credential через `SubjectAuthorizationPro
 Смена пользователя требует новой composition/identity preparation и очистки app-owned user state по migration policy. `SubjectAuthorizationSession` при этом не пересоздаётся: это общий revocation boundary между старым и новым bundle.
 
 Никогда не передавайте credential через query string, analytics property, error message или cache key.
+
+Для Usedesk различайте секретный API token и user chat token переписки. Для
+обычного мобильного чата `api_token` должен быть `nil`. User chat token,
+возвращённый SDK, сохраняется через backend для текущего авторизованного
+пользователя и передаётся обратно при следующем открытии. Установите
+`isSaveTokensInUserDefaults: false`: иначе переустановка удалит локальную связь
+с историей, а смена аккаунта может смешать переписки. [Usedesk →](Usedesk.md).
 
 После переустановки server state можно вернуть только после доказанного login в
 тот же app account. Anonymous subject допустим для Apple ownership policy

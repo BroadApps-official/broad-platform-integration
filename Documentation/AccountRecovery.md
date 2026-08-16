@@ -12,6 +12,7 @@
 | Apple token pack | app backend token ledger | вход в тот же app account; idempotent ledger по StoreKit transaction ID |
 | RU subscription/lifetime | RU backend entitlement | вход в тот же app account; покупка привязана к server customer ID |
 | RU token pack | общий app backend token ledger | вход в тот же app account; RU checkout ID обрабатывается идемпотентно |
+| История Usedesk | user chat token в backend-профиле | вход в тот же app account; token загружается до открытия чата |
 
 > [!IMPORTANT]
 > Consumable-токены нельзя восстановить кнопкой StoreKit Restore. После
@@ -110,7 +111,9 @@ Email для чека — только удобство формы. Его по�
 - автоматическое начисление токенов из списка StoreKit без idempotent backend;
 - создание новой anonymous identity на каждой установке для server purchases;
 - открытие premium при `.unresolved`, timeout или только cached inactive.
+- хранение единственной копии Usedesk user chat token в `UserDefaults` или
+  передача token предыдущего пользователя после смены аккаунта.
 
 [Entitlements →](Entitlements.md) · [Purchase Managers →](PurchaseManagers.md) ·
 [RU Billing →](RUBilling.md) · [Network Interruptions →](NetworkInterruptions.md) ·
-[Security →](Security.md)
+[Usedesk →](Usedesk.md) · [Security →](Security.md)

@@ -8,6 +8,10 @@ production-ready версии.
 
 ### Added
 
+- [Usedesk guide](Documentation/Usedesk.md): запрос данных у ПМ, безопасный
+  пример сообщения, CocoaPods GUI, вход `Настройки → Онлайн-чат`, app-owned
+  сервис, backend-хранение user chat token, переустановка, обрыв сети и готовый
+  промпт для Codex/Claude;
 - `RecoverCustomerAccessUseCase`: fresh-install/reinstall recovery для Apple и
   RU entitlements, server-authoritative token balance и RU subscription status;
 - [Account Recovery guide](Documentation/AccountRecovery.md) с обязательной

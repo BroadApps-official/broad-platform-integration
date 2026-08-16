@@ -22,6 +22,7 @@
     <a href="#agent-setup">🤖 С Codex / Claude</a> ·
     <a href="#manual-setup">🛠️ Без агента</a> ·
     <a href="#visual-reference">💳 RU Billing UI</a> ·
+    <a href="#usedesk">💬 Usedesk</a> ·
     <a href="#showcase">📱 BroadAppTemplate</a> ·
     <a href="#architecture">🧭 Модули</a> ·
     <a href="#agent-app-check">✅ Проверка результата</a> ·
@@ -137,6 +138,10 @@ Swift Package и использует их открытые интерфейсы
 | `BroadUIFlows` | Маршруты приложения, onboarding, paywall, загрузка/ошибка/повтор и общий RU Billing UI |
 | `BroadExtensions` | Независимые вспомогательные функции для Hex Color, шрифтов, клавиатуры и возврата свайпом |
 | `BroadAppTemplate` | Запускаемый пример сборки зависимостей и безопасных демонстрационных сценариев |
+
+Внешние SDK подключаются только когда они нужны приложению. Например, готовый
+чат Usedesk устанавливается через CocoaPods в app target и открывается из
+Settings; [простая инструкция уже подготовлена](Documentation/Usedesk.md).
 
 ```text
 Figma есть? ── да ─→ проект с Figma ─┐
@@ -480,6 +485,11 @@ Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
 8. Создай новый iPhone-проект на модулях платформы. Названия scheme и target
    возьми из названия проекта, остальные доступные значения — из Kaiten.
 9. Используй BroadAppTemplate как пример соединения модулей и безопасных данных.
+10. Проверь, требуется ли приложению Usedesk. Если Usedesk упомянут в Kaiten,
+    reference или сообщении ПМ, открой Documentation/Usedesk.md. Если данных
+    недостаточно, запроси Company ID, Channel ID, необходимость Базы знаний,
+    push и backend-ручки для user chat token. Не угадывай назначение присланного
+    Token или script виджета.
 
 Что сделать:
 1. Подготовь рабочее приложение и подключи package products BroadCore,
@@ -504,14 +514,19 @@ Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
    показов, выбора, покупок, восстановления и проверки доступа.
 9. ATT запрашивай только после появления первого onboarding-слайда. Rate Us в
    onboarding не добавляй.
-10. Подключи проверку незавершённой Apple-операции, возврат из RU-оплаты и
+10. Если Usedesk подтверждён для приложения, установи готовый GUI через
+    CocoaPods, добавь отдельную строку `Настройки → Онлайн-чат` и открывай SDK
+    только по нажатию. User chat token загружай/сохраняй через backend текущего
+    app account и передавай `isSaveTokensInUserDefaults: false`. Для обычного
+    чата не размещай секретный API token в приложении.
+11. Подключи проверку незавершённой Apple-операции, возврат из RU-оплаты и
     восстановление покупок/токенов после входа в тот же аккаунт.
-11. Покупка, восстановление и незавершённая операция не должны открывать premium
-   до новой подтверждённой проверки доступа.
-12. Сначала проверь безопасные локальные данные, затем только загрузку настоящего
-   каталога Adapty без финансовых операций.
-13. Собери приложение в Debug и Release. Запусти безопасные сценарии.
-14. В конце простым языком напиши: что взято из Kaiten, какие временные данные
+12. Покупка, восстановление и незавершённая операция не должны открывать premium
+    до новой подтверждённой проверки доступа.
+13. Сначала проверь безопасные локальные данные, затем только загрузку настоящего
+    каталога Adapty без финансовых операций.
+14. Собери приложение в Debug и Release. Запусти безопасные сценарии.
+15. В конце простым языком напиши: что взято из Kaiten, какие временные данные
     использованы, что заменить перед выпуском, какие backend-ручки проверены,
     какие функции требуют решения тимлида-разработчика/ПМ или доработки
     backend, какие файлы изменены и какие проверки прошли.
@@ -911,10 +926,30 @@ placement недоступен, загрузка повторяется чере
 | RU Billing | [RU Billing](Documentation/RUBilling.md) |
 | Special offer | [Special Offer](Documentation/SpecialOffer.md) |
 | Analytics | [Analytics](Documentation/Analytics.md) |
+| Usedesk из Settings | [Usedesk](Documentation/Usedesk.md) |
 
 **✅ Готово, если:** все значения конкретного приложения находятся в его
 конфигурации, `main` задан как резерв, а SwiftUI-экраны не содержат строковых
 placement ID и Adapty key.
+
+### Опциональный шаг 5A. 💬 Подключите Usedesk, если он нужен проекту
+
+Сначала получите подтверждение ПМ. Затем запросите `Company ID`, `Channel ID`,
+необходимость Базы знаний и push, а также backend-ручки для user chat token.
+
+Готовый интерфейс Usedesk устанавливается через CocoaPods в app target. После
+`pod install` открывайте `.xcworkspace`, а не `.xcodeproj`. В Settings добавьте
+отдельную строку `Онлайн-чат`; SDK открывается только после нажатия пользователя.
+
+История чата должна переживать переустановку: загружайте user chat token с
+backend текущего app account, а новый token из callback сохраняйте туда же.
+Локальный `UserDefaults` не подходит как единственный источник истории.
+
+[Полная пошаговая инструкция, Podfile, код сервиса и готовый промпт →](Documentation/Usedesk.md)
+
+**✅ Готово, если:** `Настройки → Онлайн-чат` открывает нужный канал, после
+переустановки история возвращается для того же аккаунта, а другой аккаунт её не
+видит.
 
 ### Шаг 6. 🎨 Свяжите платформу с реальными экранами
 
@@ -1215,6 +1250,79 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 
 [Все параметры запуска и демонстрационная аналитика →](Examples/BroadAppTemplate/README.md)
 </details>
+
+<a id="usedesk"></a>
+## 💬 Usedesk: онлайн-чат из Settings
+
+Usedesk добавляется только в те приложения, где его подтвердил ПМ. Разработчику
+не нужно угадывать способ подключения:
+
+| Шаг | Что происходит |
+|---|---|
+| 1. Получить данные | Аккаунт-менеджер или ПМ присылает `Company ID`, `Channel ID` и опциональные настройки |
+| 2. Подключить GUI | В app target добавляется CocoaPods `UseDesk_SDK_Swift`; после `pod install` проект открывается через `.xcworkspace` |
+| 3. Добавить вход | В Settings появляется отдельная строка `Онлайн-чат` |
+| 4. Сохранить историю | User chat token загружается и сохраняется через backend текущего app account |
+
+<p align="center">
+  <a href="Documentation/Assets/README/Usedesk/pm-data-sanitized.png">
+    <img
+      alt="Безопасный пример сообщения ПМ с данными Usedesk"
+      src="Documentation/Assets/README/Usedesk/pm-data-sanitized.png"
+      width="82%"
+    >
+  </a>
+</p>
+
+> [!IMPORTANT]
+> Поле `Token` из сообщения ПМ, user chat token конкретного пользователя и
+> секретный API token — разные значения. Для обычного чата используется
+> `api_token: nil`. User chat token хранится на backend аккаунта, чтобы история
+> вернулась после переустановки. Не вставляйте присланный token в Swift-код, пока
+> ПМ не подтвердил его назначение.
+
+Пользовательский путь всегда простой:
+
+```text
+Настройки → Онлайн-чат → загрузка token текущего аккаунта → экран Usedesk
+```
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="Documentation/Assets/README/Usedesk/settings-online-chat-highlighted.png">
+        <img
+          alt="Строка Online Chat в Settings"
+          src="Documentation/Assets/README/Usedesk/settings-online-chat-highlighted.png"
+          width="100%"
+        >
+      </a>
+      <br><strong>1. Нажать Online Chat</strong>
+      <br><sub>Это отдельная строка в Settings, не email-поддержка</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="Documentation/Assets/README/Usedesk/chat-screen.png">
+        <img
+          alt="Готовый экран чата Usedesk"
+          src="Documentation/Assets/README/Usedesk/chat-screen.png"
+          width="100%"
+        >
+      </a>
+      <br><strong>2. Откроется Usedesk</strong>
+      <br><sub>Готовый UI чата с полем сообщения и прикреплением файла</sub>
+    </td>
+  </tr>
+</table>
+
+Это рабочий пример пути пользователя. Цвета и остальной Settings UI
+берутся из конкретного приложения; общим остаётся сам переход и готовый
+экран чата.
+
+Usedesk не инициализируется в loader и не открывается автоматически. Если SDK
+не установлен, данных нет или сеть оборвалась, Settings остаётся доступным и
+показывает понятную ошибку с ручным повтором.
+
+[Открыть полную инструкцию Usedesk: данные, Podfile, код, backend и checklist →](Documentation/Usedesk.md)
 
 <a id="architecture"></a>
 ## 🧭 Четыре модуля без магии
@@ -1525,6 +1633,9 @@ BroadApps iOS Platform agent gate passed.
 | Термин | Простое объяснение |
 |---|---|
 | Swift Package / SPM package | Подключаемый к Xcode пакет с кодом платформы. Здесь это repository `BroadCore` |
+| CocoaPods | Второй менеджер зависимостей iOS; нужен, например, для готового GUI Usedesk |
+| Podfile | Короткий файл со списком CocoaPods-зависимостей app target |
+| `.xcworkspace` | Файл проекта, который нужно открывать после `pod install`, чтобы Xcode увидел приложение и Pods вместе |
 | Product / модуль package | Часть package, которую можно подключить отдельно: `BroadCore`, `BroadMonetization`, `BroadUIFlows` или `BroadExtensions` |
 | Target | То, что Xcode собирает. В этой инструкции app target — само iPhone-приложение |
 | Scheme | Выбранный сценарий запуска и сборки в верхней панели Xcode, например `BroadAppTemplate` |
@@ -1564,6 +1675,7 @@ BroadApps iOS Platform agent gate passed.
 | Gate | Команда полной проверки платформы; она проверяет правила и сборки, но сама не исправляет код |
 | PASS / BLOCKED | Всё проверено успешно / продолжение невозможно без конкретного внешнего решения |
 | Reference | Готовое приложение похожей ниши, которое смотрят как пример и не изменяют |
+| Usedesk user chat token | Идентификатор переписки одного пользователя; хранится на backend его app account, а не только на устройстве |
 
 <a id="documentation"></a>
 ## 📚 Карта документации
@@ -1585,6 +1697,7 @@ README отвечает на вопрос «куда нажать и с чего
 | Подключить RU-сервер и последовательность экранов | [RU Billing](Documentation/RUBilling.md) |
 | Включить специальное предложение | [Special Offer](Documentation/SpecialOffer.md) |
 | Подключить аналитику | [Analytics](Documentation/Analytics.md) |
+| Добавить онлайн-чат Usedesk в Settings | [Usedesk](Documentation/Usedesk.md) |
 | Настроить onboarding и ATT | [Onboarding & ATT](Documentation/OnboardingAndATT.md) |
 | Собрать адаптивный paywall | [Paywall UI](Documentation/PaywallUI.md) |
 | Подключить общие вспомогательные функции | [BroadExtensions](Documentation/Extensions.md) |

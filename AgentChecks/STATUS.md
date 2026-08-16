@@ -33,6 +33,6 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-`a0d1a47153668b30c5260e3dae9735f9d90734a649b18cc339d324f2d89613e5`
+`f9bf7aab4ef2cbeecfafa1d58ed28969351c0b269c649176fe4faae03859a851`
 
 </details>

@@ -19,6 +19,7 @@
 | Восстановление после переустановки | Account recovery + server-authoritative ledger | [Account Recovery](AccountRecovery.md) |
 | Безопасное поведение при обрыве сети | Typed network failures и pending reconciliation | [Network Interruptions](NetworkInterruptions.md) |
 | Hex Color, fonts, keyboard и swipe-back | `BroadExtensions` | [BroadExtensions](Extensions.md) |
+| Онлайн-чат поддержки из Settings | App-owned Usedesk CocoaPods adapter + backend chat token | [Usedesk](Usedesk.md) |
 
 ## Что всё равно задаёт конкретное приложение
 
@@ -27,6 +28,8 @@
 - bundle ID, ссылки и public Adapty configuration из документа Kaiten;
 - product IDs, placements и feature flags;
 - app account и backend-контракты для tokens и RU Billing;
+- необходимость Usedesk, его `Company ID`/`Channel ID` и backend-хранение user
+  chat token;
 - основной экран и бизнес-функции продукта.
 
 Если финальные данные ещё не готовы, временно используется конфигурация

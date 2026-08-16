@@ -17,6 +17,12 @@ app-owned данные и backend-контракты, но не архитект
 Внешний вид RU-оплаты сверяйте с
 [описанием полного RU Billing flow](../../README.md#visual-reference).
 
+Usedesk намеренно не встроен в example target: готовый UI этого SDK
+устанавливается через CocoaPods и нужен не каждому приложению. В рабочем
+приложении вход добавляется отдельной строкой `Настройки → Онлайн-чат`, а user
+chat token хранится через backend app account. [Инструкция Usedesk с Podfile и
+готовым промптом →](../../Documentation/Usedesk.md).
+
 > Example предназначен только для iPhone и генерируется с
 > `TARGETED_DEVICE_FAMILY = 1`. iPad, Mac, Mac Catalyst и visionOS не входят в
 > platform scope.
