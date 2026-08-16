@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title description">
+  <title id="title">No-code-разработка с Codex или Claude</title>
+  <desc id="description">Разработчик открывает карточку Kaiten, согласованный дизайн и пустую папку, затем передаёт агенту готовый промпт. Агент создаёт iPhone-приложение на платформе, а разработчик запускает второй промпт проверки и принимает отчёт.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#EFF6FF"/><stop offset="0.52" stop-color="#F8FAFC"/><stop offset="1" stop-color="#F5F3FF"/></linearGradient>
+    <linearGradient id="agent" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
+    <linearGradient id="done" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#059669"/><stop offset="1" stop-color="#0D9488"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="180%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#64748B" flood-opacity="0.22"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#64748B"/></marker>
+  </defs>
+  <rect width="1400" height="760" rx="36" fill="url(#bg)"/>
+  <circle cx="1290" cy="60" r="170" fill="#A78BFA" opacity="0.15"/><circle cx="80" cy="720" r="190" fill="#38BDF8" opacity="0.12"/>
+  <text x="60" y="62" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="32" font-weight="800">NO-CODE С CODEX / CLAUDE</text>
+  <text x="60" y="94" fill="#475569" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17">Вы даёте агенту готовые материалы и два промпта. Код, подключение платформы и сборки делает агент.</text>
+
+  <rect x="48" y="128" width="1304" height="180" rx="28" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="48" y="128" width="150" height="180" rx="28" fill="#DBEAFE"/>
+  <text x="123" y="178" text-anchor="middle" fill="#1E3A8A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">ВЫ</text>
+  <text x="123" y="207" text-anchor="middle" fill="#1E3A8A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" font-weight="800">готовите</text>
+  <text x="123" y="234" text-anchor="middle" fill="#1D4ED8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">ничего не кодируете</text>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" text-anchor="middle">
+    <rect x="224" y="164" width="238" height="108" rx="22" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/>
+    <text x="343" y="195" fill="#1D4ED8" font-size="14" font-weight="800">1 · KAITEN</text><text x="343" y="224" fill="#0F172A" font-size="18" font-weight="800">Убедиться: есть</text><text x="343" y="249" fill="#0F172A" font-size="18" font-weight="800">метка no-code</text>
+    <rect x="486" y="164" width="238" height="108" rx="22" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="2"/>
+    <text x="605" y="195" fill="#6D28D9" font-size="14" font-weight="800">2 · ДИЗАЙН</text><text x="605" y="224" fill="#0F172A" font-size="18" font-weight="800">Открыть согласованный</text><text x="605" y="249" fill="#0F172A" font-size="18" font-weight="800">Claude Design / Pencil</text>
+    <rect x="748" y="164" width="260" height="108" rx="22" fill="#FFF7ED" stroke="#F97316" stroke-width="2"/>
+    <text x="878" y="195" fill="#C2410C" font-size="14" font-weight="800">3 · ПАПКА</text><text x="878" y="224" fill="#0F172A" font-size="18" font-weight="800">Создать пустую папку</text><text x="878" y="249" fill="#0F172A" font-size="18" font-weight="800">и открыть в агенте</text>
+    <rect x="1032" y="164" width="280" height="108" rx="22" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+    <text x="1172" y="195" fill="#047857" font-size="14" font-weight="800">4 · ССЫЛКИ</text><text x="1172" y="224" fill="#0F172A" font-size="18" font-weight="800">Kaiten + дизайн + Git</text><text x="1172" y="249" fill="#0F172A" font-size="18" font-weight="800">reference либо «НАЙДИ»</text>
+  </g>
+
+  <path d="M700 308V345" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
+  <rect x="48" y="360" width="1304" height="232" rx="30" fill="url(#agent)" filter="url(#shadow)"/>
+  <text x="78" y="405" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="800" letter-spacing="1.5">CODEX / CLAUDE ДЕЛАЕТ РАБОТУ В ОТКРЫТОЙ ПАПКЕ</text>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+    <circle cx="100" cy="463" r="24" fill="#FFFFFF" opacity="0.2"/><text x="100" y="470" text-anchor="middle" fill="#FFFFFF" font-size="18" font-weight="800">1</text><text x="138" y="451" fill="#FFFFFF" font-size="18" font-weight="800">Читает правила и источники</text><text x="138" y="477" fill="#DBEAFE" font-size="14">README, AGENTS, Kaiten, дизайн, reference и backend</text>
+    <circle cx="510" cy="463" r="24" fill="#FFFFFF" opacity="0.2"/><text x="510" y="470" text-anchor="middle" fill="#FFFFFF" font-size="18" font-weight="800">2</text><text x="548" y="451" fill="#FFFFFF" font-size="18" font-weight="800">Создаёт приложение</text><text x="548" y="477" fill="#EDE9FE" font-size="14">iPhone-проект, package, конфиг и зависимости</text>
+    <circle cx="920" cy="463" r="24" fill="#FFFFFF" opacity="0.2"/><text x="920" y="470" text-anchor="middle" fill="#FFFFFF" font-size="18" font-weight="800">3</text><text x="958" y="451" fill="#FFFFFF" font-size="18" font-weight="800">Собирает продукт</text><text x="958" y="477" fill="#EDE9FE" font-size="14">экраны, API, paywall, восстановление и состояния</text>
+    <rect x="78" y="512" width="1244" height="54" rx="18" fill="#FFFFFF" opacity="0.16"/>
+    <text x="700" y="546" text-anchor="middle" fill="#FFFFFF" font-size="17" font-weight="700">Ваше действие: вставить готовый промпт варианта A целиком и дождаться отчёта агента</text>
+  </g>
+
+  <path d="M700 592V625" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
+  <rect x="48" y="642" width="398" height="78" rx="24" fill="#FFFFFF" stroke="#8B5CF6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="247" y="674" text-anchor="middle" fill="#6D28D9" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">5 · ВЫ ВСТАВЛЯЕТЕ ВТОРОЙ ПРОМПТ</text><text x="247" y="699" text-anchor="middle" fill="#334155" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">агент проверяет и исправляет приложение</text>
+  <path d="M446 681H482" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
+  <rect x="500" y="642" width="852" height="78" rx="24" fill="url(#done)" filter="url(#shadow)"/>
+  <text x="926" y="674" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="20" font-weight="800">ГОТОВО: iPhone-приложение + Debug/Release + понятный отчёт</text><text x="926" y="700" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">вы проверяете PASS, временные данные и нерешённые вопросы — не исходники построчно</text>
+</svg>

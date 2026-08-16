@@ -113,6 +113,12 @@ for required_pattern in \
     'Documentation/Assets/README/project-inputs-dark\.svg' \
     'Documentation/Assets/README/composition-root-light\.svg' \
     'Documentation/Assets/README/composition-root-dark\.svg' \
+    'Documentation/Assets/README/no-code-agent-workflow-light\.svg' \
+    'Documentation/Assets/README/no-code-agent-workflow-dark\.svg' \
+    'Documentation/Assets/README/no-code-manual-workflow-light\.svg' \
+    'Documentation/Assets/README/no-code-manual-workflow-dark\.svg' \
+    'Documentation/Assets/README/agent-click-path-light\.svg' \
+    'Documentation/Assets/README/agent-click-path-dark\.svg' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
     if ! rg -q "$required_pattern" "$platform_root/README.md"; then

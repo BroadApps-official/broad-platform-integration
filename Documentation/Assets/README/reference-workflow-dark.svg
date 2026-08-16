@@ -87,12 +87,15 @@
   <path d="M616 331H634" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
   <path d="M920 331H938" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
 
-  <rect x="54" y="530" width="1172" height="112" rx="26" fill="#3A1822" stroke="#E11D48" stroke-width="3"/>
-  <text x="88" y="568" fill="#FDA4AF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">НЕ ДЕЛАЕМ С REFERENCE</text>
-  <g fill="#FFE4E6" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="700">
-    <text x="88" y="603">× не изменяем проект</text>
-    <text x="354" y="603">× не копируем архитектуру</text>
-    <text x="664" y="603">× не выдумываем endpoint</text>
-    <text x="956" y="603">× не оставляем временные ключи в релизе</text>
+  <rect x="54" y="520" width="1172" height="134" rx="26" fill="#3A1822" stroke="#E11D48" stroke-width="3"/>
+  <text x="88" y="554" fill="#FDA4AF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">НЕ ДЕЛАЕМ С REFERENCE</text>
+  <g fill="#4A202B" stroke="#FB7185" stroke-width="1.5">
+    <rect x="80" y="572" width="270" height="62" rx="17"/><rect x="370" y="572" width="270" height="62" rx="17"/><rect x="660" y="572" width="270" height="62" rx="17"/><rect x="950" y="572" width="244" height="62" rx="17"/>
+  </g>
+  <g fill="#FFE4E6" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="700" text-anchor="middle">
+    <text x="215" y="598">× Не изменяем</text><text x="215" y="618">reference-проект</text>
+    <text x="505" y="598">× Не копируем</text><text x="505" y="618">его архитектуру</text>
+    <text x="795" y="598">× Не выдумываем</text><text x="795" y="618">API endpoint</text>
+    <text x="1072" y="598">× Не оставляем</text><text x="1072" y="618">временные ключи в релизе</text>
   </g>
 </svg>
