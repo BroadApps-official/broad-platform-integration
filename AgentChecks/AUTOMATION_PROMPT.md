@@ -26,7 +26,7 @@ Mac Catalyst или visionOS targets/configurations.
 3. Если gate содержит ошибку, найди первопричину.
 4. Внеси минимальное исправление только внутри `BroadAppsIOSPlatform`.
 5. Не изменяй reference-проекты, Git history, test policy и рабочие tracked
-   Adapty configs. Не делай commit/push и не выполняй реальные платежи.
+   Adapty configs. Не выполняй реальные платежи.
 6. Не отключай проверки, не скрывай ошибки и не подменяй PASS текстом.
 7. После Swift-правок запусти `bash Scripts/format.sh`.
 8. Повторяй `bash Scripts/agent_gate.sh`, пока он не пройдёт полностью.

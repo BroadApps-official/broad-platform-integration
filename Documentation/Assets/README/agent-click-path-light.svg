@@ -16,7 +16,7 @@
     <rect x="48" y="136" width="300" height="260" rx="28" fill="#FFFFFF" stroke="#3B82F6" stroke-width="3"/>
     <rect x="48" y="136" width="300" height="46" rx="28" fill="#DBEAFE"/><circle cx="76" cy="159" r="7" fill="#FB7185"/><circle cx="98" cy="159" r="7" fill="#FBBF24"/><circle cx="120" cy="159" r="7" fill="#34D399"/><text x="198" y="165" text-anchor="middle" fill="#1E3A8A" font-size="16" font-weight="800">Finder</text>
     <rect x="70" y="202" width="256" height="56" rx="16" fill="#EFF6FF"/><text x="88" y="224" fill="#1D4ED8" font-size="13" font-weight="800">ШАГ 1</text><text x="88" y="247" fill="#0F172A" font-size="17" font-weight="800">Создать новую папку</text>
-    <path d="M88 286h34l10 10h92v58H88Z" fill="#60A5FA"/><path d="M88 296h136v58H88Z" fill="#93C5FD"/><text x="242" y="311" fill="#475569" font-size="13">название папки:</text><text x="242" y="335" fill="#0F172A" font-size="16" font-weight="800">№ + название app</text><text x="242" y="359" fill="#64748B" font-size="12">папка пока пустая</text>
+    <path d="M88 286h34l10 10h92v58H88Z" fill="#60A5FA"/><path d="M88 296h136v58H88Z" fill="#93C5FD"/><text x="242" y="311" fill="#475569" font-size="13">название папки:</text><text x="242" y="335" fill="#0F172A" font-size="13" font-weight="800">№ + название</text><text x="242" y="359" fill="#64748B" font-size="12">папка пока пустая</text>
 
     <rect x="398" y="136" width="300" height="260" rx="28" fill="#FFFFFF" stroke="#8B5CF6" stroke-width="3"/>
     <rect x="398" y="136" width="300" height="46" rx="28" fill="#EDE9FE"/><circle cx="426" cy="159" r="7" fill="#FB7185"/><circle cx="448" cy="159" r="7" fill="#FBBF24"/><circle cx="470" cy="159" r="7" fill="#34D399"/><text x="548" y="165" text-anchor="middle" fill="#5B21B6" font-size="16" font-weight="800">Codex / Claude</text>
@@ -33,7 +33,7 @@
     <rect x="1098" y="136" width="254" height="260" rx="28" fill="url(#chat)" stroke="#6366F1" stroke-width="3"/>
     <text x="1122" y="181" fill="#DBEAFE" font-size="13" font-weight="800">ШАГ 4</text><text x="1122" y="209" fill="#FFFFFF" font-size="18" font-weight="800">Начать новый чат</text>
     <rect x="1122" y="231" width="206" height="42" rx="14" fill="#FFFFFF" opacity="0.18"/><text x="1225" y="258" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="800">＋ New Chat</text>
-    <rect x="1122" y="291" width="206" height="72" rx="16" fill="#FFFFFF"/><text x="1138" y="316" fill="#6D28D9" font-size="12" font-weight="800">ПРИЛОЖИТЬ</text><text x="1138" y="338" fill="#0F172A" font-size="13" font-weight="700">Kaiten + no-code дизайн</text><text x="1138" y="357" fill="#475569" font-size="12">reference либо «НАЙДИ»</text>
+    <rect x="1122" y="291" width="206" height="72" rx="16" fill="#FFFFFF"/><text x="1138" y="316" fill="#6D28D9" font-size="12" font-weight="800">ПРИЛОЖИТЬ</text><text x="1138" y="338" fill="#0F172A" font-size="13" font-weight="700">Kaiten + источник дизайна</text><text x="1138" y="357" fill="#475569" font-size="12">reference либо «НАЙДИ»</text>
   </g>
   <path d="M348 266H384M698 266H734M1048 266H1084" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
 

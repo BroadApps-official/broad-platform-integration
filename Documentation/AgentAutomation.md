@@ -69,8 +69,8 @@ flowchart LR
 
 Для Xcode и CoreSimulatorService агенту нужен полный локальный доступ к Mac.
 При этом `AGENTS.md` жёстко сохраняет границы: менять можно только
-`BroadAppsIOSPlatform`, нельзя трогать reference-проекты, делать commit/push или
-запускать настоящие платежи.
+`BroadAppsIOSPlatform`, нельзя трогать reference-проекты или запускать настоящие
+платежи.
 
 Platform policy — только iPhone. Example хранит `TARGETED_DEVICE_FAMILY = 1`,
 а validation отклоняет iPad, Mac, Mac Catalyst и visionOS configurations.
@@ -134,6 +134,62 @@ Gate ничего не исправляет и не создаёт agent-отч�
 
 ## Где смотреть результат
 
+### Что видно прямо в Terminal
+
+Обычный успешный запуск выглядит как пять коротких этапов:
+
+```text
+BroadApps iOS Platform · полная проверка
+
+[1/5] Правила, архитектура, privacy и документация
+✓ Правила, архитектура, privacy и документация — готово
+
+[2/5] Форматирование Swift-кода
+✓ Форматирование Swift-кода — готово
+
+[3/5] SwiftLint и границы архитектуры
+✓ SwiftLint и границы архитектуры — готово
+
+[4/5] Swift Package и iPhone-сборки Debug/Release
+✓ Swift Package и iPhone-сборки Debug/Release — готово
+
+[5/5] Две рабочие Adapty-конфигурации (только сборка)
+✓ Две рабочие Adapty-конфигурации (только сборка) — готово
+
+✓ PASS · BroadApps iOS Platform полностью проверена
+```
+
+Большой технический вывод не теряется, но и не заполняет весь экран. Для
+каждого этапа сохраняется отдельный файл:
+
+```text
+.build/GateLogs/01-validation.log
+.build/GateLogs/02-format.log
+.build/GateLogs/03-lint.log
+.build/GateLogs/04-build.log
+.build/GateLogs/05-live-adapty.log
+```
+
+Если этап падает, Terminal показывает его название, код завершения, последние
+строки ошибки и точный путь к полному логу. Пример:
+
+```text
+[2/5] Форматирование Swift-кода
+✗ Форматирование Swift-кода — ошибка (код 1)
+
+Последние строки ошибки:
+    Sources/.../PaywallView.swift: file is not formatted
+
+  → Полный лог: .build/GateLogs/02-format.log
+  → Исправьте причину выше и повторите ту же команду.
+```
+
+Правило чтения простое: найдите первый красный `✗`, прочитайте короткую причину,
+при необходимости откройте указанный лог, исправьте проблему и повторите ту же
+команду. Зелёный `PASS` печатается только после всех пяти этапов.
+
+### Где лежит отчёт агента
+
 Последний успешный ответ лежит здесь:
 
 ```text
@@ -162,7 +218,6 @@ AgentChecks/AutomationReports/latest.md
 ## Чего агент не делает
 
 - не трогает reference-проекты за пределами `BroadAppsIOSPlatform`;
-- не делает commit, push, tag или release;
 - не добавляет тестовые targets;
 - не удаляет tracked Adapty configurations;
 - не запускает настоящие purchase, restore или RU-платежи;
