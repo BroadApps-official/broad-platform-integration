@@ -128,22 +128,53 @@ Host подключает:
 Конкретные placement IDs не хардкодятся в экранах платформы. Обычные
 и cross-placement эксперименты настраиваются в Adapty dashboard.
 
-## Ручная приёмка
+## Матрица приёмки
 
-- [ ] повторный show callback одной presentation даёт не более одной
-  попытки `Adapty.logShowPaywall`;
-- [ ] новый `PaywallPresentationID` может отправить новый показ;
-- [ ] variation ID в paywall show и purchase analytics совпадает с
-  `AdaptyPaywall.variationId`;
-- [ ] fallback на main сохраняет requested placement, но берёт variation из
-  фактического main payload;
-- [ ] обычный и cross-placement сценарии проверены на одном Adapty
-  profile/identity;
-- [ ] cached-only paywall не создаёт фальшивый provider show;
-- [ ] покупка после raw-handle eviction проходит только при точном
-  variation/index/product/fingerprint match;
-- [ ] unknown `uiVariantID` переходит на app default и не меняет cohort;
-- [ ] в codebase нет custom assignment repository/coordinator и client-side randomizer.
+Матрица разделена на два уровня. Платформенный контракт проверяется локально и
+не обращается к Adapty dashboard. Фактическое распределение пользователей между
+вариантами подтверждается отдельно в Adapty: только провайдер знает experiment
+configuration и назначенный конкретному профилю вариант.
+
+### Автоматическая проверка платформы
+
+Запустите из корня репозитория:
+
+```bash
+bash Scripts/check_adapty_experiment_contracts.sh
+```
+
+Эта команда входит и в полный `agent_gate`. Она не запускает покупку, restore,
+RU-платёж или live Adapty SDK operation.
+
+| Что проверяется | Ожидаемый контракт | Статус |
+|---|---|:---:|
+| Повторный show одной presentation | До SDK резервируется не более одной попытки provider show | ✅ |
+| Новая presentation | Создаются новые paywall- и product-occurrence ID | ✅ |
+| Variation attribution | Одна opaque variation проходит из Adapty payload в show, selection и purchase analytics | ✅ |
+| Fallback на `main` | Requested placement сохраняется, resolved становится `main`, variation берётся из payload `main` | ✅ |
+| Cached-only paywall | Загрузка из cache сама не создаёт provider impression | ✅ |
+| Raw-handle eviction | Rehydration требует точного variation/index/SKU/commercial fingerprint | ✅ |
+| `uiVariantID` | Остаётся renderer metadata и не участвует в Adapty assignment | ✅ |
+| Assignment authority | В коде нет второго experiment/cohort randomizer | ✅ |
+| Identity composition | Load, show, purchase и restore получают один factory-owned identity provider | ✅ |
+
+`✅` здесь означает: контракт закреплён исходниками и обязательным regression
+guard. Это не утверждение о настройках конкретного проекта в Adapty dashboard.
+
+### Проверка конкретного приложения в Adapty
+
+Эти два пункта выполняются после создания experiments и placements конкретного
+приложения:
+
+- [ ] на одном тестовом Adapty profile открыть обычный experiment и сверить
+  placement/variation в dashboard с app analytics;
+- [ ] на том же profile пройти cross-placement flow и убедиться, что каждую
+  variation назначил Adapty, а requested/resolved placement и fallback reason
+  записаны без подмены.
+
+Для этой проверки не нужна настоящая покупка. Если проверяется purchase
+attribution, используется только разрешённый командой безопасный сценарий;
+платформа сама не запускает StoreKit sandbox или финансовую операцию.
 
 ## Границы безопасности
 

@@ -2,11 +2,12 @@
 
 ## Результат
 
-`PASS` — полный local gate прошёл 16 августа 2026 года.
+`PASS` — полный local gate прошёл 17 августа 2026 года.
 
 Проверено:
 
 - архитектурные и продуктовые правила;
+- автоматическая матрица Adapty experiment contracts;
 - privacy manifest и документация;
 - SwiftFormat и SwiftLint;
 - Swift Package и iPhone example в Debug/Release;
@@ -33,6 +34,6 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-`e5aad46534628949a2c56c89777c893e657a93707003b862f582f535dac216d3`
+`155c5532e48849076cb3ec1da07db426bf46704df9ea2d18bb10523ba4e53676`
 
 </details>

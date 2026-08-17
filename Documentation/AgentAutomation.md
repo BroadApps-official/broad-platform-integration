@@ -31,6 +31,7 @@
 | Проверка | Что она подтверждает |
 |---|---|
 | Contracts и architecture guardrails | Границы модулей и обязательные продуктовые правила не нарушены |
+| Adapty experiment matrix | Variation, presentation, `main` fallback, cache, rehydration и единый assignment authority не расходятся |
 | Privacy и documentation | Manifest валиден, README-assets и локальные ссылки существуют |
 | SwiftFormat и SwiftLint | Код соответствует единому стилю |
 | Package/example builds | Swift Package и iPhone example собираются в Debug/Release |
@@ -39,6 +40,8 @@
 Внутри architecture guardrails отдельно зафиксированы ATT/Rate Us, fallback на
 `main`, отсутствие фильтрации Adapty products, безопасные purchase/restore,
 optional special offer, recovery после переустановки и поведение при обрыве сети.
+Отдельная experiment matrix проверяет attribution-контракт без запуска live SDK
+operation; назначение вариантов конкретному профилю сверяется в Adapty dashboard.
 
 Это локальная инженерная проверка. Она намеренно не выполняет реальные
 платежи, StoreKit sandbox, test targets, iPad-сборку, `.ipa` или проверки на
