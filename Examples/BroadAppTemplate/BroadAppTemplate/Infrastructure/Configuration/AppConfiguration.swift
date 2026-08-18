@@ -139,6 +139,12 @@ enum AppConfiguration {
     }()
 
     static let loggingSubsystem: StaticString = "com.broadapps.platform.template"
+    #if DEBUG
+        static let debugKeychainServiceNames = [
+            "com.broadapps.platform.template.credentials",
+            "com.broadapps.platform.template.session"
+        ]
+    #endif
     static let requiredServiceFailureMessage = "Обязательный сервис запуска временно недоступен."
     static let bootstrapTimeoutMessage = "Запуск занял слишком много времени. Попробуйте ещё раз."
     static let bootstrapUnknownErrorMessage = "Что-то пошло не так. Попробуйте ещё раз."

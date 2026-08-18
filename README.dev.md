@@ -212,7 +212,10 @@ iPad не входит в scope платформы.
 <summary><strong>Loader, генерация и повторные нажатия</strong></summary>
 
 - Loader имеет стабильное положение и конечное ожидание.
-- После запуска операции основная кнопка блокируется.
+- После тапа ViewModel сначала синхронно ставит `isInFlight = true`, и только
+  затем создаёт `Task` и ждёт backend.
+- Основная кнопка сразу показывает ромашку и блокируется. Нельзя оставлять её
+  неподвижной до появления следующего экрана или ответа backend.
 - Если paywall уже показан, сохраните его контент и выбор под blur, а spinner
   рисуйте отдельным overlay; карточка и CTA не должны мигать или затемняться.
 - То же правило действует для paywall подписок и токен-пейвола.
@@ -220,6 +223,21 @@ iPad не входит в scope платформы.
 - Долгая операция переживает переход в History и перезапуск: пользователь видит
   pending-ячейку до подтверждённого результата.
 - Ошибка показывает понятное действие: повторить, закрыть или вернуться.
+
+[Готовая кнопка, ViewModel и Debug-fixture →](Documentation/DebugToolsAndAsyncActions.md)
+
+</details>
+
+<details>
+<summary><strong>Debug-настройки и очистка Keychain</strong></summary>
+
+- Очистка Keychain доступна только в Debug и только после подтверждения.
+- Перечислите точные app-owned `service` в `AppConfiguration`.
+- Не делайте глобальный `SecItemDelete` без `service`/`accessGroup`.
+- Не очищайте этой кнопкой payment pending, кеш и другие хранилища.
+- После завершения покажите понятный результат и предложите войти заново.
+
+[Готовая реализация →](Documentation/DebugToolsAndAsyncActions.md#очистка-keychain-во-время-разработки)
 
 </details>
 
@@ -297,6 +315,9 @@ iPad не входит в scope платформы.
 Сначала опиши фактический flow и найди нарушения архитектуры, DI, UI-состояний,
 работы backend, offline/retry и защиты от повторных действий. Отдельно проверь
 правила onboarding/ATT/Rate Us и монетизации, если feature с ними связана.
+Для каждой backend-кнопки проверь, что `isInFlight` меняется до первого `await`,
+сразу появляется spinner и повторный тап не создаёт второй запрос. Если есть
+Debug-очистка Keychain, она должна работать только с точными app-owned service.
 
 Reference-проекты не изменяй. Не выполняй реальные покупки, restore или RU-платёж.
 Исправляй только файлы текущего приложения или платформы, которые прямо входят
@@ -332,7 +353,9 @@ bash Scripts/agent_gate.sh.
 - [ ] Пройден первый запуск целиком.
 - [ ] Проверены маленький, обычный и большой iPhone.
 - [ ] Проверены loading/content/empty/error/retry.
+- [ ] Каждая backend-кнопка сразу показывает spinner до перехода или ответа.
 - [ ] Повторные тапы не создают дубликаты операций.
+- [ ] Debug-очистка Keychain отсутствует в Release и не трогает payment pending.
 - [ ] Внезапный offline не блокирует экран навсегда.
 - [ ] В QA описано, где включить нужный режим и как воспроизвести сценарий.
 - [ ] Записана проходка полного flow без ключей, токенов и персональных данных.
@@ -359,6 +382,7 @@ BroadApps iOS Platform agent gate passed.
 - [Подключение платформы](Documentation/GettingStarted.md)
 - [Архитектура](Documentation/Architecture.md)
 - [Общие UI-состояния](Documentation/LoadableUI.md)
+- [Debug и async-действия](Documentation/DebugToolsAndAsyncActions.md)
 - [Безопасное логирование](Documentation/Logging.md)
 - [Форма письма в поддержку](Documentation/SupportEmail.md)
 - [Онлайн-чат Usedesk](Documentation/Usedesk.md)

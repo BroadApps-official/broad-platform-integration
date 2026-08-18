@@ -24,13 +24,17 @@ Mac Catalyst или visionOS targets/configurations.
 2. Запусти `bash Scripts/agent_gate.sh`. Это полный local engineering gate,
    Xcode build matrix и обе compile-only live Adapty configurations.
 3. Если gate содержит ошибку, найди первопричину.
-4. Внеси минимальное исправление только внутри `BroadAppsIOSPlatform`.
-5. Не изменяй reference-проекты, Git history, test policy и рабочие tracked
+4. Отдельно просмотри async-кнопки, которые запускают backend/SDK use case:
+   UI обязан синхронно перейти в `isInFlight` до первого `await`, показать
+   spinner и заблокировать повторный тап. Debug-очистка Keychain разрешена
+   только для точных app-owned service и не должна существовать в Release.
+5. Внеси минимальное исправление только внутри `BroadAppsIOSPlatform`.
+6. Не изменяй reference-проекты, Git history, test policy и рабочие tracked
    Adapty configs. Не выполняй реальные платежи.
-6. Не отключай проверки, не скрывай ошибки и не подменяй PASS текстом.
-7. После Swift-правок запусти `bash Scripts/format.sh`.
-8. Повторяй `bash Scripts/agent_gate.sh`, пока он не пройдёт полностью.
-9. Не запускай `Scripts/agent_review_and_fix.sh`: его уже запустил разработчик.
+7. Не отключай проверки, не скрывай ошибки и не подменяй PASS текстом.
+8. После Swift-правок запусти `bash Scripts/format.sh`.
+9. Повторяй `bash Scripts/agent_gate.sh`, пока он не пройдёт полностью.
+10. Не запускай `Scripts/agent_review_and_fix.sh`: его уже запустил разработчик.
 
 Финальный ответ напиши по-русски в Markdown с точными разделами:
 

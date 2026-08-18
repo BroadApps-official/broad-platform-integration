@@ -72,7 +72,9 @@ require_file_pattern() {
     local pattern="$3"
     local status=0
 
-    rg -q --pcre2 "$pattern" "$file" || status=$?
+    # Some required contracts intentionally span several formatted Swift lines.
+    # Multiline mode keeps these checks stable after SwiftFormat rewrites layout.
+    rg -q --pcre2 --multiline "$pattern" "$file" || status=$?
 
     case "$status" in
         0)
@@ -235,6 +237,21 @@ require_file_pattern \
     "Paywall primary actions must use BroadNoPressEffectButtonStyle:" \
     "$platform_root/Sources/BroadUIFlows/Presentation/Paywall/BroadPaywallPrimaryButton.swift" \
     '\.buttonStyle\([[:space:]]*BroadNoPressEffectButtonStyle\(\)[[:space:]]*\)'
+
+require_file_pattern \
+    "Shared in-flight action button must show a ProgressView:" \
+    "$platform_root/Sources/BroadUIFlows/Presentation/Loadable/BroadActionButton.swift" \
+    '(?s)configuration\.isInFlight.{0,180}ProgressView\([[:space:]]*\)'
+
+require_file_pattern \
+    "Debug Keychain cleaner must stay behind DEBUG compilation:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Security/DebugKeychainCleaner.swift" \
+    '(?s)^#if[[:space:]]+DEBUG.*actor[[:space:]]+DebugKeychainCleaner'
+
+require_file_pattern \
+    "Debug Keychain deletion must be scoped by exact service:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Security/DebugKeychainCleaner.swift" \
+    'kSecAttrService[[:space:]]+as[[:space:]]+String:[[:space:]]+scope\.service'
 
 require_file_pattern \
     "Invalid ATT delays must fail closed instead of crashing or requesting immediately:" \

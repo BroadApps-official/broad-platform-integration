@@ -10,22 +10,45 @@ struct AppFlowRootView: View {
     private let paywallViewModel: PaywallViewModel
     private let rootViewModel: RootViewModel
     private let analyticsViewModel: ExampleAnalyticsViewModel
+    #if DEBUG
+        private let debugSettingsViewModel: ExampleDebugSettingsViewModel
+    #endif
 
-    init(
-        coordinator: AppFlowCoordinator,
-        sceneViewModel: AppFlowSceneViewModel,
-        onboardingViewModel: OnboardingViewModel,
-        paywallViewModel: PaywallViewModel,
-        rootViewModel: RootViewModel,
-        analyticsViewModel: ExampleAnalyticsViewModel
-    ) {
-        self.coordinator = coordinator
-        _sceneViewModel = StateObject(wrappedValue: sceneViewModel)
-        self.onboardingViewModel = onboardingViewModel
-        self.paywallViewModel = paywallViewModel
-        self.rootViewModel = rootViewModel
-        self.analyticsViewModel = analyticsViewModel
-    }
+    #if DEBUG
+        init(
+            coordinator: AppFlowCoordinator,
+            sceneViewModel: AppFlowSceneViewModel,
+            onboardingViewModel: OnboardingViewModel,
+            paywallViewModel: PaywallViewModel,
+            rootViewModel: RootViewModel,
+            analyticsViewModel: ExampleAnalyticsViewModel,
+            debugSettingsViewModel: ExampleDebugSettingsViewModel
+        ) {
+            self.coordinator = coordinator
+            _sceneViewModel = StateObject(wrappedValue: sceneViewModel)
+            self.onboardingViewModel = onboardingViewModel
+            self.paywallViewModel = paywallViewModel
+            self.rootViewModel = rootViewModel
+            self.analyticsViewModel = analyticsViewModel
+            self.debugSettingsViewModel = debugSettingsViewModel
+        }
+    #else
+        init(
+            coordinator: AppFlowCoordinator,
+            sceneViewModel: AppFlowSceneViewModel,
+            onboardingViewModel: OnboardingViewModel,
+            paywallViewModel: PaywallViewModel,
+            rootViewModel: RootViewModel,
+            analyticsViewModel: ExampleAnalyticsViewModel
+        ) {
+            self.coordinator = coordinator
+            _sceneViewModel = StateObject(wrappedValue: sceneViewModel)
+            self.onboardingViewModel = onboardingViewModel
+            self.paywallViewModel = paywallViewModel
+            self.rootViewModel = rootViewModel
+            self.analyticsViewModel = analyticsViewModel
+        }
+    #endif
 
     var body: some View {
         BroadAppFlowView(
@@ -79,10 +102,18 @@ struct AppFlowRootView: View {
     }
 
     private func mainContent() -> some View {
-        ExampleMainView(
-            rootViewModel: rootViewModel,
-            analyticsViewModel: analyticsViewModel
-        )
+        #if DEBUG
+            ExampleMainView(
+                rootViewModel: rootViewModel,
+                analyticsViewModel: analyticsViewModel,
+                debugSettingsViewModel: debugSettingsViewModel
+            )
+        #else
+            ExampleMainView(
+                rootViewModel: rootViewModel,
+                analyticsViewModel: analyticsViewModel
+            )
+        #endif
     }
 
     private var legalPageBinding: Binding<Bool> {

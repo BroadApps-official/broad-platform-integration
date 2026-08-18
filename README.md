@@ -28,6 +28,7 @@
     <a href="#showcase">📱 BroadAppTemplate</a> ·
     <a href="#architecture">🧭 Модули</a> ·
     <a href="#startup-cache">⚡️ Запуск и кеш</a> ·
+    <a href="#debug-feedback">🧰 Debug и backend loader</a> ·
     <a href="#agent-app-check">✅ Проверка результата</a> ·
     <a href="#reliability">🛡️ Надёжность</a> ·
     <a href="#glossary">📖 Термины</a> ·
@@ -642,7 +643,11 @@ Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
 2. Создай одно место сборки зависимостей и подключи их в порядке
    Core → Monetization → UIFlows.
 3. Настрой запуск через BroadCore: конечные timeout/retry, безопасный кеш,
-   loading/error/retry и корректное поведение без сети.
+   loading/error/retry и корректное поведение без сети. Для каждой
+   кнопки, которая ждёт backend или SDK, ставь `isInFlight = true` до
+   `Task`/первого `await`, сразу показывай spinner и блокируй повторный
+   тап. Используй `BroadActionButton` и пример из
+   `Documentation/DebugToolsAndAsyncActions.md`.
 4. Реализуй утверждённый интерфейс и маршрут:
    запуск → onboarding → paywall → новая проверка доступа → основной экран.
 5. Выбери subscriptions-only manager или отдельно подключи token manager.
@@ -671,7 +676,11 @@ Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
 13. Сначала проверь безопасные локальные данные, затем только загрузку настоящего
     каталога Adapty без финансовых операций.
 14. Собери приложение в Debug и Release. Запусти безопасные сценарии.
-15. В конце простым языком напиши: что взято из Kaiten, какие временные данные
+15. Добавь в настройки Debug-only очистку Keychain по примеру
+    `BroadAppTemplate`: только точные app-owned `service`, только после
+    подтверждения. Не трогай payment pending, кеш и файлы. В Release
+    кнопки и cleaner быть не должно.
+16. В конце простым языком напиши: что взято из Kaiten, какие временные данные
     использованы, что заменить перед выпуском, какие backend-ручки проверены,
     какие функции требуют решения тимлида-разработчика/ПМ или доработки
     backend, какие файлы изменены и какие проверки прошли.
@@ -698,6 +707,8 @@ Kaiten или доступном reference.
 | 🔌 **Продукт сверен** | Функции сопоставлены с backend-ручками; спорные места вынесены на решение |
 | 🧩 **Основа собрана** | Создан iPhone-проект, подключён package, конфигурация отделена от UI, зависимости собраны в одном месте |
 | 📱 **Сценарий работает** | Экраны соединены; незавершённые операции и повторное открытие приложения обработаны |
+| ⏳ **Долгие действия не «зависают»** | Backend-кнопка сразу показывает spinner, блокирует double tap и завершается экраном или понятным Retry |
+| 🧰 **Debug удобен и безопасен** | Из настроек можно очистить только Keychain service этого app; в Release инструмента нет |
 | ✅ **Результат проверен** | Debug/Release собраны, безопасные сценарии пройдены, временные значения перечислены |
 
 Перед переходом к проверке убедитесь, что агент показал:
@@ -738,15 +749,21 @@ Claude** этот текст:
    результат остаётся незавершённым, а появление сети не начинает новую оплату.
 7. Проверь сценарий повторной установки: Apple-доступ восстанавливается через
    StoreKit/Adapty, токены и RU-покупки — через тот же аккаунт и backend.
-8. Если исходники BroadAppsIOSPlatform не менялись, не запускай проверяющего
+8. Проверь все кнопки, которые ждут backend/SDK: spinner появляется
+   до первого `await`, повторный тап не запускает второй запрос, а
+   error/offline убирает spinner и показывает понятное действие.
+9. Проверь Debug-очистку Keychain: она работает только после
+   подтверждения, удаляет только app-owned `service`, не трогает payment
+   pending/кеш/файлы и полностью отсутствует в Release.
+10. Если исходники BroadAppsIOSPlatform не менялись, не запускай проверяющего
    агента платформы — просто напиши это в отчёте.
-9. Если исходники BroadAppsIOSPlatform менялись, открой её корень, прочитай
+11. Если исходники BroadAppsIOSPlatform менялись, открой её корень, прочитай
    AGENTS.md и запусти `bash Scripts/agent_gate.sh`. Исправляй только файлы
    платформы и повторяй проверку до PASS.
-10. Показывай ход проверки короткими этапами: источники, backend, UI-сценарии,
+12. Показывай ход проверки короткими этапами: источники, backend, UI-сценарии,
     Debug/Release и итог. Если чего-то не хватает, не пиши PASS: укажи
     `BLOCKED`, что именно отсутствует, где это ожидалось и у кого запросить.
-11. Не прячь ошибку сборки в большом логе. Сначала напиши название упавшего
+13. Не прячь ошибку сборки в большом логе. Сначала напиши название упавшего
     этапа и причину простыми словами, затем команду и путь к полному логу.
 
 В конце простым русским языком напиши: что проверил, что нашёл, что исправил,
@@ -1306,6 +1323,19 @@ backend текущего app account, а новый token из callback сохр
 локальные демонстрационные адаптеры по примеру `BroadAppTemplate`. В Release этот
 переключатель и демонстрационные данные не должны включаться.
 
+> [!IMPORTANT]
+> **Проверьте отклик каждой кнопки, которая ждёт backend или SDK.** Сразу после
+> нажатия — ещё до перехода на loader или следующий экран — пользователь должен
+> увидеть spinner. На время запроса повторный тап блокируется. Ошибка и отсутствие
+> сети обязательно завершают ожидание и показывают понятное действие: повторить
+> или закрыть экран.
+
+В `Настройки → Debug-настройки` добавьте очистку Keychain для разработки. Она
+должна удалять **только явно перечисленные `service` текущего приложения** и
+только после подтверждения. Не очищайте вместе с Keychain незавершённые платежи,
+кеш или файлы. В Release этой кнопки и самого cleaner быть не должно.
+[Готовая реализация и пример подключения →](Documentation/DebugToolsAndAsyncActions.md)
+
 1. Debug Simulator build рабочего приложения.
 2. Release Simulator build рабочего приложения.
 3. Чистый первый запуск: onboarding → paywall → демонстрационная покупка или
@@ -1315,6 +1345,10 @@ backend текущего app account, а новый token из callback сохр
 5. Live Adapty catalog — только load/show; без реальных purchase/restore.
 6. Проверка: основной экран не открывается после timeout, незавершённого или
    неопределённого результата.
+7. Каждая кнопка с backend/SDK сразу показывает spinner, не запускает второй
+   запрос по повторному тапу и корректно заканчивает ожидание при error/offline.
+8. Debug-очистка Keychain спрашивает подтверждение, удаляет только app-owned
+   `service` и полностью отсутствует в Release.
 
 Debug проще всего проверить обычной кнопкой Run в Xcode. Для Release откройте
 `Product → Scheme → Edit Scheme… → Run → Build Configuration`, временно выберите
@@ -1840,6 +1874,35 @@ stale-данных.
 [Контракт bootstrap →](Documentation/Bootstrap.md) ·
 [Детали cache/offline →](Documentation/CachingAndOffline.md)
 
+<a id="debug-feedback"></a>
+## 🧰 Debug Keychain и мгновенный отклик backend-кнопок
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/debug-feedback-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/debug-feedback-light.svg">
+  <img alt="Очистка app-owned Keychain в Debug и мгновенный loader backend-действия" src="Documentation/Assets/README/debug-feedback-light.svg" width="100%">
+</picture>
+
+| Ситуация | Что уже даёт платформа |
+|---|---|
+| Старый token мешает проверить новый вход | `BroadAppTemplate` содержит `DebugKeychainCleaner`: он очищает только перечисленные app-owned `service` и отсутствует в Release |
+| Нажали «Сгенерировать» или «Найти» | Публичный `BroadActionButton` сразу показывает `ProgressView` при `isInFlight == true` |
+| Backend ещё отвечает | Кнопка заблокирована от второго тапа; ViewModel владеет Task, timeout и результатом |
+| Ответ получен | Success переводит дальше, а offline/error убирает spinner и показывает понятный Retry |
+
+> [!IMPORTANT]
+> `isInFlight = true` устанавливается **до** создания Task и первого `await`.
+> Даже если следующим шагом будет отдельный экран загрузки, маленькая ромашка
+> на исходной кнопке сразу показывает пользователю, что тап принят.
+
+В `BroadAppTemplate` нажмите значок инструментов на основном экране: в
+`Debug-настройках` можно увидеть оба сценария. Перед очисткой Keychain есть
+подтверждение; payment pending, кеш и чужие Keychain-записи не удаляются.
+
+[Готовое подключение и код ViewModel →](Documentation/DebugToolsAndAsyncActions.md) ·
+[Общие loading-состояния →](Documentation/LoadableUI.md) ·
+[Правила безопасности →](Documentation/Security.md)
+
 <a id="monetization"></a>
 ## 💳 Шесть правил, которые нельзя сломать
 
@@ -2169,6 +2232,7 @@ README отвечает на вопрос «куда нажать и с чего
 |---|---|
 | Сверить слои, use cases, UI и checklist перед передачей | [Памятка разработчика](README.dev.md) |
 | Правильно запустить SDK и подключить кеш контента | [Запуск SDK и кеш](Documentation/StartupAndCaching.md) |
+| Добавить Debug-очистку Keychain и loader backend-кнопки | [Debug и async-действия](Documentation/DebugToolsAndAsyncActions.md) |
 | Подключить платформу вручную | [Getting Started](Documentation/GettingStarted.md) |
 | Дать агенту правильную автопроверку | [Agent Automation](Documentation/AgentAutomation.md) |
 | Понять слои и зависимости | [Architecture](Documentation/Architecture.md) |

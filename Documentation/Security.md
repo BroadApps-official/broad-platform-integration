@@ -61,6 +61,18 @@ Host получает secrets из своей защищённой runtime/build
 config, либо передаёт его из своей build configuration. Backend credentials в
 эти `.xcconfig` добавлять нельзя.
 
+## Очистка Keychain в Debug
+
+Во время разработки разрешена отдельная кнопка
+`Настройки → Debug-настройки → Очистить Keychain`. Используйте готовый
+`DebugKeychainCleaner` из `BroadAppTemplate`: он существует только под `#if DEBUG` и принимает
+точные app-owned `service` и, при необходимости, `accessGroup`.
+
+Запрещено удалять весь класс Keychain без scope, показывать кнопку в Release или
+вместе с credential очищать Apple/RU/token pending-записи. Pending — отдельная
+защита от повторной финансовой операции. Подключение и готовый UI-flow описаны в
+[Debug и async-действиях](DebugToolsAndAsyncActions.md).
+
 ## Subject-bound authorization
 
 Backend adapters получают credential через `SubjectAuthorizationProviderProtocol`. Результат содержит `SubjectBoundAuthorization`, который:

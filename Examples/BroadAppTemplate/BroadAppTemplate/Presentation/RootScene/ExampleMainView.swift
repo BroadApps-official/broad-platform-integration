@@ -1,4 +1,6 @@
+import BroadCore
 import BroadMonetization
+import BroadUIFlows
 import SwiftUI
 
 struct ExampleMainView: View {
@@ -7,6 +9,27 @@ struct ExampleMainView: View {
 
     #if DEBUG
         @State private var isShowingDebugScenarios = false
+        @StateObject private var debugSettingsViewModel: ExampleDebugSettingsViewModel
+
+        init(
+            rootViewModel: RootViewModel,
+            analyticsViewModel: ExampleAnalyticsViewModel,
+            debugSettingsViewModel: ExampleDebugSettingsViewModel
+        ) {
+            self.rootViewModel = rootViewModel
+            self.analyticsViewModel = analyticsViewModel
+            _debugSettingsViewModel = StateObject(
+                wrappedValue: debugSettingsViewModel
+            )
+        }
+    #else
+        init(
+            rootViewModel: RootViewModel,
+            analyticsViewModel: ExampleAnalyticsViewModel
+        ) {
+            self.rootViewModel = rootViewModel
+            self.analyticsViewModel = analyticsViewModel
+        }
     #endif
 
     var body: some View {
@@ -17,7 +40,8 @@ struct ExampleMainView: View {
         #if DEBUG
             .sheet(isPresented: $isShowingDebugScenarios) {
                 ExampleDebugScenariosView(
-                    analyticsViewModel: analyticsViewModel
+                    analyticsViewModel: analyticsViewModel,
+                    settingsViewModel: debugSettingsViewModel
                 )
             }
         #endif
@@ -72,6 +96,8 @@ struct ExampleMainView: View {
 #if DEBUG
     private struct ExampleDebugScenariosView: View {
         @ObservedObject var analyticsViewModel: ExampleAnalyticsViewModel
+        @ObservedObject var settingsViewModel: ExampleDebugSettingsViewModel
+        @State private var isConfirmingKeychainCleanup = false
 
         private let scenarios = [
             "-live-adapty            реальный каталог; покупка и восстановление отключены",
@@ -95,6 +121,45 @@ struct ExampleMainView: View {
         var body: some View {
             NavigationStack {
                 List {
+                    Section("Мгновенный отклик backend-кнопки") {
+                        Text(
+                            "Ромашка появляется сразу после нажатия, кнопка блокируется, а затем открывается результат или ошибка."
+                        )
+                        .font(AppTokens.Font.caption)
+                        .foregroundStyle(AppTokens.Color.secondaryText)
+
+                        BroadActionButton(
+                            configuration: BroadActionConfiguration(
+                                title: "Проверить loader",
+                                inFlightTitle: "Ждём ответ backend…",
+                                isEnabled: !settingsViewModel.isClearingKeychain,
+                                isInFlight: settingsViewModel.isBackendActionInFlight,
+                                action: settingsViewModel.runBackendActionFixture
+                            ),
+                            tint: AppTokens.Color.accent
+                        )
+                    }
+
+                    Section("Хранилище разработки") {
+                        Text(
+                            "Очищаются только Keychain-сервисы, перечисленные в AppConfiguration. Release-сборка этой функции не содержит."
+                        )
+                        .font(AppTokens.Font.caption)
+                        .foregroundStyle(AppTokens.Color.secondaryText)
+
+                        BroadActionButton(
+                            configuration: BroadActionConfiguration(
+                                title: "Очистить Keychain",
+                                inFlightTitle: "Очищаем Keychain…",
+                                isEnabled: !settingsViewModel.isBackendActionInFlight,
+                                isInFlight: settingsViewModel.isClearingKeychain
+                            ) {
+                                isConfirmingKeychainCleanup = true
+                            },
+                            tint: AppTokens.Color.failure
+                        )
+                    }
+
                     Section("Аргументы запуска") {
                         ForEach(scenarios, id: \.self) { scenario in
                             Text(scenario)
@@ -134,13 +199,119 @@ struct ExampleMainView: View {
                         }
                     }
                 }
-                .navigationTitle("Отладочные сценарии")
+                .navigationTitle("Debug-настройки")
                 .task {
                     await analyticsViewModel.refresh()
                 }
                 .refreshable {
                     await analyticsViewModel.refresh()
                 }
+                .confirmationDialog(
+                    "Очистить Keychain приложения?",
+                    isPresented: $isConfirmingKeychainCleanup,
+                    titleVisibility: .visible
+                ) {
+                    Button("Очистить", role: .destructive) {
+                        settingsViewModel.clearKeychain()
+                    }
+                    Button("Отмена", role: .cancel) {}
+                } message: {
+                    Text(
+                        "Потребуется заново войти в тестовый аккаунт. Платёжные pending-записи эта кнопка не удаляет."
+                    )
+                }
+                .alert(item: $settingsViewModel.notice) { notice in
+                    Alert(
+                        title: Text(notice.title),
+                        message: Text(notice.message),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+            }
+        }
+    }
+
+    struct ExampleDebugSettingsNotice: Identifiable, Equatable {
+        let id = UUID()
+        let title: String
+        let message: String
+    }
+
+    @MainActor
+    final class ExampleDebugSettingsViewModel: ObservableObject {
+        @Published private(set) var isBackendActionInFlight = false
+        @Published private(set) var isClearingKeychain = false
+        @Published var notice: ExampleDebugSettingsNotice?
+
+        private let keychainCleaner: DebugKeychainCleaner
+        private var backendTask: Task<Void, Never>?
+        private var keychainTask: Task<Void, Never>?
+
+        init(keychainCleaner: DebugKeychainCleaner) {
+            self.keychainCleaner = keychainCleaner
+        }
+
+        deinit {
+            backendTask?.cancel()
+            keychainTask?.cancel()
+        }
+
+        func runBackendActionFixture() {
+            guard backendTask == nil else {
+                return
+            }
+
+            isBackendActionInFlight = true
+            backendTask = Task { @MainActor [weak self] in
+                try? await Task.sleep(nanoseconds: 900_000_000)
+                guard let self, !Task.isCancelled else {
+                    return
+                }
+
+                backendTask = nil
+                isBackendActionInFlight = false
+                notice = ExampleDebugSettingsNotice(
+                    title: "Ответ получен",
+                    message: "Во время ожидания кнопка сразу показывала ромашку и не принимала повторный тап."
+                )
+            }
+        }
+
+        func clearKeychain() {
+            guard keychainTask == nil else {
+                return
+            }
+
+            isClearingKeychain = true
+            let cleaner = keychainCleaner
+            keychainTask = Task { @MainActor [weak self, cleaner] in
+                let outcome = await cleaner.clear()
+                guard let self, !Task.isCancelled else {
+                    return
+                }
+
+                keychainTask = nil
+                isClearingKeychain = false
+                apply(outcome)
+            }
+        }
+
+        private func apply(
+            _ outcome: DebugKeychainCleanupOutcome
+        ) {
+            switch outcome {
+            case let .completed(clearedServiceCount, alreadyEmptyServiceCount):
+                notice = ExampleDebugSettingsNotice(
+                    title: "Keychain очищен",
+                    message: clearedServiceCount > 0
+                        ? "Очищено сервисов: \(clearedServiceCount). Перезапустите сценарий и войдите заново."
+                        : "Данные уже отсутствовали. Проверено сервисов: \(alreadyEmptyServiceCount)."
+                )
+            case let .failed(error):
+                notice = ExampleDebugSettingsNotice(
+                    title: "Не удалось очистить Keychain",
+                    message: error.userMessage
+                )
             }
         }
     }

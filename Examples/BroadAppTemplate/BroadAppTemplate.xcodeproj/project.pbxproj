@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0B5EE15128E44F2DCEC0F213 /* DebugKeychainCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810D99B643B65934553892DE /* DebugKeychainCleaner.swift */; };
 		0B61AB392E367CA07AE3D947 /* ExampleMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0409C5D2EE1382A900A320F2 /* ExampleMainView.swift */; };
 		0FDDACE135D487CAF48C7B6E /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10D42FCA60C072A4AA86B3ED /* AppConfiguration.swift */; };
 		1844CEB68233066765E4BC35 /* BroadUIFlows in Frameworks */ = {isa = PBXBuildFile; productRef = EB208DBF6080158B84F162F0 /* BroadUIFlows */; };
@@ -60,6 +61,7 @@
 		7564BFD81898CDFB2DF3C782 /* ExampleEntitlementDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleEntitlementDependencies.swift; sourceTree = "<group>"; };
 		7D0B6880C52E2C1A2F8117D1 /* BroadAppTemplate.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = BroadAppTemplate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		80FD881F097C5432B8523241 /* Scalable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scalable.swift; sourceTree = "<group>"; };
+		810D99B643B65934553892DE /* DebugKeychainCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugKeychainCleaner.swift; sourceTree = "<group>"; };
 		862C137AC05F83C6A4ECAD0F /* ModuleCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleCardView.swift; sourceTree = "<group>"; };
 		B1C818852FDD05DF45AC5B0F /* AppTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTokens.swift; sourceTree = "<group>"; };
 		BBBEEE2E4F93FA2DAED58CCC /* Adapty5013.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Adapty5013.xcconfig; sourceTree = "<group>"; };
@@ -179,6 +181,14 @@
 			path = DesignSystem;
 			sourceTree = "<group>";
 		};
+		C024FBF9C7B63E760E9B0C10 /* Security */ = {
+			isa = PBXGroup;
+			children = (
+				810D99B643B65934553892DE /* DebugKeychainCleaner.swift */,
+			);
+			path = Security;
+			sourceTree = "<group>";
+		};
 		D0EBFE42BC10F7083DFD1246 /* RootScene */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,6 +247,7 @@
 				DB0830EE92DF6ACCEF37DC0A /* Configuration */,
 				2E50FF2B9BA80942776CBF0C /* Entitlements */,
 				14B1DF8CC6FC236E8B3D3FFB /* Monetization */,
+				C024FBF9C7B63E760E9B0C10 /* Security */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -335,6 +346,7 @@
 				3C4CDC89275F31C17A5A7F2C /* AppTokens.swift in Sources */,
 				4945F8290CC10C3D660F5539 /* BootstrapStatusCardView.swift in Sources */,
 				8F7A3FB08BD8972E9E02F8E4 /* BroadAppTemplateApp.swift in Sources */,
+				0B5EE15128E44F2DCEC0F213 /* DebugKeychainCleaner.swift in Sources */,
 				5FB5212E7D593D97CC2616C3 /* ExampleAnalyticsViewModel.swift in Sources */,
 				34BCFA057627EC4444B0A20E /* ExampleBootstrapScenario.swift in Sources */,
 				3FAF43ED645228FF46818F0F /* ExampleCheckoutMethodsUseCase.swift in Sources */,

@@ -24,15 +24,32 @@ struct BroadAppTemplateApp: App {
                     theme: AppTokens.paywallTheme
                 )
             } else {
-                AppFlowRootView(
-                    coordinator: compositionRoot.appFlowCoordinator,
-                    sceneViewModel: compositionRoot.appFlowSceneViewModel,
-                    onboardingViewModel: compositionRoot.onboardingViewModel,
-                    paywallViewModel: compositionRoot.paywallViewModel,
-                    rootViewModel: compositionRoot.rootViewModel,
-                    analyticsViewModel: compositionRoot.analyticsViewModel
-                )
+                appFlowView
             }
         }
+    }
+
+    @ViewBuilder
+    private var appFlowView: some View {
+        #if DEBUG
+            AppFlowRootView(
+                coordinator: compositionRoot.appFlowCoordinator,
+                sceneViewModel: compositionRoot.appFlowSceneViewModel,
+                onboardingViewModel: compositionRoot.onboardingViewModel,
+                paywallViewModel: compositionRoot.paywallViewModel,
+                rootViewModel: compositionRoot.rootViewModel,
+                analyticsViewModel: compositionRoot.analyticsViewModel,
+                debugSettingsViewModel: compositionRoot.debugSettingsViewModel
+            )
+        #else
+            AppFlowRootView(
+                coordinator: compositionRoot.appFlowCoordinator,
+                sceneViewModel: compositionRoot.appFlowSceneViewModel,
+                onboardingViewModel: compositionRoot.onboardingViewModel,
+                paywallViewModel: compositionRoot.paywallViewModel,
+                rootViewModel: compositionRoot.rootViewModel,
+                analyticsViewModel: compositionRoot.analyticsViewModel
+            )
+        #endif
     }
 }

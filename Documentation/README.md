@@ -7,6 +7,7 @@
 | Сверить архитектуру, use cases и UI перед передачей | [Памятка разработчика](../README.dev.md) |
 | Впервые подключить package | [Getting Started](GettingStarted.md) |
 | Правильно запустить SDK и кешировать контент | [Запуск SDK и кеш](StartupAndCaching.md) |
+| Добавить Debug-очистку Keychain и мгновенный loader кнопки | [Debug и async-действия](DebugToolsAndAsyncActions.md) |
 | Понять папки и зависимости | [Architecture](Architecture.md) |
 | Настроить Adapty, StoreKit и общий flow | [Monetization](Monetization.md) |
 | Выбрать subscriptions-only или subscriptions + tokens | [Purchase Managers](PurchaseManagers.md) |
@@ -30,13 +31,14 @@
 1. [Памятка разработчика](../README.dev.md) — поймите, куда класть код и что проверять.
 2. [Getting Started](GettingStarted.md) — подключите нужные package products.
 3. [Запуск SDK и кеш](StartupAndCaching.md) — разделите critical, background и lazy сервисы.
-4. [Architecture](Architecture.md) — не смешивайте Domain, SDK и SwiftUI.
-5. [Monetization](Monetization.md) — соберите один composition root.
-6. [Account Recovery](AccountRecovery.md) — привяжите покупки к account/backend,
+4. [Debug и async-действия](DebugToolsAndAsyncActions.md) — обеспечьте мгновенный отклик backend-кнопок и удобную Debug-разработку.
+5. [Architecture](Architecture.md) — не смешивайте Domain, SDK и SwiftUI.
+6. [Monetization](Monetization.md) — соберите один composition root.
+7. [Account Recovery](AccountRecovery.md) — привяжите покупки к account/backend,
    а не к одной установке приложения.
-7. Откройте профильный guide: RU billing, tokens, onboarding, paywall,
+8. Откройте профильный guide: RU billing, tokens, onboarding, paywall,
    Support Email или Usedesk.
-8. Если меняли код платформы, запустите обязательную проверку по
+9. Если меняли код платформы, запустите обязательную проверку по
    [инструкции Agent Automation](AgentAutomation.md).
 
 Все реальные идентификаторы приложения, Adapty placements, legal URL, API

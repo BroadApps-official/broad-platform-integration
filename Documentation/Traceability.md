@@ -18,6 +18,7 @@
 | Общая аналитика показов и покупок | Monetization analytics pipeline | [Analytics](Analytics.md) |
 | Восстановление после переустановки | Account recovery + server-authoritative ledger | [Account Recovery](AccountRecovery.md) |
 | Безопасное поведение при обрыве сети | Typed network failures и pending reconciliation | [Network Interruptions](NetworkInterruptions.md) |
+| Мгновенный spinner backend-кнопки и Debug-очистка Keychain | `BroadActionButton` + `DebugKeychainCleaner` | [Debug и async-действия](DebugToolsAndAsyncActions.md) |
 | Hex Color, fonts, keyboard и swipe-back | `BroadExtensions` | [BroadExtensions](Extensions.md) |
 | Онлайн-чат поддержки из Settings | App-owned Usedesk CocoaPods adapter + backend chat token | [Usedesk](Usedesk.md) |
 | Письмо в поддержку, распознаваемое ботом | Единый app/device/ID/diagnostics body + `(ukassa)` variant | [Support Email](SupportEmail.md) |

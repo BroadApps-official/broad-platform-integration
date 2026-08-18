@@ -114,7 +114,11 @@ BroadLoadableView(
 
 ## Retry без двойного запуска
 
-`BroadActionConfiguration` хранит только UI-состояние действия и синхронный `@MainActor` callback. Shared button отключается, когда `isInFlight == true`. ViewModel остаётся окончательным владельцем single-flight и должен синхронно поставить guard до создания `Task`:
+`BroadActionConfiguration` хранит только UI-состояние действия и синхронный
+`@MainActor` callback. Публичный `BroadActionButton` сразу показывает системный
+`ProgressView` и отключается, когда `isInFlight == true`. ViewModel остаётся
+окончательным владельцем single-flight и должен синхронно поставить guard и
+изменить UI-state **до** создания `Task`:
 
 ```swift
 func retry() {
@@ -128,7 +132,11 @@ func retry() {
 }
 ```
 
-Передавайте `isInFlight: true`, пока операция выполняется. Renderer сам не повторяет запрос на `onAppear` и не владеет cancellation.
+Передавайте `isInFlight: true`, пока операция выполняется. Это правило действует
+не только для Retry: «Сгенерировать», «Найти», «Отправить» и другие
+backend-кнопки обязаны дать мгновенный визуальный ответ ещё до перехода на
+полноэкранный loader. Renderer сам не повторяет запрос на `onAppear` и не владеет
+cancellation. Готовый пример: [Debug и async-действия](DebugToolsAndAsyncActions.md).
 
 ## Theme и layout
 
@@ -153,6 +161,7 @@ Loader не запускает собственный timeout. Timeout/retry pol
 - `stale(error: nil)` всё равно показывает stale banner;
 - `error(previousValue:)` не становится stale неявно;
 - быстрый double tap запускает один retry благодаря ViewModel single-flight guard;
+- backend-кнопка показывает spinner сразу после первого тапа, до первого `await`;
 - длинная локализация, light/dark mode и Reduce Motion не ломают доступные
   fixture-сценарии;
 - semantic accessibility и scalable layout проверяются по коду;

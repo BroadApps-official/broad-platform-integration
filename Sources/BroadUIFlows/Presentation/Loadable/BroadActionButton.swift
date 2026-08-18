@@ -1,17 +1,50 @@
 import SwiftUI
 
 @MainActor
-struct BroadActionButton: View {
-    let configuration: BroadActionConfiguration
-    let tint: Color
-    let theme: BroadLoadableTheme
+public struct BroadActionButton: View {
+    private let configuration: BroadActionConfiguration
+    private let tint: Color
+    private let theme: BroadLoadableTheme
 
-    var body: some View {
+    public init(
+        configuration: BroadActionConfiguration,
+        tint: Color,
+        theme: BroadLoadableTheme
+    ) {
+        self.configuration = configuration
+        self.tint = tint
+        self.theme = theme
+    }
+
+    public init(
+        configuration: BroadActionConfiguration,
+        tint: Color
+    ) {
+        self.init(
+            configuration: configuration,
+            tint: tint,
+            theme: .standard
+        )
+    }
+
+    public var body: some View {
         Button(action: performAction) {
-            Text(currentTitle)
-                .font(theme.typography.action)
-                .foregroundStyle(theme.palette.actionForeground)
-                .frame(minHeight: theme.metrics.minimumActionHeight)
+            HStack(spacing: theme.metrics.textSpacing) {
+                if configuration.isInFlight {
+                    ProgressView()
+                        .tint(theme.palette.actionForeground)
+                        .accessibilityHidden(true)
+                }
+
+                Text(currentTitle)
+                    .font(theme.typography.action)
+                    .foregroundStyle(theme.palette.actionForeground)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(
+                maxWidth: .infinity,
+                minHeight: theme.metrics.minimumActionHeight
+            )
         }
         .buttonStyle(.borderedProminent)
         .tint(tint)

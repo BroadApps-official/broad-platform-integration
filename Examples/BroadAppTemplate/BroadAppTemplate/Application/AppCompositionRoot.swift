@@ -13,6 +13,9 @@ final class AppCompositionRoot {
     let rootViewModel: RootViewModel
     let analyticsViewModel: ExampleAnalyticsViewModel
     let ruSubscriptionViewModel: BroadRUSubscriptionManagementViewModel
+    #if DEBUG
+        let debugSettingsViewModel: ExampleDebugSettingsViewModel
+    #endif
 
     private let assembler: Assembler
 
@@ -58,7 +61,26 @@ final class AppCompositionRoot {
             recorder: monetizationEnvironment.analyticsRecorder
         )
         ruSubscriptionViewModel = Self.makeRUSubscriptionViewModel()
+        #if DEBUG
+            debugSettingsViewModel = Self.makeDebugSettingsViewModel()
+        #endif
     }
+
+    #if DEBUG
+        private static func makeDebugSettingsViewModel()
+            -> ExampleDebugSettingsViewModel {
+            let cleaner = DebugKeychainCleaner(
+                scopes: AppConfiguration.debugKeychainServiceNames.map {
+                    DebugKeychainScope(service: $0)
+                },
+                failureError: .example(
+                    message: "Не удалось очистить Keychain приложения.",
+                    code: "example.debug.keychain-cleanup-failed"
+                )
+            )
+            return ExampleDebugSettingsViewModel(keychainCleaner: cleaner)
+        }
+    #endif
 
     private static func makeRUSubscriptionViewModel()
         -> BroadRUSubscriptionManagementViewModel {
