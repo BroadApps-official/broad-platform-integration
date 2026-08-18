@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="580" viewBox="0 0 1280 580" role="img" aria-labelledby="title description">
+  <title id="title">Где хранить настройки, дизайн-токены и локальные значения</title>
+  <desc id="description">Вместо одного глобального AppConstants данные приложения хранятся в AppConfiguration, визуальные значения в AppTokens, а деталь одной реализации в private Constants рядом с кодом.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F8FAFC"/><stop offset="0.52" stop-color="#EFF6FF"/><stop offset="1" stop-color="#FAF5FF"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-25%" width="140%" height="160%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#64748B" flood-opacity="0.2"/></filter>
+  </defs>
+  <rect width="1280" height="580" rx="34" fill="url(#background)"/>
+  <text x="52" y="58" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="29" font-weight="800">Не один AppConstants, а три понятных места</text>
+  <text x="52" y="88" fill="#475569" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">Сначала определяем, что это за значение, и только потом выбираем файл.</text>
+
+  <g filter="url(#shadow)">
+    <rect x="52" y="132" width="360" height="262" rx="28" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="3"/>
+    <rect x="460" y="132" width="360" height="262" rx="28" fill="#EFF6FF" stroke="#3B82F6" stroke-width="3"/>
+    <rect x="868" y="132" width="360" height="262" rx="28" fill="#F8FAFC" stroke="#64748B" stroke-width="3"/>
+  </g>
+  <circle cx="100" cy="180" r="26" fill="#8B5CF6"/><text x="100" y="188" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="24">⚙</text>
+  <text x="140" y="178" fill="#5B21B6" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="21" font-weight="800">AppConfiguration</text>
+  <text x="84" y="226" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">Данные и правила приложения</text>
+  <text x="84" y="262" fill="#6D28D9" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Adapty key • placements • product ID</text>
+  <text x="84" y="291" fill="#6D28D9" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">URL • feature flags • тексты • backend</text>
+  <rect x="84" y="326" width="296" height="42" rx="14" fill="#EDE9FE"/><text x="232" y="352" text-anchor="middle" fill="#5B21B6" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13" font-weight="700">меняется при настройке приложения</text>
+
+  <circle cx="508" cy="180" r="26" fill="#3B82F6"/><text x="508" y="188" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="23">✦</text>
+  <text x="548" y="178" fill="#1D4ED8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="21" font-weight="800">AppTokens</text>
+  <text x="492" y="226" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">Визуальный язык приложения</text>
+  <text x="492" y="262" fill="#2563EB" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">цвета • шрифты • отступы • радиусы</text>
+  <text x="492" y="291" fill="#2563EB" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">размеры • темы общих компонентов</text>
+  <rect x="492" y="326" width="296" height="42" rx="14" fill="#DBEAFE"/><text x="640" y="352" text-anchor="middle" fill="#1D4ED8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13" font-weight="700">переиспользуется между экранами</text>
+
+  <circle cx="916" cy="180" r="26" fill="#64748B"/><text x="916" y="188" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22">⌁</text>
+  <text x="956" y="178" fill="#334155" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="21" font-weight="800">private Constants</text>
+  <text x="900" y="226" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">Деталь одной реализации</text>
+  <text x="900" y="262" fill="#475569" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">локальная длительность анимации</text>
+  <text x="900" y="291" fill="#475569" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">число попыток • служебный размер</text>
+  <rect x="900" y="326" width="296" height="42" rx="14" fill="#E2E8F0"/><text x="1048" y="352" text-anchor="middle" fill="#334155" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13" font-weight="700">private и рядом с использующим кодом</text>
+
+  <rect x="52" y="438" width="1176" height="96" rx="24" fill="#FFF1F2" stroke="#E11D48" stroke-width="3"/>
+  <text x="84" y="475" fill="#BE123C" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="18" font-weight="800">✕ Не создаём AppConstants-барахолку</text>
+  <text x="84" y="509" fill="#9F1239" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Не смешиваем в одном enum ключи SDK, URL, цвета, тексты, задержки и размеры. Такой файл быстро становится общей неуправляемой зависимостью.</text>
+</svg>

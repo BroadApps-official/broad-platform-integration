@@ -248,7 +248,21 @@ Restore доступен отдельным sticky action. `.nothingFound`, `.un
 
 Product row, CTA, restore, close, legal links и payment methods используют `BroadNoPressEffectButtonStyle`. Стиль возвращает label без изменения `scale`, `opacity`, brightness или overlay.
 
-Во время purchase весь paywall блокирует касания через `allowsHitTesting`, но визуально не затемняется. Progress показывается как отдельный элемент CTA. Selection border/surface меняются только как явное состояние выбранного продукта; implicit animation отсутствует.
+Во время purchase встроенный paywall блокирует касания через `allowsHitTesting`,
+но его кнопки не получают press-затемнение. По умолчанию progress показывается
+как отдельный элемент CTA. Selection border/surface меняются только как явное
+состояние выбранного продукта; implicit animation отсутствует.
+
+Для эталонного полноэкранного loader поверх уже показанного paywall приложение
+оно сохраняет текущий список продуктов и выбранную карточку, размывает этот
+контент и рисует отдельный `ProgressView` в overlay. Loader не должен сначала
+скрывать paywall, затем создавать его заново: именно такой промежуточный rebuild
+выглядит как моргание. Operation gate блокирует повторный purchase/restore без
+изменения opacity или scale карточек. После результата overlay снимается одним
+переходом в content либо error/retry.
+
+Правило одинаково для подписок и расходуемых токенов. Визуальный пример обоих
+состояний находится в [главном README](../README.md#paywall-loader).
 
 ## Sticky layout и адаптивность
 
