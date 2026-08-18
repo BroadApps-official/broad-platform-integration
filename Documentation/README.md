@@ -6,6 +6,7 @@
 |---|---|
 | Сверить архитектуру, use cases и UI перед передачей | [Памятка разработчика](../README.dev.md) |
 | Впервые подключить package | [Getting Started](GettingStarted.md) |
+| Правильно запустить SDK и кешировать контент | [Запуск SDK и кеш](StartupAndCaching.md) |
 | Понять папки и зависимости | [Architecture](Architecture.md) |
 | Настроить Adapty, StoreKit и общий flow | [Monetization](Monetization.md) |
 | Выбрать subscriptions-only или subscriptions + tokens | [Purchase Managers](PurchaseManagers.md) |
@@ -28,13 +29,15 @@
 
 1. [Памятка разработчика](../README.dev.md) — поймите, куда класть код и что проверять.
 2. [Getting Started](GettingStarted.md) — подключите нужные package products.
-3. [Architecture](Architecture.md) — не смешивайте Domain, SDK и SwiftUI.
-4. [Monetization](Monetization.md) — соберите один composition root.
-5. [Account Recovery](AccountRecovery.md) — привяжите покупки к account/backend,
+3. [Запуск SDK и кеш](StartupAndCaching.md) — разделите critical, background и lazy сервисы.
+4. [Architecture](Architecture.md) — не смешивайте Domain, SDK и SwiftUI.
+5. [Monetization](Monetization.md) — соберите один composition root.
+6. [Account Recovery](AccountRecovery.md) — привяжите покупки к account/backend,
    а не к одной установке приложения.
-6. Откройте профильный guide: RU billing, tokens, onboarding, paywall,
+7. Откройте профильный guide: RU billing, tokens, onboarding, paywall,
    Support Email или Usedesk.
-7. Если меняли код платформы, запустите `./Scripts/agent_review_and_fix.sh`.
+8. Если меняли код платформы, запустите обязательную проверку по
+   [инструкции Agent Automation](AgentAutomation.md).
 
 Все реальные идентификаторы приложения, Adapty placements, legal URL, API
 paths и тексты остаются app-owned. Платформа даёт типы, порядок действий,

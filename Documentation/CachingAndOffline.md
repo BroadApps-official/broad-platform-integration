@@ -23,6 +23,7 @@ typed offline/timeout результатом. Cache не разрешает ав
 | `KeyValueStoreProtocol` | Изолирует storage и предоставляет snapshot-based conditional write/remove |
 | `UserDefaultsKeyValueStore` | Actor-adapter для небольших флагов и снапшотов |
 | `CacheClock` | Передаваемая граница времени; production использует `.system` |
+| `VersionedPaywallCache` | Subject- и placement-scoped адаптер для offline paywall с конечным stale-age |
 
 `Domain` и вызывающий код не обращаются к `UserDefaults`, `JSONEncoder` или файловой системе напрямую.
 
@@ -93,6 +94,12 @@ let coreAssembly = BroadCoreAssembly(
 
 Если host не передал repository, `BroadCoreAssembly` создаёт container-scoped реализацию на базе `UserDefaultsKeyValueStore` с namespace `com.broadapps.platform.cache`.
 
+Для paywall не нужно писать свой `PaywallCacheProtocol`. Готовый
+`VersionedPaywallCache` использует тот же repository, но добавляет
+доменные границы: отдельный cache для subject/placement, запрет на пустой
+или чужой payload и конечный `maximumStaleAge`. Готовый composition-пример:
+[запуск SDK и кеш](StartupAndCaching.md#готовый-постоянный-paywall-cache).
+
 ## Логирование кеша
 
 Repository отправляет через `BroadLoggerProtocol` только результат `fresh/stale/missing`, тип операции и безопасный класс ошибки. Payload, `Data`, key name, schema ID, namespace, suite и raw storage/encoding error не логируются. Сетевой слой позднее получит отдельные typed-события и не будет расширять cache event произвольными строками.
@@ -110,6 +117,11 @@ Repository отправляет через `BroadLoggerProtocol` только р
 5. Удаляет значение только по явному продуктово-доменному правилу, а не из-за сетевой ошибки.
 
 Для entitlement это особенно важно: timeout означает `unresolved`, а не `inactive`. Готовый `EntitlementEngine` записывает новый assertion только после явного валидного `active` или `inactive`; поздний ответ после общего deadline не пишет cache от имени завершённого refresh.
+
+Для paywall порядок уже реализован в `LoadPaywallUseCase`: remote requested
+placement → его fresh/stale cache → remote `main` → cache `main`. Кешированный
+payload можно показать, но перед purchase платформа обязательно повторно
+загружает provider-product и сверяет его точные commercial-условия.
 
 ## Entitlement-cache поверх BroadCore
 

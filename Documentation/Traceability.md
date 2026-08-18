@@ -6,7 +6,7 @@
 
 | Задача приложения | Что использовать | Инструкция |
 |---|---|---|
-| Запуск, cache, offline, timeout и retry | `BroadCore` | [Bootstrap](Bootstrap.md), [Caching & Offline](CachingAndOffline.md) |
+| Запуск SDK, cache, offline, timeout и retry | `BroadCore` + доменные cache-адаптеры | [Запуск SDK и кеш](StartupAndCaching.md), [Bootstrap](Bootstrap.md), [Caching & Offline](CachingAndOffline.md) |
 | Onboarding и правильный момент ATT | `BroadUIFlows` + tracking adapter из `BroadCore` | [Onboarding & ATT](OnboardingAndATT.md) |
 | Paywall для любого количества продуктов | `BroadUIFlows` + `BroadMonetization` | [Paywall UI](PaywallUI.md) |
 | Adapty placements, fallback на `main` и experiments | `BroadMonetization` | [Monetization](Monetization.md), [Experiments](Experiments.md) |

@@ -41,6 +41,12 @@ Bootstrap Engine — это `actor`, который выполняет шаги 
 `UserDefaultsKeyValueStore` подходит для небольших снимков. Если позже понадобится
 файловое хранилище, оно просто реализует `KeyValueStoreProtocol` — менять feature-код не нужно.
 
+Доменные кеши добавляют правила конкретных данных поверх этого общего слоя.
+Например, `VersionedPaywallCache` хранит provider-neutral paywall отдельно для
+каждого app-account и placement, не возвращает пустой или слишком старый payload
+и не считается доказательством premium-доступа. Готовая схема подключения и
+порядок запуска SDK описаны в [«Запуск SDK и кеш»](StartupAndCaching.md).
+
 Прогресс AppFlow — это не кеш. Он хранится отдельно через `KeyValueStoreProtocol` в
 `com.broadapps.platform.state`. Кеш живёт в `com.broadapps.platform.cache` и имеет TTL.
 Чекпоинты AppFlow не имеют TTL и не удаляются вместе с устаревшим кешем.

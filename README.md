@@ -27,6 +27,7 @@
     <a href="#usedesk">💬 Usedesk</a> ·
     <a href="#showcase">📱 BroadAppTemplate</a> ·
     <a href="#architecture">🧭 Модули</a> ·
+    <a href="#startup-cache">⚡️ Запуск и кеш</a> ·
     <a href="#agent-app-check">✅ Проверка результата</a> ·
     <a href="#reliability">🛡️ Надёжность</a> ·
     <a href="#glossary">📖 Термины</a> ·
@@ -1089,9 +1090,8 @@ ViewModel передаются во View через `init`; SDK, HTTP-клиен
 - отсутствие сети показывает понятное состояние с кнопкой повторной проверки;
 - ATT не входит в запуск и никогда не вызывается на loader.
 
-Готовый порядок bootstrap, кеша и общих состояний показан в
-[Getting Started](Documentation/GettingStarted.md) и
-[Bootstrap](Documentation/Bootstrap.md).
+Готовый порядок bootstrap, SDK, кеша и offline-состояний
+показан в разделе [«Запуск и кеш»](#startup-cache).
 
 [Полный composition с кодом →](Documentation/GettingStarted.md) ·
 [Границы архитектуры →](Documentation/Architecture.md)
@@ -1804,6 +1804,42 @@ BroadAppsIOSPlatform
 
 [Полная архитектура →](Documentation/Architecture.md)
 
+<a id="startup-cache"></a>
+## ⚡️ Запуск SDK и кеш: что происходит до первого экрана
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/startup-cache-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/startup-cache-light.svg">
+  <img alt="Порядок запуска критических и фоновых SDK, чтения кеша и offline fallback" src="Documentation/Assets/README/startup-cache-light.svg" width="100%">
+</picture>
+
+> [!IMPORTANT]
+> **Библиотеки уже находятся в сборке.** На старте не нужно «подгружать
+> package». Нужно правильно инициализировать сервисы и не заставлять
+> первый экран ждать то, что ему не нужно.
+
+| Что делаем | Простое правило |
+|---|---|
+| 🧩 **Собираем dependencies** | Конфиг, logger, cache, identity, adapters и use cases создаются один раз в composition root |
+| 🔴 **Ждём `critical`** | Только шаги, без которых нельзя безопасно выбрать первый route; каждый имеет timeout |
+| 🟢 **Открываем UI** | `ready` или безопасный `degraded`; необязательные SDK больше не держат loader |
+| 🟣 **Запускаем `background`** | Analytics, telemetry и некритичный prewarm идут параллельно уже после открытия UI |
+| 💾 **Читаем content cache** | Показываем fresh/stale snapshot, пробуем network refresh; offline не удаляет последние валидные данные |
+
+В пакете уже есть типизированный версионный cache и готовые кеши для
+paywall, RU-каталога, StoreKit storefront и entitlement. Кеш paywall
+разделён по app-account и placement, имеет TTL и предельный возраст
+stale-данных.
+
+> [!WARNING]
+> Cache ускоряет и сохраняет UI, но не доказывает premium, token balance
+> или RU-оплату. ATT, Rate Us, Usedesk, purchase и restore никогда не
+> запускаются на loader.
+
+[Готовая пошаговая сборка, код и checklist →](Documentation/StartupAndCaching.md) ·
+[Контракт bootstrap →](Documentation/Bootstrap.md) ·
+[Детали cache/offline →](Documentation/CachingAndOffline.md)
+
 <a id="monetization"></a>
 ## 💳 Шесть правил, которые нельзя сломать
 
@@ -2132,6 +2168,7 @@ README отвечает на вопрос «куда нажать и с чего
 | Хочу сделать | Открыть |
 |---|---|
 | Сверить слои, use cases, UI и checklist перед передачей | [Памятка разработчика](README.dev.md) |
+| Правильно запустить SDK и подключить кеш контента | [Запуск SDK и кеш](Documentation/StartupAndCaching.md) |
 | Подключить платформу вручную | [Getting Started](Documentation/GettingStarted.md) |
 | Дать агенту правильную автопроверку | [Agent Automation](Documentation/AgentAutomation.md) |
 | Понять слои и зависимости | [Architecture](Documentation/Architecture.md) |

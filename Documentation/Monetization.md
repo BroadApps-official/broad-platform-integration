@@ -499,6 +499,18 @@ let transactionRecovery = StoreKitPendingAppleTransactionRecovery(
     appBundleIdentifier: AppIdentity.bundleIdentifier,
     ownershipPolicy: appleOwnershipPolicy
 )
+let appPaywallCache = VersionedPaywallCache(
+    repository: platformCache,
+    subject: entitlementSubject,
+    freshTimeToLive: 15 * 60,
+    maximumStaleAge: 24 * 60 * 60,
+    unavailableError: AppError(
+        kind: .unavailable,
+        userMessage: "Не удалось открыть сохранённые тарифы.",
+        diagnosticCode: "paywall.cache.unavailable",
+        isRetryable: true
+    )
+)
 
 let services = factory.makeServices(
     entitlementRepository: entitlementEngine,
@@ -523,11 +535,17 @@ let assembly = BroadMonetizationAssembly(
 )
 ```
 
-`paywallCache` optional. Если приложение его не передало, fallback всё равно
+`VersionedPaywallCache` — готовая постоянная реализация. Она изолирует
+payload по subject и placement, отличает fresh от stale и не возвращает
+каталог старше `maximumStaleAge`. При login/logout создайте новый
+subject-bound cache поверх того же app-wide `platformCache`.
+
+`paywallCache` всё ещё optional. Если приложение его не передало, fallback
 попробует remote `.main`, но локальный cached fallback отсутствует. Durable
 `pendingAppleStore` optional не является: production composition не подменяет его
 in-memory реализацией. Полный StoreKit updates/foreground wiring показан в
-[Getting Started](GettingStarted.md#storekit-updates-и-recovery).
+[Getting Started](GettingStarted.md#storekit-updates-и-recovery). Общий порядок startup и cache
+описан в [«Запуск SDK и кеш»](StartupAndCaching.md).
 
 Standard factory имеет fail-fast precondition `observerMode == false`, потому что
 Adapty владеет StoreKit purchase/finish. Для `observerMode == true` host собирает

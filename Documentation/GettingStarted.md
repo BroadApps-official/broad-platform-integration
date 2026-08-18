@@ -50,9 +50,11 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 
 `lint.sh` запускает SwiftLint и проверку границ модулей. `build.sh` собирает package с `strict-concurrency=complete` и `warnings-as-errors`, затем example в Debug Simulator, Release Simulator и unsigned Release `iphoneos`. После device-build он проверяет, что `PrivacyInfo.xcprivacy` реально попал в `.app`. Test targets намеренно отсутствуют.
 
-Если вы меняли код самой платформы, выполните
-`./Scripts/agent_review_and_fix.sh`. Команда запускает готовую автоматическую
-проверку, исправляет platform-owned ошибки и повторно подтверждает результат.
+Если вы меняли код самой платформы, выполните обязательную проверку
+по [инструкции Agent Automation](AgentAutomation.md). Внутри уже открытого
+Codex/Claude используется `./Scripts/agent_gate.sh`; автоматический
+`agent_review_and_fix.sh` запускается отдельно из Terminal, а не изнутри
+другого агента.
 [Короткий checklist перед передачей изменений →](PlatformHandoff.md).
 
 ## 3. Подключите package
@@ -183,7 +185,9 @@ let platformCache: any CacheRepositoryProtocol = VersionedJSONCacheRepository(
 обязаны быть настоящими atomic compare-and-set операциями. Иначе две identity
 composition могут перезаписать или удалить чужой pending payment.
 
-Подробности: [Bootstrap](Bootstrap.md), [Caching & Offline](CachingAndOffline.md), [Logging](Logging.md).
+Готовая практическая схема: [запуск SDK и кеш](StartupAndCaching.md).
+Детальные контракты: [Bootstrap](Bootstrap.md),
+[Caching & Offline](CachingAndOffline.md), [Logging](Logging.md).
 
 ## 6. Соберите Entitlement Engine
 
@@ -269,6 +273,20 @@ let pendingApplePurchaseStore = PendingApplePurchaseStore(
 let pendingAppleTransactionRecovery = StoreKitPendingAppleTransactionRecovery(
     appBundleIdentifier: AppIdentity.bundleIdentifier,
     ownershipPolicy: appleOwnershipPolicy
+)
+
+let paywallCacheError = AppError(
+    kind: .unavailable,
+    userMessage: "Не удалось открыть сохранённые тарифы.",
+    diagnosticCode: "paywall.cache.unavailable",
+    isRetryable: true
+)
+let appPaywallCache = VersionedPaywallCache(
+    repository: platformCache,
+    subject: entitlementSubject,
+    freshTimeToLive: 15 * 60,
+    maximumStaleAge: 24 * 60 * 60,
+    unavailableError: paywallCacheError
 )
 
 let services = factory.makeServices(
