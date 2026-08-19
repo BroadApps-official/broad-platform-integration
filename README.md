@@ -18,6 +18,7 @@
 
   <p>
     <a href="#start">💡 Что это</a> ·
+    <a href="#open-after-download">📂 Что открыть</a> ·
     <a href="#choose-path">🚀 С чего начать</a> ·
     <a href="#agent-setup">🤖 С Codex / Claude</a> ·
     <a href="#manual-setup">🛠️ Без агента</a> ·
@@ -35,6 +36,44 @@
     <a href="#documentation">📚 Документация</a>
   </p>
 </div>
+
+<a id="open-after-download"></a>
+## 📂 Скачали репозиторий — что открыть
+
+> [!IMPORTANT]
+> **Файл проекта не потерян.** Корень репозитория — это Swift Package, поэтому
+> отдельного корневого `.xcodeproj` здесь быть не должно. Файл `Package.swift`
+> и папка `Sources` — это сама платформа. Запускаемое iPhone-приложение находится
+> внутри папки `Examples`.
+
+| Что вы хотите сделать | Что именно открыть |
+|---|---|
+| Просто запустить платформу и посмотреть готовый пример | `Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj` |
+| Создать новое приложение через Codex или Claude | Пустую папку нового приложения; затем выполнить [вариант A](#agent-setup) |
+| Создать новое приложение вручную | Новый `iOS App` в Xcode; затем подключить этот репозиторий как Swift Package по [варианту B](#manual-setup) |
+| Изменять код самой платформы | Корень репозитория с `Package.swift`; после правок запустить `bash Scripts/agent_gate.sh` |
+
+### Хотите прямо сейчас увидеть работающий пример
+
+Откройте Terminal в корне скачанного репозитория и выполните:
+
+```bash
+open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
+```
+
+Затем в Xcode выберите:
+
+```text
+Scheme: BroadAppTemplate
+Device: любой iPhone Simulator
+Run: ▶
+```
+
+> [!TIP]
+> **Самая частая ошибка:** искать `.xcodeproj` в корне или пытаться превратить
+> сам Swift Package в новое приложение. Для запуска примера откройте проект из
+> `Examples`; для рабочего продукта создайте отдельное iPhone-приложение и
+> подключите к нему package.
 
 <a id="start"></a>
 ## Что это такое — за 30 секунд

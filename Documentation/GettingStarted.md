@@ -1,5 +1,15 @@
 # Быстрый старт
 
+> [!IMPORTANT]
+> **После скачивания не ищите `.xcodeproj` в корне.** Корень — это Swift
+> Package, его файл сборки называется `Package.swift`. Запускаемый пример лежит
+> в `Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj`. Чтобы сразу открыть
+> его, выполните из корня репозитория:
+>
+> ```bash
+> open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
+> ```
+
 > Platform policy: приложения предназначены только для iPhone. В host target
 > установите `TARGETED_DEVICE_FAMILY = 1`. iPad, Mac, Mac Catalyst и visionOS
 > не входят в поддерживаемый scope BroadApps iOS Platform.
