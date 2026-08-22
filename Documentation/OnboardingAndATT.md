@@ -60,6 +60,15 @@ let onboardingViewModel = OnboardingViewModel(
 
 Количество страниц, стабильные ID, весь текст и media ID задаёт приложение. Платформа не знает имён assets и не ограничивает renderer статичной картинкой.
 
+`pages` — единственный источник количества. Отдельный `slidesCount` намеренно
+не существует: он мог бы разойтись с массивом. Один элемент массива означает
+один слайд; добавление или удаление элемента не требует изменения
+`BroadUIFlows`.
+
+> [!IMPORTANT]
+> Три страницы в `BroadAppTemplate` — только короткий демонстрационный набор.
+> Это не лимит и не значение по умолчанию.
+
 ```swift
 let onboardingConfiguration = OnboardingConfiguration(
     pages: [
@@ -113,6 +122,8 @@ remote/app config не оставляет пользователя на пуст
 
 ## View
 
+### Вариант 1. Стандартная композиция
+
 ```swift
 BroadOnboardingView(
     viewModel: onboardingViewModel,
@@ -123,6 +134,61 @@ BroadOnboardingView(
     onCompleted: appFlowCoordinator.onboardingCompleted
 )
 ```
+
+`BroadOnboardingView` строит progress через весь массив страниц, поэтому
+одинаково работает с одной, четырьмя или длинным списком. Через `theme` и
+`media` приложение подставляет свои визуальные значения, не меняя переходы и
+ATT.
+
+### Вариант 2. Полностью свой SwiftUI
+
+Если расположение элементов из Figma/no-code дизайна не совпадает со
+стандартным экраном, не скрывайте `BroadOnboardingView` и не повторяйте его
+lifecycle вручную. Используйте logic-only host:
+
+```swift
+BroadOnboardingFlowHost(
+    viewModel: onboardingViewModel,
+    onCompleted: appFlowCoordinator.onboardingCompleted
+) { viewModel, actions in
+    MyBrandOnboardingScreen(
+        page: viewModel.currentPage,
+        currentPage: viewModel.currentIndex + 1,
+        pageCount: viewModel.configuration.pages.count,
+        isLastPage: viewModel.isLastPage,
+        onContinue: actions.advance
+    )
+}
+```
+
+Приложение полностью рисует `MyBrandOnboardingScreen`. Host оставляет у
+платформы только общую логику:
+
+- наблюдение за текущей страницей;
+- переход и завершение на последнем элементе `pages`;
+- обработку пустой или невалидной конфигурации;
+- active/window lifecycle;
+- ATT только после появления первой страницы.
+
+### Как определить страницы до реализации
+
+Сначала сопоставьте Kaiten, Figma/no-code материалы, техническое задание и
+reference. Если список однозначен — выпишите его и создайте `pages`. Если
+количество или содержимое не указано либо источники противоречат друг другу,
+задайте вопрос до написания UI:
+
+> Сколько должно быть слайдов и что находится на каждом: заголовок, текст,
+> изображение и действие кнопки?
+
+Стабильный технический `id` для каждой найденной страницы разработчик или агент
+создаёт сам из её смысла, например `welcome`, `features`, `examples`. Это не
+продуктовый вопрос и не причина останавливать работу повторно.
+
+Нельзя молча использовать три страницы example. Если onboarding не нужен,
+отключите его через `AppFlowConfiguration`, а не передавайте пустой массив.
+Пустой массив предназначен только для безопасной обработки ошибочной
+конфигурации. При отключённом onboarding первый слайд не появляется, поэтому
+ATT не запрашивается.
 
 Для `.restorePurchases` host вызывает monetization restore use case; privacy и terms открывает своим web-router. Footer намеренно ограничен legal/restore-сценариями. Экран оценки приложения и системный review prompt внутри onboarding не поддерживаются. Вне onboarding Rate Us разрешён отдельным app-specific flow.
 

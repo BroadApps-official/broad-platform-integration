@@ -30,8 +30,12 @@ chat token хранится через backend app account. [Инструкци�
 Example показывает полный локальный flow платформы:
 
 ```text
-launch → onboarding (3 слайда) → adaptive paywall → verified purchase/restore → main
+launch → configurable onboarding → adaptive paywall → verified purchase/restore → main
 ```
+
+Обычный запуск показывает три страницы только как короткий пример. Их число не
+зашито в платформу: `ExampleOnboardingScenario.pages` формирует массив, а
+`BroadUIFlows` берёт длину только из него.
 
 ## Запуск
 
@@ -54,8 +58,11 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 ## Что демонстрирует example
 
 - composition root и порядок `Core → Monetization → UIFlows`;
-- три конфигурируемых onboarding-слайда;
+- onboarding из любого количества страниц без отдельного `slidesCount`;
+- готовый `BroadOnboardingView` и полностью app-owned UI через
+  `BroadOnboardingFlowHost`;
 - ATT только после появления первого слайда;
+- отсутствие ATT при `-onboarding-disabled` и безопасном invalid-flow;
 - paywall для 0, 1 и любого количества продуктов без фильтрации;
 - product tap/purchase без opacity/scale/dimming;
 - purchase/restore с обязательным fresh entitlement;
@@ -99,6 +106,14 @@ fail-before-charge.
 | `-live-adapty` | настоящий каталог Adapty; финансовые вызовы отключены |
 | `-analytics-fixture` | только paywall и безопасная локальная запись событий аналитики |
 | `-tracking-disabled` | полная проверка UI без системного окна ATT |
+| `-onboarding-one-page` | стандартный onboarding из одной страницы |
+| `-onboarding-two-pages` | стандартный onboarding из двух страниц |
+| `-onboarding-three-pages` | явный пример из трёх страниц |
+| `-onboarding-four-pages` | стандартный onboarding из четырёх страниц |
+| `-onboarding-long` | восемь страниц, динамический progress и scroll |
+| `-onboarding-custom-ui` | четыре страницы в полностью своём SwiftUI через logic-only host |
+| `-onboarding-disabled` | маршрут onboarding штатно отключён |
+| `-onboarding-invalid` | пустая ошибочная конфигурация безопасно завершается без UI и ATT |
 | `-paywall-empty` | paywall без продуктов |
 | `-paywall-one-product` | один продукт выбирается автоматически |
 | `-paywall-two-products` | два продукта сохраняют порядок провайдера |

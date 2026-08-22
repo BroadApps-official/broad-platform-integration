@@ -8,6 +8,12 @@ production-ready версии.
 
 ### Added
 
+- public logic-only `BroadOnboardingFlowHost` для полностью app-owned
+  onboarding UI без дублирования переходов, завершения, invalid-state и ATT
+  lifecycle;
+- onboarding fixtures для 1/2/3/4/8 страниц, custom UI, `.disabled` и пустой
+  конфигурации, а также обязательный `check_onboarding_contract.sh` без test
+  targets;
 - [Developer README](README.dev.md): понятная памятка по слоям Clean Architecture,
   добавлению сцен и use cases, UI-проверке, сложным пользовательским сценариям
   и проверке через агента или вручную;
@@ -70,6 +76,10 @@ production-ready версии.
 
 ### Changed
 
+- `OnboardingConfiguration.pages` зафиксирован как единственный источник
+  количества слайдов; три страницы `BroadAppTemplate` теперь явно обозначены
+  только демонстрационным примером, а инструкции Codex/Claude требуют сначала
+  определить страницы или задать разработчику один прямой вопрос;
 - README получил единый визуальный язык: отдельную светлую/тёмную схему работы
   с reference и backend, цветные рамки для результата, предупреждений и
   запретов, карточки этапов вместо сухих текстовых стрелок и более заметные

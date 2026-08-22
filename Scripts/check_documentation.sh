@@ -128,10 +128,15 @@ for required_pattern in \
     'Documentation/Assets/README/no-code-manual-workflow-dark\.svg' \
     'Documentation/Assets/README/agent-click-path-light\.svg' \
     'Documentation/Assets/README/agent-click-path-dark\.svg' \
+    'Documentation/Assets/README/onboarding-decision-flow-light\.svg' \
+    'Documentation/Assets/README/onboarding-decision-flow-dark\.svg' \
     'Documentation/Assets/README/remote-config-cache-flow-light\.svg' \
     'Documentation/Assets/README/remote-config-cache-flow-dark\.svg' \
     'Documentation/Assets/README/full-flow\.gif' \
-    'Documentation/Assets/README/adaptive-paywall\.gif'; do
+    'Documentation/Assets/README/adaptive-paywall\.gif' \
+    'Copy-paste: обязательная инструкция агенту перед onboarding' \
+    'Три слайда в `BroadAppTemplate` — только демонстрационный пример' \
+    'BroadOnboardingFlowHost'; do
     if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
     fi

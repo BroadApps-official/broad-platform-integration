@@ -33,13 +33,20 @@ Mac Catalyst или visionOS targets/configurations.
    UI обязан синхронно перейти в `isInFlight` до первого `await`, показать
    spinner и заблокировать повторный тап. Debug-очистка Keychain разрешена
    только для точных app-owned service и не должна существовать в Release.
-5. Внеси минимальное исправление только внутри `BroadAppsIOSPlatform`.
-6. Не изменяй reference-проекты, Git history, test policy и рабочие tracked
+5. Проверь onboarding-контракт: `OnboardingConfiguration.pages` остаётся
+   единственным источником количества страниц; platform source не содержит
+   ограничения на три страницы; стандартный `BroadOnboardingView` и logic-only
+   `BroadOnboardingFlowHost` используют одну ViewModel и один ATT lifecycle.
+   Три страницы example не должны называться значением по умолчанию. При
+   отключённом onboarding ATT не запрашивается; технические ID страниц агент
+   может создать сам из смысла, не превращая это в лишний продуктовый вопрос.
+6. Внеси минимальное исправление только внутри `BroadAppsIOSPlatform`.
+7. Не изменяй reference-проекты, Git history, test policy и рабочие tracked
    Adapty configs. Не выполняй реальные платежи.
-7. Не отключай проверки, не скрывай ошибки и не подменяй PASS текстом.
-8. После Swift-правок запусти `bash Scripts/format.sh`.
-9. Повторяй `bash Scripts/agent_gate.sh`, пока он не пройдёт полностью.
-10. Не запускай `Scripts/agent_review_and_fix.sh`: его уже запустил разработчик.
+8. Не отключай проверки, не скрывай ошибки и не подменяй PASS текстом.
+9. После Swift-правок запусти `bash Scripts/format.sh`.
+10. Повторяй `bash Scripts/agent_gate.sh`, пока он не пройдёт полностью.
+11. Не запускай `Scripts/agent_review_and_fix.sh`: его уже запустил разработчик.
 
 Финальный ответ напиши по-русски в Markdown с точными разделами:
 

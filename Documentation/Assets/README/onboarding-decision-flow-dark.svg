@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="590" viewBox="0 0 1280 590" role="img" aria-labelledby="title description">
+  <title id="title">Как определить страницы onboarding</title>
+  <desc id="description">Агент или разработчик читает материалы проекта, определяет страницы или задаёт вопрос, затем передаёт массив pages в стандартный либо собственный интерфейс.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0F172A"/><stop offset="1" stop-color="#211338"/></linearGradient>
+    <linearGradient id="flow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="9" stdDeviation="12" flood-color="#020617" flood-opacity="0.55"/></filter>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#94A3B8"/></marker>
+  </defs>
+  <rect width="1280" height="590" rx="34" fill="url(#bg)"/>
+  <text x="640" y="55" text-anchor="middle" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="32" font-weight="800">Onboarding: количество берётся из страниц</text>
+  <text x="640" y="87" text-anchor="middle" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17">Три слайда в BroadAppTemplate — только пример. Значения по умолчанию нет.</text>
+
+  <g filter="url(#shadow)" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+    <rect x="70" y="125" width="260" height="82" rx="22" fill="#172554" stroke="#3B82F6" stroke-width="2"/><text x="200" y="158" text-anchor="middle" fill="#93C5FD" font-size="19" font-weight="800">Kaiten и ТЗ</text><text x="200" y="183" text-anchor="middle" fill="#CBD5E1" font-size="15">маршрут и требования</text>
+    <rect x="360" y="125" width="260" height="82" rx="22" fill="#2E1065" stroke="#8B5CF6" stroke-width="2"/><text x="490" y="158" text-anchor="middle" fill="#C4B5FD" font-size="19" font-weight="800">Figma / no-code</text><text x="490" y="183" text-anchor="middle" fill="#CBD5E1" font-size="15">экраны и контент</text>
+    <rect x="650" y="125" width="260" height="82" rx="22" fill="#500724" stroke="#EC4899" stroke-width="2"/><text x="780" y="158" text-anchor="middle" fill="#F9A8D4" font-size="19" font-weight="800">Reference</text><text x="780" y="183" text-anchor="middle" fill="#CBD5E1" font-size="15">поведение продукта</text>
+    <rect x="940" y="125" width="270" height="82" rx="22" fill="#022C22" stroke="#10B981" stroke-width="2"/><text x="1075" y="158" text-anchor="middle" fill="#6EE7B7" font-size="19" font-weight="800">Агент / разработчик</text><text x="1075" y="183" text-anchor="middle" fill="#CBD5E1" font-size="15">сверяет все источники</text>
+  </g>
+
+  <path d="M200 207V236H640V261M490 207V236M780 207V236M1075 207V236H640" fill="none" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <g filter="url(#shadow)"><rect x="465" y="267" width="350" height="78" rx="26" fill="url(#flow)"/></g>
+  <text x="640" y="299" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="21" font-weight="800">Все страницы понятны?</text>
+  <text x="640" y="324" text-anchor="middle" fill="#EDE9FE" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">порядок • заголовок • текст • media • действие</text>
+
+  <path d="M540 345V374H330V397M740 345V374H950V397" fill="none" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <text x="470" y="371" fill="#6EE7B7" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="800">ДА</text>
+  <text x="805" y="371" fill="#FDBA74" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="800">НЕТ / ПРОТИВОРЕЧИЕ</text>
+
+  <g filter="url(#shadow)" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+    <rect x="135" y="402" width="390" height="94" rx="24" fill="#064E3B" stroke="#34D399" stroke-width="2"/><text x="330" y="437" text-anchor="middle" fill="#D1FAE5" font-size="20" font-weight="800">Создать массив pages</text><text x="330" y="466" text-anchor="middle" fill="#A7F3D0" font-size="16">1 элемент = 1 слайд</text>
+    <rect x="755" y="402" width="390" height="94" rx="24" fill="#7C2D12" stroke="#FB923C" stroke-width="2"/><text x="950" y="437" text-anchor="middle" fill="#FFEDD5" font-size="20" font-weight="800">Сначала задать вопрос</text><text x="950" y="466" text-anchor="middle" fill="#FED7AA" font-size="16">не угадывать и не брать «3» молча</text>
+  </g>
+
+  <path d="M330 496V530H610M950 496V530H670" fill="none" stroke="#94A3B8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"/>
+  <rect x="505" y="515" width="270" height="52" rx="20" fill="#F8FAFC"/>
+  <text x="640" y="547" text-anchor="middle" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="800">Стандартный UI или свой UI</text>
+</svg>

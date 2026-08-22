@@ -79,13 +79,22 @@ struct AppFlowRootView: View {
         RootView(viewModel: rootViewModel)
     }
 
+    @ViewBuilder
     private func onboardingContent() -> some View {
-        BroadOnboardingView(
-            viewModel: onboardingViewModel,
-            media: ExampleOnboardingMediaView.init,
-            onFooterAction: sceneViewModel.onboardingFooterAction,
-            onCompleted: sceneViewModel.onboardingCompleted
-        )
+        if AppConfiguration.onboardingScenario.usesCustomRenderer {
+            ExampleCustomOnboardingView(
+                viewModel: onboardingViewModel,
+                onFooterAction: sceneViewModel.onboardingFooterAction,
+                onCompleted: sceneViewModel.onboardingCompleted
+            )
+        } else {
+            BroadOnboardingView(
+                viewModel: onboardingViewModel,
+                media: ExampleOnboardingMediaView.init,
+                onFooterAction: sceneViewModel.onboardingFooterAction,
+                onCompleted: sceneViewModel.onboardingCompleted
+            )
+        }
     }
 
     private func paywallContent() -> some View {

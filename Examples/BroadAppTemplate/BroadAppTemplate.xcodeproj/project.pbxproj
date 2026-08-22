@@ -21,9 +21,11 @@
 		4945F8290CC10C3D660F5539 /* BootstrapStatusCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D947D3645D2242AC025B52 /* BootstrapStatusCardView.swift */; };
 		53246D1405C441AC0B37CEE7 /* AppFlowRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DED30C6E4967BEC7B35826F /* AppFlowRootView.swift */; };
 		532BD22B5000A67741519639 /* ExampleOnboardingMediaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6136B1A9E4165793F8B71A77 /* ExampleOnboardingMediaView.swift */; };
+		54FCC8C40F35AF3A5799AF37 /* ExampleCustomOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D194C5A9595702537E10E7D /* ExampleCustomOnboardingView.swift */; };
 		564C42E06A1F039DC1316291 /* ExampleRUSubscriptionFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060A21470E9598E252B9E52C /* ExampleRUSubscriptionFixtures.swift */; };
 		593D835FA8F40278DDAF6241 /* RootViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA50B24FA1857648F5CE8FA /* RootViewModel.swift */; };
 		5FB5212E7D593D97CC2616C3 /* ExampleAnalyticsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 433F40BAC4673550C5998708 /* ExampleAnalyticsViewModel.swift */; };
+		7AE11417F2CBCF5598E74E5C /* ExampleOnboardingScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = 003346C60520024ED6DE1CD4 /* ExampleOnboardingScenario.swift */; };
 		882BB02ECF3BB2BF9D6B2B07 /* ModuleCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 862C137AC05F83C6A4ECAD0F /* ModuleCardView.swift */; };
 		8B36C1DCEA438C6B15E27331 /* Scalable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80FD881F097C5432B8523241 /* Scalable.swift */; };
 		8F7A3FB08BD8972E9E02F8E4 /* BroadAppTemplateApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73BB3DBB72E0BE398EDA8945 /* BroadAppTemplateApp.swift */; };
@@ -44,6 +46,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		003346C60520024ED6DE1CD4 /* ExampleOnboardingScenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleOnboardingScenario.swift; sourceTree = "<group>"; };
 		0409C5D2EE1382A900A320F2 /* ExampleMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleMainView.swift; sourceTree = "<group>"; };
 		045597B892558EA1B0A581B6 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		060A21470E9598E252B9E52C /* ExampleRUSubscriptionFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRUSubscriptionFixtures.swift; sourceTree = "<group>"; };
@@ -57,6 +60,7 @@
 		433F40BAC4673550C5998708 /* ExampleAnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAnalyticsViewModel.swift; sourceTree = "<group>"; };
 		454602F0D2DA0BB1EBC9EB23 /* BroadAppsIOSPlatform */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BroadAppsIOSPlatform; path = ../..; sourceTree = SOURCE_ROOT; };
 		50D947D3645D2242AC025B52 /* BootstrapStatusCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootstrapStatusCardView.swift; sourceTree = "<group>"; };
+		5D194C5A9595702537E10E7D /* ExampleCustomOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleCustomOnboardingView.swift; sourceTree = "<group>"; };
 		6136B1A9E4165793F8B71A77 /* ExampleOnboardingMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleOnboardingMediaView.swift; sourceTree = "<group>"; };
 		646DA71F9FDF90A576EC636D /* Adapty5109Codex.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Adapty5109Codex.xcconfig; sourceTree = "<group>"; };
 		6AA50B24FA1857648F5CE8FA /* RootViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootViewModel.swift; sourceTree = "<group>"; };
@@ -112,6 +116,7 @@
 		1923A363DDFBFE3C548D40F9 /* Onboarding */ = {
 			isa = PBXGroup;
 			children = (
+				5D194C5A9595702537E10E7D /* ExampleCustomOnboardingView.swift */,
 				6136B1A9E4165793F8B71A77 /* ExampleOnboardingMediaView.swift */,
 			);
 			path = Onboarding;
@@ -225,6 +230,7 @@
 			children = (
 				10D42FCA60C072A4AA86B3ED /* AppConfiguration.swift */,
 				C8D146F0DF640114F27609D2 /* ExampleLiveAdaptyConfiguration.swift */,
+				003346C60520024ED6DE1CD4 /* ExampleOnboardingScenario.swift */,
 			);
 			path = Configuration;
 			sourceTree = "<group>";
@@ -359,6 +365,7 @@
 				5FB5212E7D593D97CC2616C3 /* ExampleAnalyticsViewModel.swift in Sources */,
 				34BCFA057627EC4444B0A20E /* ExampleBootstrapScenario.swift in Sources */,
 				3FAF43ED645228FF46818F0F /* ExampleCheckoutMethodsUseCase.swift in Sources */,
+				54FCC8C40F35AF3A5799AF37 /* ExampleCustomOnboardingView.swift in Sources */,
 				2FD632F0CFD1D0AAE08F893D /* ExampleEntitlementDependencies.swift in Sources */,
 				90D57063D86A085F665ED071 /* ExampleLiveAdaptyConfiguration.swift in Sources */,
 				901AC49FDCF16292CE1AC756 /* ExampleLiveAdaptyServicesFactory.swift in Sources */,
@@ -366,6 +373,7 @@
 				AA81F590A719281F994B0FD1 /* ExampleMonetizationAnalyticsAssembly.swift in Sources */,
 				DDA95ED4A32456DFDC046D14 /* ExampleMonetizationEnvironment.swift in Sources */,
 				532BD22B5000A67741519639 /* ExampleOnboardingMediaView.swift in Sources */,
+				7AE11417F2CBCF5598E74E5C /* ExampleOnboardingScenario.swift in Sources */,
 				F90BB868F299417C3930230D /* ExampleRUPaymentSheetFixtureView.swift in Sources */,
 				564C42E06A1F039DC1316291 /* ExampleRUSubscriptionFixtures.swift in Sources */,
 				A01EE16BEB6BE1C854E8AE68 /* ExampleRecordingMonetizationAnalytics.swift in Sources */,

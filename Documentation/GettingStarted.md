@@ -49,7 +49,13 @@ swiftlint version
 open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 ```
 
-Выберите схему `BroadAppTemplate` и любой iOS Simulator. Чистый запуск показывает три onboarding-слайда, adaptive paywall и main после подтверждённой fixture-покупки.
+Выберите схему `BroadAppTemplate` и любой iOS Simulator. Чистый запуск показывает
+три **демонстрационных** onboarding-слайда, adaptive paywall и main после
+подтверждённой fixture-покупки. Три — не лимит платформы: launch arguments
+`-onboarding-one-page`, `-onboarding-two-pages`, `-onboarding-four-pages`,
+`-onboarding-long` и `-onboarding-custom-ui` показывают остальные варианты.
+`-onboarding-disabled` пропускает flow без ATT, а `-onboarding-invalid`
+проверяет безопасное завершение пустой конфигурации без UI и ATT.
 
 Полная локальная проверка:
 
@@ -450,7 +456,9 @@ Idempotent reads можно повторить bounded policy, а неизвес
 
 ## 8. Настройте onboarding и ATT
 
-Количество слайдов, тексты и media принадлежат приложению. Минимальная конфигурация:
+Количество слайдов, тексты и media принадлежат приложению. Единственный источник
+количества — массив `pages`; отдельное число не передаётся. Минимальная
+конфигурация:
 
 ```swift
 let onboarding = OnboardingConfiguration(
@@ -462,6 +470,12 @@ let onboarding = OnboardingConfiguration(
     trackingAuthorizationPolicy: .afterFirstSlide()
 )
 ```
+
+Для готовой композиции передайте эту конфигурацию в `BroadOnboardingView`. Если
+нужен полностью свой SwiftUI, передайте тот же `OnboardingViewModel` в
+`BroadOnboardingFlowHost`: host сохранит переходы, завершение и безопасный ATT,
+а приложение нарисует экран само. Подробный пример находится в
+[OnboardingAndATT](OnboardingAndATT.md).
 
 Если ATT включён, добавьте локализованный `NSUserTrackingUsageDescription`. Запрос будет выполнен только после фактического появления первого слайда в активном видимом окне.
 

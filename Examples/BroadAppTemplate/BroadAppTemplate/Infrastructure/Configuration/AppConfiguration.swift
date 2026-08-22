@@ -37,6 +37,7 @@ enum AppConfiguration {
     static let bootstrapScenario = ExampleBootstrapScenario.current()
     static let entitlementScenario = ExampleEntitlementScenario.current()
     static let remoteFeatureScenario = ExampleRemoteFeatureScenario.current()
+    static let onboardingScenario = ExampleOnboardingScenario.current()
     static let appFlowConfiguration: AppFlowConfiguration = {
         let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("-app-flow-main-only") {
@@ -54,6 +55,13 @@ enum AppConfiguration {
             )
         }
 
+        if !onboardingScenario.isEnabled {
+            return AppFlowConfiguration(
+                onboarding: .disabled,
+                initialPaywall: .enabled(allowsClose: true)
+            )
+        }
+
         return AppFlowConfiguration(
             onboarding: .enabled,
             initialPaywall: .enabled(allowsClose: true)
@@ -61,26 +69,7 @@ enum AppConfiguration {
     }()
 
     static let onboardingConfiguration = OnboardingConfiguration(
-        pages: [
-            OnboardingPageConfiguration(
-                id: "platform-foundation",
-                title: "Надёжная основа приложения",
-                subtitle: "Запуск, работа без сети и общие состояния готовы до открытия основного экрана.",
-                media: OnboardingMediaDescriptor(identifier: "foundation")
-            ),
-            OnboardingPageConfiguration(
-                id: "adaptive-monetization",
-                title: "Показываем все тарифы",
-                subtitle: "Пейвол принимает продукты провайдера без фильтрации и ограничений по количеству.",
-                media: OnboardingMediaDescriptor(identifier: "monetization")
-            ),
-            OnboardingPageConfiguration(
-                id: "verified-access",
-                title: "Доступ только после проверки",
-                subtitle: "Покупка и восстановление завершаются только после повторной проверки доступа.",
-                media: OnboardingMediaDescriptor(identifier: "verified-access")
-            )
-        ],
+        pages: onboardingScenario.pages,
         continueTitle: "Продолжить",
         completionTitle: "Смотреть тарифы",
         progressAccessibilityLabel: "Прогресс онбординга",
@@ -135,6 +124,9 @@ enum AppConfiguration {
         }
         if ProcessInfo.processInfo.arguments.contains("-live-adapty") {
             return "broad-app-template.app-flow.live-adapty"
+        }
+        if onboardingScenario != .exampleThreePages {
+            return "broad-app-template.app-flow.onboarding.\(onboardingScenario.rawValue)"
         }
         guard let entitlementScenario else {
             return "broad-app-template.app-flow"

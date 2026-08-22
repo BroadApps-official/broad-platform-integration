@@ -3,10 +3,8 @@ import SwiftUI
 @MainActor
 public struct BroadOnboardingView<Media: View>: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.scenePhase) private var scenePhase
 
-    @StateObject private var viewModel: OnboardingViewModel
-
+    private let viewModel: OnboardingViewModel
     private let theme: BroadOnboardingTheme
     private let media: @MainActor (OnboardingMediaDescriptor) -> Media
     private let onFooterAction: @MainActor (OnboardingFooterDestination) -> Void
@@ -19,7 +17,7 @@ public struct BroadOnboardingView<Media: View>: View {
         onFooterAction: @escaping @MainActor (OnboardingFooterDestination) -> Void,
         onCompleted: @escaping @MainActor () -> Void
     ) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         self.theme = theme
         self.media = media
         self.onFooterAction = onFooterAction
@@ -42,49 +40,36 @@ public struct BroadOnboardingView<Media: View>: View {
     }
 
     public var body: some View {
-        Group {
-            if viewModel.configuration.isValid {
-                GeometryReader { proxy in
-                    ScrollView {
-                        VStack(spacing: theme.metrics.pageSpacing) {
-                            pageContent
+        BroadOnboardingFlowHost(
+            viewModel: viewModel,
+            onCompleted: onCompleted
+        ) { viewModel, actions in
+            GeometryReader { proxy in
+                ScrollView {
+                    VStack(spacing: theme.metrics.pageSpacing) {
+                        pageContent(viewModel: viewModel)
 
-                            Spacer(minLength: theme.metrics.controlSpacing)
+                        Spacer(minLength: theme.metrics.controlSpacing)
 
-                            controls
-                        }
-                        .padding(theme.metrics.screenPadding)
-                        .frame(
-                            minHeight: proxy.size.height,
-                            alignment: .top
+                        controls(
+                            viewModel: viewModel,
+                            advance: actions.advance
                         )
                     }
-                    .scrollBounceBehavior(.basedOnSize)
+                    .padding(theme.metrics.screenPadding)
+                    .frame(
+                        minHeight: proxy.size.height,
+                        alignment: .top
+                    )
                 }
-            } else {
-                Color.clear
-                    .accessibilityHidden(true)
+                .scrollBounceBehavior(.basedOnSize)
             }
         }
         .background(theme.palette.background.ignoresSafeArea())
-        .background(windowVisibilityObserver)
-        .onAppear {
-            viewModel.onboardingDidAppear()
-            viewModel.applicationActiveDidChange(scenePhase == .active)
-            if viewModel.completeInvalidConfigurationIfNeeded() {
-                onCompleted()
-            }
-        }
-        .onDisappear {
-            viewModel.onboardingDidDisappear()
-        }
-        .onChange(of: scenePhase, initial: true) { _, phase in
-            viewModel.applicationActiveDidChange(phase == .active)
-        }
     }
 
     @ViewBuilder
-    private var pageContent: some View {
+    private func pageContent(viewModel: OnboardingViewModel) -> some View {
         if let page = viewModel.currentPage {
             VStack(spacing: theme.metrics.pageSpacing) {
                 media(page.media)
@@ -110,25 +95,18 @@ public struct BroadOnboardingView<Media: View>: View {
             .id(page.id)
             .transition(reduceMotion ? .identity : .opacity)
             .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: page.id)
-            .onAppear {
-                if viewModel.currentIndex == viewModel.configuration.pages.startIndex {
-                    viewModel.firstSlideDidAppear()
-                }
-            }
-            .onDisappear {
-                if page.id == viewModel.configuration.pages.first?.id {
-                    viewModel.firstSlideDidDisappear()
-                }
-            }
         }
     }
 
-    private var controls: some View {
+    private func controls(
+        viewModel: OnboardingViewModel,
+        advance: @escaping @MainActor () -> Void
+    ) -> some View {
         VStack(spacing: theme.metrics.controlSpacing) {
-            pageProgress
+            pageProgress(viewModel: viewModel)
 
             Button(action: advance) {
-                Text(actionTitle)
+                Text(actionTitle(viewModel: viewModel))
                     .font(theme.typography.action)
                     .foregroundStyle(theme.palette.actionForeground)
                     .frame(
@@ -142,7 +120,7 @@ public struct BroadOnboardingView<Media: View>: View {
             .buttonStyle(.borderedProminent)
             .tint(theme.palette.accent)
 
-            footerLinks
+            footerLinks(viewModel: viewModel)
         }
         .padding(theme.metrics.surfacePadding)
         .background(
@@ -164,7 +142,7 @@ public struct BroadOnboardingView<Media: View>: View {
         )
     }
 
-    private var pageProgress: some View {
+    private func pageProgress(viewModel: OnboardingViewModel) -> some View {
         HStack(spacing: theme.metrics.progressSpacing) {
             ForEach(viewModel.configuration.pages) { page in
                 Capsule(style: .continuous)
@@ -188,7 +166,7 @@ public struct BroadOnboardingView<Media: View>: View {
     }
 
     @ViewBuilder
-    private var footerLinks: some View {
+    private func footerLinks(viewModel: OnboardingViewModel) -> some View {
         if !viewModel.configuration.footerLinks.isEmpty {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 0) {
@@ -227,26 +205,9 @@ public struct BroadOnboardingView<Media: View>: View {
         .accessibilityLabel(Text(link.accessibilityLabel ?? link.title))
     }
 
-    private var windowVisibilityObserver: some View {
-        OnboardingWindowVisibilityView { isVisible, validateCurrentVisibility in
-            viewModel.windowVisibilityDidChange(
-                isVisible,
-                validateCurrentVisibility: validateCurrentVisibility
-            )
-        }
-        .frame(width: 0, height: 0)
-        .accessibilityHidden(true)
-    }
-
-    private var actionTitle: String {
+    private func actionTitle(viewModel: OnboardingViewModel) -> String {
         viewModel.isLastPage
             ? viewModel.configuration.completionTitle
             : viewModel.configuration.continueTitle
-    }
-
-    private func advance() {
-        if viewModel.advance() {
-            onCompleted()
-        }
     }
 }

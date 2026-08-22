@@ -43,6 +43,8 @@ struct ExampleOnboardingMediaView: View {
             "rectangle.stack.fill"
         case "verified-access":
             "checkmark.shield.fill"
+        case "app-owned-design":
+            "paintbrush.pointed.fill"
         default:
             "sparkles"
         }
@@ -56,6 +58,8 @@ struct ExampleOnboardingMediaView: View {
             [AppTokens.Color.monetization, AppTokens.Color.core]
         case "verified-access":
             [AppTokens.Color.uiFlows, AppTokens.Color.accent]
+        case "app-owned-design":
+            [AppTokens.Color.warning, AppTokens.Color.uiFlows]
         default:
             [AppTokens.Color.accent, AppTokens.Color.core]
         }
@@ -69,6 +73,8 @@ struct ExampleOnboardingMediaView: View {
             "Адаптивный список продуктов"
         case "verified-access":
             "Проверенный премиум-доступ"
+        case "app-owned-design":
+            "Собственный дизайн приложения"
         default:
             "Иллюстрация платформы"
         }
