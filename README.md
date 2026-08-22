@@ -579,6 +579,43 @@ Claude в любом случае нужно прямо попросить пр�
 }
 ```
 
+> [!IMPORTANT]
+> Стандартного `AdaptyPaywallRepository` достаточно и для обычного paywall, и
+> для Special Offer. Не делайте собственный Adapty REST. Продукты, variation и
+> Remote Config приходят одним payload, поэтому purchase сохраняет правильную
+> привязку к варианту эксперимента Adapty. Флаги Remote Config разрешают только
+> показать функцию. Premium всё равно открывается лишь после новой подтверждённой
+> проверки доступа со статусом `active`.
+
+```text
+Adapty paywall
+  ├─ продукты → внутренний registry → purchase
+  └─ Remote Config → special_offer / ru_pay → только показ функции
+
+purchase / restore / RU return → entitlement refresh → active → premium
+```
+
+> [!NOTE]
+> **Что здесь считается текущим ответом Adapty.** SDK Adapty может вернуть
+> paywall прямо из сети или прозрачно взять его из собственного внутреннего
+> кеша. В обоих случаях это один ответ Adapty с теми же продуктами, variation и
+> Remote Config. Платформе не нужно определять, каким из этих двух путей SDK
+> получил данные, и не нужно делать второй REST-запрос.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/remote-config-cache-flow-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/remote-config-cache-flow-light.svg">
+  <img alt="Ответ SDK Adapty может управлять special offer и RU Billing, а сохранённая копия BroadMonetization — нет" src="Documentation/Assets/README/remote-config-cache-flow-light.svg" width="100%">
+</picture>
+
+| Откуда пришёл paywall | Можно показать обычные продукты | Можно включить `special_offer` / `ru_pay` |
+|---|---:|---:|
+| Текущий ответ SDK Adapty: сеть или внутренний кеш Adapty | Да | Да, только при явном валидном `true` |
+| Сохранённая копия из собственного кеша `BroadMonetization` | Да | **Нет** — положительный флаг из такой копии не используется |
+
+Это различие относится только к **показу функции**. Ни один Remote Config и ни
+один кеш не подтверждают покупку, подписку или баланс токенов.
+
 `false` — безопасное стартовое значение. Флаг меняется только когда соответствующая
 возможность действительно подключена в конкретном приложении.
 
@@ -606,8 +643,11 @@ Adapty Remote Config: ru_pay = true
 
 > [!IMPORTANT]
 > `ru_pay = true` обязателен. Регион России или русский язык сами по себе RU
-> Billing не включают. Если Adapty не вернул свежий корректный флаг, платформа
-> безопасно оставляет только оплату через Apple.
+> Billing не включают. Разрешение читается из текущего ответа SDK Adapty — неважно,
+> пришёл он из сети или из внутреннего кеша самого Adapty. Сохранённая копия из
+> кеша `BroadMonetization` такое разрешение не выдаёт. Если флаг отсутствует,
+> равен `false` или имеет неверный формат, платформа безопасно оставляет только
+> оплату через Apple.
 
 <details open>
 <summary><strong>Исходное сообщение с правилами Adapty</strong></summary>
@@ -694,9 +734,11 @@ Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
 6. Настрой Adapty по базовым правилам README: `nottrial`, paywalls
    `main`/`tokens`/`special_offer`, стандартные placements и обязательный
    Remote Config для `main`.
-   RU Billing показывай только при свежем `ru_pay = true` и когда регион iPhone
-   равен России ИЛИ первый системный язык русский. Одного из двух признаков
-   телефона достаточно; без `ru_pay = true` всегда оставляй только Apple.
+   RU Billing показывай только при `ru_pay = true` из текущего ответа SDK Adapty
+   и когда регион iPhone равен России ИЛИ первый системный язык русский. Ответ
+   может прийти из сети или внутреннего кеша Adapty; сохранённая копия из кеша
+   BroadMonetization RU Billing не включает. Одного из двух признаков телефона
+   достаточно; без `ru_pay = true` всегда оставляй только Apple.
 7. Не фильтруй и не меняй порядок продуктов Adapty. Для любого placement должен
    быть резерв на `main`.
 8. Эксперименты бери только из Adapty. Подключи один analytics pipeline для
@@ -1223,8 +1265,9 @@ placement недоступен, загрузка повторяется чере
    временной development-конфигурации.
 3. Для paywall `main` передайте Remote Config с ключами `ru_pay`,
    `auto_revenue_view` и `special_offer`. Стартовое значение каждого ключа —
-   `false`. RU Billing разрешён только при свежем `ru_pay = true` и российском
-   регионе iPhone **или** русском первом системном языке.
+   `false`. RU Billing разрешён только при `ru_pay = true` из текущего ответа
+   SDK Adapty и российском регионе iPhone **или** русском первом системном
+   языке. Локальная сохранённая копия `BroadMonetization` RU Billing не включает.
 4. Не фильтруйте, не сортируйте и не объединяйте продукты, которые вернул
    Adapty. UI показывает 0, 1 или любое количество строк в исходном порядке.
 5. Если RU Billing не нужен, не регистрируйте его adapters и источник доступа.
@@ -1760,6 +1803,20 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 | `-purchase-pending` | Незавершённая операция не выдаёт premium |
 | `-entitlement-unknown` | Неопределённый доступ не превращается в «доступа нет» |
 | `-tracking-disabled` | Проверка интерфейса без системного окна ATT |
+| `-special-offer-enabled` | `special_offer = true` из текущего ответа Adapty открывает кампанию |
+| `-special-offer-disabled` | Явный `special_offer = false` оставляет кампанию закрытой |
+| `-special-offer-platform-cache` | Даже `special_offer = true` из кеша `BroadMonetization` не открывает кампанию |
+| `-special-offer-main-fallback` | Placement кампании недоступен, резервный `main` корректно открывает её и сохраняет источник показа |
+| `-special-offer-timed` | Кампания с доверенным серверным временем показывает трёхминутный таймер |
+| `-ru-pay-provider-enabled` | `ru_pay = true` из текущего ответа Adapty и российский контекст iPhone показывают Apple, СБП и карту |
+| `-ru-pay-platform-cache` | Даже `ru_pay = true` из кеша `BroadMonetization` оставляет только Apple |
+
+> [!NOTE]
+> Эти семь новых сценариев работают на локальных демонстрационных данных. Они
+> проверяют настоящие use cases платформы, но не входят в Adapty Dashboard, не
+> запускают StoreKit и не создают RU-платёж. Результат Special Offer виден сразу;
+> в RU-сценарии выберите продукт и нажмите `Продолжить`, чтобы сравнить список
+> способов оплаты.
 
 [Все параметры запуска и демонстрационная аналитика →](Examples/BroadAppTemplate/README.md)
 </details>
@@ -2246,6 +2303,10 @@ BroadApps iOS Platform agent gate passed.
 | Placement | Место, из которого открыт paywall: onboarding, settings, main и другие |
 | Product ID | Идентификатор конкретной подписки, lifetime-покупки или набора токенов |
 | Remote Config | Удалённые переключатели функций, которые можно изменить без новой версии приложения |
+| Payload / ответ провайдера | Один набор данных paywall: продукты, variation и Remote Config, которые пришли вместе |
+| Текущий ответ SDK Adapty | Paywall, который сейчас вернул SDK: напрямую из сети или из внутреннего кеша самого Adapty |
+| Внутренний кеш Adapty | Кеш внутри SDK Adapty. Платформа не загружала эту копию сама, поэтому продукты и Remote Config остаются одной поставкой Adapty |
+| Кеш `BroadMonetization` / кеш платформы | Сохранённая самой платформой копия для безопасного показа обычного paywall без сети; она не может включить `special_offer` или `ru_pay` |
 | Access level / entitlement | Подтверждённый ответ о том, имеет ли пользователь premium-доступ |
 | Purchase / restore | Новая покупка / восстановление ранее совершённой Apple-покупки |
 | Pending | Операция началась, но её окончательный результат пока неизвестен |

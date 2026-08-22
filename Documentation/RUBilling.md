@@ -4,13 +4,18 @@ RU Billing — опциональная цепочка адаптеров для
 включается, только если одновременно выполнены три условия:
 
 1. приложение само включило feature;
-2. свежий и проверенный Adapty Remote Config вернул `ru_pay = true`;
+2. текущий provider-managed Adapty payload вернул `ru_pay = true`;
 3. регион iPhone равен `RU` **или** первый системный язык начинается с `ru`.
 
 В третьем условии достаточно одного совпадения. Страна App Store storefront не
 участвует в разрешении RU-оплаты. Если `ru_pay` отсутствует, равен `false`,
-повреждён или получен не из свежего подтверждённого Remote Config, СБП и карта
+повреждён либо payload восстановлен собственным cache платформы, СБП и карта
 скрыты даже на российском iPhone.
+
+> `ru_pay` разрешает только показать и открыть RU-способ оплаты. Он не
+> подтверждает оплату и не открывает premium. После checkout платформа ждёт
+> backend status и запускает новый authoritative entitlement refresh; только
+> итоговый `active` выдаёт доступ.
 
 ## Что уже делает пакет
 
@@ -199,10 +204,10 @@ let checkoutMethods = ResolveCheckoutMethodsUseCase(
 - `.invalid` — данные повреждены или противоречат друг другу.
 
 `.absent`, `.disabled` и `.invalid` всегда закрывают RU Billing. `.enabled`
-разрешает оплату только при `.verifiedFreshRemote` и российском регионе либо
-русском первом системном языке. Значение из provider cache, platform cache или
-legacy payload не даёт право на оплату. Host fallback без `ru_pay = true` не
-поддерживается.
+разрешает показать RU methods для `.verifiedFreshRemote` и стандартного Adapty
+`.providerCacheFallbackPossible`, если совпал российский регион либо русский
+первый системный язык. Значение из `.platformCache` или legacy payload не даёт
+этого разрешения. Host fallback без `ru_pay = true` не поддерживается.
 
 <a id="http-configuration-and-authorization"></a>
 ## Настройка HTTP и авторизации

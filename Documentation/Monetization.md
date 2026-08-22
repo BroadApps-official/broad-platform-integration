@@ -134,7 +134,28 @@ requested remote
 - `catalogSource` — Adapty/StoreKit/RU/cache;
 - typed `fallbackReason`.
 
-`PaywallPayload.remoteConfigurationProvenance` фиксирует `.verifiedFreshRemote`, `.providerCacheFallbackPossible`, `.platformCache` или `.legacyUnqualified`. Обычный paywall может использовать cache; time-sensitive special offer требует только `.verifiedFreshRemote`.
+`PaywallPayload.remoteConfigurationProvenance` фиксирует `.verifiedFreshRemote`,
+`.providerCacheFallbackPossible`, `.platformCache` или `.legacyUnqualified`.
+Текущий Adapty/provider payload может управлять `special_offer` и показом
+`ru_pay`; payload из собственного cache платформы — нет.
+
+Стандартный Adapty-путь остаётся одной непрерывной цепочкой:
+
+```text
+Adapty paywall
+  ├─ raw products → внутренний AdaptyProductRegistry → exact selection → purchase
+  └─ Remote Config
+       ├─ special_offer → Special Offer UI
+       └─ ru_pay → регион/язык iPhone → RU methods
+
+purchase / restore / RU return
+  → новый authoritative entitlement refresh
+  → premium открывается только при active
+```
+
+Для Special Offer не создаются отдельный REST transport, второй product registry
+или повторная загрузка paywall перед purchase. Поэтому выбранный продукт и Adapty
+attribution принадлежат той же презентации.
 
 Кеши разных placements не смешиваются. Перед новой презентацией `LoadPaywallUseCase` сам выдаёт cached payload новые `PaywallPresentationID` и `ProductPresentationID`, чтобы impressions и taps не склеивались. Порядок, количество, дубли и opaque product references при этом не меняются.
 
@@ -224,9 +245,9 @@ Remote payload маппится в `RemotePaywallConfiguration`:
 
 Обычные отсутствующие поля могут сохранить последнее валидное значение **для того
 же placement**. RU decision и special offer — исключения: они не наследуются.
-Любой RU false alias даёт `.disabled`, malformed/conflict без false — `.invalid`;
-fallback `.enabled` применяется только к `.absent`, а positive `.enabled` требует
-`.verifiedFreshRemote` provenance.
+Любой RU false alias даёт `.disabled`, malformed/conflict без false — `.invalid`.
+Positive `.enabled` требует provider-managed provenance; previous `true` никогда
+не применяется к новому absent/invalid payload.
 
 Aliases, типы и правила invalid values: [Remote Config](RemoteConfig.md).
 
@@ -338,7 +359,7 @@ Adapty profile можно добавить как Apple verifier только к
 RU billing — optional adapter chain, не автоматическая замена Apple:
 
 ```text
-host enabled + verified-fresh ru_pay = true
+host enabled + current provider-managed ru_pay = true
     + (iPhone region RU/RUS OR first system language starts with ru)
     → match exact RU catalog product
     → Apple / SBP / card methods
@@ -368,7 +389,11 @@ let specialOffer: SpecialOfferConfiguration? = appFeatures.specialOffer
 
 При `nil` resolver возвращает `.unavailable(.notConfigured)` до обращения к любой зависимости. Нет network, placement, cache, persistence, timer, fallback или UI.
 
-Если configuration есть, gate обязан быть valid/enabled, а provenance — `.verifiedFreshRemote`. Fallback от `.main` требует оба условия. Default Adapty repository ставит `.providerCacheFallbackPossible`, поэтому для campaign нужен host-controlled fresh-remote repository. Display-поля остаются optional.
+Если configuration есть, gate обязан быть valid/enabled, а provenance должен
+разрешать provider-managed flags. Стандартный `AdaptyPaywallRepository` с
+`.providerCacheFallbackPossible` уже удовлетворяет этому контракту; собственный
+Adapty REST/repository не нужен. При fallback решение принимает только реально
+загруженный `.main` payload. Display-поля остаются optional.
 
 Timed window/cooldown дополнительно требует app-owned `SpecialOfferClock` с
 server-synchronized/rollback-safe временем. Default clock возвращает `.untrusted`:

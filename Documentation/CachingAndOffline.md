@@ -12,6 +12,23 @@ typed offline/timeout результатом. Cache не разрешает ав
 финансовый write; такой flow сохраняет pending и сначала делает reconciliation.
 [Network Interruptions →](NetworkInterruptions.md).
 
+## Два разных paywall cache
+
+| Источник | Кто им управляет | Можно показать обычный paywall | Можно включить `special_offer` / показ `ru_pay` |
+|---|---|---:|---:|
+| Adapty provider cache | Adapty SDK внутри текущего запроса | да | да, по текущему валидному флагу |
+| Platform cache | `VersionedPaywallCache` BroadMonetization | да | нет |
+
+Adapty не раскрывает через public SDK, пришёл ли текущий payload из сети или его
+managed cache, поэтому provenance называется `.providerCacheFallbackPossible`.
+Это текущий ответ provider-а. Platform cache — сохранённая самим приложением
+копия: при чтении `LoadPaywallUseCase` обязательно понижает её provenance до
+`.platformCache` и удаляет разрешение на provider-managed flags.
+
+Прошлые `special_offer = true` и `ru_pay = true` никогда не переносятся в новый
+absent/false/invalid payload. При offline platform cache помогает отрисовать
+тарифы, но не включает удалённую кампанию и RU methods.
+
 ## Что входит в слой
 
 | Тип | Ответственность |

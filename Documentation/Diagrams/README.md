@@ -88,6 +88,11 @@ GIF генерируются стандартными macOS `AppKit + ImageIO`, 
 xcrun swift Documentation/Diagrams/generate_readme_gifs.swift
 ```
 
-Результаты записываются в `Documentation/Assets/README/full-flow.gif` и `adaptive-paywall.gif`. Light/dark SVG рядом являются статическими fallback для документации и Reduce Motion просмотра.
+Результаты записываются в `Documentation/Assets/README/full-flow.gif` и
+`adaptive-paywall.gif`. Для этих двух анимаций отдельные статические
+light/dark SVG больше не хранятся: актуальное состояние показывают GIF, а
+точное поведение и ограничения описаны текстом в README и документации.
 
-Изменив диаграмму, обновите Mermaid source, обе SVG-темы и соответствующий GIF, затем проверьте внутренние ссылки и XML валидность SVG.
+Изменив анимацию, обновите Swift-генератор и соответствующий GIF, затем
+проверьте внутренние ссылки. Для остальных схем обновляйте Mermaid source или
+обе SVG-темы — в зависимости от формата конкретной схемы.

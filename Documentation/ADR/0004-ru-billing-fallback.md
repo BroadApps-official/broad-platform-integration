@@ -1,8 +1,17 @@
 # ADR-0004: обязательный `ru_pay` и контекст iPhone для RU Billing
 
-- Статус: принято, обновлено
+- Статус: принято; часть решения о provenance заменена ADR-0005
 - Дата: 2026-08-09
-- Обновлено: 2026-08-16
+- Обновлено: 2026-08-22
+
+> [!NOTE]
+> Обязательный `ru_pay = true`, правило «регион **или** язык», backend-authoritative
+> entitlement и запрет выдавать premium после одного возврата из Safari остаются
+> в силе. Требование принимать положительный gate только с
+> `.verifiedFreshRemote` заменено
+> [ADR-0005](0005-provider-managed-remote-feature-gates.md): текущий стандартный
+> Adapty payload с `.providerCacheFallbackPossible` тоже может управлять показом
+> RU methods, а `.platformCache` — не может.
 
 ## Контекст
 
@@ -20,7 +29,7 @@ RU methods доступны только при трёх gates:
 
 ```text
 host feature enabled
-AND verified-fresh Adapty ru_pay == true
+AND current provider-managed Adapty ru_pay == true
 AND (iPhone region == RU/RUS OR first system language starts with ru)
 ```
 
@@ -30,13 +39,14 @@ timezone и формат валюты в eligibility не участвуют.
 Remote decision имеет четыре состояния: `absent`, `enabled`, `disabled`,
 `invalid`. Parser читает все aliases; любой explicit `false` побеждает,
 malformed или conflicting values дают `invalid`. Только `enabled` с provenance
-`verifiedFreshRemote` может разрешить финансовую feature. Provider/platform
-cache не может включить RU Billing.
+`.verifiedFreshRemote` или `.providerCacheFallbackPossible` может разрешить
+показ RU methods. `.platformCache` и `.legacyUnqualified` не могут включить RU
+Billing. Это не финансовая авторизация: оплату и premium подтверждает backend.
 
 Host fallback без явного `ru_pay = true` не поддерживается:
 
 - `absent`, `disabled` и `invalid` всегда выключают feature;
-- cached/unqualified `enabled` не показывает RU methods;
+- platform-cache/unqualified `enabled` не показывает RU methods;
 - российский регион или русский язык без `ru_pay = true` оставляет только Apple.
 
 `SystemRUBillingDeviceContextProvider` читает
@@ -106,7 +116,7 @@ Provider fallback paywall и entitlement authority fallback — разные р�
 
 - правило совпадает с production-поведением 5115;
 - русского региона или русского языка достаточно, но только вместе с `ru_pay`;
-- absent/false/invalid/cached remote config безопасно выключает RU;
+- absent/false/invalid/platform-cache remote config безопасно выключает RU;
 - disabled app не получает лишний unresolved entitlement source;
 - открытие Safari не считается premium.
 
@@ -150,7 +160,8 @@ entitlement.
 - `ru_pay = true` + non-RU region + русский язык → matched RU methods;
 - `ru_pay = true` + non-RU region + нерусский язык → только Apple;
 - `ru_pay = false` + RU region + русский язык → только Apple;
-- absent/malformed/conflicting/cached `ru_pay` → только Apple;
+- absent/malformed/conflicting/platform-cache `ru_pay` → только Apple;
+- provider-managed `ru_pay = true` + подходящий region/language → доступные RU methods;
 - повторная проверка перед checkout использует актуальный контекст iPhone;
 - RU backend disabled → source отсутствует в engine;
 - URL open failure очищает pending context;

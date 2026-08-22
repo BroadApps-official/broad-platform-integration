@@ -36,6 +36,7 @@ enum AppConfiguration {
 
     static let bootstrapScenario = ExampleBootstrapScenario.current()
     static let entitlementScenario = ExampleEntitlementScenario.current()
+    static let remoteFeatureScenario = ExampleRemoteFeatureScenario.current()
     static let appFlowConfiguration: AppFlowConfiguration = {
         let arguments = ProcessInfo.processInfo.arguments
         if arguments.contains("-app-flow-main-only") {
@@ -45,6 +46,7 @@ enum AppConfiguration {
         if arguments.contains("-app-flow-paywall-only")
             || arguments.contains("-analytics-fixture")
             || arguments.contains("-paywall-payment-methods")
+            || remoteFeatureScenario?.isRUPay == true
             || arguments.contains("-live-adapty") {
             return AppFlowConfiguration(
                 onboarding: .disabled,
@@ -128,6 +130,9 @@ enum AppConfiguration {
         if ProcessInfo.processInfo.arguments.contains("-analytics-fixture") {
             return "broad-app-template.app-flow.analytics-fixture"
         }
+        if let remoteFeatureScenario {
+            return "broad-app-template.app-flow.remote-feature.\(remoteFeatureScenario.rawValue)"
+        }
         if ProcessInfo.processInfo.arguments.contains("-live-adapty") {
             return "broad-app-template.app-flow.live-adapty"
         }
@@ -204,6 +209,58 @@ enum AppConfiguration {
             failedTitle: "Не удалось завершить запуск",
             retryTitle: "Повторить"
         )
+    }
+}
+
+enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
+    case specialOfferEnabled = "special-offer-enabled"
+    case specialOfferDisabled = "special-offer-disabled"
+    case specialOfferPlatformCache = "special-offer-platform-cache"
+    case specialOfferMainFallback = "special-offer-main-fallback"
+    case specialOfferTimed = "special-offer-timed"
+    case ruPayProviderEnabled = "ru-pay-provider-enabled"
+    case ruPayPlatformCache = "ru-pay-platform-cache"
+
+    var launchArgument: String {
+        "-\(rawValue)"
+    }
+
+    var isSpecialOffer: Bool {
+        switch self {
+        case .specialOfferEnabled,
+             .specialOfferDisabled,
+             .specialOfferPlatformCache,
+             .specialOfferMainFallback,
+             .specialOfferTimed:
+            true
+        case .ruPayProviderEnabled, .ruPayPlatformCache:
+            false
+        }
+    }
+
+    var isRUPay: Bool {
+        !isSpecialOffer
+    }
+
+    var specialOfferConfiguration: SpecialOfferConfiguration? {
+        guard isSpecialOffer else {
+            return nil
+        }
+        return SpecialOfferConfiguration(
+            placementID: .specialOffer,
+            windowDuration: self == .specialOfferTimed ? 180 : nil
+        )
+    }
+
+    static func current(
+        arguments: [String] = ProcessInfo.processInfo.arguments
+    ) -> ExampleRemoteFeatureScenario? {
+        let matches = allCases.filter { arguments.contains($0.launchArgument) }
+        precondition(
+            matches.count <= 1,
+            "Use at most one remote-feature fixture launch argument"
+        )
+        return matches.first
     }
 }
 

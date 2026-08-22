@@ -64,6 +64,9 @@ production-ready версии.
 - актуальные Adapty-owned normal/cross-placement experiment contracts.
 - [analytics guide](Documentation/Analytics.md), canonical shared pipeline и
   bounded typed recording fixture с явным refresh в `BroadAppTemplate`.
+- provider-managed Remote Config contract для `special_offer` и показа
+  `ru_pay`, семь безопасных launch fixtures и обязательная
+  `check_remote_feature_contracts.sh` matrix без настоящих платежей.
 
 ### Changed
 
@@ -75,10 +78,14 @@ production-ready версии.
   но и backend-контракты: каждая функция нового приложения сопоставляется с
   реальной API-ручкой, а недостающий функционал до реализации согласуется с
   тимлидом-разработчиком или проектным менеджером;
-- RU Billing gate приведён к production-правилу 5115: обязательный свежий
-  Adapty `ru_pay = true` и дополнительно регион iPhone `RU/RUS` **или** русский
+- RU Billing gate приведён к production-правилу: обязательный
+  provider-managed Adapty `ru_pay = true` и дополнительно регион iPhone `RU/RUS` **или** русский
   первый системный язык; App Store storefront больше не авторизует СБП/карту,
   а gate повторно проверяется непосредственно перед внешним checkout;
+- стандартный Adapty repository теперь напрямую поддерживает Special Offer и
+  RU feature gates без custom REST: platform cache по-прежнему не может включить
+  их, raw products остаются во внутреннем registry, а Remote Config никогда не
+  заменяет authoritative entitlement;
 - README прошёл отдельный onboarding-аудит глазами нового разработчика: добавлена
   цветная схема двух способов работы, точные переходы по меню Codex/Claude и
   Xcode, единые критерии завершения шагов, раскрываемая матрица этапов и

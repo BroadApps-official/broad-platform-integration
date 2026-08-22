@@ -7,7 +7,12 @@ struct BroadAppTemplateApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if ProcessInfo.processInfo.arguments.contains("-ru-payment-sheet") {
+            if let specialOfferFixtureViewModel = compositionRoot
+                .specialOfferFixtureViewModel {
+                ExampleSpecialOfferFixtureView(
+                    viewModel: specialOfferFixtureViewModel
+                )
+            } else if ProcessInfo.processInfo.arguments.contains("-ru-payment-sheet") {
                 ExampleRUPaymentSheetFixtureView(initialMethod: .sbp)
             } else if ProcessInfo.processInfo.arguments.contains(
                 "-ru-payment-sheet-apple"

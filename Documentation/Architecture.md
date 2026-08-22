@@ -73,6 +73,19 @@ purchase/restore, Entitlement Engine, Apple/backend/RU billing и analytics.
 Только этот модуль может подключать Adapty. Модели Adapty и StoreKit не выходят из
 Infrastructure-слоя в Domain или UI.
 
+Remote Config и финансовое право разделены архитектурно:
+
+```text
+Adapty payload → products/variation → внутренний registry → purchase attribution
+              → special_offer / ru_pay → только разрешение показать UI
+
+purchase / restore / RU return → Entitlement Engine → только active открывает premium
+```
+
+Текущий provider-managed payload (включая управляемый cache Adapty SDK) может
+управлять UI-флагами. Persistent paywall cache платформы не может. Ни один Remote
+Config flag не становится источником entitlement.
+
 ### Entitlement Engine
 
 Слои разделены так:

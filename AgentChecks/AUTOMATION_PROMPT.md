@@ -24,6 +24,11 @@ Mac Catalyst или visionOS targets/configurations.
 2. Запусти `bash Scripts/agent_gate.sh`. Это полный local engineering gate,
    Xcode build matrix и обе compile-only live Adapty configurations.
 3. Если gate содержит ошибку, найди первопричину.
+   Если упала `Remote Config feature-gate contract matrix`, сохрани единый
+   контракт: текущий Adapty/provider payload разрешает provider-managed gates,
+   platform cache их запрещает, `false` остаётся kill switch, а покупка берёт
+   raw product только из внутреннего Adapty registry. Не добавляй custom Adapty
+   REST и второй experiment randomizer.
 4. Отдельно просмотри async-кнопки, которые запускают backend/SDK use case:
    UI обязан синхронно перейти в `isInFlight` до первого `await`, показать
    spinner и заблокировать повторный тап. Debug-очистка Keychain разрешена

@@ -279,8 +279,8 @@ entitlement refresh, server token reconciliation и RU subscription status до�
 - invalid поле не превращается в `false/0` автоматически;
 - RU parser проверяет все aliases: любой false → `.disabled`, malformed/conflict
   без false → `.invalid`, ни одного alias → `.absent`;
-- host RU fallback применяется только к `.absent`; cached/unqualified `.enabled`
-  не авторизует billing;
+- `.providerCacheFallbackPossible` от стандартного Adapty repository авторизует
+  текущий `ru_pay`; `.platformCache` и legacy `.enabled` не авторизуют RU methods;
 - special offer не наследует previous gate;
 - unknown UI variant использует app default;
 - remote hard policy не может сделать empty/error экран без выхода.
@@ -300,6 +300,12 @@ let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 Не создавайте пустой config «на будущее»: `nil` гарантирует ноль запросов/cache/timer/UI.
 
 Если feature есть, мигрируйте placement, gate, window/cooldown и optional display fields. Старые hardcoded crossed prices удалите.
+Оставьте стандартную цепочку
+`AdaptyPaywallRepository → ResolveSpecialOfferUseCase → PaywallViewModel`.
+Собственный Adapty REST/fresh-remote repository не нужен: текущий
+provider-managed payload разрешает gate, а raw products остаются во внутреннем
+registry для exact purchase attribution. Platform cache может показать обычный
+paywall, но не включает кампанию.
 
 Resolver может вернуть `.eligible + paywall`, когда duration отсутствует:
 показывайте offer без countdown. Передавайте только выданный
@@ -321,8 +327,8 @@ monotonic instant, и открытый countdown не продлевается a
 
 Если готова:
 
-- eligibility требует свежий `ru_pay = true` и RU-регион iPhone или русский первый системный язык;
-- absent/false/invalid/cached `ru_pay` fail-closed;
+- eligibility требует provider-managed `ru_pay = true` и RU-регион iPhone или русский первый системный язык;
+- absent/false/invalid/platform-cache `ru_pay` fail-closed;
 - catalog match typed/deterministic;
 - HTTPS endpoints и subject-bound auth;
 - pending context без URL/email/token;
@@ -407,7 +413,7 @@ Paywall provider lifecycle не переносите в analytics destination. V
 - [ ] stable app account/subject связывает token и RU ledger между установками;
 - [ ] offline/timeout дают конечный UI state; ambiguous financial result не запускается повторно до reconciliation;
 - [ ] all configured entitlement combinations проверены;
-- [ ] RU требует свежий `ru_pay = true` и RU region или русский первый системный язык;
+- [ ] RU требует provider-managed `ru_pay = true` и RU region или русский первый системный язык;
 - [ ] special offer отсутствует через `nil` там, где не нужен;
 - [ ] remote config keys/defaults задокументированы;
 - [ ] analytics typed, дедуплицированы и без PII;

@@ -8,8 +8,9 @@
    bearer, private keys, URL оплаты и пользовательские данные в Git не кладутся.
 2. Не логируйте raw `Error`, request/response body, SDK profile и arbitrary metadata.
 3. Не выдавайте premium по факту успешного checkout — только по authoritative entitlement `.active`.
-4. RU Billing требует свежий `ru_pay = true`; дополнительно достаточно RU-региона
-   iPhone или русского первого системного языка. IP и timezone не используются.
+4. RU Billing требует `ru_pay = true` из текущего provider-managed payload;
+   дополнительно достаточно RU-региона iPhone или русского первого системного
+   языка. Собственный cache платформы, IP и timezone не авторизуют RU methods.
 5. Не кешируйте credentials в `UserDefaults`/`CacheRepositoryProtocol`.
 6. ATT вызывается только после видимого первого onboarding-слайда; Rate Us внутри onboarding запрещён.
 7. Apple purchase/restore/RU используют один app-wide gate и durable pending state.
@@ -139,6 +140,11 @@ Backend с другой схемой реализует свой encoder/decoder
 ```text
 checkout completed ≠ premium active
 ```
+
+`special_offer = true` и `ru_pay = true` тоже не равны premium. Это только
+provider-managed разрешения показать UI. Даже если стандартный Adapty SDK
+вернул свой внутренний cache, защита доступа не меняется: purchase/restore/RU
+return обязаны завершиться новой authoritative entitlement-проверкой.
 
 После purchase/restore/RU return запускается `refreshEntitlement(policy: .startNewGeneration)`. Доступ открывает только итоговый `.active`.
 
@@ -370,7 +376,7 @@ configurations. Короткий порядок действий описан в
 - [ ] late entitlement response не меняет route/cache;
 - [ ] anonymous и authorized cache scopes разделены;
 - [ ] logout очищает user-scoped host state;
-- [ ] RU eligibility требует свежий `ru_pay = true` и RU region или русский первый системный язык;
+- [ ] RU eligibility требует provider-managed `ru_pay = true` и RU region или русский первый системный язык;
 - [ ] ATT отсутствует в loader и вызывается после visible first slide;
 - [ ] review отсутствует внутри onboarding;
 - [ ] Console не содержит token, IDs, URL, payload и user messages;

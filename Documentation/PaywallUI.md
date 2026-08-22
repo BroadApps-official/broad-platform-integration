@@ -218,12 +218,19 @@ CTA сначала вызывает `ResolveCheckoutMethodsUseCaseProtocol` дл
 - `.failed` показывает только безопасный `AppError.userMessage`.
 
 RU billing не определяется самим UI. Sheet отображает только методы,
-разрешённые monetization use case после проверки свежего `ru_pay = true` и
-контекста iPhone: RU-регион **или** русский первый системный язык. IP, timezone
+разрешённые monetization use case после проверки `ru_pay = true` из текущего
+provider-managed payload и контекста iPhone: RU-регион **или** русский первый
+системный язык. Собственный platform cache не может включить методы. IP, timezone
 и App Store storefront не участвуют. Для СБП/карты sheet собирает обязательные
 offer/data-processing и recurring-charge consent, а также опциональный receipt
 email; Apple эти поля скрывает. Русские legal links задаёт приложение через
 `BroadRUBillingPresentationConfiguration`.
+
+Special Offer использует тот же `BroadPaywallView`, но получает уже проверенные
+`initialPayload` и `presentationAuthorization` от
+`ResolveSpecialOfferUseCase`. UI не загружает campaign повторно и не создаёт
+отдельные Adapty products: purchase продолжает работать с exact raw product той
+же provider presentation.
 
 Renderer по-прежнему показывает occurrences без валидного `Money`, а также
 `.consumable`/`.unknown`, и не фильтрует их. Они остаются disabled/unselected.

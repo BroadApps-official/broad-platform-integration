@@ -47,6 +47,18 @@ host так же запрашивает каждый placement независи�
 Такой контракт исключает второй randomizer на клиенте и расхождение
 между paywall, Adapty dashboard и purchase attribution.
 
+## Remote Config не создаёт второй эксперимент
+
+`special_offer` и `ru_pay` читаются из того же paywall payload, который уже
+содержит назначенную Adapty variation. Они управляют отображением функций, но не
+назначают cohort. Стандартный Adapty payload сохраняет
+`.providerCacheFallbackPossible`; raw paywall/products остаются во внутреннем
+registry и purchase получает attribution той же presentation.
+
+Platform-cache payload может отрисовать тарифы, но не включает эти gates. Для
+Special Offer не нужен custom REST и повторный load: это могло бы создать другой
+paywall/variation и разорвать attribution.
+
 ## Fallback на main
 
 При fallback платформа не переносит variation с неудачного primary
@@ -157,6 +169,7 @@ RU-платёж или live Adapty SDK operation.
 | `uiVariantID` | Остаётся renderer metadata и не участвует в Adapty assignment | ✅ |
 | Assignment authority | В коде нет второго experiment/cohort randomizer | ✅ |
 | Identity composition | Load, show, purchase и restore получают один factory-owned identity provider | ✅ |
+| Provider feature gates | Adapty/provider payload разрешён, platform cache запрещён, raw product остаётся в registry | ✅ |
 
 `✅` здесь означает: контракт закреплён исходниками и обязательным regression
 guard. Это не утверждение о настройках конкретного проекта в Adapty dashboard.

@@ -517,11 +517,11 @@ let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 
 ### RU billing нужен
 
-Eligibility требует host opt-in, свежий `ru_pay = true` и хотя бы один признак
-iPhone: регион `RU/RUS` **или** первый системный язык с префиксом `ru`. Remote
+Eligibility требует host opt-in, `ru_pay = true` из текущего provider-managed
+payload и хотя бы один признак iPhone: регион `RU/RUS` **или** первый системный язык с префиксом `ru`. Remote
 decision различает absent/enabled/disabled/invalid: отсутствующий, false,
-malformed или conflicting флаг выключает RU. Cached/unqualified enabled не
-авторизует оплату. App Store storefront в этой проверке не участвует.
+malformed или conflicting флаг выключает RU. Platform-cache/legacy enabled не
+авторизует показ RU methods. App Store storefront в этой проверке не участвует.
 [Настройка RU billing](RUBilling.md).
 
 Production adapters собирайте через `RUBillingCompositionFactory`: сначала `makeEntitlementRegistration()` добавляется в общий engine, затем `makeServices(refreshEntitlement:operationGate:)` получает уже созданный engine и тот же financial operation gate, что Apple purchase/restore. Это разрывает цикл «RU source нужен engine → RU checkout нужен refresh engine» и не позволяет Apple/RU оплатам идти параллельно.
@@ -628,7 +628,8 @@ struct RootScene: View {
 
 ### Special offer нужен
 
-`ResolveSpecialOfferUseCase` возвращает готовый verified payload. Не загружайте placement повторно:
+`ResolveSpecialOfferUseCase` возвращает готовый provider-authorized payload. Не
+загружайте placement повторно и не создавайте собственный Adapty REST transport:
 
 ```swift
 let result = await resolveSpecialOffer(
@@ -692,7 +693,7 @@ instant, поэтому последующий async save не добавляе�
 - [ ] special offer `nil` не создаёт никакой работы;
 - [ ] presentable special offer передаёт `presentationAuthorization`, persistence fail-closed;
 - [ ] timed special offer получает trusted server clock; unavailable/rollback time скрывает offer;
-- [ ] RU CTA требует свежий `ru_pay = true` и RU region или русский системный язык;
+- [ ] RU CTA требует provider-managed `ru_pay = true` и RU region или русский системный язык;
 - [ ] real credentials и PII отсутствуют в source/cache/logs/analytics;
 - [ ] `./Scripts/lint.sh` и `./Scripts/build.sh` проходят;
 - [ ] ручные fixtures на 0, 1, много products и error/pending scenarios пройдены.

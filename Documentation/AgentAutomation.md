@@ -31,6 +31,7 @@
 | Проверка | Что она подтверждает |
 |---|---|
 | Contracts и architecture guardrails | Границы модулей и обязательные продуктовые правила не нарушены |
+| Remote Config feature-gate matrix | Adapty/provider payload включает разрешённые флаги, platform cache их выключает, а purchase остаётся связан с внутренним product registry |
 | Adapty experiment matrix | Variation, presentation, `main` fallback, cache, rehydration и единый assignment authority не расходятся |
 | Privacy и documentation | Manifest валиден, README-assets и локальные ссылки существуют |
 | SwiftFormat и SwiftLint | Код соответствует единому стилю |
@@ -42,6 +43,10 @@
 optional special offer, recovery после переустановки и поведение при обрыве сети.
 Отдельная experiment matrix проверяет attribution-контракт без запуска live SDK
 operation; назначение вариантов конкретному профилю сверяется в Adapty dashboard.
+Отдельная Remote Config matrix не обращается к Adapty по сети: она статически
+проверяет, что `special_offer` и показ `ru_pay` доверяют текущему payload
+провайдера, не включаются из собственного cache платформы, а Adapty purchase
+по-прежнему использует exact raw product из внутреннего registry.
 
 Это локальная инженерная проверка. Она намеренно не выполняет реальные
 платежи, StoreKit sandbox, test targets, iPad-сборку, `.ipa` или проверки на

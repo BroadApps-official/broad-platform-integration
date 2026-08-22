@@ -9,6 +9,7 @@ struct ExampleMonetizationEnvironment {
     let trackPaywallEvent: any TrackPaywallEventUseCaseProtocol
     let analytics: any MonetizationAnalyticsProtocol
     let analyticsRecorder: ExampleRecordingMonetizationAnalytics
+    let resolveSpecialOffer: (any ResolveSpecialOfferUseCaseProtocol)?
 
     init(
         arguments: [String] = ProcessInfo.processInfo.arguments
@@ -24,44 +25,102 @@ struct ExampleMonetizationEnvironment {
             analytics: analytics
         )
         let operationGate = MonetizationOperationGate()
-        let liveAdaptyConfiguration = ExampleLiveAdaptyConfiguration.load(
+        let remoteFeatureScenario = ExampleRemoteFeatureScenario.current(
             arguments: arguments
+        )
+        let services = Self.makeSelectedServices(
+            arguments: arguments,
+            accessState: accessState,
+            analytics: analytics,
+            pendingStore: pendingApplePurchaseStore,
+            entitlementEngine: entitlementEngine,
+            operationGate: operationGate
         )
 
         self.entitlementEngine = entitlementEngine
         self.analytics = analytics
         self.analyticsRecorder = analyticsRecorder
-        if let liveAdaptyConfiguration {
-            services = ExampleLiveAdaptyServicesFactory.make(
-                configuration: liveAdaptyConfiguration,
+        self.services = services
+        resolveCheckoutMethods = Self.makeCheckoutMethodsUseCase(
+            arguments: arguments,
+            scenario: remoteFeatureScenario
+        )
+        trackPaywallEvent = services.trackPaywallEvent
+        resolveSpecialOffer = Self.makeSpecialOfferResolver(
+            scenario: remoteFeatureScenario,
+            services: services
+        )
+    }
+
+    private static func makeSelectedServices(
+        arguments: [String],
+        accessState: ExamplePremiumAccessState,
+        analytics: any MonetizationAnalyticsProtocol,
+        pendingStore: InMemoryPendingApplePurchaseStore,
+        entitlementEngine: EntitlementEngine,
+        operationGate: MonetizationOperationGate
+    ) -> BroadMonetizationServices {
+        if let configuration = ExampleLiveAdaptyConfiguration.load(arguments: arguments) {
+            return ExampleLiveAdaptyServicesFactory.make(
+                configuration: configuration,
                 entitlementEngine: entitlementEngine,
                 analytics: analytics,
-                pendingStore: pendingApplePurchaseStore,
+                pendingStore: pendingStore,
                 operationGate: operationGate
             )
-        } else if arguments.contains("-live-adapty") {
-            services = ExampleLiveAdaptyServicesFactory.makeUnavailable(
+        }
+        if arguments.contains("-live-adapty") {
+            return ExampleLiveAdaptyServicesFactory.makeUnavailable(
                 entitlementEngine: entitlementEngine,
                 analytics: analytics,
-                pendingStore: pendingApplePurchaseStore,
+                pendingStore: pendingStore,
                 operationGate: operationGate
             )
-        } else {
-            services = Self.makeServices(
-                arguments: arguments,
-                accessState: accessState,
-                analytics: analytics,
-                pendingApplePurchaseStore: pendingApplePurchaseStore,
-                entitlementEngine: entitlementEngine,
-                operationGate: operationGate
-            )
+        }
+        return makeServices(
+            arguments: arguments,
+            accessState: accessState,
+            analytics: analytics,
+            pendingApplePurchaseStore: pendingStore,
+            entitlementEngine: entitlementEngine,
+            operationGate: operationGate
+        )
+    }
+
+    private static func makeCheckoutMethodsUseCase(
+        arguments: [String],
+        scenario: ExampleRemoteFeatureScenario?
+    ) -> any ResolveCheckoutMethodsUseCaseProtocol {
+        if scenario?.isRUPay == true {
+            return makeRUPayFixtureMethodsUseCase()
         }
         if arguments.contains("-paywall-payment-methods") {
-            resolveCheckoutMethods = ExampleCheckoutMethodsUseCase()
-        } else {
-            resolveCheckoutMethods = DisabledRUBillingCheckoutMethodsUseCase()
+            return ExampleCheckoutMethodsUseCase()
         }
-        trackPaywallEvent = services.trackPaywallEvent
+        return DisabledRUBillingCheckoutMethodsUseCase()
+    }
+
+    private static func makeSpecialOfferResolver(
+        scenario: ExampleRemoteFeatureScenario?,
+        services: BroadMonetizationServices
+    ) -> (any ResolveSpecialOfferUseCaseProtocol)? {
+        guard let scenario, scenario.isSpecialOffer else {
+            return nil
+        }
+        return ResolveSpecialOfferUseCase(
+            loadPaywallUseCase: services.loadPaywall,
+            stateRepository: ExampleSpecialOfferStateRepository(),
+            presentationLifecycle: services.paywallPresentationLifecycle,
+            clock: scenario == .specialOfferTimed ? fixtureTrustedClock : .untrusted
+        )
+    }
+
+    private static var fixtureTrustedClock: SpecialOfferClock {
+        SpecialOfferClock {
+            // Fixed fixture server time: this is intentionally not device
+            // `Date()` and never leaves the example target.
+            .trusted(Date(timeIntervalSince1970: 1_800_000_000))
+        }
     }
 
     private static func makeServices(
@@ -72,18 +131,19 @@ struct ExampleMonetizationEnvironment {
         entitlementEngine: EntitlementEngine,
         operationGate: MonetizationOperationGate
     ) -> BroadMonetizationServices {
-        BroadMonetizationServices(
+        let loadPaywall = LoadPaywallUseCase(
+            repository: ExamplePaywallRepository(arguments: arguments),
+            analytics: analytics,
+            staleLoadError: .example(
+                message: "Предыдущий запрос пейвола отменён новым. Попробуйте ещё раз.",
+                code: "example.paywall.stale"
+            )
+        )
+        return BroadMonetizationServices(
             activate: ActivateMonetizationUseCase(
                 repository: ExampleMonetizationRepository()
             ),
-            loadPaywall: LoadPaywallUseCase(
-                repository: ExamplePaywallRepository(arguments: arguments),
-                analytics: analytics,
-                staleLoadError: .example(
-                    message: "Предыдущий запрос пейвола отменён новым. Попробуйте ещё раз.",
-                    code: "example.paywall.stale"
-                )
-            ),
+            loadPaywall: loadPaywall,
             selectProduct: SelectProductUseCase(),
             purchaseProduct: PurchaseSelectedProductUseCase(
                 repository: ExamplePurchaseRepository(
@@ -114,6 +174,16 @@ struct ExampleMonetizationEnvironment {
             ),
             analytics: analytics,
             paywallPresentationLifecycle: NoOpPaywallPresentationLifecycle()
+        )
+    }
+
+    private static func makeRUPayFixtureMethodsUseCase()
+        -> any ResolveCheckoutMethodsUseCaseProtocol {
+        ResolveCheckoutMethodsUseCase(
+            storefrontRepository: ExampleRUStorefrontRepository(),
+            catalogRepository: ExampleRUCatalogRepository(),
+            isFeatureEnabled: true,
+            deviceContextProvider: ExampleRussianDeviceContextProvider()
         )
     }
 
@@ -190,155 +260,6 @@ private actor ExampleEntitlementCache: EntitlementCacheProtocol {
 private struct ExampleMonetizationRepository: MonetizationRepositoryProtocol {
     func activate() async -> MonetizationActivationOutcome {
         .activated
-    }
-}
-
-private struct ExamplePaywallRepository: PaywallRepositoryProtocol {
-    let arguments: [String]
-
-    func loadPaywall(
-        for placementID: PlacementID
-    ) async -> PaywallLoadOutcome {
-        if arguments.contains("-paywall-failure") {
-            return .unavailable(
-                .example(
-                    message: "Тарифы временно недоступны.",
-                    code: "example.paywall.unavailable"
-                )
-            )
-        }
-
-        let productCount = Self.productCount(arguments: arguments)
-        let isHardPaywall = arguments.contains("-paywall-hard")
-        return .loaded(
-            PaywallPayload(
-                presentationID: .generated(),
-                paywallReference: PaywallReference(
-                    rawValue: "example-\(placementID.rawValue)-paywall"
-                ),
-                variationID: PaywallVariationID(rawValue: "example-local-fixture"),
-                origin: PaywallOrigin(
-                    requestedPlacementID: placementID,
-                    resolvedPlacementID: placementID,
-                    catalogSource: .adapty
-                ),
-                products: Self.products(
-                    count: productCount,
-                    usesRUBillingFixture: arguments.contains(
-                        "-paywall-payment-methods"
-                    )
-                ),
-                remoteConfiguration: RemotePaywallConfiguration(
-                    isRUBillingEnabled: arguments.contains("-paywall-payment-methods"),
-                    accessPolicy: isHardPaywall ? .hard : .soft,
-                    closeDelay: isHardPaywall ? nil : 0,
-                    uiVariantID: PaywallUIVariantID(rawValue: "example-adaptive")
-                ),
-                remoteConfigurationProvenance: .verifiedFreshRemote,
-                fetchedAt: Date()
-            )
-        )
-    }
-
-    private static func productCount(arguments: [String]) -> Int {
-        if arguments.contains("-paywall-empty") {
-            return 0
-        }
-        if arguments.contains("-paywall-one-product") {
-            return 1
-        }
-        if arguments.contains("-paywall-two-products") {
-            return 2
-        }
-        if arguments.contains("-paywall-many-products") {
-            return 12
-        }
-        return 4
-    }
-
-    private static func products(
-        count: Int,
-        usesRUBillingFixture: Bool
-    ) -> [MonetizationProduct] {
-        let fixtures = ProductFixture.all
-        return (0 ..< count).map { index in
-            let fixture = fixtures[index % fixtures.count]
-            return MonetizationProduct(
-                presentationID: .generated(),
-                reference: ProductReference(
-                    rawValue: "example-product-reference-\(index)-\(UUID().uuidString)"
-                ),
-                productID: ProductID(rawValue: fixture.productID),
-                kind: fixture.kind,
-                title: fixture.title,
-                subtitle: fixture.subtitle,
-                price: Money(
-                    amount: fixture.amount,
-                    currencyCode: usesRUBillingFixture ? "RUB" : "USD"
-                ),
-                displayPrice: usesRUBillingFixture
-                    ? fixture.rubleDisplayPrice
-                    : fixture.displayPrice,
-                subscriptionPeriod: fixture.period,
-                catalogSource: .adapty
-            )
-        }
-    }
-}
-
-private extension ExamplePaywallRepository {
-    struct ProductFixture {
-        let productID: String
-        let kind: MonetizationProductKind
-        let title: String
-        let subtitle: String?
-        let amount: Decimal
-        let displayPrice: String
-        let rubleDisplayPrice: String
-        let period: SubscriptionPeriod
-
-        static let all = [
-            ProductFixture(
-                productID: "example.premium.weekly",
-                kind: .autoRenewableSubscription,
-                title: "Недельная подписка",
-                subtitle: "Гибкий доступ",
-                amount: 3.99,
-                displayPrice: "$3.99",
-                rubleDisplayPrice: "299 ₽",
-                period: .week()
-            ),
-            ProductFixture(
-                productID: "example.premium.monthly",
-                kind: .autoRenewableSubscription,
-                title: "Месячная подписка",
-                subtitle: "Самый популярный тариф",
-                amount: 8.99,
-                displayPrice: "$8.99",
-                rubleDisplayPrice: "699 ₽",
-                period: .month()
-            ),
-            ProductFixture(
-                productID: "example.premium.yearly",
-                kind: .autoRenewableSubscription,
-                title: "Годовая подписка с намеренно длинным локализованным названием",
-                subtitle: "Один платёж за двенадцать месяцев",
-                amount: 49.99,
-                displayPrice: "$49.99",
-                rubleDisplayPrice: "3 990 ₽",
-                period: .year()
-            ),
-            ProductFixture(
-                productID: "example.premium.unknown",
-                kind: .unknown,
-                title: "Доступ, заданный провайдером",
-                subtitle: "Продукт без известного периода остаётся видимым",
-                amount: 12.49,
-                displayPrice: "$12.49",
-                rubleDisplayPrice: "999 ₽",
-                period: .unknown
-            )
-        ]
     }
 }
 

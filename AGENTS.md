@@ -32,6 +32,14 @@
 - Нажатие на продукт paywall не должно давать затемнение, мерцание или
   стандартный press-effect.
 - Special offer полностью опционален: отсутствие config не считается ошибкой.
+- Текущий Adapty payload может управлять `special_offer` и показом `ru_pay`,
+  даже если SDK прозрачно использовал свой provider cache. Paywall, который
+  восстановил собственный cache BroadMonetization, не может включить эти
+  флаги. Для Adapty не создаётся отдельный REST-транспорт или второй источник
+  продуктов.
+- `ru_pay = false`, отсутствующий или некорректный флаг всегда закрывает RU
+  Billing. Предыдущее разрешающее значение не восстанавливается из last-valid
+  cache.
 - Purchase/restore не открывают premium до подтверждения entitlement.
 - После переустановки subscription ownership восстанавливается через
   StoreKit/backend, а token balance и RU purchases — только через стабильный app
@@ -78,6 +86,9 @@
 2. Запусти `bash Scripts/agent_gate.sh`.
 3. Если проверка упала, найди первопричину. Не отключай, не ослабляй и не обходи
    проверку ради зелёного результата.
+   Для ошибок `Remote Config feature-gate contract matrix` сначала проверь
+   provenance, cache downgrade и product registry; не предлагай собственный
+   Adapty REST API.
 4. Внеси минимальные правки только в platform-owned файлы. Для ручных правок
    используй `apply_patch`.
 5. После изменения Swift-кода выполни `bash Scripts/format.sh`, затем снова

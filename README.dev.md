@@ -266,7 +266,15 @@ iPad не входит в scope платформы.
 - UI принимает 0, 1 или любое количество продуктов в порядке Adapty.
 - Purchase и restore не открывают premium до новой подтверждённой проверки доступа.
 - Success, fail, cancel, offline и timeout — разные конечные состояния.
-- Special offer существует только при наличии его конфигурации.
+- Special Offer существует только при конфигурации приложения и явном
+  `special_offer = true` из текущего ответа SDK Adapty. Ответ может прийти из
+  сети или внутреннего кеша Adapty; отдельный REST/repository не создаётся.
+- `ru_pay` из того же ответа разрешает только показать RU-способы оплаты.
+  Сохранённая копия из кеша `BroadMonetization` их не включает, а premium
+  появляется только после новой подтверждённой проверки доступа со статусом
+  `active`.
+- Special Offer purchase использует raw product из того же внутреннего Adapty
+  registry и не перезагружает paywall перед оплатой.
 - Restore доступен во всех согласованных точках и не запускается автоматически.
 - В рамках проверки платформы не выполняются реальные покупки, RU-платежи или
   StoreKit sandbox-операции: используются fixture-сценарии и безопасные сборки.
@@ -274,6 +282,12 @@ iPad не входит в scope платформы.
 [Paywall UI →](Documentation/PaywallUI.md) ·
 [Монетизация →](Documentation/Monetization.md) ·
 [Special Offer →](Documentation/SpecialOffer.md)
+
+Для воспроизводимой ручной проверки используйте launch arguments
+`-special-offer-enabled`, `-special-offer-disabled`,
+`-special-offer-platform-cache`, `-special-offer-main-fallback`,
+`-special-offer-timed`, `-ru-pay-provider-enabled` и
+`-ru-pay-platform-cache` из `Examples/BroadAppTemplate/README.md`.
 
 </details>
 

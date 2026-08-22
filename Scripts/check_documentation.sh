@@ -86,6 +86,15 @@ for required_pattern in \
     'Documentation/AccountRecovery\.md' \
     'Documentation/NetworkInterruptions\.md' \
     'Documentation/AgentAutomation\.md' \
+    'Текущий ответ SDK Adapty: сеть или внутренний кеш Adapty' \
+    'Сохранённая копия из собственного кеша `BroadMonetization`' \
+    '-special-offer-enabled' \
+    '-special-offer-disabled' \
+    '-special-offer-platform-cache' \
+    '-special-offer-main-fallback' \
+    '-special-offer-timed' \
+    '-ru-pay-provider-enabled' \
+    '-ru-pay-platform-cache' \
     '^## 💳 RU Billing: последовательность экранов$' \
     '^## ✅ Если вы изменили код платформы$' \
     '^### 6\. ✅ Запустите обязательную проверку перед сдачей$' \
@@ -119,9 +128,11 @@ for required_pattern in \
     'Documentation/Assets/README/no-code-manual-workflow-dark\.svg' \
     'Documentation/Assets/README/agent-click-path-light\.svg' \
     'Documentation/Assets/README/agent-click-path-dark\.svg' \
+    'Documentation/Assets/README/remote-config-cache-flow-light\.svg' \
+    'Documentation/Assets/README/remote-config-cache-flow-dark\.svg' \
     'Documentation/Assets/README/full-flow\.gif' \
     'Documentation/Assets/README/adaptive-paywall\.gif'; do
-    if ! rg -q "$required_pattern" "$platform_root/README.md"; then
+    if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
     fi
 done
@@ -195,6 +206,9 @@ for required_file in \
     "$platform_root/Documentation/NetworkInterruptions.md" \
     "$platform_root/Documentation/PurchaseManagers.md" \
     "$platform_root/Documentation/PlatformHandoff.md" \
+    "$platform_root/Documentation/SpecialOffer.md" \
+    "$platform_root/Documentation/RemoteConfig.md" \
+    "$platform_root/Documentation/ADR/0005-provider-managed-remote-feature-gates.md" \
     "$platform_root/Examples/BroadAppTemplate/Configuration/Adapty5013.xcconfig" \
     "$platform_root/Examples/BroadAppTemplate/Configuration/Adapty5109Codex.xcconfig" \
     "$platform_root/Examples/BroadAppTemplate/Configuration/LiveAdaptyInfo.plist"

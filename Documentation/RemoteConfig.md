@@ -125,6 +125,24 @@ fresh field absent/invalid → сохранить предыдущее valid val
 retained fields. Они всегда берутся из текущего parsed payload и никогда не
 наследуют старый `.enabled`: прошлый gate не может воскресить оплату/кампанию.
 
+## Какой cache может управлять feature flags
+
+| Provenance payload | Показать обычный paywall | Включить `special_offer` / показ `ru_pay` |
+|---|---:|---:|
+| `.verifiedFreshRemote` | да | да, при валидном положительном флаге |
+| `.providerCacheFallbackPossible` | да | да, при валидном положительном флаге |
+| `.platformCache` | да | нет |
+| `.legacyUnqualified` | да | нет |
+
+`providerCacheFallbackPossible` — текущий результат стандартного Adapty SDK. SDK
+сам управляет своей cache policy, а платформа не подменяет его ответ старым
+payload. `platformCache` — сохранённая платформой копия всего paywall; она годится
+для безопасного offline UI, но не для повторного включения удалённой функции.
+
+Эти флаги разрешают только показать функцию. Они не подтверждают подписку,
+premium, токены или успешный RU-платёж: финансовый результат всегда проверяет
+authoritative entitlement source.
+
 ## Special offer — намеренное исключение
 
 Special offer не наследуется из прошлого payload:
@@ -141,9 +159,15 @@ valid gate = true → enabled, остальные поля optional
 Host-level `SpecialOfferConfiguration?` — ещё более ранний gate:
 
 - `nil` — не загружать placement, не читать remote config, не запускать cache/timer/UI;
-- non-`nil` — resolver может загрузить placement, но enabled gate и `.verifiedFreshRemote` provenance всё равно обязательны.
+- non-`nil` — resolver может загрузить placement, но enabled gate и provenance,
+  разрешающий provider-managed flags, всё равно обязательны.
 
-Если special-offer placement ушёл на fallback `.main`, offer допустим только когда payload `.main` содержит валидный enabled block и `remoteConfigurationProvenance == .verifiedFreshRemote`. Default Adapty repository использует `.providerCacheFallbackPossible`, потому что SDK может скрыто вернуть cache. Для campaign нужен host-controlled repository, который доказывает network origin. Platform cache и legacy payload не авторизуют campaign.
+Если special-offer placement ушёл на fallback `.main`, offer допустим только
+когда реально загруженный payload `.main` содержит валидный enabled block.
+Стандартные `.verifiedFreshRemote` и `.providerCacheFallbackPossible` разрешают
+provider-managed flags. `.platformCache` и `.legacyUnqualified` их не разрешают.
+Для кампании используется обычный `AdaptyPaywallRepository`: собственный Adapty
+REST или отдельный repository не требуется.
 
 Если gate enabled, но effective window duration отсутствует, resolver возвращает
 `.eligible` с paywall. Это валидный offer без countdown, а не configuration error.
@@ -176,19 +200,19 @@ Remote field — только одно из трёх условий:
 
 ```text
 host feature enabled
-AND verified-fresh ru_pay == true
+AND current Adapty/provider payload has ru_pay == true
 AND (iPhone region == RU/RUS OR first system language starts with ru)
 ```
 
 Decision `.enabled` может авторизовать billing только когда payload provenance
-равен `.verifiedFreshRemote`. Default Adapty payload имеет
-`.providerCacheFallbackPossible`, поэтому cached/unqualified `.enabled` не даёт
-RU methods и **не** откатывается к host fallback.
+разрешает provider-managed gates. Для стандартного Adapty-пути это
+`.providerCacheFallbackPossible`; `.verifiedFreshRemote` остаётся допустимым для
+host transport, который действительно умеет доказать network origin.
 
-`.absent`, `.disabled` и `.invalid` всегда fail-closed. Cached/provider `false`
-безопасно работает как kill switch, а cached/provider `true` не разрешает
-финансовую функцию. Host fallback без явного свежего `ru_pay = true` не
-поддерживается.
+`.absent`, `.disabled` и `.invalid` всегда fail-closed. Provider-managed `false`
+безопасно работает как kill switch. Значение `true` из собственного
+`.platformCache` или legacy payload не включает RU methods. Host fallback без
+явного `ru_pay = true` не поддерживается.
 
 Parser отвечает только за `ru_pay`. Регион и первый системный язык iPhone
 проверяет `RUBillingGate`: достаточно региона `RU/RUS` **или** языка с префиксом
@@ -242,7 +266,7 @@ config не содержит второй cohort authority.
 - [ ] удаление offer gate не восстанавливает прошлую кампанию;
 - [ ] fallback `.main` без valid enabled offer gate не включает special offer;
 - [ ] absent RU gate при default policy не показывает RU methods;
-- [ ] все RU aliases true + verified provenance → RU gate enabled;
+- [ ] все RU aliases true + provider-managed provenance → RU gate enabled;
 - [ ] любой false alias → disabled, даже рядом с true/malformed и host fallback;
 - [ ] true + malformed без false → invalid и fail-closed;
 - [ ] host fallback `.enabled` применяется только к `.absent`;

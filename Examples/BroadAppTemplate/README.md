@@ -96,14 +96,21 @@ fail-before-charge.
 |---|---|
 | `-app-flow-main-only` | только main |
 | `-app-flow-paywall-only` | paywall без onboarding |
-| `-live-adapty` | real Adapty catalog; financial calls disabled |
-| `-analytics-fixture` | paywall-only flow + typed recording sink |
-| `-tracking-disabled` | полный UI smoke без системного ATT prompt |
-| `-paywall-empty` | empty paywall |
-| `-paywall-one-product` | один продукт + automatic selection |
-| `-paywall-two-products` | два продукта в provider order |
-| `-paywall-many-products` | 12 products + sticky controls |
-| `-paywall-payment-methods` | UI-only Apple/SBP/Card sheet; RU adapter remains disabled |
+| `-live-adapty` | настоящий каталог Adapty; финансовые вызовы отключены |
+| `-analytics-fixture` | только paywall и безопасная локальная запись событий аналитики |
+| `-tracking-disabled` | полная проверка UI без системного окна ATT |
+| `-paywall-empty` | paywall без продуктов |
+| `-paywall-one-product` | один продукт выбирается автоматически |
+| `-paywall-two-products` | два продукта сохраняют порядок провайдера |
+| `-paywall-many-products` | 12 продуктов и всегда доступные нижние кнопки |
+| `-paywall-payment-methods` | только UI выбора Apple/СБП/карты; настоящий RU-адаптер отключён |
+| `-special-offer-enabled` | текущий ответ Adapty содержит `special_offer = true`: кампания открывается |
+| `-special-offer-disabled` | явный `special_offer = false`: кампания остаётся закрытой |
+| `-special-offer-platform-cache` | кеш `BroadMonetization` содержит `true`, но кампания остаётся закрытой |
+| `-special-offer-main-fallback` | placement кампании недоступен; Remote Config резервного `main` открывает её и сохраняет исходный placement |
+| `-special-offer-timed` | кампания с фиксированным доверенным серверным временем и таймером на три минуты |
+| `-ru-pay-provider-enabled` | текущий ответ Adapty содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
+| `-ru-pay-platform-cache` | `ru_pay = true` из кеша `BroadMonetization` отклоняется; остаётся только Apple |
 | `-ru-payment-sheet` | технический СБП fixture: две обязательные галочки, чек и сохранённый email; без отдельных строк legal links |
 | `-ru-payment-sheet-apple` | Apple выбран; RU consent/receipt поля отсутствуют |
 | `-ru-subscription-management` | активная RU подписка, дата и действие отмены |
@@ -124,6 +131,23 @@ fail-before-charge.
 | `-bootstrap-failed-once` | critical failure → manual retry |
 | `-bootstrap-seed-cache` | записать stale-cache fixture |
 | `-bootstrap-stale-cache` | offline fallback после seed |
+
+### Проверка Special Offer и `ru_pay`
+
+Эти семь сценариев проверяют не нарисованный экран, а настоящий контракт
+`BroadMonetization`. Special Offer проходит через `ResolveSpecialOfferUseCase`,
+а RU methods — через `ResolveCheckoutMethodsUseCase` и `RUBillingGate`.
+
+Для Special Offer результат виден сразу: разрешённая кампания открывает общий
+paywall, заблокированная показывает безопасное объяснение. Для RU-сценария
+выберите продукт и нажмите `Продолжить`: у текущего ответа Adapty появятся
+Apple/СБП/карта, у сохранённой копии из кеша `BroadMonetization` останется только
+Apple.
+
+В консоли Xcode появляется структурированная запись
+`remote-feature.fixture.evaluated` с запрошенным и фактически загруженным
+placement, variation и источником данных. Так можно проверить резерв на `main`
+без настоящего платежа и без доступа к Adapty Dashboard.
 
 ## Analytics fixture
 

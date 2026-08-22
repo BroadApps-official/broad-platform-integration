@@ -30,7 +30,8 @@ let result = await resolveSpecialOffer(configuration: appConfiguration.specialOf
 
 1. загруженный paywall payload;
 2. `payload.remoteConfiguration.specialOffer.isEnabled == true`;
-3. `payload.remoteConfigurationProvenance == .verifiedFreshRemote`.
+3. provenance разрешает provider-managed feature gates:
+   `.verifiedFreshRemote` или `.providerCacheFallbackPossible`.
 
 Отсутствующий, невалидный или выключенный remote gate даёт
 `.unavailable(.disabledByRemoteConfiguration)`. Прошлое валидное значение не
@@ -40,11 +41,20 @@ let result = await resolveSpecialOffer(configuration: appConfiguration.specialOf
 | Provenance remote config | Обычный paywall | Special offer |
 |---|---:|---:|
 | `.verifiedFreshRemote` | да | да, при enabled gate |
-| `.providerCacheFallbackPossible` | да | нет |
+| `.providerCacheFallbackPossible` | да | да, при enabled gate |
 | `.platformCache` | да | нет |
 | `.legacyUnqualified` | да | нет |
 
-Pinned Adapty SDK может молча вернуть свой cache и не отдаёт origin в public API. Поэтому `AdaptyPaywallRepository` ставит `.providerCacheFallbackPossible`: обычный paywall остаётся доступным offline, но time-sensitive campaign fail-closed. Для special offer проект подключает host-controlled `PaywallRepositoryProtocol`, который может доказать свежий network response и только тогда ставит `.verifiedFreshRemote`.
+Стандартный `AdaptyPaywallRepository` уже является правильным источником для
+campaign. Pinned Adapty SDK может прозрачно вернуть свой управляемый cache и не
+раскрывает origin в public API, поэтому repository честно ставит
+`.providerCacheFallbackPossible`. Это всё ещё текущий ответ Adapty и он может
+управлять `special_offer`. Собственный REST-транспорт и отдельный
+`PaywallRepositoryProtocol` для Special Offer не нужны.
+
+`.platformCache` означает другое: весь payload восстановила сама платформа из
+своего persistent cache. Такой payload можно безопасно показать как обычный
+paywall, но он не может заново включить кампанию.
 
 Старые persisted payloads декодируются как `.legacyUnqualified`: их можно показать, но нельзя использовать как свежий campaign gate.
 
@@ -58,7 +68,8 @@ Fallback принимается только когда:
 - `origin.requestedPlacementID` всё ещё равен configured offer placement;
 - `origin.resolvedPlacementID == .main`;
 - remote payload на `main` содержит valid и enabled `specialOffer`;
-- remote configuration provenance равен `.verifiedFreshRemote`.
+- provenance разрешает provider-managed gates (`.verifiedFreshRemote` или
+  `.providerCacheFallbackPossible`).
 
 Обычный main paywall без special-offer gate не может случайно стать discount-экраном.
 
@@ -147,7 +158,7 @@ multiplier и period text. Countdown появляется только когд�
 deadline. Любое отсутствующее поле скрывает только свой
 элемент. Самостоятельно конструировать/переносить authorization между payloads
 нельзя: только `SpecialOfferResolution.presentationAuthorization` доказывает
-fresh enabled gate для этой презентации.
+enabled provider gate для этой презентации.
 
 ## Подключение
 

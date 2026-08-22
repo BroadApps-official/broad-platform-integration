@@ -348,6 +348,16 @@ require_file_pattern \
     "$platform_root/Sources/BroadMonetization/Application/RUBilling/RefreshRUPaymentUseCase.swift" \
     '(?s)error\.kind[[:space:]]*==[[:space:]]*\.offline.{0,100}error\.kind[[:space:]]*==[[:space:]]*\.timeout'
 
+require_file_pattern \
+    "Provider-managed payloads must authorize their own feature gates:" \
+    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallPayload.swift" \
+    'case[[:space:]]+\.verifiedFreshRemote,[[:space:]]+\.providerCacheFallbackPossible:(?s:.*?)[[:space:]]+true'
+
+require_file_pattern \
+    "Platform-cache payloads must not authorize provider feature gates:" \
+    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallPayload.swift" \
+    'case[[:space:]]+\.platformCache,[[:space:]]+\.legacyUnqualified:(?s:.*?)[[:space:]]+false'
+
 if ((violation_count > 0)); then
     echo "Architecture checks failed: $violation_count rule group(s) found."
     exit 1

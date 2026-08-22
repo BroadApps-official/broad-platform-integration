@@ -42,7 +42,7 @@ if ! command -v rg >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "[1/6] Package structure"
+echo "[1/7] Package structure"
 
 required_check_files=(
     "$platform_root/AGENTS.md"
@@ -61,6 +61,7 @@ required_automation_files=(
     "$platform_root/Scripts/agent_gate.sh"
     "$platform_root/Scripts/agent_review_and_fix.sh"
     "$platform_root/Scripts/check_adapty_experiment_contracts.sh"
+    "$platform_root/Scripts/check_remote_feature_contracts.sh"
     "$platform_root/Scripts/check_live_adapty_builds.sh"
 )
 for required_file in "${required_automation_files[@]}"; do
@@ -125,7 +126,7 @@ if [[ -n "$tests_directories" ]]; then
     record_failure "Tests directories are forbidden:" "$tests_directories"
 fi
 
-echo "[2/6] Local references"
+echo "[2/7] Local references"
 
 reference_directories="$(
     find "$platform_root" \
@@ -190,22 +191,27 @@ if [[ -n "$local_package_matches" ]]; then
     record_failure "Root Package.swift must not depend on a local package path:" "$local_package_matches"
 fi
 
-echo "[3/6] Architecture and product guardrails"
+echo "[3/7] Architecture and product guardrails"
 if ! bash "$platform_root/Scripts/check_architecture.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[4/6] Adapty experiment contracts"
+echo "[4/7] Remote Config feature-gate contracts"
+if ! bash "$platform_root/Scripts/check_remote_feature_contracts.sh"; then
+    failure_count=$((failure_count + 1))
+fi
+
+echo "[5/7] Adapty experiment contracts"
 if ! bash "$platform_root/Scripts/check_adapty_experiment_contracts.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[5/6] Privacy manifest"
+echo "[6/7] Privacy manifest"
 if ! bash "$platform_root/Scripts/check_privacy_manifest.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[6/6] Documentation and README assets"
+echo "[7/7] Documentation and README assets"
 if ! bash "$platform_root/Scripts/check_documentation.sh"; then
     failure_count=$((failure_count + 1))
 fi

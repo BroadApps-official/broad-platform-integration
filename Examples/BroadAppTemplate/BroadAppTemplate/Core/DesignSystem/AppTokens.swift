@@ -29,6 +29,11 @@ enum AppTokens {
         static let statusIcon = SwiftUI.Font.title2.weight(.semibold)
         static let onboardingIcon = SwiftUI.Font.largeTitle.weight(.bold)
         static let mainIcon = SwiftUI.Font.title.weight(.bold)
+        static let fixtureStatusIcon = SwiftUI.Font.system(size: 54, weight: .semibold)
+        static let fixtureCode = SwiftUI.Font.system(
+            .footnote,
+            design: .monospaced
+        ).weight(.semibold)
     }
 
     @MainActor

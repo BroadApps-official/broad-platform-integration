@@ -13,6 +13,7 @@ final class AppCompositionRoot {
     let rootViewModel: RootViewModel
     let analyticsViewModel: ExampleAnalyticsViewModel
     let ruSubscriptionViewModel: BroadRUSubscriptionManagementViewModel
+    let specialOfferFixtureViewModel: ExampleSpecialOfferFixtureViewModel?
     #if DEBUG
         let debugSettingsViewModel: ExampleDebugSettingsViewModel
     #endif
@@ -61,9 +62,41 @@ final class AppCompositionRoot {
             recorder: monetizationEnvironment.analyticsRecorder
         )
         ruSubscriptionViewModel = Self.makeRUSubscriptionViewModel()
+        specialOfferFixtureViewModel = Self.makeSpecialOfferFixtureViewModel(
+            environment: monetizationEnvironment,
+            logger: logger
+        )
         #if DEBUG
             debugSettingsViewModel = Self.makeDebugSettingsViewModel()
         #endif
+    }
+
+    private static func makeSpecialOfferFixtureViewModel(
+        environment: ExampleMonetizationEnvironment,
+        logger: any BroadLoggerProtocol
+    ) -> ExampleSpecialOfferFixtureViewModel? {
+        guard let scenario = AppConfiguration.remoteFeatureScenario,
+              let configuration = scenario.specialOfferConfiguration,
+              let resolver = environment.resolveSpecialOffer
+        else {
+            return nil
+        }
+        return ExampleSpecialOfferFixtureViewModel(
+            scenario: scenario,
+            resolver: resolver,
+            configuration: configuration,
+            paywallDependencies: PaywallViewModelDependencies(
+                loadPaywall: environment.services.loadPaywall,
+                selectProduct: environment.services.selectProduct,
+                checkoutProduct: environment.services.checkoutProduct,
+                restorePurchases: environment.services.restorePurchases,
+                resolveCheckoutMethods: environment.resolveCheckoutMethods,
+                trackEvent: environment.trackPaywallEvent,
+                presentationLifecycle: environment.services.paywallPresentationLifecycle,
+                operationGate: environment.services.operationGate
+            ),
+            logger: logger
+        )
     }
 
     #if DEBUG

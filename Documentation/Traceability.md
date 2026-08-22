@@ -15,6 +15,7 @@
 | Проверка premium после purchase/restore | Entitlement engine | [Entitlements](Entitlements.md) |
 | СБП, карта, чек, согласия и управление RU-подпиской | RU Billing adapters и UI | [RU Billing](RUBilling.md) |
 | Опциональный special offer | Special offer contracts | [Special Offer](SpecialOffer.md) |
+| Provider Remote Config против platform cache | Provenance capability + обязательная contract matrix | [Remote Config](RemoteConfig.md), [ADR-0005](ADR/0005-provider-managed-remote-feature-gates.md) |
 | Общая аналитика показов и покупок | Monetization analytics pipeline | [Analytics](Analytics.md) |
 | Восстановление после переустановки | Account recovery + server-authoritative ledger | [Account Recovery](AccountRecovery.md) |
 | Безопасное поведение при обрыве сети | Typed network failures и pending reconciliation | [Network Interruptions](NetworkInterruptions.md) |

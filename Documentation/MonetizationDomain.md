@@ -98,6 +98,13 @@ Special offer устроен строже:
 - отсутствие полей не создаёт фиктивную цену, скидку, период или badge;
 - отсутствие remote gate означает выключенный offer.
 
+Remote gate отвечает только на вопрос «можно ли показать кампанию». Текущий
+payload стандартного Adapty repository имеет provenance
+`.providerCacheFallbackPossible` и может дать такое разрешение. Payload,
+восстановленный собственным cache платформы, не может. Ни один из этих флагов не
+подтверждает покупку: доступ по-прежнему выдаёт только entitlement engine после
+новой authoritative проверки.
+
 Состояния представлены `SpecialOfferState`: `unavailable`, `eligible`, `active`,
 `expired`, `cooldown`.
 
@@ -155,8 +162,8 @@ Adapter не зависит от `EntitlementEngine`.
 
 `RUBillingDeviceContext.isRussian` проверяет два независимых сигнала: регион
 iPhone `RU`/`RUS` и первый системный язык с префиксом `ru`. Одного совпадения
-достаточно, но оно разрешает RU Billing только вместе со свежим
-`ru_pay = true`. `Storefront` остаётся информационной моделью App Store и не
+достаточно, но оно разрешает RU Billing только вместе с `ru_pay = true` из
+текущего provider-managed payload. `Storefront` остаётся информационной моделью App Store и не
 участвует в этом решении.
 
 RU billing намеренно не имеет одного большого `RUBillingRepositoryProtocol`.

@@ -5,6 +5,12 @@
 > [!IMPORTANT]
 > StoreKit, основной backend и RU billing имеют отдельные production boundaries. Публичный Adapty profile API тоже изолирован adapter-ом, но не выдаётся за fresh server response: pinned Adapty 3.17.3 может молча вернуть внутренний кеш. Purchase/restore/RU return всегда запускают новую generation и открывают premium только после итогового `active`.
 
+Remote Config находится по другую сторону этой границы. `special_offer = true`
+может показать campaign, а `ru_pay = true` — доступные способы оплаты. Ни один
+флаг, provenance paywall или факт открытия checkout не является entitlement.
+Даже provider-managed Adapty cache не ослабляет это правило: premium выдаётся
+только после нового ответа Apple/backend/RU authority со статусом `active`.
+
 После удаления приложения локальный entitlement cache исчезает, но право на
 покупку не исчезает. После login/identity preparation вызовите
 `RecoverCustomerAccessUseCase`: он запускает `.startNewGeneration` и заново
