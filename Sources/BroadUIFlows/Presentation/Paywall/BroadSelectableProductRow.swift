@@ -45,7 +45,7 @@ public struct BroadSelectableProductRow: View {
             }
             .padding(.horizontal, theme.metrics.spacing.productContent)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .frame(height: productRowHeight, alignment: .leading)
+            .frame(minHeight: productRowHeight, alignment: .leading)
             .background(rowBackground)
             .contentShape(Rectangle())
         }
@@ -63,18 +63,14 @@ public struct BroadSelectableProductRow: View {
                 .font(theme.typography.productTitle)
                 .foregroundStyle(theme.palette.primaryText)
                 .multilineTextAlignment(.leading)
-                .lineLimit(2)
-                .minimumScaleFactor(0.8)
-                .allowsTightening(true)
+                .fixedSize(horizontal: false, vertical: true)
 
             if let subtitle {
                 Text(subtitle)
                     .font(theme.typography.productDetail)
                     .foregroundStyle(theme.palette.secondaryText)
                     .multilineTextAlignment(.leading)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-                    .minimumScaleFactor(0.8)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

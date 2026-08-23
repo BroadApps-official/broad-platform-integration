@@ -188,9 +188,11 @@ struct UsedeskConfiguration: Sendable {
 }
 ```
 
-Если данные нового приложения ещё не готовы, можно временно взять рабочие
-`Company ID` и `Channel ID` согласованного похожего live-приложения. Обязательно
-пометьте их как временные и замените перед выпуском.
+Если данные нового приложения ещё не готовы, разрешены fixture либо
+`Company ID`/`Channel ID` согласованного похожего live-приложения только когда
+владелец продукта явно одобрил эти публичные client identifiers для development
+load/show. Пометьте их как временные и замените перед выпуском. `api_token`,
+user chat token, account data и backend credentials из reference не копируются.
 
 ## Шаг 3. Восстанавливайте историю через backend
 
