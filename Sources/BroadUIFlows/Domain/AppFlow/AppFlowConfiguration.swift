@@ -5,7 +5,8 @@ public enum AppFlowStepPolicy: Equatable, Sendable {
 
 public enum AppFlowInitialPaywallPolicy: Equatable, Sendable {
     case disabled
-    case enabled(allowsClose: Bool)
+    case onceAfterOnboarding(allowsClose: Bool)
+    case everyColdLaunchWhileInactive(allowsClose: Bool)
 }
 
 public struct AppFlowConfiguration: Equatable, Sendable {
@@ -30,10 +31,24 @@ public struct AppFlowConfiguration: Equatable, Sendable {
     }
 
     public var allowsInitialPaywallClose: Bool {
-        guard case let .enabled(allowsClose) = initialPaywall else {
-            return false
+        switch initialPaywall {
+        case .disabled:
+            false
+        case let .onceAfterOnboarding(allowsClose),
+             let .everyColdLaunchWhileInactive(allowsClose):
+            allowsClose
+        }
+    }
+
+    var persistsInitialPaywallResolution: Bool {
+        if case .onceAfterOnboarding = initialPaywall {
+            return true
         }
 
-        return allowsClose
+        return false
+    }
+
+    var honorsResolvedInitialPaywallCheckpoint: Bool {
+        persistsInitialPaywallResolution
     }
 }

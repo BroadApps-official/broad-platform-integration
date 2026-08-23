@@ -4,6 +4,10 @@ import SwiftUI
 @MainActor
 struct ExampleSpecialOfferFixtureView: View {
     @ObservedObject var viewModel: ExampleSpecialOfferFixtureViewModel
+    var onClose: () -> Void = {}
+    var onCompleted: (BroadPaywallCompletion) -> Void = { _ in }
+
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         Group {
@@ -12,8 +16,8 @@ struct ExampleSpecialOfferFixtureView: View {
                     viewModel: paywallViewModel,
                     theme: AppTokens.paywallTheme,
                     productFormatter: BroadPaywallProductFormatter(),
-                    onClose: {},
-                    onCompleted: { _ in }
+                    onClose: close,
+                    onCompleted: completed
                 )
             } else {
                 statusView
@@ -22,6 +26,16 @@ struct ExampleSpecialOfferFixtureView: View {
         .task {
             await viewModel.loadIfNeeded()
         }
+    }
+
+    private func close() {
+        onClose()
+        dismiss()
+    }
+
+    private func completed(_ completion: BroadPaywallCompletion) {
+        onCompleted(completion)
+        dismiss()
     }
 
     private var statusView: some View {

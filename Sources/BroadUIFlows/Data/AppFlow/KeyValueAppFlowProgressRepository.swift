@@ -49,6 +49,19 @@ public actor KeyValueAppFlowProgressRepository: AppFlowProgressRepositoryProtoco
         return await loadCheckpoint()
     }
 
+    public func reset() async throws -> Int {
+        var removedMarkerCount = 0
+        for key in [onboardingCompletedKey, initialPaywallResolvedKey] {
+            guard try await keyValueStore.read(key) != .missing else {
+                continue
+            }
+
+            try await keyValueStore.remove(key)
+            removedMarkerCount += 1
+        }
+        return removedMarkerCount
+    }
+
     private func containsMarker(forKey key: String) async -> Bool {
         do {
             guard case let .data(data) = try await keyValueStore.read(key) else {

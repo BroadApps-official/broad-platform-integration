@@ -6,11 +6,13 @@
 |---|---|
 | Сверить архитектуру, use cases и UI перед передачей | [Памятка разработчика](../README.dev.md) |
 | Впервые подключить package | [Getting Started](GettingStarted.md) |
+| Пройти полную ручную приёмку BroadAppTemplate | [Приёмка template](TemplateAcceptance.md) |
 | Правильно запустить SDK и кешировать контент | [Запуск SDK и кеш](StartupAndCaching.md) |
 | Добавить Debug-очистку Keychain и мгновенный loader кнопки | [Debug и async-действия](DebugToolsAndAsyncActions.md) |
 | Понять папки и зависимости | [Architecture](Architecture.md) |
 | Настроить Adapty, StoreKit и общий flow | [Monetization](Monetization.md) |
 | Выбрать subscriptions-only или subscriptions + tokens | [Purchase Managers](PurchaseManagers.md) |
+| Подключить отдельный consumable token paywall | [Token Paywall](TokenPaywall.md) |
 | Не потерять покупки после переустановки | [Account Recovery](AccountRecovery.md) |
 | Обработать внезапное отключение сети | [Network Interruptions](NetworkInterruptions.md) |
 | Подключить полный СБП/карта flow | [RU Billing](RUBilling.md) |
@@ -24,9 +26,20 @@
 | Добавить онлайн-чат Usedesk в Settings | [Usedesk](Usedesk.md) |
 | Перенести старое приложение | [Migration Guide](MigrationGuide.md) |
 | Запустить агента-проверяющего | [Agent Automation](AgentAutomation.md) |
+| Проверить Kaiten, дизайн, reference и backend до build prompt | [Agent Preflight](AgentPreflight.md) |
 | Посмотреть, что уже умеет платформа | [Карта возможностей](Traceability.md) |
 
 ## Самый короткий маршрут для нового разработчика
+
+| Ваш путь | Читать сначала | Когда считать завершённым |
+|---|---|---|
+| Codex/Claude создаёт новое приложение | [Agent Preflight](AgentPreflight.md), затем три прямые ссылки в [варианте A](../README.md#agent-setup) | Агент прошёл functional + visual audit, разработчик сделал self-review |
+| Разработчик собирает приложение вручную | [Вариант B](../README.md#manual-setup), затем профильные guides ниже | Debug/Release, безопасные flow и screenshot-to-source сверка прошли |
+| Нужно принять интерактивный пример | [Приёмка template](TemplateAcceptance.md) | Каждая строка матрицы проверена на маленьком и большом iPhone |
+| Изменён код самой платформы | [`AGENTS.md`](../AGENTS.md) и [Agent Automation](AgentAutomation.md) | Последняя строка `bash Scripts/agent_gate.sh` сообщает PASS |
+
+Не смешивайте эти пути: platform gate не заменяет проверку конкретного app, а
+сборка app не заменяет gate после изменения `BroadAppsIOSPlatform`.
 
 1. [Памятка разработчика](../README.dev.md) — поймите, куда класть код и что проверять.
 2. [Getting Started](GettingStarted.md) — подключите нужные package products.

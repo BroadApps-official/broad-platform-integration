@@ -7,14 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0A787C5040A0F19289FC65D2 /* AppCompositionRoot+Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC01266C00493ECF8D51B635 /* AppCompositionRoot+Tokens.swift */; };
 		0B5EE15128E44F2DCEC0F213 /* DebugKeychainCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810D99B643B65934553892DE /* DebugKeychainCleaner.swift */; };
 		0B61AB392E367CA07AE3D947 /* ExampleMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0409C5D2EE1382A900A320F2 /* ExampleMainView.swift */; };
 		0FDDACE135D487CAF48C7B6E /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10D42FCA60C072A4AA86B3ED /* AppConfiguration.swift */; };
 		1440F58CD73EFF7C509BF47C /* ExampleSpecialOfferFixtureViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D4EFF7873704D08894037A /* ExampleSpecialOfferFixtureViewModel.swift */; };
+		16834107BE9587FFDD100D82 /* ExampleContactUsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988A580014DF88FF160F1A51 /* ExampleContactUsView.swift */; };
 		1844CEB68233066765E4BC35 /* BroadUIFlows in Frameworks */ = {isa = PBXBuildFile; productRef = EB208DBF6080158B84F162F0 /* BroadUIFlows */; };
 		26B21837FF330B33623F7BE5 /* ExampleRestoreRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA9709135BF3A9D0CFD7B6A1 /* ExampleRestoreRepository.swift */; };
+		28C55B3D607E2CAB8F1EFE39 /* ExampleScenarioCatalogViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471EB57C47361B4D8E62DF6A /* ExampleScenarioCatalogViews.swift */; };
 		2FD632F0CFD1D0AAE08F893D /* ExampleEntitlementDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7564BFD81898CDFB2DF3C782 /* ExampleEntitlementDependencies.swift */; };
+		3287CE8C2DE5D31EC0163766 /* AppCompositionRoot+Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00228E8DCB28EE4A2058F45 /* AppCompositionRoot+Runtime.swift */; };
 		34BCFA057627EC4444B0A20E /* ExampleBootstrapScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A790FC5BECE9AC122C1C0 /* ExampleBootstrapScenario.swift */; };
+		36CA49572299FC9F11A87889 /* ExampleTokenBalanceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3113175E40FB6377F9F178EA /* ExampleTokenBalanceViewModel.swift */; };
 		37E354E1CAF56B8391EF0160 /* BroadMonetization in Frameworks */ = {isa = PBXBuildFile; productRef = 9346EA10BD51FB5F8A5E81E2 /* BroadMonetization */; };
 		3C4CDC89275F31C17A5A7F2C /* AppTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C818852FDD05DF45AC5B0F /* AppTokens.swift */; };
 		3FAF43ED645228FF46818F0F /* ExampleCheckoutMethodsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7CEC7858FB14F6B01924914 /* ExampleCheckoutMethodsUseCase.swift */; };
@@ -34,9 +39,13 @@
 		A01EE16BEB6BE1C854E8AE68 /* ExampleRecordingMonetizationAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = C22EA39CEAB3EE9F1E22C007 /* ExampleRecordingMonetizationAnalytics.swift */; };
 		A4EDDC3CC6FB2A4C8F25644C /* BroadCore in Frameworks */ = {isa = PBXBuildFile; productRef = 8DEEF7DDD522106524D1E6BD /* BroadCore */; };
 		AA81F590A719281F994B0FD1 /* ExampleMonetizationAnalyticsAssembly.swift in Sources */ = {isa = PBXBuildFile; fileRef = C481F59B832343DCA5D34960 /* ExampleMonetizationAnalyticsAssembly.swift */; };
+		B670BD3A2CBEB6CDCC81A1B4 /* ExampleTokenFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD06EE31AC87357CE6339E89 /* ExampleTokenFixtures.swift */; };
+		B6D0697CBE4853DF5A39B4C5 /* ExampleDebugStorageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CC1621332F4C3B9AA338D59 /* ExampleDebugStorageViewModel.swift */; };
+		C996C80453AAAD486B8642BC /* ExampleLaunchScenarios.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58A1C8F0E3F91CB480ADCE0F /* ExampleLaunchScenarios.swift */; };
 		CFE51D6A6962A7FD82BDD483 /* AppFlowSceneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394ADF80EF0BE0E024EF50D4 /* AppFlowSceneViewModel.swift */; };
 		D913D2853FA1976152CCB421 /* ExampleRemoteFeatureFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB76A88D40D6F47F28616AE /* ExampleRemoteFeatureFixtures.swift */; };
 		DDA95ED4A32456DFDC046D14 /* ExampleMonetizationEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17795A9CD24E5D2C8B86B6FD /* ExampleMonetizationEnvironment.swift */; };
+		E0AF617DAE8316BDE0968663 /* ExampleDebugScenariosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A85C7CBC88C9E69E09CBE4F /* ExampleDebugScenariosView.swift */; };
 		E2B81E9B3192F4250FBCEB03 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6FE4454F3C4C757862E38D73 /* Swinject */; };
 		E354F08316F9C875F1012FA1 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045597B892558EA1B0A581B6 /* RootView.swift */; };
 		E8C9CF0577D1DB7F8D0FA490 /* AppCompositionRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B8293BB2C9F339E61CD240 /* AppCompositionRoot.swift */; };
@@ -50,16 +59,21 @@
 		0409C5D2EE1382A900A320F2 /* ExampleMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleMainView.swift; sourceTree = "<group>"; };
 		045597B892558EA1B0A581B6 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		060A21470E9598E252B9E52C /* ExampleRUSubscriptionFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRUSubscriptionFixtures.swift; sourceTree = "<group>"; };
+		0A85C7CBC88C9E69E09CBE4F /* ExampleDebugScenariosView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleDebugScenariosView.swift; sourceTree = "<group>"; };
 		10B8293BB2C9F339E61CD240 /* AppCompositionRoot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCompositionRoot.swift; sourceTree = "<group>"; };
 		10D42FCA60C072A4AA86B3ED /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		17795A9CD24E5D2C8B86B6FD /* ExampleMonetizationEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleMonetizationEnvironment.swift; sourceTree = "<group>"; };
+		1CC1621332F4C3B9AA338D59 /* ExampleDebugStorageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleDebugStorageViewModel.swift; sourceTree = "<group>"; };
 		20BB088154A6ADED47B909C4 /* ExampleSpecialOfferFixtureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleSpecialOfferFixtureView.swift; sourceTree = "<group>"; };
 		24557321B5736BC1766E0C6B /* ExampleLiveAdaptyServicesFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLiveAdaptyServicesFactory.swift; sourceTree = "<group>"; };
 		295C03C6E505714DDEF4B5A8 /* ExampleRUPaymentSheetFixtureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRUPaymentSheetFixtureView.swift; sourceTree = "<group>"; };
+		3113175E40FB6377F9F178EA /* ExampleTokenBalanceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenBalanceViewModel.swift; sourceTree = "<group>"; };
 		394ADF80EF0BE0E024EF50D4 /* AppFlowSceneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowSceneViewModel.swift; sourceTree = "<group>"; };
 		433F40BAC4673550C5998708 /* ExampleAnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAnalyticsViewModel.swift; sourceTree = "<group>"; };
 		454602F0D2DA0BB1EBC9EB23 /* BroadAppsIOSPlatform */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BroadAppsIOSPlatform; path = ../..; sourceTree = SOURCE_ROOT; };
+		471EB57C47361B4D8E62DF6A /* ExampleScenarioCatalogViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleScenarioCatalogViews.swift; sourceTree = "<group>"; };
 		50D947D3645D2242AC025B52 /* BootstrapStatusCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootstrapStatusCardView.swift; sourceTree = "<group>"; };
+		58A1C8F0E3F91CB480ADCE0F /* ExampleLaunchScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLaunchScenarios.swift; sourceTree = "<group>"; };
 		5D194C5A9595702537E10E7D /* ExampleCustomOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleCustomOnboardingView.swift; sourceTree = "<group>"; };
 		6136B1A9E4165793F8B71A77 /* ExampleOnboardingMediaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleOnboardingMediaView.swift; sourceTree = "<group>"; };
 		646DA71F9FDF90A576EC636D /* Adapty5109Codex.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Adapty5109Codex.xcconfig; sourceTree = "<group>"; };
@@ -71,15 +85,19 @@
 		80FD881F097C5432B8523241 /* Scalable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scalable.swift; sourceTree = "<group>"; };
 		810D99B643B65934553892DE /* DebugKeychainCleaner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugKeychainCleaner.swift; sourceTree = "<group>"; };
 		862C137AC05F83C6A4ECAD0F /* ModuleCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModuleCardView.swift; sourceTree = "<group>"; };
+		988A580014DF88FF160F1A51 /* ExampleContactUsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleContactUsView.swift; sourceTree = "<group>"; };
 		A3D4EFF7873704D08894037A /* ExampleSpecialOfferFixtureViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleSpecialOfferFixtureViewModel.swift; sourceTree = "<group>"; };
 		B1C818852FDD05DF45AC5B0F /* AppTokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTokens.swift; sourceTree = "<group>"; };
 		BBBEEE2E4F93FA2DAED58CCC /* Adapty5013.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Adapty5013.xcconfig; sourceTree = "<group>"; };
+		BD06EE31AC87357CE6339E89 /* ExampleTokenFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenFixtures.swift; sourceTree = "<group>"; };
 		C09A790FC5BECE9AC122C1C0 /* ExampleBootstrapScenario.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleBootstrapScenario.swift; sourceTree = "<group>"; };
 		C22EA39CEAB3EE9F1E22C007 /* ExampleRecordingMonetizationAnalytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRecordingMonetizationAnalytics.swift; sourceTree = "<group>"; };
 		C481F59B832343DCA5D34960 /* ExampleMonetizationAnalyticsAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleMonetizationAnalyticsAssembly.swift; sourceTree = "<group>"; };
 		C7CEC7858FB14F6B01924914 /* ExampleCheckoutMethodsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleCheckoutMethodsUseCase.swift; sourceTree = "<group>"; };
 		C8D146F0DF640114F27609D2 /* ExampleLiveAdaptyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLiveAdaptyConfiguration.swift; sourceTree = "<group>"; };
+		DC01266C00493ECF8D51B635 /* AppCompositionRoot+Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppCompositionRoot+Tokens.swift"; sourceTree = "<group>"; };
 		DEB76A88D40D6F47F28616AE /* ExampleRemoteFeatureFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRemoteFeatureFixtures.swift; sourceTree = "<group>"; };
+		F00228E8DCB28EE4A2058F45 /* AppCompositionRoot+Runtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppCompositionRoot+Runtime.swift"; sourceTree = "<group>"; };
 		F452135168066F455E683A0B /* AppError+Example.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppError+Example.swift"; sourceTree = "<group>"; };
 		FA9709135BF3A9D0CFD7B6A1 /* ExampleRestoreRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRestoreRepository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +127,7 @@
 				DEB76A88D40D6F47F28616AE /* ExampleRemoteFeatureFixtures.swift */,
 				FA9709135BF3A9D0CFD7B6A1 /* ExampleRestoreRepository.swift */,
 				060A21470E9598E252B9E52C /* ExampleRUSubscriptionFixtures.swift */,
+				BD06EE31AC87357CE6339E89 /* ExampleTokenFixtures.swift */,
 			);
 			path = Monetization;
 			sourceTree = "<group>";
@@ -151,6 +170,8 @@
 			isa = PBXGroup;
 			children = (
 				10B8293BB2C9F339E61CD240 /* AppCompositionRoot.swift */,
+				F00228E8DCB28EE4A2058F45 /* AppCompositionRoot+Runtime.swift */,
+				DC01266C00493ECF8D51B635 /* AppCompositionRoot+Tokens.swift */,
 				73BB3DBB72E0BE398EDA8945 /* BroadAppTemplateApp.swift */,
 				A3D4EFF7873704D08894037A /* ExampleSpecialOfferFixtureViewModel.swift */,
 			);
@@ -207,9 +228,15 @@
 			children = (
 				50D947D3645D2242AC025B52 /* BootstrapStatusCardView.swift */,
 				433F40BAC4673550C5998708 /* ExampleAnalyticsViewModel.swift */,
+				988A580014DF88FF160F1A51 /* ExampleContactUsView.swift */,
+				0A85C7CBC88C9E69E09CBE4F /* ExampleDebugScenariosView.swift */,
+				1CC1621332F4C3B9AA338D59 /* ExampleDebugStorageViewModel.swift */,
+				58A1C8F0E3F91CB480ADCE0F /* ExampleLaunchScenarios.swift */,
 				0409C5D2EE1382A900A320F2 /* ExampleMainView.swift */,
 				295C03C6E505714DDEF4B5A8 /* ExampleRUPaymentSheetFixtureView.swift */,
+				471EB57C47361B4D8E62DF6A /* ExampleScenarioCatalogViews.swift */,
 				20BB088154A6ADED47B909C4 /* ExampleSpecialOfferFixtureView.swift */,
+				3113175E40FB6377F9F178EA /* ExampleTokenBalanceViewModel.swift */,
 				862C137AC05F83C6A4ECAD0F /* ModuleCardView.swift */,
 				045597B892558EA1B0A581B6 /* RootView.swift */,
 				6AA50B24FA1857648F5CE8FA /* RootViewModel.swift */,
@@ -353,6 +380,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3287CE8C2DE5D31EC0163766 /* AppCompositionRoot+Runtime.swift in Sources */,
+				0A787C5040A0F19289FC65D2 /* AppCompositionRoot+Tokens.swift in Sources */,
 				E8C9CF0577D1DB7F8D0FA490 /* AppCompositionRoot.swift in Sources */,
 				0FDDACE135D487CAF48C7B6E /* AppConfiguration.swift in Sources */,
 				FD36C221BCECD6510113CEE6 /* AppError+Example.swift in Sources */,
@@ -365,8 +394,12 @@
 				5FB5212E7D593D97CC2616C3 /* ExampleAnalyticsViewModel.swift in Sources */,
 				34BCFA057627EC4444B0A20E /* ExampleBootstrapScenario.swift in Sources */,
 				3FAF43ED645228FF46818F0F /* ExampleCheckoutMethodsUseCase.swift in Sources */,
+				16834107BE9587FFDD100D82 /* ExampleContactUsView.swift in Sources */,
 				54FCC8C40F35AF3A5799AF37 /* ExampleCustomOnboardingView.swift in Sources */,
+				E0AF617DAE8316BDE0968663 /* ExampleDebugScenariosView.swift in Sources */,
+				B6D0697CBE4853DF5A39B4C5 /* ExampleDebugStorageViewModel.swift in Sources */,
 				2FD632F0CFD1D0AAE08F893D /* ExampleEntitlementDependencies.swift in Sources */,
+				C996C80453AAAD486B8642BC /* ExampleLaunchScenarios.swift in Sources */,
 				90D57063D86A085F665ED071 /* ExampleLiveAdaptyConfiguration.swift in Sources */,
 				901AC49FDCF16292CE1AC756 /* ExampleLiveAdaptyServicesFactory.swift in Sources */,
 				0B61AB392E367CA07AE3D947 /* ExampleMainView.swift in Sources */,
@@ -379,8 +412,11 @@
 				A01EE16BEB6BE1C854E8AE68 /* ExampleRecordingMonetizationAnalytics.swift in Sources */,
 				D913D2853FA1976152CCB421 /* ExampleRemoteFeatureFixtures.swift in Sources */,
 				26B21837FF330B33623F7BE5 /* ExampleRestoreRepository.swift in Sources */,
+				28C55B3D607E2CAB8F1EFE39 /* ExampleScenarioCatalogViews.swift in Sources */,
 				F8A23DE3626A3E260D873EDC /* ExampleSpecialOfferFixtureView.swift in Sources */,
 				1440F58CD73EFF7C509BF47C /* ExampleSpecialOfferFixtureViewModel.swift in Sources */,
+				36CA49572299FC9F11A87889 /* ExampleTokenBalanceViewModel.swift in Sources */,
+				B670BD3A2CBEB6CDCC81A1B4 /* ExampleTokenFixtures.swift in Sources */,
 				882BB02ECF3BB2BF9D6B2B07 /* ModuleCardView.swift in Sources */,
 				E354F08316F9C875F1012FA1 /* RootView.swift in Sources */,
 				593D835FA8F40278DDAF6241 /* RootViewModel.swift in Sources */,
@@ -396,6 +432,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_BroadAppsFixtureOnly = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Broad Platform";
@@ -410,6 +447,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.broadapps.platform.template;
 				PRODUCT_NAME = BroadAppTemplate;
 				SDKROOT = iphoneos;
@@ -550,6 +588,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Configuration/LiveAdaptyInfo.plist;
 				INFOPLIST_KEY_BroadAppsFixtureOnly = YES;
@@ -565,6 +604,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BROADAPPS_LIVE_ADAPTY_BUNDLE_ID)";
 				PRODUCT_NAME = BroadAppTemplate;
 				SDKROOT = iphoneos;
@@ -645,6 +685,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_BroadAppsFixtureOnly = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Broad Platform";
@@ -659,6 +700,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.broadapps.platform.template;
 				PRODUCT_NAME = BroadAppTemplate;
 				SDKROOT = iphoneos;
@@ -740,6 +782,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Configuration/LiveAdaptyInfo.plist;
 				INFOPLIST_KEY_BroadAppsFixtureOnly = YES;
@@ -755,6 +798,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "$(BROADAPPS_LIVE_ADAPTY_BUNDLE_ID)";
 				PRODUCT_NAME = BroadAppTemplate;
 				SDKROOT = iphoneos;

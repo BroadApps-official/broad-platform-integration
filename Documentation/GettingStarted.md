@@ -339,7 +339,10 @@ handle — opaque `ProductReference`. Cached handle rehydration требует e
 variation + provider index + SKU + opaque commercial fingerprint (включая
 price/period/offer terms); mismatch завершается safe failure до charge. Standard
 premium purchase use case не покупает consumables: для tokens нужен отдельный
-host-owned durable exactly-once fulfillment flow.
+host-owned durable exactly-once fulfillment flow. Готовые
+`BroadTokenPaywallViewModel` и `BroadTokenPaywallView` загружают только `.tokens`,
+покупают через `TokenPurchaseManager` и передают наружу лишь backend-confirmed
+`TokenBalanceSnapshot`. [Полный token paywall guide →](TokenPaywall.md).
 
 ### StoreKit updates и recovery
 
@@ -496,7 +499,7 @@ let progressRepository = KeyValueAppFlowProgressRepository(
 let coordinator = AppFlowCoordinator(
     configuration: AppFlowConfiguration(
         onboarding: .enabled,
-        initialPaywall: .enabled(allowsClose: true)
+        initialPaywall: .onceAfterOnboarding(allowsClose: true)
     ),
     progressRepository: progressRepository,
     entitlementStatusProvider: entitlementEngine

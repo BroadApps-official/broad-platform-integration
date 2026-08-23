@@ -7,12 +7,7 @@ struct BroadAppTemplateApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if let specialOfferFixtureViewModel = compositionRoot
-                .specialOfferFixtureViewModel {
-                ExampleSpecialOfferFixtureView(
-                    viewModel: specialOfferFixtureViewModel
-                )
-            } else if ProcessInfo.processInfo.arguments.contains("-ru-payment-sheet") {
+            if ProcessInfo.processInfo.arguments.contains("-ru-payment-sheet") {
                 ExampleRUPaymentSheetFixtureView(initialMethod: .sbp)
             } else if ProcessInfo.processInfo.arguments.contains(
                 "-ru-payment-sheet-apple"
@@ -42,6 +37,9 @@ struct BroadAppTemplateApp: App {
                 sceneViewModel: compositionRoot.appFlowSceneViewModel,
                 onboardingViewModel: compositionRoot.onboardingViewModel,
                 paywallViewModel: compositionRoot.paywallViewModel,
+                catalogSpecialOfferViewModel: compositionRoot.catalogSpecialOfferViewModel,
+                tokenPaywallViewModel: compositionRoot.tokenPaywallViewModel,
+                tokenBalanceViewModel: compositionRoot.tokenBalanceViewModel,
                 rootViewModel: compositionRoot.rootViewModel,
                 analyticsViewModel: compositionRoot.analyticsViewModel,
                 debugSettingsViewModel: compositionRoot.debugSettingsViewModel
@@ -52,6 +50,9 @@ struct BroadAppTemplateApp: App {
                 sceneViewModel: compositionRoot.appFlowSceneViewModel,
                 onboardingViewModel: compositionRoot.onboardingViewModel,
                 paywallViewModel: compositionRoot.paywallViewModel,
+                catalogSpecialOfferViewModel: compositionRoot.catalogSpecialOfferViewModel,
+                tokenPaywallViewModel: compositionRoot.tokenPaywallViewModel,
+                tokenBalanceViewModel: compositionRoot.tokenBalanceViewModel,
                 rootViewModel: compositionRoot.rootViewModel,
                 analyticsViewModel: compositionRoot.analyticsViewModel
             )

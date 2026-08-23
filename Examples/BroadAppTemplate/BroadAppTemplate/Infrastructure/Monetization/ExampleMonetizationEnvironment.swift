@@ -12,10 +12,13 @@ struct ExampleMonetizationEnvironment {
     let resolveSpecialOffer: (any ResolveSpecialOfferUseCaseProtocol)?
 
     init(
-        arguments: [String] = ProcessInfo.processInfo.arguments
+        arguments: [String] = ProcessInfo.processInfo.arguments,
+        logger: any BroadLoggerProtocol = NoOpBroadLogger()
     ) {
         let accessState = ExamplePremiumAccessState()
-        let analyticsRecorder = ExampleRecordingMonetizationAnalytics()
+        let analyticsRecorder = ExampleRecordingMonetizationAnalytics(
+            logger: logger
+        )
         let analytics = ExampleMonetizationAnalyticsAssembly.make(
             recorder: analyticsRecorder
         )

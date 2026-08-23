@@ -65,11 +65,13 @@ example, запустить соответствующий fixture и убеди
 
 | Light / dark пара | Что объясняет |
 |---|---|
+| `full-flow-*.svg` | как обычный main отделён от premium: route выбирает flow policy, premium открывает только active entitlement |
 | `project-inputs-*.svg` | как метка `no-code` в карточке Kaiten определяет источник интерфейса и как временные данные заменяются перед выпуском |
 | `composition-root-*.svg` | как собрать зависимости в одном месте и какие ограничители безопасности должны быть единственными в приложении |
 | `no-code-agent-workflow-*.svg` | что делает разработчик и что делает Codex/Claude при создании no-code-приложения |
 | `no-code-manual-workflow-*.svg` | полный ручной no-code-маршрут от Kaiten и согласованного дизайна до проверенных сборок |
 | `agent-click-path-*.svg` | на какие элементы Finder и Codex/Claude нажать, чтобы открыть правильную папку, передать материалы и запустить разработку |
+| `app-delivery-iterations-*.svg` | почему функциональный PASS и визуальная сверка являются разными итерациями, а QA начинается только после self-review |
 
 Цвета фиксированы общей легендой:
 
@@ -89,9 +91,10 @@ xcrun swift Documentation/Diagrams/generate_readme_gifs.swift
 ```
 
 Результаты записываются в `Documentation/Assets/README/full-flow.gif` и
-`adaptive-paywall.gif`. Для этих двух анимаций отдельные статические
-light/dark SVG больше не хранятся: актуальное состояние показывают GIF, а
-точное поведение и ограничения описаны текстом в README и документации.
+`adaptive-paywall.gif`. Для first-run flow дополнительно хранится пара
+`full-flow-light.svg` / `full-flow-dark.svg`: README показывает статическую
+схему сразу, а GIF открывается по желанию. `adaptive-paywall.gif` остаётся без
+отдельной SVG-пары. Точное поведение и ограничения также описаны текстом.
 
 Изменив анимацию, обновите Swift-генератор и соответствующий GIF, затем
 проверьте внутренние ссылки. Для остальных схем обновляйте Mermaid source или

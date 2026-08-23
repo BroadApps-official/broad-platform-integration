@@ -1,6 +1,7 @@
 import BroadMonetization
 import BroadUIFlows
 import Foundation
+import UIKit
 
 enum AppConfiguration {
     struct CacheFixture {
@@ -51,20 +52,20 @@ enum AppConfiguration {
             || arguments.contains("-live-adapty") {
             return AppFlowConfiguration(
                 onboarding: .disabled,
-                initialPaywall: .enabled(allowsClose: true)
+                initialPaywall: initialPaywallPolicy(arguments: arguments)
             )
         }
 
         if !onboardingScenario.isEnabled {
             return AppFlowConfiguration(
                 onboarding: .disabled,
-                initialPaywall: .enabled(allowsClose: true)
+                initialPaywall: initialPaywallPolicy(arguments: arguments)
             )
         }
 
         return AppFlowConfiguration(
             onboarding: .enabled,
-            initialPaywall: .enabled(allowsClose: true)
+            initialPaywall: initialPaywallPolicy(arguments: arguments)
         )
     }()
 
@@ -116,6 +117,12 @@ enum AppConfiguration {
     static let privacyPolicyURL = legalURL(path: "privacy")
     static let termsOfUseURL = legalURL(path: "terms")
     static let appFlowProgressKeyPrefix: String = {
+        if ProcessInfo.processInfo.arguments.contains("-initial-paywall-every-cold-launch") {
+            return "broad-app-template.app-flow.paywall-policy.every-cold-launch"
+        }
+        if ProcessInfo.processInfo.arguments.contains("-initial-paywall-disabled") {
+            return "broad-app-template.app-flow.paywall-policy.disabled"
+        }
         if ProcessInfo.processInfo.arguments.contains("-analytics-fixture") {
             return "broad-app-template.app-flow.analytics-fixture"
         }
@@ -136,6 +143,8 @@ enum AppConfiguration {
     }()
 
     static let loggingSubsystem: StaticString = "com.broadapps.platform.template"
+    static let supportEmailRecipient = "support@example.com"
+    static let supportAppStoreVersion = "1.0.0"
     #if DEBUG
         static let debugKeychainServiceNames = [
             "com.broadapps.platform.template.credentials",
@@ -159,11 +168,69 @@ enum AppConfiguration {
         value: ExampleCachedConfiguration(source: "Сохранённая локальная конфигурация запуска")
     )
 
+    @MainActor
+    static var supportEmailRequest: BroadSupportEmailRequest? {
+        let bundle = Bundle.main
+        let installedVersion = bundle.object(
+            forInfoDictionaryKey: "CFBundleShortVersionString"
+        ) as? String ?? "unknown"
+        let buildNumber = bundle.object(
+            forInfoDictionaryKey: "CFBundleVersion"
+        ) as? String ?? "unknown"
+        let supportLog = """
+        [INPUT] Contact Us открыт пользователем
+        [FLOW] route=contact-us; composer=checked
+        [PASS] Очищенный fixture support log сформирован
+        """
+        let configuration = BroadSupportEmailConfiguration(
+            recipient: supportEmailRecipient,
+            subject: "BroadAppTemplate Support",
+            greeting: .standard,
+            appName: "BroadAppTemplate",
+            appStoreVersion: supportAppStoreVersion,
+            installedVersion: installedVersion,
+            buildNumber: buildNumber,
+            bundleIdentifier: bundle.bundleIdentifier ?? "unknown",
+            systemVersion: UIDevice.current.systemVersion,
+            deviceModel: UIDevice.current.model,
+            localeIdentifier: Locale.current.identifier,
+            timeZoneIdentifier: TimeZone.current.identifier,
+            adaptyProfileID: "fixture-profile",
+            backendUserID: "fixture-user",
+            subscriptionStatus: "not_subscribed",
+            supportLogData: Data(supportLog.utf8)
+        )
+        return BroadSupportEmailRequestBuilder.makeRequest(
+            configuration: configuration
+        )
+    }
+
     private static func legalURL(path: String) -> URL {
         guard let url = URL(string: "https://example.com/\(path)") else {
             preconditionFailure("Example legal URL must be valid")
         }
         return url
+    }
+
+    private static func initialPaywallPolicy(
+        arguments: [String]
+    ) -> AppFlowInitialPaywallPolicy {
+        let usesEveryColdLaunch = arguments.contains(
+            "-initial-paywall-every-cold-launch"
+        )
+        let isDisabled = arguments.contains("-initial-paywall-disabled")
+        precondition(
+            !usesEveryColdLaunch || !isDisabled,
+            "Use at most one initial-paywall policy launch argument"
+        )
+
+        if usesEveryColdLaunch {
+            return .everyColdLaunchWhileInactive(allowsClose: true)
+        }
+        if isDisabled {
+            return .disabled
+        }
+        return .onceAfterOnboarding(allowsClose: true)
     }
 
     static func rootContent(for scenario: ExampleBootstrapScenario) -> RootContent {

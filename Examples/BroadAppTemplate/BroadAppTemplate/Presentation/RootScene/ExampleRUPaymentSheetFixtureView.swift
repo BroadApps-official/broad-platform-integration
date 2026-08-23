@@ -4,6 +4,8 @@ import SwiftUI
 
 struct ExampleRUPaymentSheetFixtureView: View {
     let initialMethod: CheckoutMethod
+    @State private var notice: ExampleRUPaymentNotice?
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         BroadPaymentMethodSheet(
@@ -20,9 +22,23 @@ struct ExampleRUPaymentSheetFixtureView: View {
             copy: .russian,
             ruConfiguration: AppConfiguration.paywallConfiguration.ruBilling,
             theme: AppTokens.paywallTheme,
-            onSubmit: { _, _ in },
-            onCancel: {}
+            onSubmit: { method, _ in
+                notice = ExampleRUPaymentNotice(
+                    title: "Безопасный fixture",
+                    message: "Выбран способ «\(method.fixtureTitle)». Настоящий платёж не запускался."
+                )
+            },
+            onCancel: { dismiss() }
         )
+        .alert(item: $notice) { notice in
+            Alert(
+                title: Text(notice.title),
+                message: Text(notice.message),
+                dismissButton: .default(Text("Закрыть")) {
+                    dismiss()
+                }
+            )
+        }
     }
 
     private static let monthlyProduct = MonetizationProduct(
@@ -37,4 +53,21 @@ struct ExampleRUPaymentSheetFixtureView: View {
         subscriptionPeriod: .month(),
         catalogSource: .ruBackend
     )
+}
+
+private struct ExampleRUPaymentNotice: Identifiable {
+    let id = UUID()
+    let title: String
+    let message: String
+}
+
+private extension CheckoutMethod {
+    var fixtureTitle: String {
+        switch self {
+        case .apple: "Apple"
+        case .sbp: "СБП"
+        case .card: "Банковская карта"
+        @unknown default: rawValue
+        }
+    }
 }

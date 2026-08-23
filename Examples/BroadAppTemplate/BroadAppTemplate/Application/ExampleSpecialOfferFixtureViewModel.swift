@@ -33,8 +33,13 @@ final class ExampleSpecialOfferFixtureViewModel: ObservableObject {
     }
 
     func loadIfNeeded() async {
+        _ = await resolveIfNeeded()
+    }
+
+    @discardableResult
+    func resolveIfNeeded() async -> Bool {
         guard !hasLoaded else {
-            return
+            return paywallViewModel != nil
         }
         hasLoaded = true
 
@@ -46,7 +51,7 @@ final class ExampleSpecialOfferFixtureViewModel: ObservableObject {
             statusTitle = "Special Offer не открылся"
             statusMessage = Self.explanation(for: resolution.state)
             logResult(scenario: scenario, state: resolution.state, paywall: nil)
-            return
+            return false
         }
 
         paywallViewModel = makePaywallViewModel(
@@ -55,6 +60,7 @@ final class ExampleSpecialOfferFixtureViewModel: ObservableObject {
         )
         isLoading = false
         logResult(scenario: scenario, state: resolution.state, paywall: paywall)
+        return true
     }
 }
 
@@ -108,14 +114,74 @@ private extension ExampleSpecialOfferFixtureViewModel {
         paywall: PaywallPayload?
     ) {
         logger.log(
-            .remoteFeatureFixtureEvaluated(
-                scenario: scenario.rawValue,
-                state: String(describing: state),
-                requestedPlacement: paywall?.origin.requestedPlacementID.rawValue,
-                resolvedPlacement: paywall?.origin.resolvedPlacementID.rawValue,
-                variation: paywall?.variationID?.rawValue,
-                provenance: paywall?.remoteConfigurationProvenance.rawValue
+            .remoteFeatureFixtureResolved(
+                scenario: scenario.logValue,
+                resolution: state.logResolution(hasPaywall: paywall != nil),
+                requestedPlacement: Self.logPlacement(
+                    paywall?.origin.requestedPlacementID
+                ),
+                resolvedPlacement: Self.logPlacement(
+                    paywall?.origin.resolvedPlacementID
+                ),
+                hasVariation: paywall?.variationID != nil,
+                provenance: paywall?.remoteConfigurationProvenance.logValue
             )
         )
+    }
+
+    static func logPlacement(
+        _ placement: PlacementID?
+    ) -> BroadLogPlacement? {
+        guard let placement else {
+            return nil
+        }
+
+        switch placement {
+        case .main: return .main
+        case .specialOffer: return .specialOffer
+        case .tokens: return .tokens
+        default: return .other
+        }
+    }
+}
+
+private extension ExampleRemoteFeatureScenario {
+    var logValue: BroadLogRemoteFeatureFixtureScenario {
+        switch self {
+        case .specialOfferEnabled: .specialOfferEnabled
+        case .specialOfferDisabled: .specialOfferDisabled
+        case .specialOfferPlatformCache: .specialOfferPlatformCache
+        case .specialOfferMainFallback: .specialOfferMainFallback
+        case .specialOfferTimed: .specialOfferTimed
+        case .ruPayProviderEnabled: .ruPayProviderEnabled
+        case .ruPayPlatformCache: .ruPayPlatformCache
+        }
+    }
+}
+
+private extension SpecialOfferState {
+    func logResolution(
+        hasPaywall: Bool
+    ) -> BroadLogRemoteFeatureResolution {
+        if hasPaywall {
+            return .presented
+        }
+
+        switch self {
+        case .expired: return .expired
+        case .cooldown: return .cooldown
+        case .eligible, .active, .unavailable: return .unavailable
+        }
+    }
+}
+
+private extension PaywallRemoteConfigurationProvenance {
+    var logValue: BroadLogRemoteConfigurationProvenance {
+        switch self {
+        case .verifiedFreshRemote: .verifiedFreshRemote
+        case .providerCacheFallbackPossible: .providerCacheFallbackPossible
+        case .platformCache: .platformCache
+        case .legacyUnqualified: .legacyUnqualified
+        }
     }
 }

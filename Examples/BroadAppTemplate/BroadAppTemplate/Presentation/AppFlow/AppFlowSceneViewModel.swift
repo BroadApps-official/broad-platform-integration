@@ -1,5 +1,7 @@
+import BroadCore
 import BroadMonetization
 import BroadUIFlows
+import Combine
 import Foundation
 
 struct AppFlowNotice: Identifiable, Equatable {
@@ -11,22 +13,36 @@ struct AppFlowNotice: Identifiable, Equatable {
 @MainActor
 final class AppFlowSceneViewModel: ObservableObject {
     @Published private(set) var legalURL: URL?
+    @Published private(set) var activeSpecialOfferViewModel: ExampleSpecialOfferFixtureViewModel?
+    @Published private(set) var isResolvingSpecialOffer = false
     @Published var notice: AppFlowNotice?
 
     private let coordinator: AppFlowCoordinator
     private let restorePurchases: any RestorePurchasesUseCaseProtocol
+    private let specialOfferViewModel: ExampleSpecialOfferFixtureViewModel?
+    private let logger: any BroadLoggerProtocol
     private var restoreTask: Task<Void, Never>?
+    private var specialOfferTask: Task<Void, Never>?
+    private var routeObservation: AnyCancellable?
+    private var lastLoggedRoute: AppFlowRoute
 
     init(
         coordinator: AppFlowCoordinator,
-        restorePurchases: any RestorePurchasesUseCaseProtocol
+        restorePurchases: any RestorePurchasesUseCaseProtocol,
+        specialOfferViewModel: ExampleSpecialOfferFixtureViewModel?,
+        logger: any BroadLoggerProtocol = NoOpBroadLogger()
     ) {
         self.coordinator = coordinator
         self.restorePurchases = restorePurchases
+        self.specialOfferViewModel = specialOfferViewModel
+        self.logger = logger
+        lastLoggedRoute = coordinator.route
+        observeRoutes()
     }
 
     deinit {
         restoreTask?.cancel()
+        specialOfferTask?.cancel()
     }
 
     func onboardingCompleted() {
@@ -51,7 +67,45 @@ final class AppFlowSceneViewModel: ObservableObject {
     }
 
     func paywallClosed() {
+        guard specialOfferTask == nil else {
+            return
+        }
+        guard let specialOfferViewModel else {
+            coordinator.initialPaywallDismissed()
+            return
+        }
+
+        isResolvingSpecialOffer = true
+        specialOfferTask = Task { @MainActor [weak self, specialOfferViewModel] in
+            let shouldPresent = await specialOfferViewModel.resolveIfNeeded()
+            guard let self, !Task.isCancelled else {
+                return
+            }
+
+            specialOfferTask = nil
+            isResolvingSpecialOffer = false
+            if shouldPresent {
+                activeSpecialOfferViewModel = specialOfferViewModel
+                logger.log(
+                    .flowAdvanced(
+                        source: .initialPaywall,
+                        destination: .specialOffer
+                    )
+                )
+            } else {
+                coordinator.initialPaywallDismissed()
+            }
+        }
+    }
+
+    func specialOfferClosed() {
+        guard activeSpecialOfferViewModel != nil else {
+            return
+        }
+
+        activeSpecialOfferViewModel = nil
         coordinator.initialPaywallDismissed()
+        logger.log(.flowAdvanced(source: .specialOffer, destination: .main))
     }
 
     func paywallCompleted(
@@ -59,6 +113,7 @@ final class AppFlowSceneViewModel: ObservableObject {
     ) {
         switch completion {
         case .purchased, .restored:
+            activeSpecialOfferViewModel = nil
             coordinator.subscriptionDidBecomeActive()
         }
     }
@@ -100,6 +155,42 @@ final class AppFlowSceneViewModel: ObservableObject {
                 title: "Восстановление недоступно",
                 message: error.userMessage
             )
+        }
+    }
+
+    private func observeRoutes() {
+        routeObservation = coordinator.$route
+            .removeDuplicates()
+            .dropFirst()
+            .sink { [weak self] route in
+                self?.recordRouteTransition(to: route)
+            }
+    }
+
+    private func recordRouteTransition(
+        to route: AppFlowRoute
+    ) {
+        defer { lastLoggedRoute = route }
+        guard lastLoggedRoute != route else {
+            return
+        }
+        logger.log(
+            .flowAdvanced(
+                source: lastLoggedRoute.logStage,
+                destination: route.logStage
+            )
+        )
+    }
+}
+
+private extension AppFlowRoute {
+    var logStage: BroadLogFlowStage {
+        switch self {
+        case .launch: .launch
+        case .onboarding: .onboarding
+        case .initialPaywall: .initialPaywall
+        case .main: .main
+        @unknown default: .launch
         }
     }
 }

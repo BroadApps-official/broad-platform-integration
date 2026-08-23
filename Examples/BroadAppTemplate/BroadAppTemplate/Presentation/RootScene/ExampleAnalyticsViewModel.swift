@@ -4,27 +4,97 @@ import Foundation
 @MainActor
 final class ExampleAnalyticsViewModel: ObservableObject {
     @Published private(set) var events: [ExampleRecordedMonetizationEvent] = []
+    @Published private(set) var isRefreshing = false
+    @Published private(set) var isClearing = false
+    @Published private(set) var lastUpdatedAt: Date?
+    @Published private(set) var lastClearedEventCount: Int?
 
     private let recorder: ExampleRecordingMonetizationAnalytics
+    private var observationTask: Task<Void, Never>?
+    private var refreshTask: Task<Void, Never>?
+    private var resetTask: Task<Void, Never>?
 
     init(recorder: ExampleRecordingMonetizationAnalytics) {
         self.recorder = recorder
     }
 
-    func refresh() async {
-        let snapshot = await recorder.snapshot()
-        guard !Task.isCancelled else {
+    deinit {
+        observationTask?.cancel()
+        refreshTask?.cancel()
+        resetTask?.cancel()
+    }
+
+    func startObserving() {
+        guard observationTask == nil else {
             return
         }
-        events = snapshot
+
+        let recorder = recorder
+        observationTask = Task { @MainActor [weak self, recorder] in
+            let updates = await recorder.updates()
+            for await snapshot in updates {
+                guard let self, !Task.isCancelled else {
+                    return
+                }
+                apply(snapshot)
+            }
+        }
+    }
+
+    func refresh() async {
+        requestRefresh()
+        await refreshTask?.value
+    }
+
+    func requestRefresh() {
+        guard refreshTask == nil else {
+            return
+        }
+
+        isRefreshing = true
+        let recorder = recorder
+        refreshTask = Task { @MainActor [weak self, recorder] in
+            try? await Task.sleep(nanoseconds: 350_000_000)
+            let snapshot = await recorder.snapshot()
+            guard let self, !Task.isCancelled else {
+                return
+            }
+            refreshTask = nil
+            isRefreshing = false
+            apply(snapshot)
+        }
     }
 
     func reset() async {
-        await recorder.reset()
-        guard !Task.isCancelled else {
+        requestReset()
+        await resetTask?.value
+    }
+
+    func requestReset() {
+        guard resetTask == nil, !events.isEmpty else {
             return
         }
-        events = []
+
+        isClearing = true
+        lastClearedEventCount = nil
+        let recorder = recorder
+        resetTask = Task { @MainActor [weak self, recorder] in
+            let count = await recorder.reset()
+            guard let self, !Task.isCancelled else {
+                return
+            }
+            resetTask = nil
+            isClearing = false
+            lastClearedEventCount = count
+            apply([])
+        }
+    }
+
+    private func apply(
+        _ snapshot: [ExampleRecordedMonetizationEvent]
+    ) {
+        events = snapshot
+        lastUpdatedAt = Date()
     }
 }
 

@@ -13,10 +13,10 @@ launch ─→ onboarding ─→ initialPaywall ─→ main
 
 - `launch` — bootstrap/loader ещё не открыл первый продуктовый route.
 - `onboarding` — onboarding включён и ещё не завершён.
-- `initialPaywall` — первичный paywall включён, ещё не был разрешён, а entitlement точно `inactive`.
+- `initialPaywall` — выбранная политика требует первичный paywall, а entitlement точно `inactive`.
 - `main` — основной маршрут. В рамках обычной сессии это конечное состояние.
 
-Onboarding и initial paywall можно отключать независимо, поэтому ненужные шаги пропускаются. Например, вернувшийся пользователь с уже пройденным initial paywall перейдёт из `launch` сразу в `main`.
+Onboarding и initial paywall можно отключать независимо, поэтому ненужные шаги пропускаются. При политике `onceAfterOnboarding` вернувшийся пользователь с уже пройденным initial paywall перейдёт из `launch` сразу в `main`. При `everyColdLaunchWhileInactive` новый process снова проверит entitlement и покажет paywall только при подтверждённом `inactive`.
 
 `main` не переводится обратно в `initialPaywall` из-за позднего ответа SDK или смены entitlement. Премиальный content внутри `main` по-прежнему защищается актуальным entitlement, а повторные продажи при необходимости открываются отдельным placement/feature-flow.
 
@@ -27,12 +27,17 @@ Onboarding и initial paywall можно отключать независимо
 ```swift
 let fullFlow = AppFlowConfiguration(
     onboarding: .enabled,
-    initialPaywall: .enabled(allowsClose: false)
+    initialPaywall: .onceAfterOnboarding(allowsClose: false)
 )
 
-let closablePaywall = AppFlowConfiguration(
+let closableOncePaywall = AppFlowConfiguration(
     onboarding: .enabled,
-    initialPaywall: .enabled(allowsClose: true)
+    initialPaywall: .onceAfterOnboarding(allowsClose: true)
+)
+
+let everyColdLaunchPaywall = AppFlowConfiguration(
+    onboarding: .enabled,
+    initialPaywall: .everyColdLaunchWhileInactive(allowsClose: true)
 )
 
 let onboardingOnly = AppFlowConfiguration(
@@ -42,14 +47,16 @@ let onboardingOnly = AppFlowConfiguration(
 
 let paywallOnly = AppFlowConfiguration(
     onboarding: .disabled,
-    initialPaywall: .enabled(allowsClose: true)
+    initialPaywall: .onceAfterOnboarding(allowsClose: true)
 )
 
 let mainOnly: AppFlowConfiguration = .mainOnly
 ```
 
-- `.enabled(allowsClose: false)` — закрытие initial paywall не разрешено.
-- `.enabled(allowsClose: true)` — host может показать close-action и передать его в coordinator.
+- `.onceAfterOnboarding(allowsClose:)` — initial paywall разрешается один раз на установку; подтверждённый dismissal или active сохраняет checkpoint.
+- `.everyColdLaunchWhileInactive(allowsClose:)` — каждый новый process заново проверяет entitlement; dismissal пропускает paywall только в текущем запуске и не сохраняет permanent skip.
+- `.disabled` — initial paywall автоматически не показывается.
+- `allowsClose: false` запрещает close-action; `true` разрешает host передать закрытие в coordinator.
 - `.mainOnly` — оба шага отключены; coordinator переходит в `main` без чтения progress storage и entitlement provider.
 
 `AppFlowConfiguration` описывает только порядок экранов. Placement ID, продукты, backup-placement и доступность special offer принадлежат monetization-конфигурации приложения, а не AppFlow.
@@ -62,21 +69,21 @@ AppFlow хранит только монотонный прогресс:
 start → onboardingCompleted → initialPaywallResolved
 ```
 
-Назад checkpoint не откатывается. `initialPaywallResolved` означает, что одноразовый initial gate уже разрешён. Это не доказательство активной подписки.
+Назад checkpoint не откатывается. `initialPaywallResolved` означает, что одноразовый initial gate уже разрешён. Он используется только политикой `onceAfterOnboarding` и не является доказательством активной подписки. Политика `everyColdLaunchWhileInactive` намеренно игнорирует этот marker.
 
 Ниже показано решение state machine. Если статус помечен как «не читается», coordinator не вызывает entitlement provider.
 
-| Checkpoint | Условие конфига | Entitlement | Route | Что фиксируется |
+| Checkpoint | Политика | Entitlement | Route | Что фиксируется |
 |---|---|---|---|---|
 | `start` | onboarding включён | не читается | `onboarding` | ничего |
-| `start` | onboarding выключен, paywall включён | `active` | `main` | `initialPaywallResolved`, best-effort |
-| `start` | onboarding выключен, paywall включён | `inactive` | `initialPaywall` | ничего |
-| `start` | onboarding выключен, paywall включён | `unknown` | `main` | ничего |
-| `onboardingCompleted` | paywall включён | `active` | `main` | `initialPaywallResolved`, best-effort |
-| `onboardingCompleted` | paywall включён | `inactive` | `initialPaywall` | ничего |
-| `onboardingCompleted` | paywall включён | `unknown` | `main` | ничего |
-| `initialPaywallResolved` | paywall включён | не читается | `main` | ничего |
-| `onboardingCompleted` или `initialPaywallResolved` | paywall выключен | не читается | `main` | ничего |
+| `start` / `onboardingCompleted` | `onceAfterOnboarding` | `active` | `main` | `initialPaywallResolved`, best-effort |
+| `start` / `onboardingCompleted` | `onceAfterOnboarding` | `inactive` | `initialPaywall` | ничего |
+| `start` / `onboardingCompleted` | `onceAfterOnboarding` | `unknown` | `main` | ничего |
+| `initialPaywallResolved` | `onceAfterOnboarding` | не читается | `main` | ничего |
+| любой завершённый onboarding | `everyColdLaunchWhileInactive` | `active` | `main` | ничего |
+| любой завершённый onboarding | `everyColdLaunchWhileInactive` | `inactive` | `initialPaywall` | ничего |
+| любой завершённый onboarding | `everyColdLaunchWhileInactive` | `unknown` | `main` | ничего |
+| любой | `disabled` | не читается | `main` | ничего |
 
 Если оба шага выключены, `.mainOnly` открывает `main` синхронно. Если onboarding включён, он всегда завершается раньше initial paywall: даже уже активная подписка не прерывает onboarding.
 
@@ -153,7 +160,7 @@ Generic aggregation, bounded execution, cache, DI, StoreKit, основной ba
 Прогресс монотонен:
 
 - `onboardingCompleted` записывает onboarding-marker;
-- `initialPaywallResolved` сначала пытается записать onboarding-marker, затем paywall-marker; валидный paywall-marker сам по себе означает наивысший checkpoint;
+- `initialPaywallResolved` для `onceAfterOnboarding` сначала пытается записать onboarding-marker, затем paywall-marker; валидный paywall-marker сам по себе означает наивысший checkpoint;
 - `advance(to:)` после записи читает фактический checkpoint, поэтому dismissal/onboarding не проходят при неудавшейся записи;
 - запись `start` ничего не удаляет и не откатывает.
 
@@ -179,7 +186,7 @@ let coreAssembly = BroadCoreAssembly(
 | `startIfNeeded()` | После bootstrap `ready` или `degraded` | Один раз читает progress, при необходимости запрашивает entitlement и выбирает route |
 | `onboardingCompleted()` | После реального завершения onboarding | Сохраняет checkpoint; затем открывает paywall или `main` |
 | `subscriptionDidBecomeActive()` | Только после проверенного `active` от purchase/restore/entitlement refresh | Запоминает active в текущей сессии; пропускает initial paywall и фиксирует его best-effort |
-| `initialPaywallDismissed()` | Только по close-action при `allowsClose == true` | Сначала фиксирует checkpoint, затем открывает `main` |
+| `initialPaywallDismissed()` | Только по close-action при `allowsClose == true` | Для `onceAfterOnboarding` сначала фиксирует checkpoint; для `everyColdLaunchWhileInactive` открывает `main` только в текущем process |
 | `initialPaywallUnavailable()` | Monetization-слой не смог собрать initial paywall после своей fallback-policy | Открывает `main`, но не фиксирует paywall; следующий launch сможет повторить попытку |
 | `restart()` | Явный session reset | Отменяет текущий transition, сбрасывает route в `launch`, но не удаляет persistent progress и не запускает flow повторно сам |
 
@@ -195,13 +202,14 @@ appFlowCoordinator.subscriptionDidBecomeActive()
 
 Если `active` подтверждён во время onboarding, текущий onboarding не прерывается. Coordinator запоминает active для этой сессии. Когда onboarding реально завершается, flow идёт сразу в `main`, фиксирует initial paywall как разрешённый и не показывает его даже на один frame.
 
-Если `active` подтверждён на `initialPaywall`, flow сразу открывает `main`, а запись checkpoint завершается best-effort в фоне. Если запись не удалась, текущий доступ не откатывается, а следующий launch ещё раз проверит entitlement.
+Если `active` подтверждён на `initialPaywall`, flow сразу открывает `main`. Для `onceAfterOnboarding` запись checkpoint завершается best-effort в фоне; `everyColdLaunchWhileInactive` не создаёт permanent marker и на следующем cold launch снова проверяет entitlement.
 
 ## Правила dismissal и unavailable
 
 - Close-action нужно показывать только при `allowsClose == true`.
 - При `allowsClose == false` вызов `initialPaywallDismissed()` игнорируется, route остаётся `initialPaywall`.
-- При разрешённом close coordinator сначала записывает checkpoint. Если хранилище не подтвердило запись, `main` не открывается.
+- При разрешённом close и `onceAfterOnboarding` coordinator сначала записывает checkpoint. Если хранилище не подтвердило запись, `main` не открывается.
+- При разрешённом close и `everyColdLaunchWhileInactive` coordinator открывает `main` без paywall-marker; повторного показа в том же process нет, а следующий cold launch снова проверяет entitlement.
 - `initialPaywallUnavailable()` нужно вызывать после того, как monetization-слой исчерпал свою стратегию primary/backup placement. AppFlow не угадывает placement и не фильтрует продукты.
 - Unavailable открывает `main`, но не сохраняет `initialPaywallResolved`. При новом launch paywall можно попытаться загрузить снова.
 
@@ -267,7 +275,7 @@ final class AppCompositionRoot {
         appFlowCoordinator = AppFlowCoordinator(
             configuration: AppFlowConfiguration(
                 onboarding: .enabled,
-                initialPaywall: .enabled(allowsClose: true)
+                initialPaywall: .onceAfterOnboarding(allowsClose: true)
             ),
             progressRepository: progressRepository,
             entitlementStatusProvider: resolvedEntitlements
@@ -323,7 +331,7 @@ struct AppFlowRootView: View {
 }
 ```
 
-Конкретные onboarding/paywall/main screens, тексты, assets и токены принадлежат host app. AppFlow не придумывает app-specific UI и не требует Figma. `BroadAppTemplate` по умолчанию показывает полный flow с тремя onboarding-слайдами; `-app-flow-main-only` включает `.mainOnly`, а `-app-flow-paywall-only` отключает onboarding. Builders используют реальные `BroadOnboardingView`, `BroadPaywallView` и `ExampleMainView`.
+Конкретные onboarding/paywall/main screens, тексты, assets и токены принадлежат host app. AppFlow не придумывает app-specific UI и не требует Figma. `BroadAppTemplate` по умолчанию показывает полный flow с тремя onboarding-слайдами и `onceAfterOnboarding`; `-initial-paywall-every-cold-launch` включает повторный cold-launch сценарий, `-initial-paywall-disabled` отключает автоматический paywall, `-app-flow-main-only` включает `.mainOnly`, а `-app-flow-paywall-only` отключает onboarding. Builders используют реальные `BroadOnboardingView`, `BroadPaywallView` и `ExampleMainView`.
 
 ## Ручная acceptance-матрица
 
@@ -347,18 +355,22 @@ Routes визуально различаются. Фактическое зна�
 | 1 | `.mainOnly`, чистое state storage | Bootstrap переходит в `ready` | `launch → main`; storage и entitlement provider не читаются |
 | 2 | Full flow, `start`, любой entitlement | Вызвать `startIfNeeded()` | `launch → onboarding`; entitlement provider не вызывается |
 | 3 | Full flow, `onboardingCompleted`, `inactive` | Запустить flow | `launch → initialPaywall` |
-| 4 | Full flow, `onboardingCompleted`, `active` | Запустить flow | `launch → main` без frame paywall; paywall-marker записан |
+| 4 | `onceAfterOnboarding`, `onboardingCompleted`, `active` | Запустить flow | `launch → main` без frame paywall; paywall-marker записан |
 | 5 | Full flow, `onboardingCompleted`, `unknown` | Запустить flow | `launch → main`; premium не включён, paywall-marker не записан; новый process проверяет статус снова |
 | 6 | Full flow, `start` | Во время onboarding подтвердить restore, затем завершить onboarding | Onboarding не прерывается; после completion сразу `main`, без мерцания paywall |
 | 7 | Paywall `inactive`, `allowsClose: false` | Попытаться вызвать dismissal | Route остаётся `initialPaywall`, checkpoint не меняется |
-| 8 | Paywall `inactive`, `allowsClose: true` | Закрыть paywall | После подтверждённой записи checkpoint открывается `main`; новый process не показывает initial paywall |
+| 8 | `onceAfterOnboarding`, paywall `inactive`, `allowsClose: true` | Закрыть paywall | После подтверждённой записи checkpoint открывается `main`; новый process не показывает initial paywall |
 | 9 | Paywall `inactive` | Передать `initialPaywallUnavailable()` после monetization fallback | Открывается `main`, paywall-marker не записывается; новый process может повторить paywall |
-| 10 | Paywall показан | Подтвердить active после purchase/restore | `main` открывается сразу; checkpoint фиксируется best-effort |
+| 10 | Paywall показан | Подтвердить active после purchase/restore | `main` открывается сразу; для `onceAfterOnboarding` checkpoint фиксируется best-effort |
 | 11 | Flow уже на `main` | Provider/SDK позже сообщает inactive или завершается старый async-ответ | Нет обратного `main → initialPaywall`; premium-content реагирует через monetization entitlement |
 | 12 | Любой persistent checkpoint | Вызвать `restart()` | Route становится `launch`; markers не удаляются; нужен новый `startIfNeeded()` |
 | 13 | Bootstrap `failed` | Дождаться terminal bootstrap state | AppFlow остаётся в `launch`; после успешного retry и `ready/degraded` запускается один раз |
 | 14 | Onboarding включён | Открыть первый слайд, уйти назад и вернуться | ATT может быть запрошен только после первого фактического appearance и не более одного раза; Rate Us в onboarding отсутствует |
 | 15 | Повреждённый/невалидный marker или storage read error | Запустить flow | Невалидный marker не засчитывается; flow без crash выбирает более ранний checkpoint |
 | 16 | Storage не может записать marker | Завершить onboarding или закрыть closable paywall | Onboarding остаётся `onboarding`, dismissible paywall остаётся `initialPaywall`; переход не потеряется между process |
+| 17 | `everyColdLaunchWhileInactive`, `inactive` | Закрыть paywall и продолжить текущий process | Открывается `main`, paywall-marker не записывается, повторного показа в текущем process нет |
+| 18 | `everyColdLaunchWhileInactive`, `inactive` | Полностью остановить и снова запустить app | `initialPaywall` показывается снова |
+| 19 | Любая paywall policy, `active` | Сделать cold launch | Сразу `main`; subscription paywall не показывается |
+| 20 | `disabled`, любой checkpoint | Сделать cold launch | Сразу `main` после onboarding; entitlement для initial paywall не читается |
 
 Дополнительно проверьте, что transition не добавляет мерцание, затемнение или случайную animation на paywall/product button. Это ответственность конкретного paywall UI; `BroadAppFlowView` сам эффектов не добавляет.

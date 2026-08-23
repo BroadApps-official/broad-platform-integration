@@ -200,3 +200,27 @@ final class RootViewModel: ObservableObject {
         }
     }
 }
+
+extension RootViewModel.Content {
+    init(configuration: AppConfiguration.RootContent) {
+        self.init(
+            eyebrow: configuration.eyebrow,
+            title: configuration.title,
+            subtitle: configuration.subtitle,
+            coreDescription: configuration.coreDescription,
+            monetizationDescription: configuration.monetizationDescription,
+            uiFlowsDescription: configuration.uiFlowsDescription,
+            connectedDetail: configuration.connectedDetail,
+            adaptyLinkedDetail: configuration.adaptyLinkedDetail,
+            adaptyUnavailableDetail: configuration.adaptyUnavailableDetail,
+            loadingTitle: configuration.loadingTitle,
+            loadingMessage: configuration.loadingMessage,
+            readyTitle: configuration.readyTitle,
+            readyMessage: configuration.readyMessage,
+            degradedTitle: configuration.degradedTitle,
+            degradedMessage: configuration.degradedMessage,
+            failedTitle: configuration.failedTitle,
+            retryTitle: configuration.retryTitle
+        )
+    }
+}

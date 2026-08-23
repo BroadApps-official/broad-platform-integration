@@ -24,6 +24,50 @@ let result = await resolveSpecialOffer(configuration: appConfiguration.specialOf
 - fallback на `main`;
 - скрытого UI или default offer.
 
+## Ветка после закрытия initial paywall
+
+Если продукту нужен downsell-сценарий, host подключает resolver к закрытию
+обычного subscription paywall:
+
+```text
+обычный paywall закрыт без покупки
+              ↓
+SpecialOfferConfiguration существует?
+              ↓
+resolver проверяет текущий payload, provenance и remote gate
+              ↓
+paywall разрешён → special offer → close или verified active → main
+нет / disabled / unavailable ───────────────────────────────→ main
+```
+
+Обычный paywall сначала действительно закрывает provider presentation. Пока
+resolver работает, host показывает отдельный loader и блокирует повторный close.
+`initialPaywallDismissed()` вызывается только после отрицательного результата
+resolver-а или после закрытия самого special offer. Благодаря этому policy
+`onceAfterOnboarding` фиксирует завершение всей ветки, а
+`everyColdLaunchWhileInactive` пропускает её только в текущем process.
+
+Verified purchase/restore из special offer вызывает тот же
+`subscriptionDidBecomeActive()`, что и основной paywall. `pending`, cancellation,
+ошибка и непроверенное завершение premium не открывают.
+
+Один экземпляр flow-view-model выполняет resolution не более одного раза за
+process. Отрицательный результат не показывает промежуточный «пустой» экран и
+не создаёт цикл `main → paywall → offer`.
+
+`BroadAppTemplate` проверяет ветку безопасными аргументами:
+
+- `-special-offer-enabled` — offer открывается;
+- `-special-offer-disabled` — current remote gate ведёт прямо в `main`;
+- `-special-offer-main-fallback` — requested placement остаётся special offer,
+  resolved placement равен `main`;
+- `-special-offer-platform-cache` — platform cache не может включить offer;
+- `-special-offer-timed` — используется trusted fixture clock.
+
+Эти аргументы больше не обходят AppFlow отдельным стартовым экраном: сначала
+открывается обычный subscription paywall, затем проверяется реальная ветка
+закрытия. Настоящая покупка не запускается.
+
 ## Три обязательных условия
 
 Даже когда host-конфиг есть, offer не показывается автоматически. Нужны:

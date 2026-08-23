@@ -98,10 +98,10 @@ public final class AppFlowCoordinator: ObservableObject {
         case .initialPaywall:
             cancelTransition()
             route = stateMachine.subscriptionDidBecomeActive()
-            persistResolvedPaywall()
+            persistResolvedPaywallIfNeeded()
         case .main:
-            if !wasAlreadyConfirmed, configuration.initialPaywall != .disabled {
-                persistResolvedPaywall()
+            if !wasAlreadyConfirmed {
+                persistResolvedPaywallIfNeeded()
             }
         }
     }
@@ -112,6 +112,11 @@ public final class AppFlowCoordinator: ObservableObject {
             configuration.allowsInitialPaywallClose,
             !isTransitionInFlight
         else {
+            return
+        }
+
+        guard configuration.persistsInitialPaywallResolution else {
+            route = stateMachine.initialPaywallDismissed()
             return
         }
 
@@ -205,7 +210,9 @@ public final class AppFlowCoordinator: ObservableObject {
 
         route = resolvedRoute
 
-        if status == .active, resolvedRoute == .main {
+        if status == .active,
+           resolvedRoute == .main,
+           configuration.persistsInitialPaywallResolution {
             _ = await progressRepository.advance(to: .initialPaywallResolved)
             guard isCurrent(generation) else {
                 return
@@ -228,11 +235,15 @@ public final class AppFlowCoordinator: ObservableObject {
         route = resolvedRoute
 
         if resolvedRoute == .main {
-            persistResolvedPaywall()
+            persistResolvedPaywallIfNeeded()
         }
     }
 
-    private func persistResolvedPaywall() {
+    private func persistResolvedPaywallIfNeeded() {
+        guard configuration.persistsInitialPaywallResolution else {
+            return
+        }
+
         let generation = beginTransition()
         let repository = progressRepository
 

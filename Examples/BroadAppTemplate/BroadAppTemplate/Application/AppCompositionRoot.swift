@@ -13,7 +13,9 @@ final class AppCompositionRoot {
     let rootViewModel: RootViewModel
     let analyticsViewModel: ExampleAnalyticsViewModel
     let ruSubscriptionViewModel: BroadRUSubscriptionManagementViewModel
-    let specialOfferFixtureViewModel: ExampleSpecialOfferFixtureViewModel?
+    let catalogSpecialOfferViewModel: ExampleSpecialOfferFixtureViewModel
+    let tokenPaywallViewModel: BroadTokenPaywallViewModel
+    let tokenBalanceViewModel: ExampleTokenBalanceViewModel
     #if DEBUG
         let debugSettingsViewModel: ExampleDebugSettingsViewModel
     #endif
@@ -21,54 +23,111 @@ final class AppCompositionRoot {
     private let assembler: Assembler
 
     init() {
+        let runtime = Self.makeRuntime()
+        let tokenComposition = Self.makeTokenComposition(
+            environment: runtime.monetizationEnvironment,
+            logger: runtime.logger
+        )
+        assembler = runtime.assembler
+        appFlowCoordinator = runtime.composition.appFlowCoordinator
+        appFlowSceneViewModel = runtime.composition.appFlowSceneViewModel
+        onboardingViewModel = runtime.composition.onboardingViewModel
+        paywallViewModel = runtime.composition.paywallViewModel
+        rootViewModel = runtime.composition.rootViewModel
+        analyticsViewModel = ExampleAnalyticsViewModel(
+            recorder: runtime.monetizationEnvironment.analyticsRecorder
+        )
+        ruSubscriptionViewModel = Self.makeRUSubscriptionViewModel()
+        catalogSpecialOfferViewModel = Self.makeCatalogSpecialOfferViewModel(
+            logger: runtime.logger
+        )
+        tokenPaywallViewModel = tokenComposition.paywallViewModel
+        tokenBalanceViewModel = tokenComposition.balanceViewModel
+        #if DEBUG
+            debugSettingsViewModel = Self.makeDebugSettingsViewModel(
+                progressRepository: runtime.composition.progressRepository,
+                cacheRepository: runtime.cache.repository,
+                cacheKey: runtime.cache.key,
+                analyticsRecorder: runtime.monetizationEnvironment.analyticsRecorder
+            )
+        #endif
+    }
+}
+
+private extension AppCompositionRoot {
+    static func makeRuntime() -> CompositionRuntime {
         let scenario = AppConfiguration.bootstrapScenario
         let logger = OSLogBroadLogger(subsystem: AppConfiguration.loggingSubsystem)
         let cache = ExampleCacheDependencies(
             configuration: AppConfiguration.cacheFixture,
             logger: logger
         )
-        let bootstrapSteps = Self.makeBootstrapSteps(
-            scenario: scenario,
-            cache: cache
+        let monetizationEnvironment = ExampleMonetizationEnvironment(
+            logger: logger
         )
-        let rootContent = AppConfiguration.rootContent(for: scenario)
-        let monetizationEnvironment = ExampleMonetizationEnvironment()
-        let entitlementEngine = Self.makeEntitlementEngine(
+        let entitlementEngine = makeEntitlementEngine(
             logger: logger,
             analytics: monetizationEnvironment.analytics
-        )
-            ?? monetizationEnvironment.entitlementEngine
-        let assembler = Self.makeAssembler(
-            bootstrapSteps: bootstrapSteps,
+        ) ?? monetizationEnvironment.entitlementEngine
+        let assembler = makeAssembler(
+            bootstrapSteps: makeBootstrapSteps(scenario: scenario, cache: cache),
             cacheRepository: cache.repository,
             entitlementEngine: entitlementEngine,
             monetizationServices: monetizationEnvironment.services,
             logger: logger
         )
-
-        let composition = Self.makeComposition(
-            dependencies: PlatformDependencies(resolver: assembler.resolver),
-            monetizationEnvironment: monetizationEnvironment,
-            rootContent: rootContent
-        )
-
-        self.assembler = assembler
-        appFlowCoordinator = composition.appFlowCoordinator
-        appFlowSceneViewModel = composition.appFlowSceneViewModel
-        onboardingViewModel = composition.onboardingViewModel
-        paywallViewModel = composition.paywallViewModel
-        rootViewModel = composition.rootViewModel
-        analyticsViewModel = ExampleAnalyticsViewModel(
-            recorder: monetizationEnvironment.analyticsRecorder
-        )
-        ruSubscriptionViewModel = Self.makeRUSubscriptionViewModel()
-        specialOfferFixtureViewModel = Self.makeSpecialOfferFixtureViewModel(
+        let specialOfferViewModel = makeSpecialOfferFixtureViewModel(
             environment: monetizationEnvironment,
             logger: logger
         )
-        #if DEBUG
-            debugSettingsViewModel = Self.makeDebugSettingsViewModel()
-        #endif
+        let composition = makeComposition(
+            dependencies: PlatformDependencies(resolver: assembler.resolver),
+            monetizationEnvironment: monetizationEnvironment,
+            specialOfferViewModel: specialOfferViewModel,
+            rootContent: AppConfiguration.rootContent(for: scenario),
+            logger: logger
+        )
+        return CompositionRuntime(
+            assembler: assembler,
+            composition: composition,
+            monetizationEnvironment: monetizationEnvironment,
+            specialOfferViewModel: specialOfferViewModel,
+            logger: logger,
+            cache: cache
+        )
+    }
+
+    private static func makeCatalogSpecialOfferViewModel(
+        logger: any BroadLoggerProtocol
+    ) -> ExampleSpecialOfferFixtureViewModel {
+        let arguments = ["BroadAppTemplate", "-special-offer-enabled"]
+        let environment = ExampleMonetizationEnvironment(
+            arguments: arguments,
+            logger: logger
+        )
+        let scenario = ExampleRemoteFeatureScenario.specialOfferEnabled
+        guard let configuration = scenario.specialOfferConfiguration,
+              let resolver = environment.resolveSpecialOffer
+        else {
+            preconditionFailure("Special Offer catalog fixture is incomplete")
+        }
+
+        return ExampleSpecialOfferFixtureViewModel(
+            scenario: scenario,
+            resolver: resolver,
+            configuration: configuration,
+            paywallDependencies: PaywallViewModelDependencies(
+                loadPaywall: environment.services.loadPaywall,
+                selectProduct: environment.services.selectProduct,
+                checkoutProduct: environment.services.checkoutProduct,
+                restorePurchases: environment.services.restorePurchases,
+                resolveCheckoutMethods: environment.resolveCheckoutMethods,
+                trackEvent: environment.trackPaywallEvent,
+                presentationLifecycle: environment.services.paywallPresentationLifecycle,
+                operationGate: environment.services.operationGate
+            ),
+            logger: logger
+        )
     }
 
     private static func makeSpecialOfferFixtureViewModel(
@@ -100,7 +159,12 @@ final class AppCompositionRoot {
     }
 
     #if DEBUG
-        private static func makeDebugSettingsViewModel()
+        private static func makeDebugSettingsViewModel(
+            progressRepository: any AppFlowProgressRepositoryProtocol,
+            cacheRepository: any CacheRepositoryProtocol,
+            cacheKey: CacheKey<ExampleCachedConfiguration>,
+            analyticsRecorder: ExampleRecordingMonetizationAnalytics
+        )
             -> ExampleDebugSettingsViewModel {
             let cleaner = DebugKeychainCleaner(
                 scopes: AppConfiguration.debugKeychainServiceNames.map {
@@ -111,7 +175,15 @@ final class AppCompositionRoot {
                     code: "example.debug.keychain-cleanup-failed"
                 )
             )
-            return ExampleDebugSettingsViewModel(keychainCleaner: cleaner)
+            return ExampleDebugSettingsViewModel(
+                keychainCleaner: cleaner,
+                progressRepository: progressRepository,
+                contentCacheCleaner: ExampleDebugContentCacheCleaner(
+                    repository: cacheRepository,
+                    key: cacheKey
+                ),
+                analyticsRecorder: analyticsRecorder
+            )
         }
     #endif
 
@@ -188,22 +260,28 @@ final class AppCompositionRoot {
     private static func makeComposition(
         dependencies: PlatformDependencies,
         monetizationEnvironment: ExampleMonetizationEnvironment,
-        rootContent: AppConfiguration.RootContent
+        specialOfferViewModel: ExampleSpecialOfferFixtureViewModel?,
+        rootContent: AppConfiguration.RootContent,
+        logger: any BroadLoggerProtocol
     ) -> PlatformComposition {
+        let progressRepository = KeyValueAppFlowProgressRepository(
+            keyValueStore: dependencies.stateStore,
+            keyPrefix: AppConfiguration.appFlowProgressKeyPrefix
+        )
         let coordinator = AppFlowCoordinator(
             configuration: AppConfiguration.appFlowConfiguration,
-            progressRepository: KeyValueAppFlowProgressRepository(
-                keyValueStore: dependencies.stateStore,
-                keyPrefix: AppConfiguration.appFlowProgressKeyPrefix
-            ),
+            progressRepository: progressRepository,
             entitlementStatusProvider: dependencies.entitlementStatusProvider
         )
 
         return PlatformComposition(
+            progressRepository: progressRepository,
             appFlowCoordinator: coordinator,
             appFlowSceneViewModel: AppFlowSceneViewModel(
                 coordinator: coordinator,
-                restorePurchases: dependencies.restorePurchases
+                restorePurchases: dependencies.restorePurchases,
+                specialOfferViewModel: specialOfferViewModel,
+                logger: logger
             ),
             onboardingViewModel: OnboardingViewModel(
                 configuration: AppConfiguration.onboardingConfiguration,
@@ -231,111 +309,6 @@ final class AppCompositionRoot {
                 runAppBootstrapUseCase: dependencies.runAppBootstrapUseCase,
                 appFlowCoordinator: coordinator
             )
-        )
-    }
-}
-
-private struct PlatformComposition {
-    let appFlowCoordinator: AppFlowCoordinator
-    let appFlowSceneViewModel: AppFlowSceneViewModel
-    let onboardingViewModel: OnboardingViewModel
-    let paywallViewModel: PaywallViewModel
-    let rootViewModel: RootViewModel
-}
-
-private struct PlatformDependencies {
-    let coreModule: BroadCoreModule
-    let monetizationModule: BroadMonetizationModule
-    let uiFlowsModule: BroadUIFlowsModule
-    let runAppBootstrapUseCase: any RunAppBootstrapUseCaseProtocol
-    let stateStore: any KeyValueStoreProtocol
-    let entitlementStatusProvider: any EntitlementStatusProviderProtocol
-    let trackingAuthorization: any TrackingAuthorizationUseCaseProtocol
-    let loadPaywall: any LoadPaywallUseCaseProtocol
-    let selectProduct: any SelectProductUseCaseProtocol
-    let checkoutProduct: any CheckoutSelectedProductUseCaseProtocol
-    let restorePurchases: any RestorePurchasesUseCaseProtocol
-
-    init(resolver: Resolver) {
-        guard
-            let coreModule = resolver.resolve(BroadCoreModule.self),
-            let monetizationModule = resolver.resolve(BroadMonetizationModule.self),
-            let uiFlowsModule = resolver.resolve(BroadUIFlowsModule.self),
-            let bootstrap = resolver.resolve(RunAppBootstrapUseCaseProtocol.self),
-            let stateStore = resolver.resolve(KeyValueStoreProtocol.self),
-            let entitlement = resolver.resolve(EntitlementStatusProviderProtocol.self),
-            let tracking = resolver.resolve(TrackingAuthorizationUseCaseProtocol.self),
-            let loadPaywall = resolver.resolve(LoadPaywallUseCaseProtocol.self),
-            let selectProduct = resolver.resolve(SelectProductUseCaseProtocol.self),
-            let checkout = resolver.resolve(CheckoutSelectedProductUseCaseProtocol.self),
-            let restore = resolver.resolve(RestorePurchasesUseCaseProtocol.self)
-        else {
-            preconditionFailure("BroadApps platform assemblies are incomplete")
-        }
-
-        self.coreModule = coreModule
-        self.monetizationModule = monetizationModule
-        self.uiFlowsModule = uiFlowsModule
-        runAppBootstrapUseCase = bootstrap
-        self.stateStore = stateStore
-        entitlementStatusProvider = entitlement
-        trackingAuthorization = tracking
-        self.loadPaywall = loadPaywall
-        self.selectProduct = selectProduct
-        checkoutProduct = checkout
-        restorePurchases = restore
-    }
-}
-
-private struct ExampleCacheDependencies {
-    let repository: any CacheRepositoryProtocol
-    let key: CacheKey<ExampleCachedConfiguration>
-    let value: ExampleCachedConfiguration
-
-    init(
-        configuration: AppConfiguration.CacheFixture,
-        logger: any BroadLoggerProtocol
-    ) {
-        let keyValueStore = UserDefaultsKeyValueStore(
-            suiteName: configuration.suiteName,
-            namespace: configuration.namespace,
-            maximumDataSize: configuration.maximumDataSize
-        )
-        repository = VersionedJSONCacheRepository(
-            keyValueStore: keyValueStore,
-            maximumEncodedSize: configuration.maximumDataSize,
-            logger: logger
-        )
-        key = CacheKey(
-            name: configuration.keyName,
-            schemaIdentifier: configuration.schemaIdentifier,
-            version: configuration.version,
-            policy: CachePolicy(timeToLive: configuration.timeToLive)
-        )
-        value = configuration.value
-    }
-}
-
-private extension RootViewModel.Content {
-    init(configuration: AppConfiguration.RootContent) {
-        self.init(
-            eyebrow: configuration.eyebrow,
-            title: configuration.title,
-            subtitle: configuration.subtitle,
-            coreDescription: configuration.coreDescription,
-            monetizationDescription: configuration.monetizationDescription,
-            uiFlowsDescription: configuration.uiFlowsDescription,
-            connectedDetail: configuration.connectedDetail,
-            adaptyLinkedDetail: configuration.adaptyLinkedDetail,
-            adaptyUnavailableDetail: configuration.adaptyUnavailableDetail,
-            loadingTitle: configuration.loadingTitle,
-            loadingMessage: configuration.loadingMessage,
-            readyTitle: configuration.readyTitle,
-            readyMessage: configuration.readyMessage,
-            degradedTitle: configuration.degradedTitle,
-            degradedMessage: configuration.degradedMessage,
-            failedTitle: configuration.failedTitle,
-            retryTitle: configuration.retryTitle
         )
     }
 }

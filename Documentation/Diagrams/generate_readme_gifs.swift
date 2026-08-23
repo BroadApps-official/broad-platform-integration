@@ -103,7 +103,7 @@ private func flowFrames() -> [GIFFrame] {
         ("Paywall", "0...N продуктов", Palette.uiFlows),
         ("Покупка / Restore", "Apple или RU", Palette.monetization),
         ("Проверка доступа", "только свежий ответ", Palette.monetization),
-        ("Главный экран", "только при active", Palette.app)
+        ("Главный экран", "route по policy", Palette.app)
     ]
     let nodeWidth: CGFloat = 165
     let nodeHeight: CGFloat = 90
@@ -173,7 +173,7 @@ private func flowFrames() -> [GIFFrame] {
             }
 
             drawText(
-                "inactive / unresolved → premium не открывается",
+                "inactive / unresolved → main без premium",
                 in: NSRect(x: 42, y: 76, width: 500, height: 22),
                 size: 13,
                 color: Palette.uiFlows,

@@ -8,6 +8,9 @@ struct AppFlowRootView: View {
 
     private let onboardingViewModel: OnboardingViewModel
     private let paywallViewModel: PaywallViewModel
+    private let catalogSpecialOfferViewModel: ExampleSpecialOfferFixtureViewModel
+    private let tokenPaywallViewModel: BroadTokenPaywallViewModel
+    private let tokenBalanceViewModel: ExampleTokenBalanceViewModel
     private let rootViewModel: RootViewModel
     private let analyticsViewModel: ExampleAnalyticsViewModel
     #if DEBUG
@@ -20,6 +23,9 @@ struct AppFlowRootView: View {
             sceneViewModel: AppFlowSceneViewModel,
             onboardingViewModel: OnboardingViewModel,
             paywallViewModel: PaywallViewModel,
+            catalogSpecialOfferViewModel: ExampleSpecialOfferFixtureViewModel,
+            tokenPaywallViewModel: BroadTokenPaywallViewModel,
+            tokenBalanceViewModel: ExampleTokenBalanceViewModel,
             rootViewModel: RootViewModel,
             analyticsViewModel: ExampleAnalyticsViewModel,
             debugSettingsViewModel: ExampleDebugSettingsViewModel
@@ -28,6 +34,9 @@ struct AppFlowRootView: View {
             _sceneViewModel = StateObject(wrappedValue: sceneViewModel)
             self.onboardingViewModel = onboardingViewModel
             self.paywallViewModel = paywallViewModel
+            self.catalogSpecialOfferViewModel = catalogSpecialOfferViewModel
+            self.tokenPaywallViewModel = tokenPaywallViewModel
+            self.tokenBalanceViewModel = tokenBalanceViewModel
             self.rootViewModel = rootViewModel
             self.analyticsViewModel = analyticsViewModel
             self.debugSettingsViewModel = debugSettingsViewModel
@@ -38,6 +47,9 @@ struct AppFlowRootView: View {
             sceneViewModel: AppFlowSceneViewModel,
             onboardingViewModel: OnboardingViewModel,
             paywallViewModel: PaywallViewModel,
+            catalogSpecialOfferViewModel: ExampleSpecialOfferFixtureViewModel,
+            tokenPaywallViewModel: BroadTokenPaywallViewModel,
+            tokenBalanceViewModel: ExampleTokenBalanceViewModel,
             rootViewModel: RootViewModel,
             analyticsViewModel: ExampleAnalyticsViewModel
         ) {
@@ -45,6 +57,9 @@ struct AppFlowRootView: View {
             _sceneViewModel = StateObject(wrappedValue: sceneViewModel)
             self.onboardingViewModel = onboardingViewModel
             self.paywallViewModel = paywallViewModel
+            self.catalogSpecialOfferViewModel = catalogSpecialOfferViewModel
+            self.tokenPaywallViewModel = tokenPaywallViewModel
+            self.tokenBalanceViewModel = tokenBalanceViewModel
             self.rootViewModel = rootViewModel
             self.analyticsViewModel = analyticsViewModel
         }
@@ -97,29 +112,63 @@ struct AppFlowRootView: View {
         }
     }
 
+    @ViewBuilder
     private func paywallContent() -> some View {
-        BroadPaywallView(
-            viewModel: paywallViewModel,
-            theme: AppTokens.paywallTheme,
-            productFormatter: BroadPaywallProductFormatter(
-                locale: Locale(identifier: "ru_RU"),
-                periodCopy: .russian
-            ),
-            onClose: sceneViewModel.paywallClosed,
-            onCompleted: sceneViewModel.paywallCompleted
-        )
+        if sceneViewModel.isResolvingSpecialOffer {
+            specialOfferResolutionProgress
+        } else if let specialOfferViewModel = sceneViewModel.activeSpecialOfferViewModel {
+            ExampleSpecialOfferFixtureView(
+                viewModel: specialOfferViewModel,
+                onClose: sceneViewModel.specialOfferClosed,
+                onCompleted: sceneViewModel.paywallCompleted
+            )
+        } else {
+            BroadPaywallView(
+                viewModel: paywallViewModel,
+                theme: AppTokens.paywallTheme,
+                productFormatter: BroadPaywallProductFormatter(
+                    locale: Locale(identifier: "ru_RU"),
+                    periodCopy: .russian
+                ),
+                onClose: sceneViewModel.paywallClosed,
+                onCompleted: sceneViewModel.paywallCompleted
+            )
+        }
+    }
+
+    private var specialOfferResolutionProgress: some View {
+        ZStack {
+            AppTokens.Color.background.ignoresSafeArea()
+            VStack(spacing: AppTokens.Spacing.cardContent) {
+                ProgressView()
+                    .tint(AppTokens.Color.accent)
+                Text("Проверяем специальное предложение…")
+                    .font(AppTokens.Font.body)
+                    .foregroundStyle(AppTokens.Color.secondaryText)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("special-offer.resolving")
     }
 
     private func mainContent() -> some View {
         #if DEBUG
             ExampleMainView(
                 rootViewModel: rootViewModel,
+                paywallViewModel: paywallViewModel,
+                specialOfferViewModel: catalogSpecialOfferViewModel,
+                tokenPaywallViewModel: tokenPaywallViewModel,
+                tokenBalanceViewModel: tokenBalanceViewModel,
                 analyticsViewModel: analyticsViewModel,
                 debugSettingsViewModel: debugSettingsViewModel
             )
         #else
             ExampleMainView(
                 rootViewModel: rootViewModel,
+                paywallViewModel: paywallViewModel,
+                specialOfferViewModel: catalogSpecialOfferViewModel,
+                tokenPaywallViewModel: tokenPaywallViewModel,
+                tokenBalanceViewModel: tokenBalanceViewModel,
                 analyticsViewModel: analyticsViewModel
             )
         #endif

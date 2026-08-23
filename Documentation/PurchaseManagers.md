@@ -124,4 +124,5 @@ StoreKit sandbox и реальные списания не входят в ло�
 | Токены через RU backend | app-specific `TokenFulfillmentRepositoryProtocol`; не копируйте Apple JWS-схему в RU API автоматически |
 
 [Общая монетизация →](Monetization.md) · [RU Billing →](RUBilling.md) ·
-[Entitlements →](Entitlements.md) · [Account Recovery →](AccountRecovery.md)
+[Entitlements →](Entitlements.md) · [Account Recovery →](AccountRecovery.md) ·
+[Token Paywall →](TokenPaywall.md)

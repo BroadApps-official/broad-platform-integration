@@ -12,8 +12,10 @@ Reference-проект — это готовое похожее приложен
 app-owned данные и backend-контракты, но не архитектура. Все функции нового
 проекта нужно сопоставить с реальными API-ручками reference; отсутствующую или
 недостаточную ручку сначала обсуждают с тимлидом-разработчиком или проектным
-менеджером. При наличии Figma дизайн берётся из неё; при её отсутствии
-используется согласованный результат Claude Design или Pencil.
+менеджером. Источник дизайна определяется только меткой карточки Kaiten:
+`no-code` ведёт к согласованному Claude Design/Pencil, а без этой метки
+обязательна Figma. Пустое поле или недоступная ссылка Figma не превращают проект
+в `no-code`: нужно запросить доступ или экспорт у ПМ.
 Внешний вид RU-оплаты сверяйте с
 [описанием полного RU Billing flow](../../README.md#visual-reference).
 
@@ -30,8 +32,13 @@ chat token хранится через backend app account. [Инструкци�
 Example показывает полный локальный flow платформы:
 
 ```text
-launch → configurable onboarding → adaptive paywall → verified purchase/restore → main
+launch → configurable onboarding → initial paywall policy → optional special offer → main
+                                                        verified active ───────→ premium
 ```
+
+`main` и premium — не одно состояние. Разрешённое закрытие paywall,
+недоступный каталог или `unknown` entitlement могут открыть обычный `main`, но
+premium-возможности внутри него открывает только подтверждённый `active`.
 
 Обычный запуск показывает три страницы только как короткий пример. Их число не
 зашито в платформу: `ExampleOnboardingScenario.pages` формирует массив, а
@@ -57,6 +64,15 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 
 ## Что демонстрирует example
 
+- интерактивный каталог из девяти работающих карточек: app flow, subscription
+  paywall, token paywall, special offer, RU Billing, loader/error, analytics,
+  Contact Us и Debug-хранилища;
+- три initial-paywall policy: once, every cold launch while inactive и disabled;
+- special offer как опциональную ветку после закрытия subscription paywall;
+- отдельный consumable token paywall с backend-confirmed balance, pending,
+  идемпотентным retry, offline и account recovery fixture;
+- независимую очистку Keychain, app-flow progress, content cache и in-memory
+  analytics с результатом рядом со своей кнопкой;
 - composition root и порядок `Core → Monetization → UIFlows`;
 - onboarding из любого количества страниц без отдельного `slidesCount`;
 - готовый `BroadOnboardingView` и полностью app-owned UI через
@@ -99,10 +115,20 @@ fail-before-charge.
 
 ## Полезные launch arguments
 
+Обычные fixture-экраны лучше открывать кнопками из каталога приложения: им не
+нужен перезапуск. Аргументы ниже предназначены для cold-launch поведения, потому
+что читаются при создании процесса. В Xcode откройте
+`Scheme → Edit Scheme → Run → Arguments`, добавьте один аргумент из выбранной
+взаимоисключающей группы и полностью перезапустите приложение. В Debug-настройках
+каждый поддерживаемый аргумент можно скопировать; рядом указаны назначение и
+ожидаемый результат.
+
 | Аргумент | Сценарий |
 |---|---|
 | `-app-flow-main-only` | только main |
 | `-app-flow-paywall-only` | paywall без onboarding |
+| `-initial-paywall-disabled` | initial paywall автоматически не показывается |
+| `-initial-paywall-every-cold-launch` | при подтверждённом inactive paywall возвращается после каждого cold launch, но не повторяется в той же сессии |
 | `-live-adapty` | настоящий каталог Adapty; финансовые вызовы отключены |
 | `-analytics-fixture` | только paywall и безопасная локальная запись событий аналитики |
 | `-tracking-disabled` | полная проверка UI без системного окна ATT |
@@ -132,6 +158,7 @@ fail-before-charge.
 | `-ru-subscription-cancelled` | подписка активна до даты, автопродление отключено |
 | `-paywall-failure` | safe load error |
 | `-paywall-hard` | hard access policy |
+| `-token-paywall-main-fallback` | `.tokens` недоступен; token UI принимает резервный `main` только с consumable-продуктами и не превращается в subscription paywall |
 | `-purchase-cancelled` | user cancellation |
 | `-purchase-pending` | pending без premium |
 | `-purchase-failure` | safe purchase error |
@@ -159,23 +186,25 @@ paywall, заблокированная показывает безопасно�
 Apple/СБП/карта, у сохранённой копии из кеша `BroadMonetization` останется только
 Apple.
 
-В консоли Xcode появляется структурированная запись
-`remote-feature.fixture.evaluated` с запрошенным и фактически загруженным
-placement, variation и источником данных. Так можно проверить резерв на `main`
-без настоящего платежа и без доступа к Adapty Dashboard.
+В консоли Xcode появляется безопасная typed-запись
+`remote-feature.fixture.resolved` со сценарием, итогом, логическими
+requested/resolved placement, наличием variation и источником данных. Так можно
+проверить резерв на `main` без настоящего платежа, произвольных строк в OSLog и
+доступа к Adapty Dashboard.
 
 ## Analytics fixture
 
 Запустите example с `-analytics-fixture -tracking-disabled`, выберите продукт и
-завершите fixture purchase. На main нажмите кнопку с инструментами, затем
-нажмите `Refresh recorded events` в секции `Recorded analytics` (или используйте
-pull-to-refresh). В ней показываются
+закройте safe paywall — настоящая покупка для создания событий не нужна. На
+main откройте карточку `Аналитика` либо кнопку с инструментами, затем нажмите
+`Обновить события` (или используйте pull-to-refresh). В списке показываются
 только typed safe fields: attempt/presentation, logical placement, SKU,
 variation, checkout method и safe diagnostic code.
 
 Сценарии `-purchase-pending`, `-purchase-cancelled`, `-purchase-failure` и
 `-restore-nothing` позволяют проверить разные terminal events. Кнопка
-`Clear recorded events` очищает только bounded in-memory историю.
+`Очистить события` очищает только bounded in-memory историю и сразу показывает
+число удалённых записей.
 
 [Полный analytics contract и ожидаемая последовательность →](../../Documentation/Analytics.md)
 

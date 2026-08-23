@@ -23,7 +23,9 @@ public struct AppFlowStateMachine: Sendable {
             return route
         }
 
-        if configuration.initialPaywall == .disabled || checkpoint.hasResolvedInitialPaywall {
+        if configuration.initialPaywall == .disabled
+            || configuration.honorsResolvedInitialPaywallCheckpoint
+            && checkpoint.hasResolvedInitialPaywall {
             route = .main
             return route
         }
