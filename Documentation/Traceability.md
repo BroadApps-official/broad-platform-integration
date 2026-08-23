@@ -38,7 +38,7 @@
 
 Если финальные public client values ещё не готовы, используется fixture либо
 явно согласованные public SDK/placement/product values похожего live-приложения
-только для load/show. Signing team, bundle, credentials, keys/certificates,
+только для load/show. Bundle, provisioning, credentials, keys/certificates,
 backend auth и account/user данные из reference не копируются. Перед выпуском
 временные public values заменяются данными текущего проекта.
 

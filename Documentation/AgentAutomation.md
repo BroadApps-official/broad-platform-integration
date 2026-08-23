@@ -49,8 +49,10 @@ operation; назначение вариантов конкретному про
 по-прежнему использует exact raw product из внутреннего registry.
 
 Это локальная инженерная проверка. Она намеренно не выполняет реальные
-платежи, StoreKit sandbox, test targets, iPad-сборку, `.ipa` или проверки на
-физическом устройстве.
+платежи, StoreKit sandbox, test targets, iPad-сборку, provisioning или `.ipa`.
+Обязательная матрица использует iPhone Simulator и generic `iphoneos` compile
+без подписи. Доступный компании ручной запуск на iPhone выполняется отдельно и
+не влияет на platform `PASS`.
 
 ## Как это устроено
 
@@ -226,8 +228,7 @@ AgentChecks/AutomationReports/latest.md
 - не добавляет тестовые targets;
 - не удаляет tracked Adapty configurations;
 - не запускает настоящие purchase, restore или RU-платежи;
-- не требует StoreKit sandbox, device accessibility matrix, `.ipa` и host
-  attestations;
+- не требует StoreKit sandbox, provisioning, `.ipa` и host attestations;
 - не ослабляет проверку ради красивого зелёного сообщения.
 
 Полный доступ к Mac — это техническое разрешение, а не разрешение расширять

@@ -1,90 +1,67 @@
-# Аудит этапов 1–5
+# Аудит первой половины работ
 
-Дата: 2026-08-23. Аудит выполнен после preflight первого реального приложения
-и до перехода к этапам 6–11.
+Дата: 2026-08-23. Аудит выполнен до финального security/self-review/QA handoff.
 
 ## Итог
 
-Платформенная часть этапов 1–5 подтверждена. Один documentation safety defect
-исправлен. Внешние проверки не превращены в ложный `PASS`: независимый
-README-тест человеком, device-only приёмка и входы проекта 5135 остаются
-явными handoff/blocker-пунктами.
+Платформенная часть подтверждена. Найденные documentation и fixture defects
+исправлены. Проверка конкретного host app не смешивается с platform `PASS` и
+выполняется по универсальному контракту без номера проекта.
 
 ## Проверка по этапам
 
 | Этап | Аудит | Результат |
 |---|---|---|
-| 1. Фиксация | Commit `686acd2`, полный gate, secret/artifact/reference scan | PASS |
-| 2. README | Cold-read нашёл отсутствие единого критерия QA readiness; добавлен Project Delivery и прямой маршрут | PASS для документации; внешний human test ещё нужен |
-| 3. Template | Отдельный фактический отчёт, два Simulator, AppFlow/special/token matrix | PASS |
-| 4. Physical iPhone | Устройство найдено; signing team не задан, ручные Mail/ATT/VoiceOver проверки не выполнены | BLOCKED без ложного Simulator substitution |
-| 5. 5135 preflight | Kaiten прочитан; Figma exact context, ТЗ, reference и backend contracts недостаточны | BLOCKED с владельцами пробелов |
+| 1. Фиксация | История, полный gate, secret/artifact/reference scan | PASS |
+| 2. README | Добавлены единый Project Delivery и прямой маршрут | PASS |
+| 3. Template | Два Simulator, AppFlow/special/token matrix | PASS |
+| 4. Test policy | `Team = None`, Simulator-first и generic unsigned compile | PASS |
+| 5. App integration | Универсальные preflight/status/handoff criteria | PASS для platform contract |
 
 ## Что найдено и исправлено
 
 ### 1. Загрязнённый entitlement fixture-progress
 
 Первый последовательный прогон использовал общий сохранённый onboarding
-namespace и мог показать main для `inactive`. Этот результат отброшен.
-BroadAppTemplate переустановлен только на тестовом Simulator, а entitlement
-матрица повторена с `-app-flow-paywall-only`, который использует отдельный
-entitlement namespace. В acceptance-report записан только повторный результат.
+namespace и мог показать main для `inactive`. Результат отброшен. Template
+переустановлен только на тестовом Simulator, а entitlement matrix повторена с
+`-app-flow-paywall-only` и независимыми namespaces.
 
 ### 2. Слишком широкое разрешение на конфигурацию reference
 
-README допускал временное копирование development-конфигурации похожего live
-app и даже временного signing team/bundle. Такая формулировка могла привести к
-копированию чужого provisioning/account state.
+Инструкция могла привести к переносу чужого provisioning/account state.
+Теперь разрешены только fixture либо согласованные public client values для
+безопасного load/show. Bundle текущего приложения остаётся уникальным,
+credentials, keys, backend auth и account data из reference запрещены.
 
-Исправлено в корневом README, Traceability и Usedesk:
+### 3. Неверный критерий обязательной подписанной установки
 
-- разрешены fixture либо явно согласованные публичные SDK/placement/product
-  identifiers только для безопасного load/show;
-- bundle нового приложения остаётся уникальным;
-- без team используется Simulator/generic unsigned build;
-- signing team, credentials, App Store keys/certificates, backend auth,
-  api/user chat tokens и account/user data из reference запрещены.
+Старые отчёты требовали Signing Team и превращали отсутствие подписанной
+установки в `BLOCKED`. Это не соответствует процессу компании. Теперь
+обязательная матрица использует `Team = None`, два iPhone Simulator и generic
+`iphoneos` compile без подписи. Доступный компании запуск на iPhone остаётся
+отдельным дополнительным evidence.
 
-### 3. Граница независимого README-теста
+### 4. Привязка AgentChecks к одному приложению
 
-Cold-read и повторная проверка навигации выполнены, но тот же исполнитель не
-может заменить нового человека. В QA handoff остаётся короткий внешний маршрут:
-дать разработчику только корневой README и получить его замечания без подсказок.
-
-## Повторные проверки после исправлений
-
-- `git diff --check` — PASS;
-- `bash Scripts/check_documentation.sh` — PASS;
-- поиск private-key/Bearer/client-secret patterns — совпадений нет;
-- поиск личных абсолютных путей и чувствительных значений Kaiten в
-  `README.md`, `Documentation` и `AgentChecks` — совпадений нет;
-- reference-проекты в commit этапа 1 не изменены.
-
-## Решение о продолжении
-
-Продолжать платформенные security, self-review и QA-handoff проверки можно.
-Создавать production-функции и визуально объявлять 5135 готовым нельзя до
-снятия blocker-ов из `Project5135Preflight.md`.
+Проектные preflight/status отчёты заменены
+[`ApplicationIntegrationContract.md`](ApplicationIntegrationContract.md).
+Конкретные Kaiten/design/backend результаты хранятся в repository host app и
+заполняются по `Documentation/ProjectDelivery.md`.
 
 ## Повторный midpoint после замечаний разработчика
 
-После первой половины повторного плана отдельно проверены карточка Special
-Offer, общий recorder и Debug refresh. Целевые contract checks и Debug-сборка
-сначала выявили слишком строгий static-pattern, а ручной lifecycle-review —
-повторное использование старой presentation authorization при новом открытии
-карточки.
+Отдельно перепроверены карточка Special Offer, общий recorder и Debug refresh.
+Найдены слишком строгий static-pattern и повторное использование старой
+presentation authorization.
 
 Исправлено:
 
-- карточка проходит обычный subscription paywall, отдельный resolver-loader и
-  только затем offer;
-- каждый новый вход сбрасывает catalog view model и получает новую
-  authorization;
-- fixture environment offer пишет в process recorder основного runtime;
-- Debug refresh сразу показывает in-flight и явный результат пустого snapshot;
-- architecture check фиксирует эти четыре контракта.
+- карточка проходит subscription paywall, resolver-loader и только затем offer;
+- каждый новый вход получает новую authorization;
+- fixture offer пишет в process recorder основного runtime;
+- Debug refresh сразу показывает in-flight и результат пустого snapshot;
+- architecture check фиксирует эти контракты.
 
-После исправлений прошли `format.sh`, `check_architecture.sh`,
-`check_remote_feature_contracts.sh`, `check_documentation.sh`,
-`git diff --check` и Debug build generic iPhone Simulator. Это midpoint, а не замена
-финального `agent_gate.sh`.
+После исправлений прошли профильные contract/documentation checks и Debug build.
+Финальный результат подтверждается только последующим `agent_gate.sh`.

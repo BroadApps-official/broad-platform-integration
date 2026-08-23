@@ -38,7 +38,7 @@
 | Codex/Claude создаёт новое приложение | [Agent Preflight](AgentPreflight.md), затем три прямые ссылки в [варианте A](../README.md#agent-setup) | Агент прошёл functional + visual audit, разработчик сделал self-review |
 | Разработчик собирает приложение вручную | [Вариант B](../README.md#manual-setup), затем профильные guides ниже | Debug/Release, безопасные flow и screenshot-to-source сверка прошли |
 | Нужно принять интерактивный пример | [Приёмка template](TemplateAcceptance.md) | Каждая строка матрицы проверена на маленьком и большом iPhone |
-| Нужно передать конкретное приложение QA | [Project Delivery](ProjectDelivery.md) | Собраны functional, visual, device, configuration и security evidence; self-review завершён |
+| Нужно передать конкретное приложение QA | [Project Delivery](ProjectDelivery.md) | Собраны functional, visual, Simulator, configuration и security evidence; self-review завершён |
 | Изменён код самой платформы | [`AGENTS.md`](../AGENTS.md) и [Agent Automation](AgentAutomation.md) | Последняя строка `bash Scripts/agent_gate.sh` сообщает PASS |
 
 Не смешивайте эти пути: platform gate не заменяет проверку конкретного app, а

@@ -110,18 +110,22 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 
 Если frame недоступен, итог — `BLOCKED`, а не «похожий UI принят».
 
-## 6. Физическое устройство
+## 6. Simulator-first приёмка
 
-- [ ] Системный Mail composer открылся с правильным recipient/subject/body.
-- [ ] `support-log.txt` приложен и очищен по `SupportEmail.md`.
+- [ ] Маленький и большой iPhone Simulator проходят обязательные flow.
+- [ ] Системный Mail composer либо documented Simulator fallback показывает
+  правильный recipient/subject/body.
+- [ ] `support-log.txt` сформирован и очищен по `SupportEmail.md`.
 - [ ] ATT не появился в loader и был запрошен только после первого слайда.
 - [ ] При отключённом onboarding ATT не запрашивался.
 - [ ] Cold-launch policy сохранила ожидаемый маршрут.
-- [ ] VoiceOver видит основные заголовки и действия.
-- [ ] Крупный шрифт не скрывает критические кнопки.
+- [ ] Длинные тексты и крупный шрифт не скрывают критические кнопки.
 
-Отсутствующее устройство отмечается как внешний `BLOCKED`. Simulator fallback
-не доказывает работу `MFMailComposeViewController` на физическом iPhone.
+Оставьте `Team = None`: платный Apple Developer аккаунт, provisioning и
+подписанная установка не входят в обязательную приёмку. Если компания отдельно
+предоставляет способ проверить сборку на iPhone, результат можно добавить как
+дополнительное app-level evidence. Отсутствие такой проверки не является
+`BLOCKED` для платформы, template или checklist приложения.
 
 ## 7. Внешние конфигурации
 
@@ -130,7 +134,7 @@ Git не добавляются.
 
 | Конфигурация | Current app source | Debug/Release проверка | Статус |
 |---|---|---|---|
-| Bundle/team/signing |  |  |  |
+| Bundle ID |  | Уникален для текущего приложения; `Team = None` |  |
 | Adapty public SDK configuration |  | load/show only |  |
 | Placements и entitlement ID |  |  |  |
 | App Store Connect products |  | metadata only |  |
@@ -155,8 +159,8 @@ Git не добавляются.
 
 Разработчик лично проходит clean install, repeat launch, onboarding, все нужные
 paywall, active/inactive/unresolved, offline/retry, background/foreground,
-Contact Us, analytics и persistence на маленьком и большом iPhone. Замечания
-исправляются до передачи QA.
+Contact Us, analytics и persistence на маленьком и большом iPhone Simulator.
+Замечания исправляются до передачи QA.
 
 ## 10. Пакет передачи QA
 
@@ -169,7 +173,7 @@ Contact Us, analytics и persistence на маленьком и большом i
 - известные ограничения и все `N/A`;
 - внешние `BLOCKED`, если передача всё же согласована ответственным;
 - тестовые аккаунты через разрешённый защищённый канал, не через Git;
-- результаты Debug/Release, functional, visual, device и security review;
+- результаты Debug/Release, functional, visual, Simulator и security review;
 - имя разработчика, выполнившего self-review.
 
 QA не должен угадывать, где включается сценарий или какой результат считается

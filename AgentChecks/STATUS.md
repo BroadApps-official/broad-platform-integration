@@ -6,31 +6,28 @@
 замечаний разработчика, исправления Special Offer catalog flow, общей аналитики
 и обновления developer instructions.
 
-Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не означает
-готовность ещё не созданного приложения 5135 Seedance.
+Scope результата — только `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не
+переносится автоматически ни на одно приложение, созданное поверх платформы.
 
 ## Что подтверждено
 
 - правила, архитектура, privacy, documentation links и README assets;
 - SwiftFormat и SwiftLint без нарушений;
 - Swift Package и iPhone example в Debug/Release Simulator;
-- Release generic iOS device без подписи;
+- Release generic iOS device compile без подписи;
 - две live Adapty configurations только компиляцией, без финансовых действий;
 - полная fixture-матрица AppFlow, entitlement, special offer и token flow;
 - карточка Special Offer проходит subscription paywall → resolver → offer,
-  повторно получает новую presentation authorization и пишет события обоих
-  paywall в общий process recorder;
+  получает новую presentation authorization и пишет события обоих paywall в
+  общий process recorder;
 - Debug refresh аналитики показывает spinner, timestamp и явное empty state;
-- девять карточек каталога на маленьком iPhone и iPhone 17 Pro Simulator;
+- девять карточек каталога на маленьком и большом iPhone Simulator;
 - clean install, ATT после видимого onboarding, cold/relaunch и
   background/foreground;
-- длинные product title/subtitle переносятся без многоточия, цена остаётся
-  читаемой;
 - typed logs, scoped Debug Keychain cleanup, privacy manifest и отсутствие
   Debug-каталога в Release;
-- единый checklist реального приложения, production-shape backend contract
-  smoke, functional-review checkpoint, визуальная проверка на двух размерах и
-  актуальный QA handoff.
+- универсальный app integration contract, Project Delivery checklist,
+  functional-review checkpoint и QA handoff без привязки к номеру приложения.
 
 Настоящие purchase, restore и RU-платежи не запускались.
 
@@ -38,19 +35,24 @@ Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. О�
 
 - [`TemplateAcceptanceReport.md`](TemplateAcceptanceReport.md) — фактическая
   functional acceptance;
-- [`MidpointAudit.md`](MidpointAudit.md) — обязательный аудит после этапа 5;
+- [`MidpointAudit.md`](MidpointAudit.md) — аудит первой половины работ;
 - [`SecurityPrivacyReview.md`](SecurityPrivacyReview.md) — security/privacy;
 - [`SelfReview.md`](SelfReview.md) — финальный developer self-review;
 - [`QAHandoff.md`](QAHandoff.md) — пакет передачи QA;
-- [`Project5135Preflight.md`](Project5135Preflight.md) — внешние blocker-ы 5135.
+- [`ApplicationIntegrationContract.md`](ApplicationIntegrationContract.md) —
+  универсальная граница platform и любого host app.
 
-## Что остаётся внешним
+## Границы результата
 
-- Физический iPhone найден, но signing team не выбрана: Mail composer,
-  VoiceOver и крупный Dynamic Type остаются `BLOCKED`.
-- Независимый cold-read корневого README новым человеком остаётся handoff.
-- 5135 не имеет Git/local project, ТЗ, reference, exact Figma context и
-  versioned backend contracts; этапы реализации этого приложения не начаты.
+- Обязательная матрица использует `Team = None`, iPhone Simulator и generic
+  unsigned compile; платный аккаунт и Signing Team не требуются.
+- Доступный компании ручной запуск на iPhone выполняется отдельно и не является
+  blocker-ом platform/template.
+- Каждый host app отдельно заполняет
+  [`Documentation/ProjectDelivery.md`](../Documentation/ProjectDelivery.md) по
+  своим Kaiten/design/backend/configuration данным.
+- Независимый cold-read корневого README новым человеком остаётся полезным
+  handoff, но не меняет технический platform `PASS`.
 
 ## Как получить свежий результат после своих изменений
 
@@ -72,6 +74,6 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-`963dda95ad11b55f9c0c0c6f8c4705193ee1f6139ba5934e9ecb9d7f4eb284dc`
+`0b12527413b1059b840f718e5341c1ea721deb15d5437cbfe48bb385ce4e7d00`
 
 </details>

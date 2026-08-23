@@ -122,7 +122,7 @@ Us/Debug. Его можно использовать как карту стар�
 | Посмотреть возможности платформы | Открыть [`BroadAppTemplate`](#showcase) | Нажать все карточки безопасного каталога | Пройти [template acceptance](Documentation/TemplateAcceptance.md) |
 | Создать приложение с Codex/Claude | Выполнить [preflight](#agent-preflight) | Скопировать [build prompt](#agent-build-prompt) | Скопировать [prompt проверки](#agent-app-check) |
 | Создать приложение вручную | Открыть [вариант B](#manual-setup) | Выполнить шаги 0–7 в Xcode | Выполнить шаги 8–9 и визуальную сверку |
-| Подготовить конкретное приложение к QA | Открыть [единый checklist передачи](Documentation/ProjectDelivery.md) | Собрать functional, visual, device и configuration evidence | Передать QA только после developer self-review |
+| Подготовить конкретное приложение к QA | Открыть [единый checklist передачи](Documentation/ProjectDelivery.md) | Собрать functional, visual, Simulator и configuration evidence | Передать QA только после developer self-review |
 | Изменить саму платформу | Прочитать [`AGENTS.md`](AGENTS.md) | Внести platform-owned правки | Запустить `bash Scripts/agent_gate.sh` |
 
 Читайте только выбранную строку. Остальная часть README — справочник, к которому
@@ -154,7 +154,7 @@ loader и не должен показывать paywall как при дока�
 `bash Scripts/agent_gate.sh` подтверждает качество самой платформы и
 `BroadAppTemplate`. Он не доказывает, что конкретное новое приложение уже
 получило свои Kaiten/Figma/no-code материалы, backend, внешние конфигурации и
-проверку на устройстве.
+app-level проверку.
 
 | Уровень | Что должно быть подтверждено | Что не является доказательством |
 |---|---|---|
@@ -175,6 +175,14 @@ loader и не должен показывать paywall как при дока�
 [`AgentChecks/QAHandoff.md`](AgentChecks/QAHandoff.md). Эти отчёты подтверждают
 platform/example; они не означают, что отдельное приложение автоматически
 готово к QA.
+
+Универсальная граница между platform `PASS` и готовностью любого host app
+описана в
+[`AgentChecks/ApplicationIntegrationContract.md`](AgentChecks/ApplicationIntegrationContract.md).
+Она не привязана к номеру проекта. Обязательная разработка выполняется с
+`Team = None` на iPhone Simulator; generic device build компилируется без
+подписи. Если компания отдельно организует запуск на iPhone, его результат
+добавляется в handoff приложения и не блокирует platform gate.
 
 ### Что изображено на схеме первого запуска
 
@@ -679,7 +687,7 @@ Claude в любом случае нужно прямо попросить пр�
 | Этап | Какие данные использует приложение | Что важно |
 |---|---|---|
 | 🔵 **Начало разработки** | Уникальный локальный bundle и fixture-конфигурация; при отдельном согласовании — публичные client values reference | TS/design/backend уже доступны; все временные значения лежат в одном файле |
-| 🟣 **Разработка UI** | Временный public Adapty SDK key и read-only placement/product ID, если их использование явно одобрено | Только load/show и fixture UI; без signing и финансовых операций |
+| 🟣 **Разработка UI** | Временный public Adapty SDK key и read-only placement/product ID, если их использование явно одобрено | Только load/show и fixture UI; без финансовых операций |
 | 🟠 **Данные готовятся** | Аккаунт-менеджер заполняет документ нового приложения в Kaiten | Разработчик не создаёт второй «паспорт» и не перепечатывает поля вручную |
 | 🟢 **Перед выпуском** | Только данные текущего приложения из Kaiten | Все временные значения заменены и перечислены в отчёте |
 
@@ -701,9 +709,9 @@ Claude в любом случае нужно прямо попросить пр�
       собрать до появления данных нового приложения.</p>
       <p>Все значения лежат в одном конфигурационном файле и заменяются без
       изменения модулей платформы.</p>
-      <p>Запрещено копировать signing team, bundle live-приложения, backend
-      credentials, App Store keys/certificates, account/user данные и любые
-      secret tokens.</p>
+      <p>Запрещено копировать bundle live-приложения, provisioning profiles,
+      backend credentials, App Store keys/certificates, account/user данные и
+      любые secret tokens.</p>
     </td>
   </tr>
   <tr>
@@ -905,7 +913,7 @@ Preflight уже завершён результатом «Можно начин
 7. Если финальных public client values текущего приложения пока нет, используй
    fixture либо явно согласованные public SDK/placement/product values
    reference только для load/show. Пометь их и сохрани в одном конфигурационном
-   файле. Не копируй чужие bundle/signing team, credentials, keys/certificates,
+   файле. Не копируй чужие bundle, credentials, keys/certificates,
    backend auth или account/user данные.
 8. Создай новый iPhone-проект на модулях платформы. Названия scheme и target
    возьми из названия проекта, остальные доступные значения — из Kaiten.
@@ -1099,8 +1107,8 @@ Kaiten или доступном reference.
 - путь к созданному `.xcodeproj` или `.xcworkspace`;
 - какие модули платформы подключены;
 - какие fixture или явно согласованные публичные client identifiers использованы
-  временно, откуда они взяты и что нужно заменить; чужие signing/account/auth
-  данные здесь недопустимы;
+  временно, откуда они взяты и что нужно заменить; чужие provisioning,
+  account/auth данные здесь недопустимы;
 - результаты сборок Debug и Release;
 - список того, что осталось заменить перед выпуском.
 
@@ -1343,8 +1351,8 @@ Figma-проекта нет ссылки или доступа, запросит
 всё, что уже заполнено. Не создавайте второй список с bundle, Adapty, products и
 ссылками. Если финального блока аккаунт-менеджера ещё нет, используйте fixture
 либо только явно согласованные публичные SDK/placement/product values reference
-для load/show и запишите, что заменить. Чужие bundle/signing/credentials не
-копируйте.
+для load/show и запишите, что заменить. Чужие bundle, provisioning и
+credentials не копируйте.
 
 Создайте в новом приложении одно место для таких значений, например
 `AppConfiguration.swift`. Не разносите bundle, Adapty key, placements, product
@@ -1353,8 +1361,9 @@ ID и URL по SwiftUI-экранам. Тогда временные значе�
 
 > [!TIP]
 > **✅ Готово, если:** вы знаете источник каждого значения и отдельно пометили
-> все временные fixture/согласованные public client values; signing, bundle,
-> credentials и account data из похожего live-приложения не использовались.
+> все временные fixture/согласованные public client values; bundle,
+> provisioning, credentials и account data похожего live-приложения не
+> использовались.
 
 ### Перед началом. Сверьте backend нового проекта с reference
 
@@ -1401,13 +1410,14 @@ reference достаточно для более функционального 
 | Interface | `SwiftUI` |
 | Language | `Swift` |
 | Include Tests | Не включать |
-| Team | Только команда текущего проекта из Kaiten; если её ещё нет — `None` и Simulator/generic unsigned build |
+| Team | `None`; обязательный процесс не требует платного аккаунта или Signing Team |
 | Organization Identifier | Основа уникального `Bundle ID` текущего проекта; до финальных данных используйте уникальный локальный development ID, не bundle reference |
 
 После создания нажмите на синий файл проекта в левой панели и выберите app
 target. Затем:
 
-- в `Signing & Capabilities` проверьте точные `Team` и `Bundle Identifier`;
+- в `Signing & Capabilities` оставьте `Team = None` и проверьте уникальный
+  `Bundle Identifier` текущего приложения;
 - в `General → Minimum Deployments` установите `iOS 17.0`;
 - в `Build Settings` найдите `Targeted Device Family` и оставьте только `iPhone`
   (`TARGETED_DEVICE_FAMILY = 1`);
@@ -2532,8 +2542,9 @@ app-owned credentials; flow progress, content cache и in-memory analytics им�
 | Сборка | Swift Package и iPhone example в Debug/Release, плюс две live-конфигурации Adapty без запуска финансовых операций |
 
 Настоящие purchase, restore и RU-платёж не выполняются. StoreKit sandbox, test
-targets, iPad, `.ipa` и device accessibility matrix в эту локальную проверку не
-входят.
+targets, iPad, `.ipa` и provisioning в эту локальную проверку не входят.
+Отсутствие Signing Team не является blocker: обязательная матрица использует
+iPhone Simulator и generic unsigned compile.
 
 ### Где лежат правила проверяющего агента
 
@@ -2795,8 +2806,8 @@ README отвечает на вопрос «куда нажать и с чего
 > [!IMPORTANT]
 > **Перед передачей приложения:** соберите Debug и Release, пройдите безопасные
 > демонстрационные сценарии и замените fixture/разрешённые временные public
-> client values на данные текущего проекта из Kaiten. Убедитесь, что signing,
-> bundle, credentials и account data никогда не копировались из reference.
+> client values на данные текущего проекта из Kaiten. Убедитесь, что bundle,
+> provisioning, credentials и account data не копировались из reference.
 
 > [!TIP]
 > **Если меняли саму платформу:** задача завершена только после строки

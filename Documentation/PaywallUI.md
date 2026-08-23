@@ -287,8 +287,7 @@ Product row, CTA, restore, close, legal links и payment methods использ�
 - выбор продукта не использует motion, поэтому Reduce Motion не требует альтернативы.
 
 Локальная проверка использует доступные сценарии в Simulator и просмотр
-semantic labels/traits в коде. Отдельный прогон VoiceOver/Dynamic Type на
-устройствах не обязателен. Light/dark с цветами приложения, реальные окна
+semantic labels/traits в коде. Light/dark с цветами приложения, реальные окна
 выбора оплаты и возврат из RU-оплаты проверяются при сборке конкретного
 приложения.
 
@@ -323,5 +322,5 @@ semantic labels/traits в коде. Отдельный прогон VoiceOver/Dy
   purchase, restore и durable Apple/RU pending, но остаются видимыми без dimming;
 - во время purchase нет opacity/scale/dimming и заблокированы касания;
 - long localization и light/dark fixtures в доступном Simulator matrix;
-- наличие semantic labels/traits и scalable layout по source contract, без
-  обязательного device VoiceOver/Dynamic Type прогона.
+- наличие semantic labels/traits и scalable layout по source contract и
+  доступным Simulator fixtures.

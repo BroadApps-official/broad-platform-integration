@@ -1,8 +1,7 @@
 # Security и privacy review
 
-Дата: 2026-08-23. Scope — платформа, BroadAppTemplate и текущий diff. Для
-несозданного приложения 5135 review не может заменить будущую app-level
-проверку.
+Дата: 2026-08-23. Scope — платформа, BroadAppTemplate и текущий diff. Review
+конкретного host app выполняется отдельно по его network/configuration source.
 
 ## Результат
 
@@ -11,33 +10,25 @@ operations и production payload не использовались.
 
 | Требование | Доказательство | Статус |
 |---|---|---|
-| В логах нет email/token/receipt/JWS/payment URL | `BroadLogEvent` принимает закрытые enum/Bool/count; `OSLogBroadLogger` форматирует только typed fields; raw logging APIs в app/source не найдены | PASS |
-| Provider payload не печатается целиком | Analytics models исключают payload/identity; legacy free-form remote event физически не вызывается и логируется как discarded metadata | PASS |
-| Support log очищен | Template формирует bounded три строки без ID/payload; builder принимает только уже очищенный log по documented contract | PASS |
-| Keychain Debug очищает только app-owned services | Точный `kSecClassGenericPassword` + `kSecAttrService`, два явно перечисленных template service, весь тип под `#if DEBUG` | PASS |
-| Payment pending не очищается Debug UI | Debug actions имеют только keychain/flow/content-cache/in-memory analytics; pending stores не передаются | PASS |
-| Entitlement/token не берутся из content cache | Token balance приходит только из fulfillment/recovery callback; premium идёт через entitlement engine/authority; architecture check прошёл | PASS |
-| Credentials отсутствуют в Git/current diff | Secret patterns и key/certificate/provisioning extensions не найдены | PASS |
+| В логах нет email/token/receipt/JWS/payment URL | `BroadLogEvent` принимает bounded typed fields; raw logging APIs в app/source не найдены | PASS |
+| Provider payload не печатается целиком | Analytics исключает payload/identity; legacy free-form event отбрасывается | PASS |
+| Support log очищен | Template формирует bounded строки без ID/payload | PASS |
+| Debug Keychain очищает только app-owned services | Точный class/service scope, весь инструмент под `#if DEBUG` | PASS |
+| Payment pending не очищается Debug UI | Доступны только keychain/flow/cache/in-memory analytics scopes | PASS |
+| Entitlement/token не берутся из content cache | Premium идёт через entitlement authority, balance — через fulfillment/recovery | PASS |
+| Credentials отсутствуют в Git/current diff | Secret patterns и key/certificate/provisioning files не найдены | PASS |
 | Privacy manifest соответствует API | `bash Scripts/check_privacy_manifest.sh` | PASS |
-| Release без Debug-каталога | Debug composition/views ограждены `#if DEBUG`; в Release binary нет debug labels/identifiers | PASS |
+| Release без Debug-каталога | Debug composition ограждена `#if DEBUG` | PASS |
 
-## Дополнительное исправление аудита
+## Конфигурационная граница
 
-Инструкция временной конфигурации теперь разрешает только fixture или явно
-согласованные public client values для load/show. README, Traceability и
-Usedesk прямо запрещают копировать signing team, live bundle, credentials,
-keys/certificates, backend auth, api/user chat tokens и account/user data.
-
-## Команды
-
-- `bash Scripts/check_privacy_manifest.sh` — PASS;
-- `bash Scripts/check_architecture.sh` — PASS;
-- поиск raw `print`/`debugPrint`/`NSLog`/`os_log` — вызовов не найдено;
-- secret/key/certificate scan — совпадений и файлов нет;
-- `strings` Release binary по Debug labels/identifiers — совпадений нет.
+Инструкции разрешают fixture или явно согласованные public client values для
+load/show. Нельзя копировать live bundle, credentials, keys/certificates,
+backend auth, API/user chat tokens и account/user data из reference. Signing
+не требуется для обязательной Simulator-first проверки.
 
 ## Граница результата
 
-После создания 5135 проверку нужно повторить для его analytics destination,
-network clients, app support-log source, signing/config delivery и Release
-binary. Текущий platform `PASS` этого будущего app-level review не доказывает.
+Каждый host app повторяет review для своих analytics destinations, network
+clients, support-log source, app-owned configuration и Release binary. Platform
+`PASS` не доказывает этот будущий app-level результат.

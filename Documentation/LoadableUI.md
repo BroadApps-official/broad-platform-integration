@@ -142,7 +142,7 @@ cancellation. Готовый пример: [Debug и async-действия](Deb
 
 `BroadLoadableTheme.standard` использует semantic system colors, Dynamic Type fonts и размеры через локальный `.scale`. Приложение может передать собственные `Palette`, `Typography` и `Metrics`; размеры host theme должны приходить уже масштабированными через его design tokens.
 
-Компоненты не задают фиксированную высоту тексту. Stale banner переходит из horizontal в vertical layout на accessibility Dynamic Type. Декоративные иконки скрыты от VoiceOver, loader остаётся нативным progress element, а action — отдельной доступной кнопкой с minimum tap target. Custom animation отсутствует, поэтому Reduce Motion не требует альтернативной ветки; системный `ProgressView` остаётся системным.
+Компоненты не задают фиксированную высоту тексту. Stale banner переходит из horizontal в vertical layout на accessibility Dynamic Type. Декоративные иконки не получают отдельного semantic action, loader остаётся нативным progress element, а action — отдельной кнопкой с minimum tap target. Custom animation отсутствует, поэтому Reduce Motion не требует альтернативной ветки; системный `ProgressView` остаётся системным.
 
 ## Timeout, degraded и fallback
 
@@ -164,5 +164,5 @@ Loader не запускает собственный timeout. Timeout/retry pol
 - backend-кнопка показывает spinner сразу после первого тапа, до первого `await`;
 - длинная локализация, light/dark mode и Reduce Motion не ломают доступные
   fixture-сценарии;
-- semantic accessibility и scalable layout проверяются по коду;
-  отдельный прогон VoiceOver/Dynamic Type на устройствах не обязателен.
+- semantic accessibility и scalable layout проверяются по коду и доступным
+  Simulator fixtures.

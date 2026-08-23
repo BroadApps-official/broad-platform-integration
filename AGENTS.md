@@ -14,6 +14,15 @@
 - Платформа и example — только для iPhone. Не добавляй iPad, Mac, Mac Catalyst
   или visionOS targets/configurations. Example обязан хранить
   `TARGETED_DEVICE_FAMILY = 1`.
+- У разработчиков нет доступного платного Apple Developer аккаунта и Signing
+  Team. Для обязательной работы используй `Team = None`, iPhone Simulator и
+  generic `iphoneos` compile без подписи. Не проси выбрать team, настроить
+  provisioning или создать подписанную сборку.
+- Ручной запуск на iPhone, если компания предоставляет свой способ, выполняется
+  вне platform gate. Его отсутствие не является blocker-ом платформы или
+  template и не заменяет Simulator-проверки.
+- Platform-owned документация и AgentChecks остаются универсальными: не
+  привязывай их к номеру, названию или статусу отдельного приложения.
 - Рабочие public Adapty SDK configurations 5013/5109Codex должны оставаться в
   tracked source по требованию руководства. Не удаляй и не маскируй их.
 - Backend credentials, private signing keys и токены серверного доступа сюда не
@@ -83,7 +92,8 @@
 
 - Не выполнять настоящую покупку, restore или RU-платёж.
 - Не требовать StoreKit sandbox: он недоступен по правилам компании.
-- Не требовать VoiceOver/Dynamic Type matrix на физических устройствах.
+- Не добавлять обязательную screen-reader или отдельную device accessibility
+  matrix. Доступные semantic/source проверки не являются device gate.
 - Не создавать archive, signed `.ipa` и host attestation.
 - Live Adapty schemes разрешено только собирать. Не запускай финансовые SDK
   операции.

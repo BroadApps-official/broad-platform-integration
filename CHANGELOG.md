@@ -124,8 +124,14 @@ production-ready версии.
 - Стартовая инструкция теперь берёт данные приложения из Kaiten, разрешает
   только fixture либо явно согласованные публичные client identifiers reference
   для безопасного load/show и фиксирует базовые правила Adapty для products,
-  paywalls, placements и Remote Config; чужие signing/account/auth данные
+  paywalls, placements и Remote Config; чужие provisioning/account/auth данные
   переносить запрещено;
+- platform-owned AgentChecks больше не привязаны к номеру отдельного
+  приложения: project-specific preflight/status и обязательный signed-device
+  report заменены единым универсальным application integration contract;
+- developer flow закреплён как `Team = None`, два iPhone Simulator и generic
+  unsigned compile; доступный компании запуск на iPhone остаётся отдельным
+  app-level evidence и не блокирует platform `PASS`;
 - стандартный Remote Config распознаёт `ru_pay` и `auto_revenue_view` вместе с
   legacy aliases, а typed placements включают `pro_icon` и `CTR`;
 - README теперь начинает работу с реального сценария команды: новое приложение

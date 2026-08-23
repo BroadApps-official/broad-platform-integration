@@ -99,6 +99,6 @@ entitlement fixture; таблица содержит только этот по�
 
 ## Итог этапа
 
-`PASS` для ручной приёмки BroadAppTemplate на двух Simulator. Проверки,
-которые по природе требуют физический iPhone или входы конкретного продукта,
-в этот результат не включены и отслеживаются отдельно.
+`PASS` для ручной приёмки BroadAppTemplate на двух Simulator. App-owned
+backend, дизайн и внешняя конфигурация проверяются отдельно для каждого host
+app по `Documentation/ProjectDelivery.md`; они не меняют platform-результат.
