@@ -140,7 +140,10 @@ for required_pattern in \
     'FUNCTIONAL REVIEW REQUIRED' \
     'маленьком и большом iPhone Simulator' \
     'offer_week_4\.99_nottrial' \
-    'BroadOnboardingFlowHost'; do
+    'BroadOnboardingFlowHost' \
+    '^### 🎁 Special Offer — всегда второй paywall$' \
+    'Documentation/Assets/README/References/special-offer-step-1-paywall\.png' \
+    'Documentation/Assets/README/References/special-offer-step-2-offer\.png'; do
     if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
     fi

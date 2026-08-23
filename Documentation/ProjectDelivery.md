@@ -77,7 +77,9 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 - [ ] Token purchase использует `TokenPurchaseManager`; баланс меняется после backend.
 - [ ] Active entitlement пропускает subscription paywall; unresolved не выдаёт premium.
 - [ ] Special offer опционален и не включается platform cache.
-- [ ] Закрытие subscription paywall проходит resolver и только затем показывает offer/main.
+- [ ] Special Offer никогда не открывается первым: крестик subscription paywall
+  запускает resolver и только затем показывает offer/main; подтверждённая
+  purchase/restore первого paywall обходит offer.
 - [ ] Один analytics pipeline видит события subscription и special-offer презентаций.
 - [ ] RU methods требуют текущий разрешающий gate и app-owned backend.
 - [ ] Contact Us имеет composer и fallback.

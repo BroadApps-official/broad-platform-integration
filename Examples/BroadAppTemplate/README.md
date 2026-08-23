@@ -32,8 +32,9 @@ chat token хранится через backend app account. [Инструкци�
 Example показывает полный локальный flow платформы:
 
 ```text
-launch → configurable onboarding → initial paywall policy → optional special offer → main
-                                                        verified active ───────→ premium
+launch → configurable onboarding → subscription paywall
+                                      ├─ purchase/restore → active → main/premium
+                                      └─ close → resolver → optional special offer → main
 ```
 
 `main` и premium — не одно состояние. Разрешённое закрытие paywall,
@@ -70,7 +71,8 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 - три initial-paywall policy: once, every cold launch while inactive и disabled;
 - special offer как опциональную ветку: карточка и cold-launch fixtures сначала
   показывают subscription paywall, после close запускают resolver и только затем
-  открывают offer или возвращаются в main;
+  открывают offer или возвращаются в main; purchase/restore первого paywall
+  ведёт в main без downsell;
 - отдельный consumable token paywall с backend-confirmed balance, pending,
   идемпотентным retry, offline и account recovery fixture;
 - независимую очистку Keychain, app-flow progress, content cache и in-memory
@@ -184,8 +186,9 @@ fail-before-charge.
 `BroadMonetization`. Special Offer проходит через `ResolveSpecialOfferUseCase`,
 а RU methods — через `ResolveCheckoutMethodsUseCase` и `RUBillingGate`.
 
-Для Special Offer результат виден сразу: разрешённая кампания открывает общий
-paywall, заблокированная показывает безопасное объяснение. Для RU-сценария
+Для Special Offer сначала закройте обычный subscription paywall. Разрешённая
+кампания затем открывает второй paywall, заблокированная ведёт в main без
+пустого экрана. Для RU-сценария
 выберите продукт и нажмите `Продолжить`: у текущего ответа Adapty появятся
 Apple/СБП/карта, у сохранённой копии из кеша `BroadMonetization` останется только
 Apple.

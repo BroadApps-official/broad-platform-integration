@@ -143,6 +143,45 @@ Us/Debug. Его можно использовать как карту стар�
 | Debug-хранилища | Только Debug-каталог | Keychain, app-flow progress, content cache и in-memory analytics очищаются независимо и показывают результат рядом со своей кнопкой |
 | Loading/error/offline | Backend или SDK action | Spinner появляется до первого `await`, повторный тап блокируется, а ошибка завершает ожидание и даёт безопасный Retry |
 
+<a id="special-offer-sequence"></a>
+### 🎁 Special Offer — всегда второй paywall
+
+Когда Special Offer включён для приложения, он **никогда не заменяет первый
+subscription paywall** и не открывается напрямую при запуске. Последовательность
+фиксированная:
+
+```text
+обычный subscription paywall
+  ├─ purchase / restore → новая проверка entitlement → active → main без offer
+  └─ крестик без покупки → закрыть первую presentation → resolver-loader
+       ├─ offer разрешён → Special Offer → крестик / confirmed purchase → main
+       └─ nil / false / unavailable / platform cache → main без ошибки
+```
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="Documentation/Assets/README/References/special-offer-step-1-paywall.png">
+        <img src="Documentation/Assets/README/References/special-offer-step-1-paywall.png" alt="Шаг 1: обычный subscription paywall с кнопкой закрытия" width="100%">
+      </a>
+      <br><strong>1. Обычный paywall</strong>
+      <br><sub>Пользователь сначала видит стандартные тарифы и нажимает крестик без покупки</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="Documentation/Assets/README/References/special-offer-step-2-offer.png">
+        <img src="Documentation/Assets/README/References/special-offer-step-2-offer.png" alt="Шаг 2: Special Offer после закрытия обычного paywall" width="100%">
+      </a>
+      <br><strong>2. Special Offer</strong>
+      <br><sub>Resolver разрешает второй paywall только после закрытия первого</sub>
+    </td>
+  </tr>
+</table>
+
+Это reference последовательности из дизайна. Конкретные фон, тексты, продукты,
+таймер и проценты скидки остаются app-owned и берутся из дизайна/Adapty текущего
+приложения. Механика перехода при этом одинакова: карточка Special Offer в
+`BroadAppTemplate` тоже воспроизводит оба шага и не открывает offer напрямую.
+
 Главное различие: **`main` — это маршрут приложения, а premium — защищённые
 возможности внутри него**. `unknown` не должен оставлять пользователя в вечном
 loader и не должен показывать paywall как при доказанном `inactive`; он открывает
@@ -979,8 +1018,11 @@ Preflight уже завершён результатом «Можно начин
    указанной backend-ручки. Token purchase не выдаёт premium, subscription
    purchase не меняет token balance. Initial paywall использует явно выбранную
    политику: once after onboarding, every cold launch while inactive или
-   disabled. Special offer остаётся опциональной веткой после закрытия обычного
-   paywall и никогда не подменяет token paywall.
+   disabled. Special offer остаётся опциональной веткой: он никогда не
+   открывается вместо обычного subscription paywall, резолвится только после
+   нажатия крестика без покупки и никогда не подменяет token paywall. Успешная
+   purchase/restore первого paywall ведёт через entitlement refresh в main без
+   показа offer.
 6. Настрой Adapty по базовым правилам README: `nottrial`, paywalls
    `main`/`tokens`/`special_offer`, стандартные placements и обязательный
    Remote Config для `main`. Если загружается самостоятельный placement
@@ -1019,8 +1061,9 @@ Preflight уже завершён результатом «Можно начин
     доказательством Dashboard-конфигурации.
 15. Собери приложение в Debug и Release. Запусти безопасные сценарии: три
     initial-paywall policy; active/inactive/unresolved; закрытие subscription
-    paywall → resolver → special offer/main; absent/false/true/main fallback/
-    platform cache; отдельные subscription/token paywall; Contact Us без Mail;
+    paywall крестиком без покупки → resolver → special offer/main; confirmed
+    purchase/restore → main без offer; absent/false/true/main fallback/platform
+    cache; отдельные subscription/token paywall; Contact Us без Mail;
     создание/refresh/clear общего analytics pipeline. Ни одна
     функция из карты экранов не должна исчезнуть молча: для неподключённой
     функции покажи BLOCKED, а не заглушку, выдаваемую за production flow.
@@ -1139,7 +1182,8 @@ Claude** этот текст:
    onboarding с фактическим количеством страниц; initial paywall в политиках
    once/every cold launch/disabled; entitlement active/inactive/unresolved;
    paywall с 0/1/2/12 продуктов; ошибку/retry/pending/offline; закрытие обычного
-   subscription paywall → resolver → special offer/main; special offer при
+   subscription paywall → крестик без покупки → resolver → special offer/main;
+   purchase/restore первого paywall должен обойти offer; special offer при
    absent/false/true/main fallback/platform cache; отдельный token paywall;
    Contact Us без настроенного Mail; создание, live-observation, refresh и clear
    событий одного analytics pipeline. Для каждого сценария запиши действие,
@@ -1822,8 +1866,9 @@ smoke по согласованному обезличенному production-sh
 4. Все три initial-paywall policy и entitlement active/inactive/unresolved.
 5. Paywall с 0/1/2/12 продуктами, пустым списком, ошибкой, незавершённой
    операцией и отсутствием сети.
-6. Закрытие обычного subscription paywall → resolver → special offer/main;
-   отдельно absent/false/true/main fallback/platform cache.
+6. Закрытие обычного subscription paywall крестиком без покупки → resolver →
+   special offer/main; confirmed purchase/restore первого paywall → main без
+   offer; отдельно absent/false/true/main fallback/platform cache.
 7. Token paywall остаётся отдельным; Contact Us без Mail показывает fallback;
    один analytics pipeline видит создание, live-update, refresh и clear событий.
 8. Live Adapty catalog — только load/show; без реальных purchase/restore. Запишите
@@ -2142,7 +2187,8 @@ purchase-flow и окно выбора СБП/карты не открывает
 - понять, как четыре модуля package соединяются в одном приложении;
 - открыть интерактивные карточки app flow, subscription/token paywall, special
   offer, RU Billing, loader/error, analytics, Contact Us и Debug-хранилищ;
-- пройти `запуск → onboarding → initial paywall → optional special offer → main`;
+- пройти `запуск → onboarding → initial paywall → крестик без покупки →
+  optional special offer → main`;
 - сравнить три app-owned политики initial paywall: один раз после onboarding,
   каждый холодный запуск при inactive access и disabled;
 - проверить отдельный token balance/paywall: placement `.tokens`, fixture

@@ -3,8 +3,8 @@
 ## Результат
 
 `PASS` — полный local gate прошёл 23 августа 2026 года после повторного аудита
-замечаний разработчика, исправления Special Offer catalog flow, общей аналитики
-и обновления developer instructions.
+Special Offer flow, добавления visual reference и усиления architecture
+contracts для первого paywall и downsell.
 
 Scope результата — только `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не
 переносится автоматически ни на одно приложение, созданное поверх платформы.
@@ -17,9 +17,12 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
 - Release generic iOS device compile без подписи;
 - две live Adapty configurations только компиляцией, без финансовых действий;
 - полная fixture-матрица AppFlow, entitlement, special offer и token flow;
-- карточка Special Offer проходит subscription paywall → resolver → offer,
-  получает новую presentation authorization и пишет события обоих paywall в
-  общий process recorder;
+- карточка Special Offer проходит subscription paywall → close без покупки →
+  resolver → offer; confirmed completion первого paywall обходит offer; каждый
+  повторный вход получает новую presentation authorization, а события обоих
+  paywall попадают в общий process recorder;
+- README показывает приложенную пару design-reference экранов и явно отделяет
+  app-owned визуал от обязательной последовательности переходов;
 - Debug refresh аналитики показывает spinner, timestamp и явное empty state;
 - девять карточек каталога на маленьком и большом iPhone Simulator;
 - clean install, ATT после видимого onboarding, cold/relaunch и
@@ -74,6 +77,6 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-`0b12527413b1059b840f718e5341c1ea721deb15d5437cbfe48bb385ce4e7d00`
+`34e085e5bbc99e854c0bf2d765ee2f88548b9a58b475262128065b226faac230`
 
 </details>

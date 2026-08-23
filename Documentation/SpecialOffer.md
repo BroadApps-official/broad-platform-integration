@@ -2,8 +2,10 @@
 
 ## Главное правило
 
-Special offer — опциональная фича проекта, а не обязательная стадия paywall flow.
-Проект включает её только передачей `SpecialOfferConfiguration`.
+Special offer — опциональная фича проекта, но при включении он всегда является
+вторым paywall. Он не заменяет обычный subscription paywall и не открывается
+напрямую при launch, из main или из демонстрационной карточки. Проект включает
+ветку только передачей `SpecialOfferConfiguration`.
 
 ```swift
 let result = await resolveSpecialOffer(configuration: appConfiguration.specialOffer)
@@ -30,7 +32,9 @@ let result = await resolveSpecialOffer(configuration: appConfiguration.specialOf
 обычного subscription paywall:
 
 ```text
-обычный paywall закрыт без покупки
+обычный subscription paywall показан первым
+              ↓
+пользователь нажал крестик без покупки
               ↓
 SpecialOfferConfiguration существует?
               ↓
@@ -40,7 +44,9 @@ paywall разрешён → special offer → close или verified active → 
 нет / disabled / unavailable ───────────────────────────────→ main
 ```
 
-Обычный paywall сначала действительно закрывает provider presentation. Пока
+Purchase/restore первого paywall не вызывает resolver: после подтверждённого
+`active` flow идёт в `main`. Обычный paywall сначала действительно закрывает
+provider presentation. Пока
 resolver работает, host показывает отдельный loader и блокирует повторный close.
 `initialPaywallDismissed()` вызывается только после отрицательного результата
 resolver-а или после закрытия самого special offer. Благодаря этому policy
@@ -64,9 +70,12 @@ process. Отрицательный результат не показывает
 - `-special-offer-platform-cache` — platform cache не может включить offer;
 - `-special-offer-timed` — используется trusted fixture clock.
 
-Эти аргументы больше не обходят AppFlow отдельным стартовым экраном: сначала
-открывается обычный subscription paywall, затем проверяется реальная ветка
-закрытия. Настоящая покупка не запускается.
+Эти аргументы не обходят AppFlow отдельным стартовым экраном: сначала открывается
+обычный subscription paywall, затем пользователь закрывает его крестиком и
+только после этого проверяется offer. Настоящая покупка не запускается.
+
+Наглядная пара экранов находится в
+[главном README](../README.md#special-offer-sequence).
 
 ## Три обязательных условия
 

@@ -76,6 +76,11 @@ production-ready версии.
 
 ### Changed
 
+- README получил приложенную пару design-reference экранов и явную механику
+  `subscription paywall → крестик без покупки → resolver → Special Offer`;
+  confirmed purchase/restore первого paywall обходит downsell;
+- architecture gate теперь отдельно защищает порядок initial и catalog Special
+  Offer flow и не позволяет completion первого paywall открыть offer;
 - карточка Special Offer в `BroadAppTemplate` теперь действительно проходит
   `subscription paywall → resolver → offer/main`, повторно резолвит новый
   presentation при каждом открытии и пишет обе презентации в общий process

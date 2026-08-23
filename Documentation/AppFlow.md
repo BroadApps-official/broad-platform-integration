@@ -20,6 +20,23 @@ Onboarding и initial paywall можно отключать независимо
 
 `main` не переводится обратно в `initialPaywall` из-за позднего ответа SDK или смены entitlement. Премиальный content внутри `main` по-прежнему защищается актуальным entitlement, а повторные продажи при необходимости открываются отдельным placement/feature-flow.
 
+### Ветка Special Offer после крестика
+
+AppFlow не ставит Special Offer вместо `initialPaywall`. Если host включил
+downsell, он подключается только к явному закрытию первого paywall без покупки:
+
+```text
+initialPaywall
+  ├─ purchased/restored → entitlement active → main
+  └─ close (крестик) → resolver → specialOffer или main
+```
+
+Пока resolver работает, host оставляет пользователя в конечном loader-state и
+не вызывает `initialPaywallDismissed()`. Этот метод вызывается после
+отрицательного resolution либо после закрытия Special Offer. Так policy не
+считает ветку завершённой раньше времени. Полный контракт и reference экранов:
+[Special Offer](SpecialOffer.md) · [README](../README.md#special-offer-sequence).
+
 ## Конфигурация
 
 `AppFlowConfiguration` требует явно задать оба шага. Скрытых default-решений нет.

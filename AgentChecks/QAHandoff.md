@@ -24,7 +24,7 @@
 | Основной flow | Onboarding → initial paywall policy → main |
 | Subscription paywall | Fixture subscriptions; premium только после entitlement |
 | Token paywall | Consumables, backend confirmation/retry/recovery, без premium |
-| Special offer | Subscription paywall → resolver → optional второй paywall |
+| Special offer | Subscription paywall → крестик без покупки → resolver → optional второй paywall; confirmed purchase/restore обходит offer |
 | RU Billing | Безопасный выбор метода; настоящая оплата не запускается |
 | Loader и ошибки | Немедленный spinner, disabled double tap, error и Retry |
 | Аналитика | Общий recorder, видимый refresh и clear feedback |

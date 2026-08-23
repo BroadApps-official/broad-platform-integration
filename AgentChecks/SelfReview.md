@@ -37,7 +37,7 @@ Special Offer/analytics. Отсутствие платного аккаунта,
 
 Карточка раньше открывала offer напрямую и использовала отдельный невидимый
 recorder. Теперь Simulator-прогон подтверждает
-`subscription-paywall → resolver → special-offer`, новый presentation ID при
+`subscription-paywall → close без покупки → resolver → special-offer`, новый presentation ID при
 повторном входе и события обеих презентаций в общем recorder. Debug refresh
 показывает видимое завершение.
 

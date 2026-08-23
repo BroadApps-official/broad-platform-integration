@@ -139,16 +139,20 @@ requested remote
 Текущий Adapty/provider payload может управлять `special_offer` и показом
 `ru_pay`; payload из собственного cache платформы — нет.
 
-Стандартный Adapty-путь остаётся одной непрерывной цепочкой:
+Стандартный Adapty-путь остаётся одной непрерывной цепочкой. Special Offer
+никогда не подменяет первый subscription paywall:
 
 ```text
-Adapty paywall
-  ├─ raw products → внутренний AdaptyProductRegistry → exact selection → purchase
-  └─ Remote Config
-       ├─ special_offer → Special Offer UI
-       └─ ru_pay → регион/язык iPhone → RU methods
+обычный Adapty subscription paywall
+  ├─ raw products → внутренний AdaptyProductRegistry → exact selection
+  ├─ purchase / restore → entitlement refresh → active → main без offer
+  └─ крестик без покупки → ResolveSpecialOfferUseCase
+       ├─ current provider gate enabled → Special Offer UI
+       └─ unavailable / disabled / platform cache → main
 
-purchase / restore / RU return
+Remote Config ru_pay → регион/язык iPhone → RU methods
+
+Special Offer purchase / restore / RU return
   → новый authoritative entitlement refresh
   → premium открывается только при active
 ```
@@ -388,6 +392,10 @@ let specialOffer: SpecialOfferConfiguration? = appFeatures.specialOffer
 ```
 
 При `nil` resolver возвращает `.unavailable(.notConfigured)` до обращения к любой зависимости. Нет network, placement, cache, persistence, timer, fallback или UI.
+
+Resolver вызывается только после крестика первого subscription paywall без
+покупки. Подтверждённые purchase/restore первого paywall сразу продолжают
+обычный entitlement flow и не показывают downsell.
 
 Если configuration есть, gate обязан быть valid/enabled, а provenance должен
 разрешать provider-managed flags. Стандартный `AdaptyPaywallRepository` с

@@ -309,6 +309,21 @@ require_file_pattern \
     '(?s)ExampleSpecialOfferCatalogFlowView.*case[[:space:]]+[.]?subscriptionPaywall.*BroadPaywallView.*onClose:[[:space:]]*subscriptionPaywallClosed.*case[[:space:]]+[.]?resolvingOffer.*resolutionProgress.*case[[:space:]]+[.]?specialOffer.*ExampleSpecialOfferFixtureView\(.*resetForCatalogPresentation\(\).*func[[:space:]]+subscriptionPaywallClosed\(\).*resolveIfNeeded\(\)'
 
 require_file_pattern \
+    "Confirmed completion of the catalog subscription paywall must bypass Special Offer:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/RootScene/ExampleSpecialOfferFixtureView.swift" \
+    '(?s)case[[:space:]]+[.]?subscriptionPaywall:.*BroadPaywallView\(.*onClose:[[:space:]]*subscriptionPaywallClosed,[[:space:]]*onCompleted:[[:space:]]*\{[[:space:]]*_[[:space:]]+in[[:space:]]+dismiss\(\)[[:space:]]*\}'
+
+require_file_pattern \
+    "Initial AppFlow must resolve Special Offer only after the first paywall closes:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/AppFlow/AppFlowSceneViewModel.swift" \
+    '(?s)func[[:space:]]+paywallClosed\(\).*specialOfferViewModel\.resolveIfNeeded\(\).*activeSpecialOfferViewModel[[:space:]]*=[[:space:]]*specialOfferViewModel.*func[[:space:]]+specialOfferClosed\(\).*coordinator\.initialPaywallDismissed\(\)'
+
+require_file_pattern \
+    "Confirmed purchase or restore on the first paywall must bypass Special Offer:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/AppFlow/AppFlowSceneViewModel.swift" \
+    '(?s)func[[:space:]]+paywallCompleted\(.*case[[:space:]]+[.]purchased,[[:space:]]+[.]restored:.*activeSpecialOfferViewModel[[:space:]]*=[[:space:]]*nil.*coordinator\.subscriptionDidBecomeActive\(\)'
+
+require_file_pattern \
     "Special Offer catalog must use the shared process analytics recorder:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Application/AppCompositionRoot.swift" \
     '(?s)makeCatalogSpecialOfferViewModel\(.*analyticsRecorder:[[:space:]]*runtime\.monetizationEnvironment\.analyticsRecorder'

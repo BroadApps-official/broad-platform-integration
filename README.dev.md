@@ -293,6 +293,9 @@ iPad не входит в scope платформы.
 - Special Offer существует только при конфигурации приложения и явном
   `special_offer = true` из текущего ответа SDK Adapty. Ответ может прийти из
   сети или внутреннего кеша Adapty; отдельный REST/repository не создаётся.
+- Special Offer никогда не является первым paywall: сначала показывается
+  обычный subscription paywall, resolver запускается только после его крестика
+  без покупки, а подтверждённая purchase/restore ведёт в main без downsell.
 - Если самостоятельный placement `special_offer` загрузился, gate читается из
   его payload. Gate резервного `main` используется только при фактическом
   fallback на `main`.
