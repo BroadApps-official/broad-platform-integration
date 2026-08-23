@@ -26,6 +26,7 @@ contract; тимлид — подтвердить product decisions ниже.
 | Git приложения | Поле пусто; отдельного локального проекта 5135 нет | BLOCKED · разработчик/тимлид |
 | Legal/support | Ссылки присутствуют в Project Storage, но их продуктовая применимость ещё не подтверждена | BLOCKED · ПМ |
 | Monetization | В Kaiten есть subscription, token и offer product names; реальные каталоги не открывались | PARTIAL |
+| Ожидаемый offer product | Разработчик сообщил `offer_week_4.99_nottrial`; payload Adapty не загружался | REPORTED / BLOCKED до безопасного app-owned load/show |
 | Analytics | Назначение, события и destinations не описаны | BLOCKED · ПМ/analytics owner |
 
 ## Таблица продуктовых решений
@@ -38,7 +39,7 @@ contract; тимлид — подтвердить product decisions ниже.
 | Число страниц | Точный frame context недоступен | BLOCKED · дизайнер/ПМ |
 | Источник каждого экрана | Figma, но node/frame map не выдан | BLOCKED · дизайнер |
 | Subscription / tokens | В Project Storage перечислены продукты обоих типов | Утверждено по типам; состав каталога сверяет ПМ |
-| Special offer | Есть отдельный offer product, но правила eligibility/cooldown не описаны | BLOCKED · ПМ |
+| Special offer | Сообщён product ID `offer_week_4.99_nottrial`, но placement, remote gate, eligibility/cooldown и live payload не подтверждены | BLOCKED · ПМ/Adapty owner |
 | RU Billing | Требование отсутствует | BLOCKED · ПМ должен ответить `нет` или дать контракт |
 | Initial paywall policy | Checklist требует показ после onboarding; повторные cold launch не описаны | BLOCKED · ПМ/тимлид |
 | Close paywall | Checklist требует появление close через 5 секунд | Утверждено; policy безопасности сверяет тимлид |

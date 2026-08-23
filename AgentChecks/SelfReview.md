@@ -6,7 +6,8 @@
 
 ## Результат
 
-`PASS` для доступных Simulator-проверок после одного исправления layout.
+`PASS` для доступных Simulator-проверок после layout-исправления и повторного
+аудита Special Offer/analytics.
 Проверка системного Mail composer, VoiceOver и Dynamic Type на физическом
 iPhone остаётся `BLOCKED` до выбора signing team и описана отдельно в
 [`PhysicalDeviceReport.md`](PhysicalDeviceReport.md).
@@ -17,6 +18,8 @@ iPhone остаётся `BLOCKED` до выбора signing team и описан
 |---|---|---|---|
 | Main и каталог девяти сценариев | iOS 18.6 | iPhone 17 Pro, iOS 26.2 | PASS |
 | Subscription/token/special/RU/loader/analytics/Contact Us/Debug | Пройдено | Пройдено | PASS по безопасным fixture-сценариям |
+| Карточка Special Offer | Subscription → close → resolver → offer; повторный вход создал новые presentation ID | Subscription → close → resolver → offer | PASS без финансовых действий |
+| Общий recorder | Analytics и Debug показали события subscription и special offer; refresh обновил время | События обеих презентаций записываются тем же composition contract | PASS |
 | Token paywall после layout-исправления | Длинные подписи переносятся; остальные пакеты доступны прокруткой | Длинные подписи переносятся; цена остаётся видимой | PASS |
 | Clean install | Первый onboarding-слайд фактически показан до ATT; системный диалог отвечает | Ранее проверена чистая установка каталога | PASS в Simulator |
 | Background → foreground | Token paywall сохранился без сброса и падения | Основные cold/relaunch-сценарии проверены при acceptance | PASS |
@@ -40,6 +43,18 @@ iPhone остаётся `BLOCKED` до выбора signing team и описан
 - правая колонка цены остаётся однострочной и не перекрывается текстом.
 
 Повторный визуальный прогон на обоих размерах подтвердил полный перенос строки.
+
+## Повторный аудит замечаний разработчика
+
+До исправления карточка Special Offer открывала offer напрямую и собирала его
+события во втором невидимом recorder. После исправления ручной Simulator-прогон
+на маленьком iPhone и iPhone 17 Pro подтвердил `subscription-paywall → resolver
+→ special-offer`. На маленьком iPhone повторный вход создал новые presentation
+ID, а общий экран и Debug-список показали load/show/close обеих презентаций.
+Debug refresh обновил видимое время завершения.
+
+Во время midpoint review дополнительно найдено и устранено повторное
+использование старой Special Offer presentation authorization.
 
 ## Осознанные границы
 

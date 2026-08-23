@@ -136,6 +136,10 @@ for required_pattern in \
     'Documentation/Assets/README/adaptive-paywall\.gif' \
     'Copy-paste: обязательная инструкция агенту перед onboarding' \
     'Три слайда в `BroadAppTemplate` — только демонстрационный пример' \
+    'production-shape fixture' \
+    'FUNCTIONAL REVIEW REQUIRED' \
+    'маленьком и большом iPhone Simulator' \
+    'offer_week_4\.99_nottrial' \
     'BroadOnboardingFlowHost'; do
     if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"

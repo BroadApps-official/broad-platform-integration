@@ -13,12 +13,12 @@ struct ExampleMonetizationEnvironment {
 
     init(
         arguments: [String] = ProcessInfo.processInfo.arguments,
-        logger: any BroadLoggerProtocol = NoOpBroadLogger()
+        logger: any BroadLoggerProtocol = NoOpBroadLogger(),
+        analyticsRecorder sharedAnalyticsRecorder: ExampleRecordingMonetizationAnalytics? = nil
     ) {
         let accessState = ExamplePremiumAccessState()
-        let analyticsRecorder = ExampleRecordingMonetizationAnalytics(
-            logger: logger
-        )
+        let analyticsRecorder = sharedAnalyticsRecorder
+            ?? ExampleRecordingMonetizationAnalytics(logger: logger)
         let analytics = ExampleMonetizationAnalyticsAssembly.make(
             recorder: analyticsRecorder
         )

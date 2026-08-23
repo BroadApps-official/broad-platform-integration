@@ -51,9 +51,13 @@ import SwiftUI
 
                     Section("События для просмотра") {
                         if analyticsViewModel.events.isEmpty {
-                            Text("Событий монетизации пока нет. Откройте безопасный paywall из каталога.")
-                                .font(AppTokens.Font.caption)
-                                .foregroundStyle(AppTokens.Color.secondaryText)
+                            Text(
+                                analyticsViewModel.lastUpdatedAt == nil
+                                    ? "Событий монетизации пока нет. Откройте безопасный paywall из каталога."
+                                    : "Обновление завершено: событий пока нет. Откройте безопасный paywall из каталога."
+                            )
+                            .font(AppTokens.Font.caption)
+                            .foregroundStyle(AppTokens.Color.secondaryText)
                         } else {
                             ForEach(analyticsViewModel.events) { record in
                                 VStack(alignment: .leading, spacing: AppTokens.Spacing.tiny) {
@@ -68,11 +72,29 @@ import SwiftUI
                             }
                         }
 
-                        Button("Обновить события") {
-                            Task {
-                                await analyticsViewModel.refresh()
+                        Button {
+                            analyticsViewModel.requestRefresh()
+                        } label: {
+                            HStack {
+                                Text(
+                                    analyticsViewModel.isRefreshing
+                                        ? "Обновляем события…"
+                                        : "Обновить события"
+                                )
+                                Spacer()
+                                if analyticsViewModel.isRefreshing {
+                                    ProgressView()
+                                } else if let lastUpdatedAt = analyticsViewModel.lastUpdatedAt {
+                                    Text(lastUpdatedAt, style: .time)
+                                        .font(AppTokens.Font.caption)
+                                        .foregroundStyle(AppTokens.Color.secondaryText)
+                                }
                             }
                         }
+                        .disabled(
+                            analyticsViewModel.isRefreshing
+                                || analyticsViewModel.isClearing
+                        )
                     }
                 }
                 .navigationTitle("Debug-настройки")

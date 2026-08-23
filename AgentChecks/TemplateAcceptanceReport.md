@@ -22,10 +22,10 @@
 | Основной flow | PASS | PASS | Экран открывается и закрывается; cold-launch аргументы проверены отдельно |
 | Subscription paywall | PASS | PASS | Каталог и close доступны; финансовое действие не запускалось |
 | Token paywall | PASS | PASS | Открывается отдельный consumable UI, не subscription UI |
-| Special offer | PASS | PASS | Открывается общий paywall с источником `SPECIAL OFFER`; close возвращает в каталог |
+| Special offer | PASS | PASS | Сначала открыт обычный subscription paywall; close запускает resolver и второй paywall `SPECIAL OFFER`; close возвращает в каталог |
 | RU Billing | PASS | PASS | Безопасный fixture открывается; настоящий checkout не запускался |
 | Loader и ошибки | PASS | PASS | Spinner появляется до ответа, кнопка сразу disabled, повторный tap заблокирован, результат находится в той же секции |
-| Аналитика | PASS | PASS | Экран, refresh/clear и понятное empty-состояние доступны; отображаются только typed fixture-события |
+| Аналитика | PASS | PASS | Экран и Debug refresh показывают время/empty feedback; один recorder содержит typed события subscription и special-offer presentation |
 | Contact Us | PASS | PASS | Simulator показывает fallback без пустого экрана; Copy и Close доступны |
 | Debug-хранилища | PASS | PASS | Четыре независимых scope и отдельные результаты; destructive финансовые pending-состояния не очищаются |
 
@@ -71,6 +71,9 @@ entitlement fixture; таблица содержит только этот по�
 | Таймер | Видимое значение стартует с `00:02:59` | PASS |
 | Повторное закрытие | Close offer ведёт в main | PASS |
 | Нет бесконечного показа | Следующий cold launch того же once-fixture остаётся на main | PASS |
+| Карточка каталога | Обычный paywall → close → resolver → `SPECIAL OFFER` на маленьком и большом iPhone | PASS |
+| Повторный вход в карточку | Созданы новые subscription/offer presentation ID; старая authorization не переиспользована | PASS |
+| Общая аналитика | Один список содержит load/show/close для requested `onboarding` и `special-offer` | PASS |
 
 ## Token flow
 

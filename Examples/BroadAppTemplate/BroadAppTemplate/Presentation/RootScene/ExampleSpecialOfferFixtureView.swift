@@ -2,6 +2,104 @@ import BroadUIFlows
 import SwiftUI
 
 @MainActor
+struct ExampleSpecialOfferCatalogFlowView: View {
+    private enum Phase: Equatable {
+        case subscriptionPaywall
+        case resolvingOffer
+        case specialOffer
+
+        var accessibilityValue: String {
+            switch self {
+            case .subscriptionPaywall: "subscription-paywall"
+            case .resolvingOffer: "resolving-offer"
+            case .specialOffer: "special-offer"
+            }
+        }
+    }
+
+    @ObservedObject var subscriptionPaywallViewModel: PaywallViewModel
+    @ObservedObject var specialOfferViewModel: ExampleSpecialOfferFixtureViewModel
+
+    @State private var phase = Phase.subscriptionPaywall
+    @State private var resolutionTask: Task<Void, Never>?
+    @State private var hasPreparedOffer = false
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        Group {
+            switch phase {
+            case .subscriptionPaywall:
+                BroadPaywallView(
+                    viewModel: subscriptionPaywallViewModel,
+                    theme: AppTokens.paywallTheme,
+                    productFormatter: BroadPaywallProductFormatter(),
+                    onClose: subscriptionPaywallClosed,
+                    onCompleted: { _ in dismiss() }
+                )
+            case .resolvingOffer:
+                resolutionProgress
+            case .specialOffer:
+                ExampleSpecialOfferFixtureView(
+                    viewModel: specialOfferViewModel,
+                    onClose: { dismiss() },
+                    onCompleted: { _ in dismiss() }
+                )
+            }
+        }
+        .preferredColorScheme(.dark)
+        .accessibilityIdentifier("catalog.special-offer-flow")
+        .accessibilityValue(phase.accessibilityValue)
+        .onAppear {
+            guard !hasPreparedOffer else {
+                return
+            }
+            hasPreparedOffer = true
+            specialOfferViewModel.resetForCatalogPresentation()
+        }
+        .onDisappear {
+            resolutionTask?.cancel()
+            resolutionTask = nil
+        }
+    }
+
+    private var resolutionProgress: some View {
+        ZStack {
+            AppTokens.Color.background.ignoresSafeArea()
+            VStack(spacing: AppTokens.Spacing.cardContent) {
+                ProgressView()
+                    .tint(AppTokens.Color.accent)
+                Text("Проверяем специальное предложение…")
+                    .font(AppTokens.Font.body)
+                    .foregroundStyle(AppTokens.Color.secondaryText)
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("catalog.special-offer.resolving")
+    }
+
+    private func subscriptionPaywallClosed() {
+        guard phase == .subscriptionPaywall, resolutionTask == nil else {
+            return
+        }
+
+        phase = .resolvingOffer
+        resolutionTask = Task { @MainActor in
+            let shouldPresent = await specialOfferViewModel.resolveIfNeeded()
+            guard !Task.isCancelled else {
+                return
+            }
+
+            resolutionTask = nil
+            if shouldPresent {
+                phase = .specialOffer
+            } else {
+                dismiss()
+            }
+        }
+    }
+}
+
+@MainActor
 struct ExampleSpecialOfferFixtureView: View {
     @ObservedObject var viewModel: ExampleSpecialOfferFixtureViewModel
     var onClose: () -> Void = {}

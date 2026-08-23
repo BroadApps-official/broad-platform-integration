@@ -40,7 +40,7 @@ editor/dev-access, а отдельного приложения 5135 для scre
 | Adapty | В Kaiten есть public SDK value и список product names | placements, entitlement/access level, dashboard confirmation |
 | App Store Connect | Есть app metadata и product names | текущий product state, agreements/availability, безопасный owner-confirmed access |
 | Remote Config | Не описан | keys, defaults, owner и kill-switch policy |
-| Special offer | Есть offer product name | eligibility, cooldown, placement и server-time source |
+| Special offer | Разработчик сообщил `offer_week_4.99_nottrial` | безопасный load/show payload, eligibility, cooldown, placement, remote gate и server-time source |
 | RU Billing | Требование не подтверждено | явное `N/A` либо полный backend contract |
 | Legal/support | Ссылки присутствуют | подтверждение финальности и app flow для Contact Us |
 | Analytics | Не описана | event map, destinations, consent и safe fields |

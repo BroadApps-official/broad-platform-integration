@@ -26,10 +26,10 @@
 | Основной flow | Onboarding → initial paywall policy → main |
 | Subscription paywall | Fixture-каталог subscription; premium только после подтверждённого entitlement |
 | Token paywall | Отдельные consumables, backend confirmation/retry/recovery, без выдачи premium |
-| Special offer | Опциональный второй paywall после close; unavailable ведёт в main |
+| Special offer | Карточка и AppFlow сначала закрывают subscription paywall, затем resolver открывает опциональный второй paywall; unavailable ведёт в main |
 | RU Billing | Безопасный выбор метода; настоящая оплата не запускается |
 | Loader и ошибки | Немедленный spinner, disabled double tap, error и Retry |
-| Аналитика | Только typed fixture-события текущего процесса |
+| Аналитика | Один process recorder показывает typed события subscription и special offer; refresh/clear имеют видимый результат |
 | Contact Us | Composer на поддерживаемом устройстве либо Copy/Close fallback |
 | Debug-хранилища | Независимые app-owned Keychain/flow/cache/analytics scopes |
 

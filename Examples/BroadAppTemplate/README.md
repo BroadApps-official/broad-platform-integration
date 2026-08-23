@@ -68,7 +68,9 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
   paywall, token paywall, special offer, RU Billing, loader/error, analytics,
   Contact Us и Debug-хранилища;
 - три initial-paywall policy: once, every cold launch while inactive и disabled;
-- special offer как опциональную ветку после закрытия subscription paywall;
+- special offer как опциональную ветку: карточка и cold-launch fixtures сначала
+  показывают subscription paywall, после close запускают resolver и только затем
+  открывают offer или возвращаются в main;
 - отдельный consumable token paywall с backend-confirmed balance, pending,
   идемпотентным retry, offline и account recovery fixture;
 - независимую очистку Keychain, app-flow progress, content cache и in-memory
@@ -82,7 +84,9 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 - paywall для 0, 1 и любого количества продуктов без фильтрации;
 - product tap/purchase без opacity/scale/dimming;
 - purchase/restore с обязательным fresh entitlement;
-- один shared non-blocking → deduplicating → composite analytics pipeline;
+- один shared process recorder поверх non-blocking → deduplicating → composite
+  analytics pipeline; события subscription и catalog special offer видны в
+  одном списке;
 - bounded typed recorder и debug-панель без PII/raw SDK data;
 - bootstrap/cache/timeout fixtures;
 - технический RU payment fixture без endpoint и реального списания;
@@ -145,12 +149,12 @@ fail-before-charge.
 | `-paywall-two-products` | два продукта сохраняют порядок провайдера |
 | `-paywall-many-products` | 12 продуктов и всегда доступные нижние кнопки |
 | `-paywall-payment-methods` | только UI выбора Apple/СБП/карты; настоящий RU-адаптер отключён |
-| `-special-offer-enabled` | текущий ответ Adapty содержит `special_offer = true`: кампания открывается |
+| `-special-offer-enabled` | provider-like fixture payload содержит `special_offer = true`: после закрытия обычного paywall кампания открывается |
 | `-special-offer-disabled` | явный `special_offer = false`: кампания остаётся закрытой |
 | `-special-offer-platform-cache` | кеш `BroadMonetization` содержит `true`, но кампания остаётся закрытой |
 | `-special-offer-main-fallback` | placement кампании недоступен; Remote Config резервного `main` открывает её и сохраняет исходный placement |
 | `-special-offer-timed` | кампания с фиксированным доверенным серверным временем и таймером на три минуты |
-| `-ru-pay-provider-enabled` | текущий ответ Adapty содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
+| `-ru-pay-provider-enabled` | provider-like fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
 | `-ru-pay-platform-cache` | `ru_pay = true` из кеша `BroadMonetization` отклоняется; остаётся только Apple |
 | `-ru-payment-sheet` | технический СБП fixture: две обязательные галочки, чек и сохранённый email; без отдельных строк legal links |
 | `-ru-payment-sheet-apple` | Apple выбран; RU consent/receipt поля отсутствуют |

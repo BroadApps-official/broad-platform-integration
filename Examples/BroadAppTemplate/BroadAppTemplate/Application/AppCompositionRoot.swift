@@ -39,7 +39,8 @@ final class AppCompositionRoot {
         )
         ruSubscriptionViewModel = Self.makeRUSubscriptionViewModel()
         catalogSpecialOfferViewModel = Self.makeCatalogSpecialOfferViewModel(
-            logger: runtime.logger
+            logger: runtime.logger,
+            analyticsRecorder: runtime.monetizationEnvironment.analyticsRecorder
         )
         tokenPaywallViewModel = tokenComposition.paywallViewModel
         tokenBalanceViewModel = tokenComposition.balanceViewModel
@@ -98,12 +99,14 @@ private extension AppCompositionRoot {
     }
 
     private static func makeCatalogSpecialOfferViewModel(
-        logger: any BroadLoggerProtocol
+        logger: any BroadLoggerProtocol,
+        analyticsRecorder: ExampleRecordingMonetizationAnalytics
     ) -> ExampleSpecialOfferFixtureViewModel {
         let arguments = ["BroadAppTemplate", "-special-offer-enabled"]
         let environment = ExampleMonetizationEnvironment(
             arguments: arguments,
-            logger: logger
+            logger: logger,
+            analyticsRecorder: analyticsRecorder
         )
         let scenario = ExampleRemoteFeatureScenario.specialOfferEnabled
         guard let configuration = scenario.specialOfferConfiguration,

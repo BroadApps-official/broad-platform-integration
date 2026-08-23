@@ -163,54 +163,6 @@ struct ExampleMainView: View {
         return items
     }
 
-    @ViewBuilder
-    private func scenarioDestination(
-        _ route: ExampleScenarioRoute
-    ) -> some View {
-        switch route {
-        case .appFlow:
-            ExampleFlowExplanationView()
-        case .subscriptionPaywall:
-            ExampleCatalogPaywallView(viewModel: paywallViewModel)
-        case .tokenPaywall:
-            BroadTokenPaywallView(
-                viewModel: tokenPaywallViewModel,
-                theme: AppTokens.paywallTheme,
-                productFormatter: BroadPaywallProductFormatter(
-                    locale: Locale(identifier: "ru_RU"),
-                    periodCopy: .russian
-                ),
-                onClose: { selectedScenario = nil }
-            )
-            .preferredColorScheme(.dark)
-        case .specialOffer:
-            ExampleSpecialOfferFixtureView(viewModel: specialOfferViewModel)
-        case .ruBilling:
-            ExampleRUPaymentSheetFixtureView(initialMethod: .sbp)
-        case .loaderAndErrors:
-            ExampleLoaderAndErrorsView()
-        case .analytics:
-            ExampleAnalyticsCatalogView(
-                viewModel: analyticsViewModel,
-                paywallViewModel: paywallViewModel
-            )
-        case .contactUs:
-            ExampleContactUsView(
-                request: AppConfiguration.supportEmailRequest
-            )
-        case .debugStorage:
-            #if DEBUG
-                ExampleDebugScenariosView(
-                    analyticsViewModel: analyticsViewModel,
-                    settingsViewModel: debugSettingsViewModel,
-                    onOpenScenario: openScenarioFromDebug
-                )
-            #else
-                ExampleFlowExplanationView()
-            #endif
-        }
-    }
-
     #if DEBUG
         private func openScenarioFromDebug(
             _ route: ExampleScenarioRoute
@@ -266,6 +218,59 @@ struct ExampleMainView: View {
             Rectangle()
                 .fill(AppTokens.Color.border)
                 .frame(height: AppTokens.Border.thin)
+        }
+    }
+}
+
+private extension ExampleMainView {
+    @ViewBuilder
+    func scenarioDestination(
+        _ route: ExampleScenarioRoute
+    ) -> some View {
+        switch route {
+        case .appFlow:
+            ExampleFlowExplanationView()
+        case .subscriptionPaywall:
+            ExampleCatalogPaywallView(viewModel: paywallViewModel)
+        case .tokenPaywall:
+            BroadTokenPaywallView(
+                viewModel: tokenPaywallViewModel,
+                theme: AppTokens.paywallTheme,
+                productFormatter: BroadPaywallProductFormatter(
+                    locale: Locale(identifier: "ru_RU"),
+                    periodCopy: .russian
+                ),
+                onClose: { selectedScenario = nil }
+            )
+            .preferredColorScheme(.dark)
+        case .specialOffer:
+            ExampleSpecialOfferCatalogFlowView(
+                subscriptionPaywallViewModel: paywallViewModel,
+                specialOfferViewModel: specialOfferViewModel
+            )
+        case .ruBilling:
+            ExampleRUPaymentSheetFixtureView(initialMethod: .sbp)
+        case .loaderAndErrors:
+            ExampleLoaderAndErrorsView()
+        case .analytics:
+            ExampleAnalyticsCatalogView(
+                viewModel: analyticsViewModel,
+                paywallViewModel: paywallViewModel
+            )
+        case .contactUs:
+            ExampleContactUsView(
+                request: AppConfiguration.supportEmailRequest
+            )
+        case .debugStorage:
+            #if DEBUG
+                ExampleDebugScenariosView(
+                    analyticsViewModel: analyticsViewModel,
+                    settingsViewModel: debugSettingsViewModel,
+                    onOpenScenario: openScenarioFromDebug
+                )
+            #else
+                ExampleFlowExplanationView()
+            #endif
         }
     }
 }

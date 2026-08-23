@@ -304,6 +304,21 @@ require_file_pattern \
     'CompositeMonetizationAnalytics'
 
 require_file_pattern \
+    "Special Offer catalog must close a subscription paywall before resolving the offer:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/RootScene/ExampleSpecialOfferFixtureView.swift" \
+    '(?s)ExampleSpecialOfferCatalogFlowView.*case[[:space:]]+[.]?subscriptionPaywall.*BroadPaywallView.*onClose:[[:space:]]*subscriptionPaywallClosed.*case[[:space:]]+[.]?resolvingOffer.*resolutionProgress.*case[[:space:]]+[.]?specialOffer.*ExampleSpecialOfferFixtureView\(.*resetForCatalogPresentation\(\).*func[[:space:]]+subscriptionPaywallClosed\(\).*resolveIfNeeded\(\)'
+
+require_file_pattern \
+    "Special Offer catalog must use the shared process analytics recorder:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Application/AppCompositionRoot.swift" \
+    '(?s)makeCatalogSpecialOfferViewModel\(.*analyticsRecorder:[[:space:]]*runtime\.monetizationEnvironment\.analyticsRecorder'
+
+require_file_pattern \
+    "Debug analytics refresh must show in-flight feedback:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/RootScene/ExampleDebugScenariosView.swift" \
+    '(?s)analyticsViewModel\.requestRefresh\(\).*analyticsViewModel\.isRefreshing.*ProgressView\(\)'
+
+require_file_pattern \
     "Live Adapty example must fail before StoreKit purchase by company policy:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Monetization/ExampleLiveAdaptyServicesFactory.swift" \
     'example\.company-policy\.storekit-purchase-disabled'

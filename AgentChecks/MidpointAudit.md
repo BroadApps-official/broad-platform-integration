@@ -65,3 +65,26 @@ Cold-read и повторная проверка навигации выполн
 Продолжать платформенные security, self-review и QA-handoff проверки можно.
 Создавать production-функции и визуально объявлять 5135 готовым нельзя до
 снятия blocker-ов из `Project5135Preflight.md`.
+
+## Повторный midpoint после замечаний разработчика
+
+После первой половины повторного плана отдельно проверены карточка Special
+Offer, общий recorder и Debug refresh. Целевые contract checks и Debug-сборка
+сначала выявили слишком строгий static-pattern, а ручной lifecycle-review —
+повторное использование старой presentation authorization при новом открытии
+карточки.
+
+Исправлено:
+
+- карточка проходит обычный subscription paywall, отдельный resolver-loader и
+  только затем offer;
+- каждый новый вход сбрасывает catalog view model и получает новую
+  authorization;
+- fixture environment offer пишет в process recorder основного runtime;
+- Debug refresh сразу показывает in-flight и явный результат пустого snapshot;
+- architecture check фиксирует эти четыре контракта.
+
+После исправлений прошли `format.sh`, `check_architecture.sh`,
+`check_remote_feature_contracts.sh`, `check_documentation.sh`,
+`git diff --check` и Debug build generic iPhone Simulator. Это midpoint, а не замена
+финального `agent_gate.sh`.

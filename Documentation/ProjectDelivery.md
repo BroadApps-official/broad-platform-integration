@@ -56,12 +56,17 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 Одна строка на каждую функцию пользователя. Наличие SwiftUI-кнопки без этой
 строки не означает подключённый backend.
 
-| Функция | Method + endpoint | Request/response | Auth | Errors/retry/offline | Код вызова | Статус |
-|---|---|---|---|---|---|---|
-| Пример: история | `GET /…` | Ссылка на schema | App account | Timeout → Retry | Repository/use case | `READY/BLOCKED` |
+| Функция | Method + endpoint | Request/response | Contract smoke | Auth | Errors/retry/offline | Код вызова | Статус |
+|---|---|---|---|---|---|---|---|
+| Пример: история | `GET /…` | Ссылка на schema | Production-shape fixture декодирован; missing-field даёт safe error; UI-поля сверены | App account | Timeout → Retry | Repository/use case | `READY/BLOCKED` |
 
 В таблице можно указывать названия и ссылки на внутреннюю документацию, но не
 секреты, bearer tokens или полный пользовательский payload.
+
+`READY` требует воспроизводимый безопасный contract smoke по согласованному
+обезличенному production-shape fixture или версионированной schema. Компиляция,
+кнопка и happy-path fixture без проверки обязательных полей не считаются
+подключённым backend.
 
 ## 4. Функциональная итерация
 
@@ -72,6 +77,8 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 - [ ] Token purchase использует `TokenPurchaseManager`; баланс меняется после backend.
 - [ ] Active entitlement пропускает subscription paywall; unresolved не выдаёт premium.
 - [ ] Special offer опционален и не включается platform cache.
+- [ ] Закрытие subscription paywall проходит resolver и только затем показывает offer/main.
+- [ ] Один analytics pipeline видит события subscription и special-offer презентаций.
 - [ ] RU methods требуют текущий разрешающий gate и app-owned backend.
 - [ ] Contact Us имеет composer и fallback.
 - [ ] Backend/SDK кнопки сразу показывают spinner и блокируют double tap.
@@ -79,22 +86,27 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 - [ ] Debug и Release собираются; Debug-инструменты отсутствуют в Release.
 - [ ] Настоящие purchase, restore и RU checkout не выполнялись автоматизацией.
 
+После заполнения этого раздела статус — `FUNCTIONAL REVIEW REQUIRED`.
+Разработчик лично открывает сборку и письменно подтверждает переход к разделу 5.
+Без подтверждения визуальная итерация не начинается.
+
 ## 5. Визуальная итерация
 
-Для каждого обязательного экрана заполните строку. Source и Simulator должны
-использовать один и тот же размер iPhone.
+Для каждого обязательного экрана заполните строку. Каждый source state нужно
+сверить минимум на маленьком и большом iPhone Simulator; если source задан для
+конкретной модели, дополнительно используйте этот же размер.
 
-| Экран/состояние | Source frame | Simulator screenshot | Проверены layout/type/color/assets/states | Итог |
-|---|---|---|---|---|
-| Onboarding |  |  |  | `READY/BLOCKED/N/A` |
-| Main |  |  |  |  |
-| Settings |  |  |  |  |
-| Subscription paywall |  |  |  |  |
-| Token paywall |  |  |  |  |
-| Special offer |  |  |  |  |
-| RU Billing |  |  |  |  |
-| Loading/empty/error/offline |  |  |  |  |
-| Contact Us |  |  |  |  |
+| Экран/состояние | Source frame | Маленький iPhone | Большой iPhone | Проверены layout/type/color/assets/states | Итог |
+|---|---|---|---|---|---|
+| Onboarding |  |  |  |  | `READY/BLOCKED/N/A` |
+| Main |  |  |  |  |  |
+| Settings |  |  |  |  |  |
+| Subscription paywall |  |  |  |  |  |
+| Token paywall |  |  |  |  |  |
+| Special offer |  |  |  |  |  |
+| RU Billing |  |  |  |  |  |
+| Loading/empty/error/offline |  |  |  |  |  |
+| Contact Us |  |  |  |  |  |
 
 Если frame недоступен, итог — `BLOCKED`, а не «похожий UI принят».
 
@@ -122,6 +134,7 @@ Git не добавляются.
 | Adapty public SDK configuration |  | load/show only |  |
 | Placements и entitlement ID |  |  |  |
 | App Store Connect products |  | metadata only |  |
+| Ожидаемые product ID |  | load/show payload, каждый ID найден/отсутствует |  |
 | Remote Config |  | typed current payload |  |
 | RU Billing backend |  | без реального checkout |  |
 | Support/legal |  |  |  |

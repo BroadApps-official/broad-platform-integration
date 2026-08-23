@@ -76,6 +76,19 @@ production-ready версии.
 
 ### Changed
 
+- карточка Special Offer в `BroadAppTemplate` теперь действительно проходит
+  `subscription paywall → resolver → offer/main`, повторно резолвит новый
+  presentation при каждом открытии и пишет обе презентации в общий process
+  recorder аналитики;
+- Debug refresh аналитики показывает spinner, время завершения и явное пустое
+  состояние; статические контракты запрещают возврат к прямому открытию offer и
+  отдельному невидимому recorder;
+- build/final prompts требуют production-shape API contract smoke, полную
+  матрицу initial-paywall/special-offer/Contact Us/analytics, два размера iPhone
+  и явный `FUNCTIONAL REVIEW REQUIRED` checkpoint перед визуальной итерацией;
+- документация уточняет, из payload какого placement читается
+  `special_offer`, и отделяет fixture/source proof от app-owned безопасного
+  load/show ожидаемого product ID без финансовых операций;
 - `OnboardingConfiguration.pages` зафиксирован как единственный источник
   количества слайдов; три страницы `BroadAppTemplate` теперь явно обозначены
   только демонстрационным примером, а инструкции Codex/Claude требуют сначала
@@ -96,10 +109,11 @@ production-ready версии.
   RU feature gates без custom REST: platform cache по-прежнему не может включить
   их, raw products остаются во внутреннем registry, а Remote Config никогда не
   заменяет authoritative entitlement;
-- README прошёл отдельный onboarding-аудит глазами нового разработчика: добавлена
-  цветная схема двух способов работы, точные переходы по меню Codex/Claude и
-  Xcode, единые критерии завершения шагов, раскрываемая матрица этапов и
-  расширенный словарь проектных и платёжных терминов;
+- README прошёл внутренний cold-read и аудит навигации: добавлена цветная схема
+  двух способов работы, точные переходы по меню Codex/Claude и Xcode, единые
+  критерии завершения шагов, раскрываемая матрица этапов и расширенный словарь
+  проектных и платёжных терминов; независимый тест новым разработчиком остаётся
+  отдельным handoff;
 - README повторно выстроен как две полные параллельные инструкции: с
   Codex/Claude и без агента; в обеих явно пройдены исходные данные, создание
   проекта, Core/архитектура, UI, монетизация, восстановление, плохая сеть,
@@ -107,9 +121,11 @@ production-ready версии.
 - сложные термины в README сохранены там, где они нужны разработчику, но теперь
   объясняются при первом использовании и собраны в коротком словаре; у каждого
   ручного этапа появился проверяемый результат «Готово, если»;
-- Стартовая инструкция теперь берёт данные приложения из Kaiten, поддерживает
-  временную development-конфигурацию похожего live-приложения и фиксирует новые
-  базовые правила Adapty для products, paywalls, placements и Remote Config;
+- Стартовая инструкция теперь берёт данные приложения из Kaiten, разрешает
+  только fixture либо явно согласованные публичные client identifiers reference
+  для безопасного load/show и фиксирует базовые правила Adapty для products,
+  paywalls, placements и Remote Config; чужие signing/account/auth данные
+  переносить запрещено;
 - стандартный Remote Config распознаёт `ru_pay` и `auto_revenue_view` вместе с
   legacy aliases, а typed placements включают `pro_icon` и `CTR`;
 - README теперь начинает работу с реального сценария команды: новое приложение

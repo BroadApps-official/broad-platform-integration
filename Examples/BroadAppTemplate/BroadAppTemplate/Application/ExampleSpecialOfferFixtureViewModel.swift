@@ -36,6 +36,14 @@ final class ExampleSpecialOfferFixtureViewModel: ObservableObject {
         _ = await resolveIfNeeded()
     }
 
+    func resetForCatalogPresentation() {
+        paywallViewModel = nil
+        statusTitle = "Проверяем Special Offer"
+        statusMessage = "Загружаем fixture без настоящей покупки…"
+        isLoading = true
+        hasLoaded = false
+    }
+
     @discardableResult
     func resolveIfNeeded() async -> Bool {
         guard !hasLoaded else {

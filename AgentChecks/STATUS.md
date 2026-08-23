@@ -2,8 +2,9 @@
 
 ## Результат
 
-`PASS` — полный local gate прошёл 23 августа 2026 года после финального
-аудита, visual self-review и исправления переноса текста product row.
+`PASS` — полный local gate прошёл 23 августа 2026 года после повторного аудита
+замечаний разработчика, исправления Special Offer catalog flow, общей аналитики
+и обновления developer instructions.
 
 Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не означает
 готовность ещё не созданного приложения 5135 Seedance.
@@ -16,6 +17,10 @@ Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. О�
 - Release generic iOS device без подписи;
 - две live Adapty configurations только компиляцией, без финансовых действий;
 - полная fixture-матрица AppFlow, entitlement, special offer и token flow;
+- карточка Special Offer проходит subscription paywall → resolver → offer,
+  повторно получает новую presentation authorization и пишет события обоих
+  paywall в общий process recorder;
+- Debug refresh аналитики показывает spinner, timestamp и явное empty state;
 - девять карточек каталога на маленьком iPhone и iPhone 17 Pro Simulator;
 - clean install, ATT после видимого onboarding, cold/relaunch и
   background/foreground;
@@ -23,7 +28,9 @@ Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. О�
   читаемой;
 - typed logs, scoped Debug Keychain cleanup, privacy manifest и отсутствие
   Debug-каталога в Release;
-- единый checklist реального приложения и актуальный QA handoff.
+- единый checklist реального приложения, production-shape backend contract
+  smoke, functional-review checkpoint, визуальная проверка на двух размерах и
+  актуальный QA handoff.
 
 Настоящие purchase, restore и RU-платежи не запускались.
 
@@ -65,6 +72,6 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-`7a72bb6b3765cdaad31a710253808340ffef4e239c5ecc376432d52c7144b368`
+`963dda95ad11b55f9c0c0c6f8c4705193ee1f6139ba5934e9ecb9d7f4eb284dc`
 
 </details>

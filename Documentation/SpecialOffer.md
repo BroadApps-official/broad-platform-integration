@@ -102,6 +102,36 @@ paywall, но он не может заново включить кампани�
 
 Старые persisted payloads декодируются как `.legacyUnqualified`: их можно показать, но нельзя использовать как свежий campaign gate.
 
+## Где должен находиться remote gate
+
+Resolver принимает решение по фактически загруженному payload:
+
+- когда placement `special_offer` загрузился самостоятельно, валидный
+  `special_offer = true` нужен в Remote Config этого payload;
+- когда запрос `special_offer` завершился разрешённым fallback на `main`, gate
+  читается из полученного payload `main`;
+- флаг только на `main` не должен включать успешно загруженный самостоятельный
+  offer с отсутствующим или выключенным gate.
+
+## Проверка конкретного продукта без покупки
+
+Локальные fixture доказывают state machine, но не состояние Adapty Dashboard.
+Для конкретного приложения разработчик выполняет отдельный безопасный
+load/show-прогон без purchase/restore и фиксирует:
+
+1. requested и resolved placement;
+2. provenance и значение `special_offer` текущего payload;
+3. все полученные product ID без фильтрации и перестановки;
+4. присутствие каждого ожидаемого ID, например
+   `offer_week_4.99_nottrial`, если он указан в документе проекта.
+
+Отсутствующий ID — внешний `BLOCKED`, который проверяют владельцы Adapty и App
+Store Connect. Его нельзя компенсировать hardcoded строкой. Если продукт есть в
+payload, стандартный `AdaptyPaywallRepository` регистрирует соответствующий raw
+product при маппинге; отдельного публичного API для ручного наполнения registry
+не требуется. Полный финансовый путь подтверждается только разрешённой
+компанией отдельной приёмкой.
+
 ## Placement и fallback
 
 Use case запрашивает placement из `SpecialOfferConfiguration`. Общий paywall loader
