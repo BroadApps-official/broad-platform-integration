@@ -1,6 +1,6 @@
 # QA handoff: BroadApps iOS Platform и BroadAppTemplate
 
-Дата: 2026-08-23. Этот пакет передаёт проверяемую платформу/template. Он не
+Дата: 2026-08-24. Этот пакет передаёт проверяемую платформу/template. Он не
 является отчётом какого-либо конкретного приложения.
 
 ## 1. Что готово
@@ -10,6 +10,7 @@
 - Example project: `Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj`.
 - Scheme: `BroadAppTemplate`, iPhone only, iOS 17+.
 - Debug/Release Simulator и generic `iphoneos` compile без подписи.
+- Понятный runtime Console helper: `bash Scripts/stream_example_logs.sh`.
 - Фактическая acceptance-матрица:
   [`TemplateAcceptanceReport.md`](TemplateAcceptanceReport.md).
 
@@ -24,7 +25,7 @@
 | Основной flow | Onboarding → initial paywall policy → main |
 | Subscription paywall | Fixture subscriptions; premium только после entitlement |
 | Token paywall | Consumables, backend confirmation/retry/recovery, без premium |
-| Special offer | Subscription paywall → крестик без покупки → resolver → optional второй paywall; confirmed purchase/restore обходит offer |
+| Special offer | Subscription paywall → крестик без покупки → resolver → optional второй paywall; confirmed purchase/restore обходит offer; debug-state отдельно показывает route и presentation |
 | RU Billing | Безопасный выбор метода; настоящая оплата не запускается |
 | Loader и ошибки | Немедленный spinner, disabled double tap, error и Retry |
 | Аналитика | Общий recorder, видимый refresh и clear feedback |
@@ -68,6 +69,7 @@ configuration проверяется compile/load contract без финансо
 | Security/privacy platform | PASS | [`SecurityPrivacyReview.md`](SecurityPrivacyReview.md) |
 | Visual self-review Simulator | PASS | [`SelfReview.md`](SelfReview.md) |
 | Debug/Release/generic unsigned compile | Последний full gate | [`STATUS.md`](STATUS.md) |
+| README/Terminal/runtime Console | PASS после midpoint-исправлений | [`SelfReview.md`](SelfReview.md) |
 | Любой host app | Отдельный app-level статус | [`ApplicationIntegrationContract.md`](ApplicationIntegrationContract.md) |
 
 ## 6. Известные ограничения
@@ -84,8 +86,10 @@ configuration проверяется compile/load contract без финансо
 
 1. Запустить `bash Scripts/agent_gate.sh` после platform-изменений.
 2. Открыть example и пройти нужные fixture-сценарии на двух Simulator.
-3. Оставить `Team = None`; не запрашивать платный аккаунт или provisioning.
-4. Для своего приложения заполнить
+3. Во втором Terminal запустить `bash Scripts/stream_example_logs.sh`; при двух
+   booted iPhone выбрать показанный UDID.
+4. Оставить `Team = None`; не запрашивать платный аккаунт или provisioning.
+5. Для своего приложения заполнить
    [`Documentation/ProjectDelivery.md`](../Documentation/ProjectDelivery.md).
-5. Передавать credentials и тестовые аккаунты только разрешённым защищённым
+6. Передавать credentials и тестовые аккаунты только разрешённым защищённым
    каналом, отдельно от Git.

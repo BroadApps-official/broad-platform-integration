@@ -319,6 +319,11 @@ require_file_pattern \
     '(?s)func[[:space:]]+paywallClosed\(\).*specialOfferViewModel\.resolveIfNeeded\(\).*activeSpecialOfferViewModel[[:space:]]*=[[:space:]]*specialOfferViewModel.*func[[:space:]]+specialOfferClosed\(\).*coordinator\.initialPaywallDismissed\(\)'
 
 require_file_pattern \
+    "AppFlow debug state must distinguish subscription, resolver and Special Offer presentations:" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/AppFlow/AppFlowRootView.swift" \
+    '(?s)route=.*presentation=.*fixture=.*isResolvingSpecialOffer.*special-offer-resolver.*activeSpecialOfferViewModel.*special-offer.*subscription-paywall'
+
+require_file_pattern \
     "Confirmed purchase or restore on the first paywall must bypass Special Offer:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/AppFlow/AppFlowSceneViewModel.swift" \
     '(?s)func[[:space:]]+paywallCompleted\(.*case[[:space:]]+[.]purchased,[[:space:]]+[.]restored:.*activeSpecialOfferViewModel[[:space:]]*=[[:space:]]*nil.*coordinator\.subscriptionDidBecomeActive\(\)'

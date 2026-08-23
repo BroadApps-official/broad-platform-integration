@@ -170,11 +170,26 @@ struct AppLogger: BroadLoggerProtocol {
 
 ## Ручная проверка
 
-Запустите `BroadAppTemplate` в Simulator с нужным launch argument, затем откройте macOS Console и отфильтруйте по subsystem:
+Запустите `BroadAppTemplate` в iPhone Simulator с нужным launch argument. Во
+втором Terminal откройте уже отфильтрованный поток одной командой:
 
-```text
-com.broadapps.platform.template
+```bash
+bash Scripts/stream_example_logs.sh
 ```
+
+Helper выбирает единственный запущенный iPhone Simulator. Если их несколько, он
+печатает имена и UDID и просит повторить команду явно:
+
+```bash
+bash Scripts/stream_example_logs.sh \
+  com.broadapps.platform.template \
+  <SIMULATOR_UDID>
+```
+
+Для host app первым аргументом передайте постоянный subsystem, который задан в
+его `OSLogBroadLogger`. Открывать macOS Console вручную необязательно; если это
+удобнее, используйте тот же subsystem-фильтр. Остановить Terminal-поток можно
+через `Control-C`.
 
 Полезные сценарии:
 
@@ -182,10 +197,29 @@ com.broadapps.platform.template
 - `-bootstrap-stale-cache`: появляются `cache.read.completed result=stale`, timeout/degraded bootstrap и при повторном запуске stale-снапшот остаётся доступен;
 - `-bootstrap-degraded`: фоновый timeout переводит готовое приложение в `degraded`;
 - `-bootstrap-failed-once`: первый critical run заканчивается `failed`, ручной retry — `ready`.
-- открытие special offer после initial paywall: `[FLOW] ... to=special-offer`;
+- закрытие initial paywall в настоящем AppFlow: сначала `[EXPERIMENTS]
+  remote-feature.fixture.resolved`, затем `[FLOW] ... from=initial-paywall
+  to=special-offer`;
+- открытие пары subscription → special offer из карточки каталога:
+  `[EXPERIMENTS]` и `[ANALYTICS]`; отдельного `[FLOW]` нет, потому что глобальный
+  AppFlow остаётся на `main`;
 - подтверждённое зачисление token fixture: `[TOKENS] tokens.balance.confirmed`;
 - любое monetization fixture-событие: `[ANALYTICS] ... count=<N>`.
 
 Проверьте, что в Console отсутствуют cache payload, пользовательские сообщения об ошибках, suite/namespace и физические cache keys.
+
+### Как читать строку
+
+```text
+[FLOW] flow.advanced from=initial-paywall to=special-offer
+```
+
+- тег в квадратных скобках показывает область события;
+- имя после тега — закрытое typed-событие;
+- поля `from/to`, `count`, `result`, `scenario` и `provenance` — безопасные enum,
+  Bool или счётчики;
+- отсутствие события не заменяется догадкой: сначала проверьте фактический UI и
+  Debug Status, затем убедитесь, что запущены правильные scheme, аргументы,
+  Simulator и subsystem.
 
 В проекте намеренно нет test targets: эти launch-сценарии являются ручными acceptance fixtures.

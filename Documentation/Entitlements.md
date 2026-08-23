@@ -445,7 +445,7 @@ xcrun simctl launch booted com.broadapps.platform.template \
   -entitlement-timeout
 ```
 
-Example показывает реальные route-specific экраны: `BroadOnboardingView`, `BroadPaywallView` и `ExampleMainView`. Дополнительно route можно проверить в Accessibility Inspector по identifier `broadapps.app-flow.root`; value имеет вид `route=main;fixture=store-kit-fallback`, `route=main;fixture=timeout` или `route=initial-paywall;fixture=inactive`.
+Example показывает реальные route-specific экраны: `BroadOnboardingView`, `BroadPaywallView` и `ExampleMainView`. Дополнительно route можно проверить в Accessibility Inspector по identifier `broadapps.app-flow.root`; value имеет вид `route=main;presentation=main;fixture=store-kit-fallback`, `route=main;presentation=main;fixture=timeout` или `route=initial-paywall;presentation=subscription-paywall;fixture=inactive`.
 
 Каждый fixture имеет свой namespace `entitlement-source-v1.<scenario>`, поэтому ранее запущенный `active` не загрязняет `timeout`. Подождите больше `1.5 s` — route не должен измениться. Это проверяет, что поздний ответ не меняет текущий snapshot.
 

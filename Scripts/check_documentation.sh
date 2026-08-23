@@ -86,6 +86,7 @@ for required_pattern in \
     'Documentation/AccountRecovery\.md' \
     'Documentation/NetworkInterruptions\.md' \
     'Documentation/AgentAutomation\.md' \
+    'Scripts/stream_example_logs\.sh' \
     'Текущий ответ SDK Adapty: сеть или внутренний кеш Adapty' \
     'Сохранённая копия из собственного кеша `BroadMonetization`' \
     '-special-offer-enabled' \
@@ -142,6 +143,7 @@ for required_pattern in \
     'offer_week_4\.99_nottrial' \
     'BroadOnboardingFlowHost' \
     '^### 🎁 Special Offer — всегда второй paywall$' \
+    'presentation=special-offer' \
     'Documentation/Assets/README/References/special-offer-step-1-paywall\.png' \
     'Documentation/Assets/README/References/special-offer-step-2-offer\.png'; do
     if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then

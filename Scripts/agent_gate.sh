@@ -24,7 +24,8 @@ console_run_logged_step \
     bash "$platform_root/Scripts/check_live_adapty_builds.sh"
 
 console_rule
-console_success "PASS · BroadApps iOS Platform полностью проверена"
+console_success "PASS · локальный platform gate пройден"
+console_hint "Scope: платформа, BroadAppTemplate и compile-only live Adapty schemes."
 console_hint "Настоящие purchase, restore и RU-платежи не запускались."
 console_hint "Подробные логи: .build/GateLogs/"
 printf 'BroadApps iOS Platform agent gate passed.\n'

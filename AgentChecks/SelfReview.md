@@ -1,6 +1,6 @@
 # Developer self-review платформы и BroadAppTemplate
 
-Дата: 2026-08-23. Scope — текущая платформа и интерактивный
+Дата: 2026-08-24. Scope — текущая платформа и интерактивный
 `BroadAppTemplate`. Результат не распространяется автоматически на host apps.
 
 ## Результат
@@ -40,6 +40,26 @@ recorder. Теперь Simulator-прогон подтверждает
 `subscription-paywall → close без покупки → resolver → special-offer`, новый presentation ID при
 повторном входе и события обеих презентаций в общем recorder. Debug refresh
 показывает видимое завершение.
+
+## Финальный аудит README, Terminal и runtime Console
+
+README, developer guide, профильные документы и scripts повторно прочитаны как
+две независимые инструкции: для разработчика с агентом и без агента. Найдены и
+исправлены:
+
+- неверное требование не открывать main при `unresolved`/timeout; теперь main
+  доступен без premium и с Retry, а payment pending остаётся незавершённым;
+- устаревшее число package-модулей и слишком широкий текст terminal `PASS`;
+- отсутствие одной команды для безопасного runtime-потока и объяснения полей;
+- смешение AppFlow `[FLOW]` с catalog-only `[EXPERIMENTS]`/`[ANALYTICS]`;
+- debug-value, в котором второй paywall выглядел как initial paywall;
+- первая версия log-helper буферизовала вывод и не распознавала переименованный
+  iPhone Simulator. Midpoint-аудит исправил оба дефекта.
+
+Фактический повторный прогон на iPhone 17 Pro подтвердил
+`presentation=subscription-paywall → presentation=special-offer`. Runtime-поток
+показал `[FLOW] from=initial-paywall to=special-offer` вместе с безопасными
+`[EXPERIMENTS]` и `[ANALYTICS]`; `Control-C` завершил helper без ложной ошибки.
 
 ## Осознанные границы
 

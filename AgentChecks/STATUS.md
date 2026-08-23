@@ -2,9 +2,10 @@
 
 ## Результат
 
-`PASS` — полный local gate прошёл 23 августа 2026 года после повторного аудита
-Special Offer flow, добавления visual reference и усиления architecture
-contracts для первого paywall и downsell.
+`PASS` — полный local gate прошёл 24 августа 2026 года после повторного аудита
+README, developer/manual flow, Terminal, runtime Console и Special Offer
+downsell. Midpoint-аудит нашёл две ошибки нового log-helper; обе исправлены до
+финального gate.
 
 Scope результата — только `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не
 переносится автоматически ни на одно приложение, созданное поверх платформы.
@@ -29,6 +30,14 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
   background/foreground;
 - typed logs, scoped Debug Keychain cleanup, privacy manifest и отсутствие
   Debug-каталога в Release;
+- `stream_example_logs.sh` сразу показывает safe typed OSLog, корректно
+  различает переименованные iPhone Simulator, объясняет выбор UDID и спокойно
+  завершается по `Control-C`;
+- debug-состояние AppFlow различает стабильный route и presentation
+  `subscription-paywall` / `special-offer-resolver` / `special-offer`;
+- README и developer guide согласованы для работы с агентом и вручную:
+  `unresolved`/timeout разрешают обычный main без premium, а pending не
+  превращается в успех;
 - универсальный app integration contract, Project Delivery checklist,
   functional-review checkpoint и QA handoff без привязки к номеру приложения.
 
@@ -77,6 +86,8 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-`34e085e5bbc99e854c0bf2d765ee2f88548b9a58b475262128065b226faac230`
+Актуальный digest находится в последнем отчёте
+[`AutomationReports/latest.md`](AutomationReports/latest.md); новый полный gate
+после изменения проверяемых файлов обязан обновить его.
 
 </details>

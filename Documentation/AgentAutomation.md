@@ -157,13 +157,14 @@ BroadApps iOS Platform · полная проверка
 [3/5] SwiftLint и границы архитектуры
 ✓ SwiftLint и границы архитектуры — готово
 
-[4/5] Swift Package и iPhone-сборки Debug/Release
-✓ Swift Package и iPhone-сборки Debug/Release — готово
+[4/5] Swift Package, Simulator и generic iOS compile
+✓ Swift Package, Simulator и generic iOS compile — готово
 
 [5/5] Две рабочие Adapty-конфигурации (только сборка)
 ✓ Две рабочие Adapty-конфигурации (только сборка) — готово
 
-✓ PASS · BroadApps iOS Platform полностью проверена
+✓ PASS · локальный platform gate пройден
+  → Scope: платформа, BroadAppTemplate и compile-only live Adapty schemes.
 ```
 
 Большой технический вывод не теряется, но и не заполняет весь экран. Для
@@ -217,7 +218,7 @@ AgentChecks/AutomationReports/latest.md
 
 ## Что агент имеет право исправлять
 
-- Swift-код трёх platform modules;
+- Swift-код четырёх platform modules;
 - example и его project configuration;
 - platform scripts, документацию и README;
 - ошибки форматирования, lint, архитектурных контрактов и сборки.

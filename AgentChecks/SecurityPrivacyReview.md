@@ -1,7 +1,12 @@
 # Security и privacy review
 
-Дата: 2026-08-23. Scope — платформа, BroadAppTemplate и текущий diff. Review
+Дата: 2026-08-24. Scope — платформа, BroadAppTemplate и текущий diff. Review
 конкретного host app выполняется отдельно по его network/configuration source.
+
+Повторный audit runtime Console подтвердил: helper принимает только валидный
+bundle-style subsystem, фильтрует Unified Logging по точному subsystem, ничего
+не сохраняет и не добавляет raw payload. Переименованный Simulator определяется
+по системному device type, а не по пользовательскому имени.
 
 ## Результат
 

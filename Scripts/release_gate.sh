@@ -38,7 +38,7 @@ console_run_logged_step \
 
 console_run_logged_step \
     "$((step_offset + 4))" "$step_total" \
-    "Swift Package и iPhone-сборки Debug/Release" \
+    "Swift Package, Simulator и generic iOS compile" \
     "$logs_root/04-build.log" \
     bash "$platform_root/Scripts/build.sh"
 

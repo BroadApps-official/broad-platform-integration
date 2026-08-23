@@ -64,10 +64,13 @@ required_automation_files=(
     "$platform_root/Scripts/check_onboarding_contract.sh"
     "$platform_root/Scripts/check_remote_feature_contracts.sh"
     "$platform_root/Scripts/check_live_adapty_builds.sh"
+    "$platform_root/Scripts/stream_example_logs.sh"
 )
 for required_file in "${required_automation_files[@]}"; do
     if [[ ! -x "$required_file" ]]; then
         record_failure "Required automation script is missing or not executable:" "$required_file"
+    elif ! bash -n "$required_file"; then
+        record_failure "Required automation script has invalid Bash syntax:" "$required_file"
     fi
 done
 

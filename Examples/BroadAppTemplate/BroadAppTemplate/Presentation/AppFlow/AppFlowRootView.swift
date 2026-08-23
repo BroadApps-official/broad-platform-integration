@@ -187,7 +187,20 @@ struct AppFlowRootView: View {
 
     private var accessibilityValue: String {
         let fixture = AppConfiguration.entitlementScenario?.rawValue ?? "default"
-        return "route=\(coordinator.route.accessibilityValue);fixture=\(fixture)"
+        return "route=\(coordinator.route.accessibilityValue);presentation=\(presentationValue);fixture=\(fixture)"
+    }
+
+    private var presentationValue: String {
+        guard coordinator.route == .initialPaywall else {
+            return coordinator.route.accessibilityValue
+        }
+        if sceneViewModel.isResolvingSpecialOffer {
+            return "special-offer-resolver"
+        }
+        if sceneViewModel.activeSpecialOfferViewModel != nil {
+            return "special-offer"
+        }
+        return "subscription-paywall"
     }
 }
 

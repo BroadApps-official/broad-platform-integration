@@ -182,6 +182,12 @@ subscription paywall** и не открывается напрямую при з
 приложения. Механика перехода при этом одинакова: карточка Special Offer в
 `BroadAppTemplate` тоже воспроизводит оба шага и не открывает offer напрямую.
 
+При проверке AppFlow debug-значение `broadapps.app-flow.root` отдельно показывает
+стабильный route и фактически открытую presentation: сначала
+`route=initial-paywall;presentation=subscription-paywall`, во время проверки
+`presentation=special-offer-resolver`, затем `presentation=special-offer`.
+Так второй paywall не маскируется под первый в отчёте разработчика.
+
 Главное различие: **`main` — это маршрут приложения, а premium — защищённые
 возможности внутри него**. `unknown` не должен оставлять пользователя в вечном
 loader и не должен показывать paywall как при доказанном `inactive`; он открывает
@@ -862,8 +868,10 @@ purchase / restore / RU return → entitlement refresh → active → premium
 <a id="ru-billing-availability"></a>
 #### Когда пользователь увидит RU Billing
 
-Флаг `ru_pay` не включает СБП и карту для всех пользователей сразу. Платформа
-показывает RU Billing, только когда одновременно выполнены **две** проверки:
+Флаг `ru_pay` не включает СБП и карту для всех пользователей сразу. Всего
+условий три: host app подключил RU Billing, текущий payload явно разрешил его и
+iPhone имеет российский контекст. Для уже подключённой feature последние две
+runtime-проверки выглядят так:
 
 ```text
 Adapty Remote Config: ru_pay = true
@@ -1874,8 +1882,10 @@ smoke по согласованному обезличенному production-sh
 8. Live Adapty catalog — только load/show; без реальных purchase/restore. Запишите
    requested/resolved placement, remote gate и наличие каждого ожидаемого
    product ID; fixture не является доказательством Dashboard.
-9. Проверка: основной экран не открывается после timeout, незавершённого или
-   неопределённого результата.
+9. Проверка: timeout или `unresolved` могут открыть обычный `main`, чтобы не
+   оставить пользователя в вечном loader, но premium остаётся закрытым и
+   доступен Retry. Незавершённая платёжная операция остаётся `pending`, не
+   открывает premium и не запускается повторно автоматически.
 10. Каждая кнопка с backend/SDK сразу показывает spinner, не запускает второй
    запрос по повторному тапу и корректно заканчивает ожидание при error/offline.
 11. Debug-очистка Keychain спрашивает подтверждение, удаляет только app-owned
@@ -2197,8 +2207,10 @@ purchase-flow и окно выбора СБП/карты не открывает
   in-memory analytics с объяснением scope и необходимости перезапуска;
 - увидеть live typed analytics, создать события без покупки, обновить и очистить
   их с понятным результатом;
-- проверить Contact Us: системный composer на устройстве, alert/Copy на
-  Simulator и отдельный сценарий пустого support email;
+- проверить Contact Us: обязательный Simulator fallback с alert/Copy и
+  отдельный сценарий пустого support email; системный composer остаётся
+  скомпилированной веткой для доступного компании способа запуска и не требует
+  Signing Team в platform gate;
 - проверить локальные данные и настоящий каталог Adapty как два отдельных режима;
 - воспроизвести 0/1/2/12 продуктов, пустой список, ошибку, незавершённую
   операцию и отсутствие сети;
@@ -2231,6 +2243,25 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 ```bash
 ./Scripts/agent_gate.sh
 ```
+
+Чтобы видеть только безопасные runtime-события example, оставьте приложение
+запущенным и во втором Terminal выполните:
+
+```bash
+bash Scripts/stream_example_logs.sh
+```
+
+Если запущено несколько iPhone Simulator, команда сама покажет их UDID и
+готовый формат повторного запуска. Для host app передайте его постоянный
+subsystem первым аргументом. Основной результат всё равно смотрите в UI или
+Debug Status; Console объясняет порядок `[BOOTSTRAP]`, `[FLOW]`,
+`[EXPERIMENTS]`, `[TOKENS]` и `[ANALYTICS]` и не должен содержать payload,
+email, token, receipt/JWS или raw SDK error.
+
+Для настоящего AppFlow закрытие initial paywall даёт
+`[FLOW] ... from=initial-paywall to=special-offer`. Открытие той же пары из
+карточки каталога не меняет глобальный AppFlow route: там ожидаются
+`[EXPERIMENTS]` и `[ANALYTICS]`, но не отдельный `[FLOW]` переход.
 
 | Режим | Когда нужен | Что безопасно делает |
 |---|---|---|

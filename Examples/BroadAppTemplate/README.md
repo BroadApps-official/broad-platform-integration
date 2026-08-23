@@ -59,9 +59,18 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 Полная проверка package + example:
 
 ```bash
-./Scripts/lint.sh
-./Scripts/build.sh
+bash Scripts/agent_gate.sh
 ```
+
+Безопасные runtime-события запущенного example в отдельном Terminal:
+
+```bash
+bash Scripts/stream_example_logs.sh
+```
+
+Если одновременно запущено несколько iPhone Simulator, helper покажет список
+UDID и точную команду с выбранным устройством. UI/Debug Status остаётся
+источником итогового результата; Console нужен для объяснения порядка шагов.
 
 ## Что демонстрирует example
 
@@ -193,11 +202,16 @@ fail-before-charge.
 Apple/СБП/карта, у сохранённой копии из кеша `BroadMonetization` останется только
 Apple.
 
-В консоли Xcode появляется безопасная typed-запись
+В Console появляется безопасная typed-запись
 `remote-feature.fixture.resolved` со сценарием, итогом, логическими
 requested/resolved placement, наличием variation и источником данных. Так можно
 проверить резерв на `main` без настоящего платежа, произвольных строк в OSLog и
 доступа к Adapty Dashboard.
+
+Cold-launch AppFlow дополнительно пишет `[FLOW] ... from=initial-paywall
+to=special-offer`. Карточка каталога показывает ту же пару paywall внутри main,
+поэтому глобальный route там не меняется: ожидайте `[EXPERIMENTS]` и
+`[ANALYTICS]`, но не новый `[FLOW]`.
 
 ## Analytics fixture
 

@@ -42,7 +42,7 @@ production-ready версии.
   links; Apple скрывает RU-поля;
 - `RUBillingManager`, загрузка management status и готовый
   `BroadRUSubscriptionManagementView` с paid-through датой и отменой;
-- четыре реальные RU billing screenshots с iPhone Simulator, отдельные guides
+- пять реальных RU billing screenshots с iPhone Simulator, отдельные guides
   по Purchase Managers и BroadExtensions и единая карта документации;
 - автоматический Codex review-and-fix cycle одной командой с постоянными
   `AGENTS.md` guardrails, management-approved full Mac access для Xcode,
@@ -76,6 +76,16 @@ production-ready версии.
 
 ### Changed
 
+- runtime-проверка получила `stream_example_logs.sh`: helper выбирает booted
+  iPhone Simulator, фильтрует safe OSLog по subsystem и понятно объясняет выбор
+  UDID; README разделяет AppFlow `[FLOW]` и catalog-only analytics/experiment
+  события;
+- debug-значение AppFlow теперь отдельно показывает стабильный route и текущую
+  presentation, поэтому resolver и второй Special Offer paywall не выглядят как
+  обычный initial paywall;
+- manual acceptance исправлен для `unresolved`/timeout: обычный main доступен,
+  premium закрыт, а pending не превращается в успех; terminal PASS теперь явно
+  ограничен локальным platform/example scope;
 - README получил приложенную пару design-reference экранов и явную механику
   `subscription paywall → крестик без покупки → resolver → Special Offer`;
   confirmed purchase/restore первого paywall обходит downsell;

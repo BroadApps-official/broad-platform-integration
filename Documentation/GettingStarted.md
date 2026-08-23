@@ -712,7 +712,19 @@ instant, поэтому последующий async save не добавляе�
 - [ ] timed special offer получает trusted server clock; unavailable/rollback time скрывает offer;
 - [ ] RU CTA требует provider-managed `ru_pay = true` и RU region или русский системный язык;
 - [ ] real credentials и PII отсутствуют в source/cache/logs/analytics;
+- [ ] Debug Status объясняет результат без Console, а safe runtime-поток
+  подтверждает фактический порядок flow;
 - [ ] `./Scripts/lint.sh` и `./Scripts/build.sh` проходят;
 - [ ] ручные fixtures на 0, 1, много products и error/pending scenarios пройдены.
+
+Для `BroadAppTemplate` runtime-поток открывается из корня платформы:
+
+```bash
+bash Scripts/stream_example_logs.sh
+```
+
+Для host app передайте его logger subsystem первым аргументом. Если запущено
+несколько iPhone Simulator, helper покажет их UDID и формат повторной команды.
+Полный словарь тегов и безопасных полей: [Logging](Logging.md).
 
 Для переноса существующего приложения используйте [Migration Guide](MigrationGuide.md). Карта всех документов находится в [README](../README.md#карта-документации).

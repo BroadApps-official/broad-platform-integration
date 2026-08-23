@@ -42,8 +42,13 @@ bash Scripts/agent_gate.sh
 - ATT, onboarding, paywall и entitlement guardrails;
 - RU Billing, tokens, recovery и поведение при плохой сети;
 - SwiftFormat, SwiftLint, privacy manifest, документацию и assets;
-- Swift Package и iPhone example в Debug/Release;
+- Swift Package, iPhone Simulator example в Debug/Release и generic iOS compile
+  без подписи;
 - компиляцию двух рабочих live Adapty configurations без финансовых операций.
+
+Это локальный platform/example scope. Для runtime-проверки запущенного example
+используйте `bash Scripts/stream_example_logs.sh`; UI/Debug Status остаётся
+источником итогового результата, а поток объясняет порядок safe typed событий.
 
 ## Перед commit
 
