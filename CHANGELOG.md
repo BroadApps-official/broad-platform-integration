@@ -47,6 +47,9 @@ production-ready версии.
 - integration checkout получил clean-runner GitHub Actions workflow, локальную
   checksum-проверенную установку SwiftLint/XcodeGen и отдельный Xcode lockfile;
   это делает exact-набор воспроизводимым без заранее установленных Homebrew tools;
+- публичный `broad-platform-integration` прошёл полный clean-runner gate, а
+  public clone каждого из четырёх tags отдельно прошёл свой `module_gate.sh`;
+  compatibility catalog поэтому опубликован как проверенный platform set `1.0.0`;
 
 ### Почему платформа делится на repositories
 

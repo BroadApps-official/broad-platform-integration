@@ -2,10 +2,10 @@
 
 ## Результат
 
-`PASS` — полный local gate прошёл 24 августа 2026 года после повторного аудита
-README, developer/manual flow, staged app-creation workflow, Terminal, runtime
-Console и Special Offer downsell. Найденные дефекты исправлены до финального
-gate.
+`PASS` — полный local gate, clean-runner integration CI и clean-clone module
+gates прошли 25 августа 2026 года. Четыре public modules выпущены как `1.0.0`,
+host example подключает нужные products напрямую, а integration repository
+фиксирует проверенный exact-набор без обязательного umbrella.
 
 Scope результата — только `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не
 переносится автоматически ни на одно приложение, созданное поверх платформы.
@@ -13,6 +13,9 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
 ## Что подтверждено
 
 - правила, архитектура, privacy, documentation links и README assets;
+- публичные `BroadCore`, `BroadExtensions`, `BroadMonetization` и
+  `BroadUIFlows` по tag `1.0.0`, каждый из clean clone;
+- `broad-platform-integration` на clean `macos-15` runner;
 - SwiftFormat и SwiftLint без нарушений;
 - Swift Package и iPhone example в Debug/Release Simulator;
 - Release generic iOS device compile без подписи;

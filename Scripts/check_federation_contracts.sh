@@ -49,12 +49,13 @@ if ((failure_count == 0)); then
 
     for contract in \
         '^schema: 1$' \
-        '^platform_set:' \
+        '^platform_set: "1\.0\.0"$' \
         '^ios: "17\.0"$' \
         '^swift_tools: "6\.0"$' \
         '^modules:$' \
         '^verification:$' \
-        '^  status: (pending|passed)$'
+        '^  status: passed$' \
+        '^  checked_at: "2026-08-25"$'
     do
         require_pattern \
             "Compatibility catalog field is missing" \

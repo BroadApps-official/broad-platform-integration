@@ -1,5 +1,5 @@
 schema: 1
-platform_set: "unreleased-federation"
+platform_set: "1.0.0"
 ios: "17.0"
 swift_tools: "6.0"
 repositories:
@@ -13,9 +13,9 @@ modules:
   BroadMonetization: "1.0.0"
   BroadUIFlows: "1.0.0"
 verification:
-  status: pending
+  status: passed
   command: "bash Scripts/agent_gate.sh"
-  checked_at: null
+  checked_at: "2026-08-25"
 module_verification:
   BroadCore:
     version: "1.0.0"
