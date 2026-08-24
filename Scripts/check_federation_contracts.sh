@@ -83,6 +83,10 @@ if ((failure_count == 0)); then
         "Integration Package.swift must pin BroadCore 1.0.0" \
         "Package.swift" \
         'broad-core-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    require_pattern \
+        "Integration Package.swift must pin BroadMonetization 1.0.0" \
+        "Package.swift" \
+        'broad-monetization-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
 
     if ! /usr/bin/ruby -ryaml -e '
       catalog = YAML.safe_load(File.read(ARGV.fetch(0)))
@@ -98,6 +102,22 @@ if ((failure_count == 0)); then
       exit(expected.all? { |key, value| core[key].to_s == value } ? 0 : 1)
     ' "$platform_root/Compatibility/current.yml"; then
         record_failure "Released BroadCore evidence is missing or inconsistent in Compatibility/current.yml."
+    fi
+
+    if ! /usr/bin/ruby -ryaml -e '
+      catalog = YAML.safe_load(File.read(ARGV.fetch(0)))
+      monetization = catalog.fetch("module_verification").fetch("BroadMonetization")
+      expected = {
+        "version" => "1.0.0",
+        "module_gate" => "passed",
+        "github_actions" => "passed",
+        "release" => "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.0.0",
+        "integration_gate" => "passed",
+        "checked_at" => "2026-08-24"
+      }
+      exit(expected.all? { |key, value| monetization[key].to_s == value } ? 0 : 1)
+    ' "$platform_root/Compatibility/current.yml"; then
+        record_failure "Released BroadMonetization evidence is missing or inconsistent in Compatibility/current.yml."
     fi
 
     for example_contract in \
@@ -122,6 +142,18 @@ if ((failure_count == 0)); then
             "Integration example does not compile BroadCore 1.0.0" \
             "Examples/BroadAppTemplate/project.yml" \
             "$core_example_contract"
+    done
+
+    for monetization_example_contract in \
+        'url: https://github\.com/BroadApps-official/broad-monetization-ios\.git' \
+        'exactVersion: 1\.0\.0' \
+        'package: BroadMonetization' \
+        'product: BroadMonetization'
+    do
+        require_pattern \
+            "Integration example does not compile BroadMonetization 1.0.0" \
+            "Examples/BroadAppTemplate/project.yml" \
+            "$monetization_example_contract"
     done
 
     require_pattern \
@@ -166,6 +198,16 @@ if [[ -d "$platform_root/Sources/BroadCore" ]] && \
     record_failure "BroadCore production sources still exist in the integration checkout."
 fi
 
+if rg -q --multiline -- '\.library\(name: "BroadMonetization"|\.target\([[:space:]]*name: "BroadMonetization"' \
+    "$platform_root/Package.swift"; then
+    record_failure "Integration Package.swift still publishes a duplicated local BroadMonetization target."
+fi
+
+if [[ -d "$platform_root/Sources/BroadMonetization" ]] && \
+    find "$platform_root/Sources/BroadMonetization" -type f -print -quit | rg -q .; then
+    record_failure "BroadMonetization production sources still exist in the integration checkout."
+fi
+
 if ! /usr/bin/ruby -rjson -e '
   resolved = JSON.parse(File.read(ARGV.fetch(0)))
   pin = resolved.fetch("pins").find { |item| item["identity"] == "broad-extensions-ios" }
@@ -180,6 +222,14 @@ if ! /usr/bin/ruby -rjson -e '
   exit(pin&.dig("state", "version") == "1.0.0" ? 0 : 1)
 ' "$platform_root/Package.resolved"; then
     record_failure "Package.resolved does not pin BroadCore 1.0.0."
+fi
+
+if ! /usr/bin/ruby -rjson -e '
+  resolved = JSON.parse(File.read(ARGV.fetch(0)))
+  pin = resolved.fetch("pins").find { |item| item["identity"] == "broad-monetization-ios" }
+  exit(pin&.dig("state", "version") == "1.0.0" ? 0 : 1)
+' "$platform_root/Package.resolved"; then
+    record_failure "Package.resolved does not pin BroadMonetization 1.0.0."
 fi
 
 for forbidden_claim in \

@@ -279,21 +279,6 @@ require_file_pattern \
     'viewModel\.canSelectProducts'
 
 require_file_pattern \
-    "Malformed Adapty product IDs must use a bounded non-raw surrogate:" \
-    "$platform_root/Sources/BroadMonetization/Data/Adapty/AdaptyPaywallRepository+ProductMapping.swift" \
-    'adapty-opaque-unavailable-'
-
-require_file_pattern \
-    "Malformed Adapty product IDs must not authorize checkout with Money:" \
-    "$platform_root/Sources/BroadMonetization/Data/Adapty/AdaptyPaywallRepository+ProductMapping.swift" \
-    'price:[[:space:]]*hasValidatedVendorProductID[[:space:]]*\?[[:space:]]*money\(product\)[[:space:]]*:[[:space:]]*nil'
-
-require_file_pattern \
-    "Product selection analytics must preserve the catalog product ID:" \
-    "$platform_root/Sources/BroadMonetization/Domain/Analytics/MonetizationAnalyticsEvent.swift" \
-    'public[[:space:]]+let[[:space:]]+productID:[[:space:]]*ProductID'
-
-require_file_pattern \
     "BroadAppTemplate analytics must fan out only after deduplication:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Analytics/ExampleMonetizationAnalyticsAssembly.swift" \
     'destination:[[:space:]]*deduplicated'
@@ -359,44 +344,14 @@ require_file_pattern \
     'LiveAdapty5109Codex:[[:space:]]+Configuration/Adapty5109Codex\.xcconfig'
 
 require_file_pattern \
-    "Fresh-install recovery must force a new entitlement generation:" \
-    "$platform_root/Sources/BroadMonetization/Application/Recovery/RecoverCustomerAccessUseCase.swift" \
-    'policy:[[:space:]]*\.startNewGeneration'
-
-require_file_pattern \
-    "Token recovery must remain a server-authoritative app boundary:" \
-    "$platform_root/Sources/BroadMonetization/Application/Recovery/CustomerAccessRecoveryModels.swift" \
-    'protocol[[:space:]]+RecoverTokenAccountUseCaseProtocol'
-
-require_file_pattern \
     "Integration must consume the released BroadCore contract instead of a local copy:" \
     "$platform_root/Package.swift" \
     'broad-core-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
 
 require_file_pattern \
-    "RU HTTP must fail with a bounded result instead of waiting indefinitely:" \
-    "$platform_root/Sources/BroadMonetization/Infrastructure/RUBilling/RUBillingAuthenticatedHTTPClient.swift" \
-    'waitsForConnectivity[[:space:]]*=[[:space:]]*false'
-
-require_file_pattern \
-    "RU polling must stop immediately on offline or timeout:" \
-    "$platform_root/Sources/BroadMonetization/Application/RUBilling/RefreshRUPaymentUseCase.swift" \
-    '(?s)error\.kind[[:space:]]*==[[:space:]]*\.offline.{0,100}error\.kind[[:space:]]*==[[:space:]]*\.timeout'
-
-require_file_pattern \
-    "Provider-managed payloads must authorize the Special Offer gate:" \
-    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallRemoteConfigurationProvenance.swift" \
-    'case[[:space:]]+\.verifiedFreshRemote,[[:space:]]+\.providerCacheFallbackPossible:(?s:.*?)[[:space:]]+true'
-
-require_file_pattern \
-    "Platform-cache payloads must not authorize the Special Offer gate:" \
-    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallRemoteConfigurationProvenance.swift" \
-    'case[[:space:]]+\.platformCache,[[:space:]]+\.legacyUnqualified:(?s:.*?)[[:space:]]+false'
-
-require_file_pattern \
-    "RU Billing must remain restricted to verified-fresh payloads:" \
-    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallRemoteConfigurationProvenance.swift" \
-    'authorizesRUBillingPresentation[[:space:]]*:[[:space:]]*Bool[[:space:]]*\{(?s:.*)self[[:space:]]*==[[:space:]]*\.verifiedFreshRemote'
+    "Integration must consume the released BroadMonetization contract instead of a local copy:" \
+    "$platform_root/Package.swift" \
+    'broad-monetization-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
 
 if ((violation_count > 0)); then
     echo "Architecture checks failed: $violation_count rule group(s) found."

@@ -77,7 +77,7 @@ Host app не обязано подключать integration repository или 
 | 2. Docs | public editable site | ✅ build, link/search, anonymous access, Edit this page |
 | 3. Extensions | standalone public package | ✅ `1.0.0`, module/remote/release/integration gates PASS |
 | 4. Core | standalone public package | ✅ `1.0.0`, module/remote/release/integration gates PASS |
-| 5. Monetization | package с Core dependency | ⏳ module gate + probes + integration |
+| 5. Monetization | package с Core dependency | ✅ `1.0.0`, module/remote/release/integration gates PASS |
 | 6. UIFlows | package с Core/Monetization | ⏳ module gate + iPhone sandbox + integration |
 | 7. Cutover | integration repository и public releases | ⏳ clean-clone acceptance всех repos |
 

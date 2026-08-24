@@ -10,7 +10,7 @@ repositories:
 modules:
   BroadCore: "1.0.0"
   BroadExtensions: "1.0.0"
-  BroadMonetization: "pending"
+  BroadMonetization: "1.0.0"
   BroadUIFlows: "pending"
 verification:
   status: pending
@@ -29,6 +29,13 @@ module_verification:
     module_gate: passed
     github_actions: passed
     release: "https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.0"
+    integration_gate: passed
+    checked_at: "2026-08-24"
+  BroadMonetization:
+    version: "1.0.0"
+    module_gate: passed
+    github_actions: passed
+    release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.0.0"
     integration_gate: passed
     checked_at: "2026-08-24"
 notes:

@@ -31,6 +31,12 @@ production-ready версии.
 - integration package и example собирают exact tag `BroadCore 1.0.0`;
   локальная копия Core удалена, а privacy acceptance проверяет
   manifest из собранного remote package;
+- `BroadMonetization 1.0.0` вынесен в public repository с сохранением
+  Git-истории, отдельным iPhone sandbox, DocC/public API report и исполняемыми
+  Special Offer/Adapty contract probes;
+- integration package, `BroadUIFlows` и host example собирают exact tag
+  `BroadMonetization 1.0.0`; локальная копия production sources удалена,
+  а cross-module gate проверяет точный release, lockfile и UI/host behavior;
 
 ### Почему платформа делится на repositories
 

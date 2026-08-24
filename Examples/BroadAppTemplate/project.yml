@@ -18,6 +18,9 @@ packages:
   BroadCore:
     url: https://github.com/BroadApps-official/broad-core-ios.git
     exactVersion: 1.0.0
+  BroadMonetization:
+    url: https://github.com/BroadApps-official/broad-monetization-ios.git
+    exactVersion: 1.0.0
   BroadExtensions:
     url: https://github.com/BroadApps-official/broad-extensions-ios.git
     exactVersion: 1.0.0
@@ -42,7 +45,7 @@ targets:
     dependencies:
       - package: BroadCore
         product: BroadCore
-      - package: BroadAppsIOSPlatform
+      - package: BroadMonetization
         product: BroadMonetization
       - package: BroadAppsIOSPlatform
         product: BroadUIFlows
