@@ -1,5 +1,5 @@
 {
-  "originHash" : "bc64a18bd07fb82c69c297f35e264d0c7dcf95b6f5137106daf49a223c1d73f1",
+  "originHash" : "e1bec2ea63aaa44dcca472ca9ac92f01cd95960b454c97dba8398c05f6fb5ffd",
   "pins" : [
     {
       "identity" : "adaptysdk-ios",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "2c73ea4599b2e30bd4ba0a72660e1497a7b069f3",
         "version" : "3.17.3"
+      }
+    },
+    {
+      "identity" : "broad-extensions-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BroadApps-official/broad-extensions-ios.git",
+      "state" : {
+        "revision" : "6ae3720885ba5fcc74deea1d116d589c24141a2e",
+        "version" : "1.0.0"
       }
     },
     {

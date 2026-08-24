@@ -15,6 +15,9 @@ options:
 packages:
   BroadAppsIOSPlatform:
     path: ../..
+  BroadExtensions:
+    url: https://github.com/BroadApps-official/broad-extensions-ios.git
+    exactVersion: 1.0.0
   Swinject:
     url: https://github.com/Swinject/Swinject.git
     exactVersion: 2.10.0
@@ -40,6 +43,8 @@ targets:
         product: BroadMonetization
       - package: BroadAppsIOSPlatform
         product: BroadUIFlows
+      - package: BroadExtensions
+        product: BroadExtensions
       - package: Swinject
         product: Swinject
     configFiles:

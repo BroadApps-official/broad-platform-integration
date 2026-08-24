@@ -9,7 +9,6 @@ let package = Package(
     ],
     products: [
         .library(name: "BroadCore", targets: ["BroadCore"]),
-        .library(name: "BroadExtensions", targets: ["BroadExtensions"]),
         .library(name: "BroadMonetization", targets: ["BroadMonetization"]),
         .library(name: "BroadUIFlows", targets: ["BroadUIFlows"]),
     ],
@@ -32,9 +31,6 @@ let package = Package(
             resources: [
                 .process("Resources"),
             ]
-        ),
-        .target(
-            name: "BroadExtensions"
         ),
         .target(
             name: "BroadMonetization",

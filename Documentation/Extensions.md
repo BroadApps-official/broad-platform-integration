@@ -4,6 +4,17 @@
 iOS-утилитами. Он не зависит от `BroadCore`, `BroadMonetization` или
 `BroadUIFlows`.
 
+Canonical source, DocC, Gallery, module gate и changelog находятся в
+[public repository `broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios).
+Текущий проверенный release: [`1.0.0`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.0).
+
+```swift
+.package(
+    url: "https://github.com/BroadApps-official/broad-extensions-ios.git",
+    exact: "1.0.0"
+)
+```
+
 Подключайте продукт только тем target, где он реально нужен:
 
 ```swift

@@ -61,6 +61,32 @@ if ((failure_count == 0)); then
             "$contract"
     done
 
+    for extensions_contract in \
+        '^  BroadExtensions: "1\.0\.0"$' \
+        '^    version: "1\.0\.0"$' \
+        '^    module_gate: passed$' \
+        '^    github_actions: passed$' \
+        '^    integration_gate: passed$' \
+        'broad-extensions-ios/releases/tag/1\.0\.0'
+    do
+        require_pattern \
+            "Released BroadExtensions evidence is missing" \
+            "Compatibility/current.yml" \
+            "$extensions_contract"
+    done
+
+    for example_contract in \
+        'url: https://github\.com/BroadApps-official/broad-extensions-ios\.git' \
+        'exactVersion: 1\.0\.0' \
+        'package: BroadExtensions' \
+        'product: BroadExtensions'
+    do
+        require_pattern \
+            "Integration example does not compile BroadExtensions 1.0.0" \
+            "Examples/BroadAppTemplate/project.yml" \
+            "$example_contract"
+    done
+
     require_pattern \
         "ADR must allow direct module selection by a host app" \
         "Documentation/ADR/0006-federated-public-repositories.md" \
@@ -81,6 +107,24 @@ if ((failure_count == 0)); then
         "Release policy must explain what changed and why" \
         "Documentation/ModuleReleasePolicy.md" \
         'объясняет \*\*что\*\* изменилось и \*\*почему\*\*'
+fi
+
+if rg -q -- '\.library\(name: "BroadExtensions"|\.target\([[:space:]]*name: "BroadExtensions"' \
+    "$platform_root/Package.swift"; then
+    record_failure "Integration Package.swift still publishes a duplicated local BroadExtensions target."
+fi
+
+if [[ -d "$platform_root/Sources/BroadExtensions" ]] && \
+    find "$platform_root/Sources/BroadExtensions" -type f -print -quit | rg -q .; then
+    record_failure "BroadExtensions production sources still exist in the integration checkout."
+fi
+
+if ! /usr/bin/ruby -rjson -e '
+  resolved = JSON.parse(File.read(ARGV.fetch(0)))
+  pin = resolved.fetch("pins").find { |item| item["identity"] == "broad-extensions-ios" }
+  exit(pin&.dig("state", "version") == "1.0.0" ? 0 : 1)
+' "$platform_root/Package.resolved"; then
+    record_failure "Package.resolved does not pin BroadExtensions 1.0.0."
 fi
 
 for forbidden_claim in \

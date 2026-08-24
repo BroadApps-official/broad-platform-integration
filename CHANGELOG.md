@@ -20,6 +20,11 @@ production-ready версии.
 - README превращён из монолитного справочника в короткую navigation-точку;
   шесть воспроизводимых light/dark схем объясняют выбор модулей,
   repositories, миграцию, release, cross-repo changes и docs pipeline;
+- `BroadExtensions 1.0.0` вынесен в public repository с сохранением Git-истории,
+  standalone Gallery, executable production-type probe, DocC, public API report,
+  pinned tools, clean-runner CI и release workflow;
+- integration example теперь собирает exact tag `BroadExtensions 1.0.0`,
+  а дублирующие production sources удалены из integration checkout;
 
 ### Почему платформа делится на repositories
 
