@@ -1,5 +1,10 @@
 # Архитектура
 
+> [!IMPORTANT]
+> Каждый модуль публикуется в своём repository. Host app подключает
+> только нужные products; обязательного umbrella package нет.
+> Точная карта repositories и версий: [федерация](FederatedRepositories.md).
+
 BroadApps iOS Platform состоит из трёх основных модулей и одного
 независимого набора расширений. Зависимости идут только внутрь:
 
@@ -249,12 +254,15 @@ Onboarding получает стабильные ID слайдов, тексты
 
 ## Точка сборки зависимостей
 
-Приложение владеет composition root. Swinject-сборки подключаются в таком порядке:
+Приложение владеет composition root. Из подключённых конкретному host app
+модулей Swinject-сборки подключаются в таком порядке:
 
 1. `BroadCoreAssembly`;
 2. `BroadMonetizationAssembly`;
 3. `BroadUIFlowsAssembly`;
 4. repository, use case и ViewModel конкретного приложения.
+
+Если модуль не подключён, его assembly в composition root не создаётся.
 
 `BroadCoreAssembly` регистрирует descriptor модуля, bootstrap, cache, отдельный state store и logging.
 Приложение может независимо передать готовый cache repository, `KeyValueStoreProtocol` для

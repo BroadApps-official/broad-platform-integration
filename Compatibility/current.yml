@@ -1,0 +1,22 @@
+schema: 1
+platform_set: "unreleased-federation"
+ios: "17.0"
+swift_tools: "6.0"
+repositories:
+  BroadCore: "https://github.com/BroadApps-official/broad-core-ios"
+  BroadExtensions: "https://github.com/BroadApps-official/broad-extensions-ios"
+  BroadMonetization: "https://github.com/BroadApps-official/broad-monetization-ios"
+  BroadUIFlows: "https://github.com/BroadApps-official/broad-ui-flows-ios"
+modules:
+  BroadCore: "pending"
+  BroadExtensions: "pending"
+  BroadMonetization: "pending"
+  BroadUIFlows: "pending"
+verification:
+  status: pending
+  command: "bash Scripts/agent_gate.sh"
+  checked_at: null
+notes:
+  - "Host applications connect only the repositories/products they need."
+  - "This catalog is not a mandatory runtime umbrella dependency."
+  - "Tests, test targets, XCTest and Swift Testing are intentionally absent."

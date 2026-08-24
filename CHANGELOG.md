@@ -8,6 +8,26 @@ production-ready версии.
 
 ### Added
 
+- принят [ADR-0006](Documentation/ADR/0006-federated-public-repositories.md):
+  четыре Swift products переносятся в отдельные публичные repositories,
+  а integration/docs получают свои repositories;
+- [план федерации](Documentation/FederatedRepositories.md),
+  [release policy](Documentation/ModuleReleasePolicy.md) и машиночитаемый
+  `Compatibility/current.yml` фиксируют ownership, SemVer, порядок release
+  снизу вверх и acceptance каждого шага;
+
+### Почему платформа делится на repositories
+
+Цель — уменьшить область review и release. Host app подключает любой
+нужный модуль напрямую; обязательного `BroadPlatform` нет. Integration
+repository нужен для проверенных exact versions и целостного example, а не
+как обязательная runtime dependency.
+
+Документы не удаляются из Git: Markdown/DocC остаются публично
+редактируемыми, а отдельный сайт добавляет навигацию и поиск. По решению
+владельца unit tests/test targets/XCTest не добавляются; их место занимают
+static contracts, builds, executable probes и iPhone sandboxes.
+
 - универсальный staged workflow создания host app: отдельные preflight,
   Integration Plan, skeleton, vertical-slice, functional, visual и acceptance
   prompts с обязательными developer checkpoints;

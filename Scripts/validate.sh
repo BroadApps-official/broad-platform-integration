@@ -42,7 +42,7 @@ if ! command -v rg >/dev/null 2>&1; then
     exit 1
 fi
 
-echo "[1/8] Package structure"
+echo "[1/9] Package structure"
 
 required_check_files=(
     "$platform_root/AGENTS.md"
@@ -61,6 +61,7 @@ required_automation_files=(
     "$platform_root/Scripts/agent_gate.sh"
     "$platform_root/Scripts/agent_review_and_fix.sh"
     "$platform_root/Scripts/check_adapty_experiment_contracts.sh"
+    "$platform_root/Scripts/check_federation_contracts.sh"
     "$platform_root/Scripts/check_onboarding_contract.sh"
     "$platform_root/Scripts/check_remote_feature_contracts.sh"
     "$platform_root/Scripts/check_special_offer_runtime_contract.sh"
@@ -131,7 +132,7 @@ if [[ -n "$tests_directories" ]]; then
     record_failure "Tests directories are forbidden:" "$tests_directories"
 fi
 
-echo "[2/8] Local references"
+echo "[2/9] Local references"
 
 reference_directories="$(
     find "$platform_root" \
@@ -196,32 +197,37 @@ if [[ -n "$local_package_matches" ]]; then
     record_failure "Root Package.swift must not depend on a local package path:" "$local_package_matches"
 fi
 
-echo "[3/8] Architecture and product guardrails"
+echo "[3/9] Federation contracts"
+if ! bash "$platform_root/Scripts/check_federation_contracts.sh"; then
+    failure_count=$((failure_count + 1))
+fi
+
+echo "[4/9] Architecture and product guardrails"
 if ! bash "$platform_root/Scripts/check_architecture.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[4/8] Onboarding contracts"
+echo "[5/9] Onboarding contracts"
 if ! bash "$platform_root/Scripts/check_onboarding_contract.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[5/8] Remote Config feature-gate contracts"
+echo "[6/9] Remote Config feature-gate contracts"
 if ! bash "$platform_root/Scripts/check_remote_feature_contracts.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[6/8] Adapty experiment contracts"
+echo "[7/9] Adapty experiment contracts"
 if ! bash "$platform_root/Scripts/check_adapty_experiment_contracts.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[7/8] Privacy manifest"
+echo "[8/9] Privacy manifest"
 if ! bash "$platform_root/Scripts/check_privacy_manifest.sh"; then
     failure_count=$((failure_count + 1))
 fi
 
-echo "[8/8] Documentation and README assets"
+echo "[9/9] Documentation and README assets"
 if ! bash "$platform_root/Scripts/check_documentation.sh"; then
     failure_count=$((failure_count + 1))
 fi

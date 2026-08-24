@@ -2,6 +2,7 @@
 
 - Статус: принято
 - Дата: 2026-08-09
+- Дополнено: [ADR-0006](0006-federated-public-repositories.md)
 
 ## Контекст
 
@@ -9,7 +10,8 @@
 
 ## Решение
 
-Платформа состоит из трёх library products с однонаправленными зависимостями:
+Платформа состоит из трёх основных library products и одного
+независимого product с однонаправленными зависимостями:
 
 ```text
 BroadCore
@@ -19,6 +21,8 @@ BroadMonetization
 BroadUIFlows
    ↑
 Host App
+
+BroadExtensions ← Host App (опционально, независимо)
 ```
 
 Точный Package graph:
@@ -26,7 +30,11 @@ Host App
 - `BroadCore` не зависит от других platform modules;
 - `BroadMonetization` зависит от `BroadCore`;
 - `BroadUIFlows` зависит от `BroadCore` и `BroadMonetization`;
-- Host App может импортировать все три, но создаёт их только в composition root.
+- `BroadExtensions` не зависит от других модулей;
+- Host App подключает только нужные ему repositories/products и создаёт
+  runtime-зависимости только в composition root;
+- `broad-platform-integration` фиксирует проверенный набор версий,
+  но не является обязательной dependency host app.
 
 Внутри каждого feature соблюдаются Clean Architecture и MVVM:
 
