@@ -1,6 +1,24 @@
-# Перенос существующего приложения
+# Ручная миграция старого приложения
 
 Переносите приложение вертикальными срезами, а не одним большим rewrite. Первый безопасный результат — один реальный маршрут `launch → onboarding → paywall → purchase/restore → main`, собранный на platform contracts. После этого можно переносить остальные placements и optional features.
+
+Эта инструкция нужна, если работающий host app использует старый BroadApps
+monolith, local package checkout или скопированные platform sources. Для
+миграции через coding agent используйте отдельный файл
+[LegacyAppMigrationAgent.md](LegacyAppMigrationAgent.md).
+
+## Определите вид legacy integration
+
+| Текущее состояние | Безопасное переключение |
+|---|---|
+| Старый package URL или local package | Заменить reference на public module repositories. Не подключать одновременно packages, экспортирующие одинаковый Swift module |
+| Platform `.swift`-файлы скопированы в app target | Добавить новый product и атомарно исключить совпадающие legacy-файлы из target membership |
+| App wrapper повторяет platform API | Сохранить wrapper как app adapter, заменить его implementation и удалить только доказанный дубль |
+| Источник типа неизвестен | Найти package product, target membership, imports и construction point; до этого migration row остаётся `BLOCKED` |
+
+Не создавайте второй app target и не смешивайте migration с новой feature.
+Переключайте один dependency boundary/вертикальный срез, сохраняйте rollback и
+удаляйте legacy owner только после поиска usages, сборки и developer review.
 
 ## Главный принцип
 
@@ -46,11 +64,16 @@
 
 Эти места нельзя переносить как есть.
 
-## 1. Подключите package без изменения UI
+## 1. Переключите package boundary без изменения UI
 
-Добавьте package из GitHub или локальной checkout-папки, три основных продукта
-и при необходимости независимый `BroadExtensions`. Создайте
-один `AppCompositionRoot`, но сначала оставьте legacy screen builders.
+Выберите только используемые products и exact versions из
+`Compatibility/current.yml`. Добавьте отдельные public repositories, затем
+удалите конфликтующий old product/local reference или совпадающие copied
+sources. Если старый package экспортирует несколько одноимённых modules и
+частичный switch невозможен, замените package references одним небольшим
+dependency-only commit; runtime slices всё равно проверяйте по одному.
+
+Создайте один `AppCompositionRoot`, но сначала оставьте legacy screen builders.
 
 Проверка этапа:
 
@@ -419,3 +442,5 @@ Paywall provider lifecycle не переносите в analytics destination. V
 - [ ] ручные acceptance fixtures пройдены минимум на двух app configurations.
 
 Test targets для platform migration не добавляются; риск закрывается строгими checks, полной сборкой и воспроизводимыми ручными сценариями.
+
+[Вернуться к архитектуре и выбору способа миграции →](../README.md#если-приложение-уже-сделано-на-старой-платформе)

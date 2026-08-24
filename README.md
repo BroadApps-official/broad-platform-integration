@@ -33,7 +33,7 @@ backend-ручки и product decisions остаются в конкретном
 | За 5 минут понять, какой product подключать | раздел [«Что подключать»](#что-подключать) ниже |
 | Подключить первый модуль к host app | [Getting Started на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started) |
 | Найти правило по Special Offer, entitlement, cache или release | [поиск по публичной документации](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search) |
-| Перенести существующее приложение на отдельные modules | [Migration Guide](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/migration) |
+| Перенести существующее приложение со старой платформы | [Legacy migration](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration) |
 | Проверить совместимые версии | [Compatibility catalog](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility) |
 | Изменить API конкретного модуля | README и DocC в repository этого модуля |
 
@@ -64,6 +64,25 @@ backend-ручки и product decisions остаются в конкретном
   <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/platform-module-selection-light.svg">
   <img alt="Host app выбирает любой нужный модуль" src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
 </picture>
+
+### Идея новой архитектуры
+
+Host app больше не зависит от общего изменяемого «комбайна». Код принадлежит
+маленьким module repositories, каждый module ревьюится и выпускается отдельно,
+а integration repository только доказывает, что конкретные версии работают
+вместе. Documentation repository добавляет общий поиск, но не забирает API docs
+у владельца модуля.
+
+| Раньше | Теперь | Почему лучше |
+|---|---|---|
+| Одна большая область изменений | Core, Extensions, Monetization и UIFlows разделены | Review видит только относящийся к задаче код |
+| Release затрагивает всю платформу | У каждого module свой SemVer | Fix одного слоя не выпускает остальные заново |
+| Host получает весь umbrella | Host выбирает нужные products напрямую | Меньше dependencies и скрытых side effects |
+| Совместимость приходилось угадывать | Integration фиксирует exact known-good set | Есть воспроизводимый пример и clean-runner evidence |
+| Документацию трудно найти | README направляет, сайт ищет, DocC описывает tag | Нет одной огромной инструкции и второй копии API |
+
+Главная идея: **module repository владеет кодом и release, host app — своими
+решениями, integration — совместимостью, сайт — навигацией и поиском**.
 
 | Задача host app | Подключить | Что придёт транзитивно |
 |---|---|---|
@@ -195,8 +214,45 @@ Platform scope:
 
 ---
 
+## Если приложение уже сделано на старой платформе
+
+Не создавайте новое приложение и не переписывайте рабочий flow целиком.
+Сначала снимите baseline, затем переключайте один dependency boundary и один
+вертикальный срез за раз.
+
+```mermaid
+flowchart LR
+    A["Работающий legacy app"] --> B["Baseline + inventory"]
+    B --> C{"Кто мигрирует?"}
+    C -->|"Разработчик"| D["Manual instruction"]
+    C -->|"Codex / Claude"| E["Staged AI instruction"]
+    D --> F["Один module boundary / slice"]
+    E --> F
+    F --> G["Build + functional review"]
+    G --> H{"Legacy owners остались?"}
+    H -->|"Да"| F
+    H -->|"Нет"| I["Удалить monolith/local copies → QA"]
+```
+
+| Подход | Когда выбирать | Отдельная инструкция |
+|---|---|---|
+| Вручную | Разработчик сам анализирует graph, меняет package references и проверяет каждый flow | [Ручная миграция старого приложения](Documentation/MigrationGuide.md) |
+| Через ИИ | Нужен агент, который сам проведёт audit/plan/switch/slice/cleanup, но будет останавливаться на review | [Конкретная staged-инструкция для Codex/Claude](Documentation/LegacyAppMigrationAgent.md) |
+
+Общие правила: не линковать old/new packages с одинаковым Swift module, не
+переносить app-owned configuration в public package, брать версии из
+`Compatibility/current.yml` и удалять legacy source только после поиска usages,
+сборок и developer review.
+
+[Открыть legacy migration на сайте →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration)
+
+---
+
 <a id="agent-setup"></a>
 ## 🤖 Вариант A: сделать приложение через Codex или Claude
+
+Этот раздел — общий staged workflow для нового приложения/нового feature. Для
+перехода уже работающего legacy app используйте отдельную AI-инструкцию выше.
 
 Агент не должен получать один монолитный prompt «сделай всё». Работа идёт
 по проверяемым stages:
@@ -520,65 +576,15 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 
 ## Карта документации
 
-### Начать и подключить
-
-- [Getting Started](Documentation/GettingStarted.md)
-- [Архитектура](Documentation/Architecture.md)
-- [Федерация repositories](Documentation/FederatedRepositories.md)
-- [Migration Guide](Documentation/MigrationGuide.md)
-- [Памятка разработчика](README.dev.md)
-
-### Создать и передать app
-
-- [Agent Preflight](Documentation/AgentPreflight.md)
-- [App Creation Workflow](Documentation/AppCreationWorkflow.md)
-- [Agent Prompt Pack](Documentation/AgentPromptPack.md)
-- [Integration Plan template](Documentation/Templates/AppIntegrationPlan.md)
-- [Project Delivery](Documentation/ProjectDelivery.md)
-
-### Core и runtime
-
-- [Bootstrap](Documentation/Bootstrap.md)
-- [Startup & Caching](Documentation/StartupAndCaching.md)
-- [Caching & Offline](Documentation/CachingAndOffline.md)
-- [Loadable State](Documentation/LoadableState.md)
-- [Loadable UI](Documentation/LoadableUI.md)
-- [Logging](Documentation/Logging.md)
-- [Security](Documentation/Security.md)
-
-### Monetization
-
-- [Monetization](Documentation/Monetization.md)
-- [Monetization Domain](Documentation/MonetizationDomain.md)
-- [Entitlements](Documentation/Entitlements.md)
-- [Paywall UI](Documentation/PaywallUI.md)
-- [Special Offer](Documentation/SpecialOffer.md)
-- [Remote Config](Documentation/RemoteConfig.md)
-- [Experiments](Documentation/Experiments.md)
-- [Analytics](Documentation/Analytics.md)
-- [Purchase Managers](Documentation/PurchaseManagers.md)
-- [Token Paywall](Documentation/TokenPaywall.md)
-- [RU Billing](Documentation/RUBilling.md)
-- [Account Recovery](Documentation/AccountRecovery.md)
-- [Network Interruptions](Documentation/NetworkInterruptions.md)
-
-### UI, extensions и app-owned integrations
-
-- [AppFlow](Documentation/AppFlow.md)
-- [Onboarding & ATT](Documentation/OnboardingAndATT.md)
-- [BroadExtensions](Documentation/Extensions.md)
-- [Debug Tools & Async Actions](Documentation/DebugToolsAndAsyncActions.md)
-- [Support Email](Documentation/SupportEmail.md)
-- [Usedesk](Documentation/Usedesk.md)
-
-### Проверка и release
-
-- [Agent Automation](Documentation/AgentAutomation.md)
-- [Platform Handoff](Documentation/PlatformHandoff.md)
-- [Traceability](Documentation/Traceability.md)
-- [Module Release Policy](Documentation/ModuleReleasePolicy.md)
-- [Compatibility catalog](Compatibility/current.yml)
-- [Changelog](CHANGELOG.md)
+| Задача | Точка входа |
+|---|---|
+| Подключить module | [Getting Started](Documentation/GettingStarted.md) · [Архитектура](Documentation/Architecture.md) · [Памятка разработчика](README.dev.md) |
+| Создать новый app/feature | [Agent Preflight](Documentation/AgentPreflight.md) · [Workflow](Documentation/AppCreationWorkflow.md) · [Prompt Pack](Documentation/AgentPromptPack.md) · [Integration Plan](Documentation/Templates/AppIntegrationPlan.md) |
+| Мигрировать старый app вручную | [Manual migration](Documentation/MigrationGuide.md) |
+| Мигрировать старый app через ИИ | [AI migration instruction](Documentation/LegacyAppMigrationAgent.md) |
+| Найти runtime/monetization правило | [Поиск по публичной базе](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search) · локальная папка `Documentation/` |
+| Проверить или выпустить platform change | [Agent Automation](Documentation/AgentAutomation.md) · [Platform Handoff](Documentation/PlatformHandoff.md) · [Release Policy](Documentation/ModuleReleasePolicy.md) |
+| Сверить готовность | [Traceability](Documentation/Traceability.md) · [Compatibility catalog](Compatibility/current.yml) · [Changelog](CHANGELOG.md) |
 
 [Поиск по всей публичной базе →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search)
 

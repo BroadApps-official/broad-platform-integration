@@ -7,6 +7,12 @@
 
 ### Changed
 
+- README теперь прямо объясняет новую repository architecture, показывает её
+  преимущества относительно монолита и содержит схему безопасной migration
+  существующего app с отдельным выбором manual/AI;
+- `Documentation/MigrationGuide.md` уточняет ручной dependency cutover для old
+  package/local/copied sources, а новый `LegacyAppMigrationAgent.md` задаёт
+  исполняемые AI stages, review checkpoints, prompts и resume flow;
 - README получил короткий маршрут «задача → правильный источник документации»,
   прямые ссылки на публичный сайт/поиск и воспроизводимую инструкцию локального
   запуска `broad-docs`;
@@ -21,6 +27,11 @@
 Разработчик должен увидеть новый сайт уже из README, но не читать две копии
 одной статьи. README отвечает за выбор следующего шага, сайт — за поиск и
 cross-module guides, а module README/DocC — за API конкретного release.
+
+Legacy app нельзя безопасно мигрировать тем же prompt, которым создаётся новый
+app: сначала нужен audit фактического graph, затем атомарный dependency switch
+и только один проверяемый slice. Отдельные manual/AI маршруты делают эти
+checkpoint-ы явными и сохраняют rollback.
 
 ## 1.0.0 — 2026-08-25
 

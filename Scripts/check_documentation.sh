@@ -82,6 +82,8 @@ for required_pattern in \
     '^## С чего начать$' \
     '^## Что подключать$' \
     '^## Целевые public repositories$' \
+    '^### Идея новой архитектуры$' \
+    '^## Если приложение уже сделано на старой платформе$' \
     '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
     '^## 🛠️ Вариант B: собрать приложение вручную$' \
     '^### 🎁 Special Offer — только второй paywall$' \
@@ -101,6 +103,10 @@ for required_pattern in \
     'pnpm install --frozen-lockfile' \
     'pnpm run dev' \
     'README не копирует подробные статьи сайта' \
+    'flowchart LR' \
+    'Documentation/MigrationGuide\.md' \
+    'Documentation/LegacyAppMigrationAgent\.md' \
+    'не линковать old/new packages с одинаковым Swift module' \
     'https://broadapps-ios-docs\.nkhsnv\.chatgpt\.site' \
     'Documentation/FederatedRepositories\.md' \
     'Documentation/ModuleReleasePolicy\.md' \
@@ -146,6 +152,14 @@ for documentation_contract in \
     'Documentation/ModuleReleasePolicy.md|upToNextMajor' \
     'Documentation/ModuleReleasePolicy.md|swift_language_mode: "5"' \
     'Documentation/GettingStarted.md|platform sources и host example компилируются в Swift 5 language mode' \
+    'Documentation/MigrationGuide.md|^# Ручная миграция старого приложения$' \
+    'Documentation/MigrationGuide.md|Не подключать одновременно packages, экспортирующие одинаковый Swift module' \
+    'Documentation/LegacyAppMigrationAgent.md|MIGRATION PREFLIGHT REVIEW REQUIRED' \
+    'Documentation/LegacyAppMigrationAgent.md|MIGRATION PLAN REVIEW REQUIRED' \
+    'Documentation/LegacyAppMigrationAgent.md|DEPENDENCY SWITCH REVIEW REQUIRED' \
+    'Documentation/LegacyAppMigrationAgent.md|MIGRATION SLICE REVIEW REQUIRED' \
+    'Documentation/LegacyAppMigrationAgent.md|LEGACY CLEANUP REVIEW REQUIRED' \
+    'Documentation/LegacyAppMigrationAgent.md|READY FOR QA' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
     'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
     'Documentation/SpecialOffer.md|raw `AdaptyPaywallProduct`' \
