@@ -1,5 +1,5 @@
 {
-  "originHash" : "e1bec2ea63aaa44dcca472ca9ac92f01cd95960b454c97dba8398c05f6fb5ffd",
+  "originHash" : "f6cdf68c13c86ae30561292e7fb24cf1ac4b9ecd1295c1dbef11e6576183e660",
   "pins" : [
     {
       "identity" : "adaptysdk-ios",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "2c73ea4599b2e30bd4ba0a72660e1497a7b069f3",
         "version" : "3.17.3"
+      }
+    },
+    {
+      "identity" : "broad-core-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BroadApps-official/broad-core-ios.git",
+      "state" : {
+        "revision" : "b2fb737e1ffc0b1e0908c53965ff0daded2be07b",
+        "version" : "1.0.0"
       }
     },
     {

@@ -25,6 +25,12 @@ production-ready версии.
   pinned tools, clean-runner CI и release workflow;
 - integration example теперь собирает exact tag `BroadExtensions 1.0.0`,
   а дублирующие production sources удалены из integration checkout;
+- `BroadCore 1.0.0` вынесен в public repository с сохранением Git-истории,
+  standalone iPhone sandbox, production-type probe, privacy-manifest check,
+  DocC, public API report, clean-runner CI и release workflow;
+- integration package и example собирают exact tag `BroadCore 1.0.0`;
+  локальная копия Core удалена, а privacy acceptance проверяет
+  manifest из собранного remote package;
 
 ### Почему платформа делится на repositories
 

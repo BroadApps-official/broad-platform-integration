@@ -8,7 +8,7 @@ repositories:
   BroadMonetization: "https://github.com/BroadApps-official/broad-monetization-ios"
   BroadUIFlows: "https://github.com/BroadApps-official/broad-ui-flows-ios"
 modules:
-  BroadCore: "pending"
+  BroadCore: "1.0.0"
   BroadExtensions: "1.0.0"
   BroadMonetization: "pending"
   BroadUIFlows: "pending"
@@ -17,6 +17,13 @@ verification:
   command: "bash Scripts/agent_gate.sh"
   checked_at: null
 module_verification:
+  BroadCore:
+    version: "1.0.0"
+    module_gate: passed
+    github_actions: passed
+    release: "https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.0.0"
+    integration_gate: passed
+    checked_at: "2026-08-24"
   BroadExtensions:
     version: "1.0.0"
     module_gate: passed

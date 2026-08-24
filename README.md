@@ -58,7 +58,7 @@ backend-ручки и product decisions остаются в конкретном
 | Repository | Роль | Подключается host app |
 |---|---|---:|
 | [`broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios) | `BroadExtensions` · [`1.0.0`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.0) | да, по надобности |
-| [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` | да, по надобности |
+| [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.0.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.0.0) | да, по надобности |
 | [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` | да, по надобности |
 | [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` | да, по надобности |
 | `broad-platform-integration` | exact versions, example, cross-module gate | нет, это catalog/evidence |

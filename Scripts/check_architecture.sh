@@ -369,9 +369,9 @@ require_file_pattern \
     'protocol[[:space:]]+RecoverTokenAccountUseCaseProtocol'
 
 require_file_pattern \
-    "Interrupted connections must be classified as offline:" \
-    "$platform_root/Sources/BroadCore/Infrastructure/Networking/NetworkFailureClassifier.swift" \
-    '\.networkConnectionLost'
+    "Integration must consume the released BroadCore contract instead of a local copy:" \
+    "$platform_root/Package.swift" \
+    'broad-core-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
 
 require_file_pattern \
     "RU HTTP must fail with a bounded result instead of waiting indefinitely:" \

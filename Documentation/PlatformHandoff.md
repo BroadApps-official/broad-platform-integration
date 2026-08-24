@@ -64,7 +64,7 @@ bash Scripts/agent_gate.sh
 
 ```swift
 .package(
-    url: "https://github.com/BroadApps-official/BroadCore.git",
+    url: "https://github.com/BroadApps-official/broad-core-ios.git",
     branch: "vers_niiaz"
 )
 ```

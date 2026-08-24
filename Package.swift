@@ -8,11 +8,18 @@ let package = Package(
         .iOS(.v17),
     ],
     products: [
-        .library(name: "BroadCore", targets: ["BroadCore"]),
         .library(name: "BroadMonetization", targets: ["BroadMonetization"]),
         .library(name: "BroadUIFlows", targets: ["BroadUIFlows"]),
     ],
     dependencies: [
+        .package(
+            url: "https://github.com/BroadApps-official/broad-extensions-ios.git",
+            exact: "1.0.0"
+        ),
+        .package(
+            url: "https://github.com/BroadApps-official/broad-core-ios.git",
+            exact: "1.0.0"
+        ),
         .package(
             url: "https://github.com/Swinject/Swinject.git",
             exact: "2.10.0"
@@ -24,18 +31,9 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "BroadCore",
-            dependencies: [
-                .product(name: "Swinject", package: "Swinject"),
-            ],
-            resources: [
-                .process("Resources"),
-            ]
-        ),
-        .target(
             name: "BroadMonetization",
             dependencies: [
-                "BroadCore",
+                .product(name: "BroadCore", package: "broad-core-ios"),
                 .product(name: "Swinject", package: "Swinject"),
                 .product(
                     name: "Adapty",
@@ -47,7 +45,7 @@ let package = Package(
         .target(
             name: "BroadUIFlows",
             dependencies: [
-                "BroadCore",
+                .product(name: "BroadCore", package: "broad-core-ios"),
                 "BroadMonetization",
                 .product(name: "Swinject", package: "Swinject"),
             ]

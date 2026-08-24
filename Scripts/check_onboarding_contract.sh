@@ -124,7 +124,6 @@ scan_forbidden \
 loader_paths=()
 for loader_path in \
     "$platform_root/Sources/BroadUIFlows/Presentation/Loadable" \
-    "$platform_root/Sources/BroadCore/Application/Bootstrap" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/Root"; do
     if [[ -d "$loader_path" ]]; then
         loader_paths+=("$loader_path")

@@ -365,6 +365,7 @@
 			mainGroup = FA8E84BA7F55B03BC0FBF4CA;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				A4D9E3CF8C27A22D2B8FA96F /* XCRemoteSwiftPackageReference "broad-core-ios" */,
 				AF9F3A76F6D9744E7AC59292 /* XCRemoteSwiftPackageReference "broad-extensions-ios" */,
 				766E427D766A9ACD0377ED09 /* XCRemoteSwiftPackageReference "Swinject" */,
 				27525D4F4B47170339DB6EAA /* XCLocalSwiftPackageReference "../.." */,
@@ -855,6 +856,14 @@
 				version = 2.10.0;
 			};
 		};
+		A4D9E3CF8C27A22D2B8FA96F /* XCRemoteSwiftPackageReference "broad-core-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BroadApps-official/broad-core-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.0;
+			};
+		};
 		AF9F3A76F6D9744E7AC59292 /* XCRemoteSwiftPackageReference "broad-extensions-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/BroadApps-official/broad-extensions-ios.git";
@@ -873,6 +882,7 @@
 		};
 		8DEEF7DDD522106524D1E6BD /* BroadCore */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = A4D9E3CF8C27A22D2B8FA96F /* XCRemoteSwiftPackageReference "broad-core-ios" */;
 			productName = BroadCore;
 		};
 		9346EA10BD51FB5F8A5E81E2 /* BroadMonetization */ = {

@@ -15,7 +15,7 @@ require_pattern() {
     local file="$2"
     local pattern="$3"
 
-    if ! rg -q -- "$pattern" "$platform_root/$file"; then
+    if ! rg -q --multiline -- "$pattern" "$platform_root/$file"; then
         record_failure "$description: $file -> $pattern"
     fi
 }
@@ -75,6 +75,31 @@ if ((failure_count == 0)); then
             "$extensions_contract"
     done
 
+    require_pattern \
+        "Integration Package.swift must pin BroadExtensions 1.0.0" \
+        "Package.swift" \
+        'broad-extensions-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    require_pattern \
+        "Integration Package.swift must pin BroadCore 1.0.0" \
+        "Package.swift" \
+        'broad-core-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+
+    if ! /usr/bin/ruby -ryaml -e '
+      catalog = YAML.safe_load(File.read(ARGV.fetch(0)))
+      core = catalog.fetch("module_verification").fetch("BroadCore")
+      expected = {
+        "version" => "1.0.0",
+        "module_gate" => "passed",
+        "github_actions" => "passed",
+        "release" => "https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.0.0",
+        "integration_gate" => "passed",
+        "checked_at" => "2026-08-24"
+      }
+      exit(expected.all? { |key, value| core[key].to_s == value } ? 0 : 1)
+    ' "$platform_root/Compatibility/current.yml"; then
+        record_failure "Released BroadCore evidence is missing or inconsistent in Compatibility/current.yml."
+    fi
+
     for example_contract in \
         'url: https://github\.com/BroadApps-official/broad-extensions-ios\.git' \
         'exactVersion: 1\.0\.0' \
@@ -85,6 +110,18 @@ if ((failure_count == 0)); then
             "Integration example does not compile BroadExtensions 1.0.0" \
             "Examples/BroadAppTemplate/project.yml" \
             "$example_contract"
+    done
+
+    for core_example_contract in \
+        'url: https://github\.com/BroadApps-official/broad-core-ios\.git' \
+        'exactVersion: 1\.0\.0' \
+        'package: BroadCore' \
+        'product: BroadCore'
+    do
+        require_pattern \
+            "Integration example does not compile BroadCore 1.0.0" \
+            "Examples/BroadAppTemplate/project.yml" \
+            "$core_example_contract"
     done
 
     require_pattern \
@@ -119,12 +156,30 @@ if [[ -d "$platform_root/Sources/BroadExtensions" ]] && \
     record_failure "BroadExtensions production sources still exist in the integration checkout."
 fi
 
+if rg -q --multiline -- '\.library\(name: "BroadCore"|\.target\([[:space:]]*name: "BroadCore"' \
+    "$platform_root/Package.swift"; then
+    record_failure "Integration Package.swift still publishes a duplicated local BroadCore target."
+fi
+
+if [[ -d "$platform_root/Sources/BroadCore" ]] && \
+    find "$platform_root/Sources/BroadCore" -type f -print -quit | rg -q .; then
+    record_failure "BroadCore production sources still exist in the integration checkout."
+fi
+
 if ! /usr/bin/ruby -rjson -e '
   resolved = JSON.parse(File.read(ARGV.fetch(0)))
   pin = resolved.fetch("pins").find { |item| item["identity"] == "broad-extensions-ios" }
   exit(pin&.dig("state", "version") == "1.0.0" ? 0 : 1)
 ' "$platform_root/Package.resolved"; then
     record_failure "Package.resolved does not pin BroadExtensions 1.0.0."
+fi
+
+if ! /usr/bin/ruby -rjson -e '
+  resolved = JSON.parse(File.read(ARGV.fetch(0)))
+  pin = resolved.fetch("pins").find { |item| item["identity"] == "broad-core-ios" }
+  exit(pin&.dig("state", "version") == "1.0.0" ? 0 : 1)
+' "$platform_root/Package.resolved"; then
+    record_failure "Package.resolved does not pin BroadCore 1.0.0."
 fi
 
 for forbidden_claim in \

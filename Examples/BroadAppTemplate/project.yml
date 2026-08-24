@@ -15,6 +15,9 @@ options:
 packages:
   BroadAppsIOSPlatform:
     path: ../..
+  BroadCore:
+    url: https://github.com/BroadApps-official/broad-core-ios.git
+    exactVersion: 1.0.0
   BroadExtensions:
     url: https://github.com/BroadApps-official/broad-extensions-ios.git
     exactVersion: 1.0.0
@@ -37,7 +40,7 @@ targets:
     sources:
       - path: BroadAppTemplate
     dependencies:
-      - package: BroadAppsIOSPlatform
+      - package: BroadCore
         product: BroadCore
       - package: BroadAppsIOSPlatform
         product: BroadMonetization
