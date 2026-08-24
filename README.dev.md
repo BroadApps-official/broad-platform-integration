@@ -425,6 +425,10 @@ bash Scripts/agent_gate.sh.
 - [ ] Проверены loading/content/empty/error/retry.
 - [ ] Каждая backend-кнопка сразу показывает spinner до перехода или ответа.
 - [ ] Повторные тапы не создают дубликаты операций.
+- [ ] Token recovery получает полный balance текущего авторизованного account;
+      transaction/checkout IDs используются только для однократного начисления.
+- [ ] Если подключён Usedesk, backend остаётся источником chat token, а
+      account-scoped Keychain хранит только cache/pending sync без device ID.
 - [ ] Debug-очистка Keychain отсутствует в Release и не трогает payment pending.
 - [ ] Внезапный offline не блокирует экран навсегда.
 - [ ] В QA описано, где включить нужный режим и как воспроизвести сценарий.
@@ -456,6 +460,7 @@ BroadApps iOS Platform agent gate passed.
 - [Общие UI-состояния](Documentation/LoadableUI.md)
 - [Debug и async-действия](Documentation/DebugToolsAndAsyncActions.md)
 - [Безопасное логирование](Documentation/Logging.md)
+- [Восстановление account и token balance](Documentation/AccountRecovery.md)
 - [Форма письма в поддержку](Documentation/SupportEmail.md)
 - [Онлайн-чат Usedesk](Documentation/Usedesk.md)
 - [Карта всех возможностей](Documentation/Traceability.md)

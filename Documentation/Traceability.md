@@ -17,11 +17,11 @@
 | Опциональный special offer | Special offer contracts | [Special Offer](SpecialOffer.md) |
 | Provider Remote Config против platform cache | Provenance capability + обязательная contract matrix | [Remote Config](RemoteConfig.md), [ADR-0005](ADR/0005-provider-managed-remote-feature-gates.md) |
 | Общая аналитика показов и покупок | Monetization analytics pipeline | [Analytics](Analytics.md) |
-| Восстановление после переустановки | Account recovery + server-authoritative ledger | [Account Recovery](AccountRecovery.md) |
+| Восстановление после переустановки | Account recovery + полный backend balance; purchase ID только для duplicate-safe fulfillment | [Account Recovery](AccountRecovery.md) |
 | Безопасное поведение при обрыве сети | Typed network failures и pending reconciliation | [Network Interruptions](NetworkInterruptions.md) |
 | Мгновенный spinner backend-кнопки и Debug-очистка Keychain | `BroadActionButton` + `DebugKeychainCleaner` | [Debug и async-действия](DebugToolsAndAsyncActions.md) |
 | Hex Color, fonts, keyboard и swipe-back | `BroadExtensions` | [BroadExtensions](Extensions.md) |
-| Онлайн-чат поддержки из Settings | App-owned Usedesk CocoaPods adapter + backend chat token | [Usedesk](Usedesk.md) |
+| Онлайн-чат поддержки из Settings | App-owned Usedesk adapter + backend token source + account-scoped Keychain cache | [Usedesk](Usedesk.md) |
 | Письмо в поддержку, распознаваемое ботом | Единый app/device/ID/diagnostics body + `(ukassa)` variant | [Support Email](SupportEmail.md) |
 
 ## Что всё равно задаёт конкретное приложение
@@ -32,8 +32,8 @@
 - bundle ID, ссылки и public Adapty configuration из документа Kaiten;
 - product IDs, placements и feature flags;
 - app account и backend-контракты для tokens и RU Billing;
-- необходимость Usedesk, его `Company ID`/`Channel ID` и backend-хранение user
-  chat token;
+- необходимость Usedesk, его `Company ID`/`Channel ID`, backend-хранение user
+  chat token и account-scoped Keychain cache/pending sync;
 - основной экран и бизнес-функции продукта.
 
 До первого app-кода эти решения фиксируются в

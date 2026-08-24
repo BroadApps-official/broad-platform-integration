@@ -25,7 +25,7 @@
 | Products | SKU, исторические premium SKU, periods, duplicates, sorting/filtering |
 | Purchase/restore | SDK entry points, double-tap guards, результат и access grant |
 | Entitlement | Apple/backend/RU authorities, TTL, offline behavior, user identity |
-| Reinstall recovery | login restore, subscription ownership, token ledger, RU customer binding |
+| Reinstall recovery | login restore, subscription ownership, account token balance, processed purchase IDs, RU customer binding |
 | Network interruption | обрыв до/во время/после каждого read и financial operation |
 | Remote config | keys, aliases, defaults, last-valid behavior |
 | RU billing | `ru_pay`, регион/язык iPhone, catalog mapping, consent/receipt UI, endpoints, return/polling/cancel/settings |

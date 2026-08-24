@@ -236,8 +236,8 @@ Onboarding получает стабильные ID слайдов, тексты
 
 - `BroadAppsIOSPlatform` не импортирует Usedesk;
 - pod устанавливается в app target конкретного приложения;
-- конфигурация, backend repository для user chat token и сервис открытия чата
-  принадлежат приложению;
+- конфигурация, backend repository для user chat token, account-scoped Keychain
+  cache/pending sync и сервис открытия чата принадлежат приложению;
 - SwiftUI Settings вызывает сервис через ViewModel/action, но не создаёт SDK
   внутри View;
 - если Usedesk проекту не нужен, этой зависимости и строки Settings нет.

@@ -59,7 +59,8 @@ server state. Даже событие «internet снова online» не явл
 ## Host/backend contract
 
 1. Все запросы имеют конечный timeout.
-2. Token fulfillment дедуплицируется по StoreKit transaction ID.
+2. Backend атомарно обрабатывает каждый StoreKit transaction ID один раз;
+   повтор evidence возвращает текущий account balance без второго начисления.
 3. RU checkout creation не списывает деньги сам по себе; неоткрытая session
    безопасно истекает. После ambiguous response host сначала проверяет
    pending/server state и только затем разрешает пользователю новый checkout.

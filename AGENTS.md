@@ -85,9 +85,10 @@
   вручную и не создавай рядом второй `ru_pay` source.
 - Purchase/restore не открывают premium до подтверждения entitlement.
 - После переустановки subscription ownership восстанавливается через
-  StoreKit/backend, а token balance и RU purchases — только через стабильный app
-  account и server-authoritative ledger. Local cache не является источником
-  купленного доступа или баланса.
+  StoreKit/backend, а полный token balance и RU purchases загружаются для
+  авторизованного app account. StoreKit transaction ID и RU checkout ID нужны
+  backend только для однократного начисления, а не как вход обычного recovery.
+  Local cache не является источником купленного доступа или баланса.
 - Offline/timeout не превращаются в inactive/success. Неопределённый финансовый
   результат остаётся pending до reconciliation; появление сети не запускает
   purchase, token charge, RU checkout или cancellation автоматически.
@@ -95,8 +96,9 @@
   устанавливается через CocoaPods в app target и открывается только действием
   `Настройки → Онлайн-чат`, не в loader/bootstrap. Для обычного чата
   `api_token` остаётся `nil`; user chat token хранится на backend текущего app
-  account при `isSaveTokensInUserDefaults = false`, чтобы история переживала
-  переустановку и не смешивалась между аккаунтами.
+  account при `isSaveTokensInUserDefaults = false`. Keychain разрешён только
+  как account-scoped cache и durable pending sync: device ID не является
+  identity чата, а ошибка синхронизации не проглатывается.
 - Любая кнопка, запускающая backend/SDK use case, синхронно переводит UI в
   `isInFlight` до создания `Task` и первого `await`: сразу показывает spinner и
   блокирует повторный тап до результата или безопасного перехода.

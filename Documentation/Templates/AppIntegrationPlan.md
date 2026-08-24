@@ -73,7 +73,7 @@
 | Tokens | enabled / disabled + fulfillment endpoint |  |  |
 | Special Offer | enabled / disabled + placement/gate |  |  |
 | RU Billing | enabled / disabled + backend/legal |  |  |
-| Recovery | Apple/backend/token ledger |  |  |
+| Recovery | Apple/backend + account token balance endpoint; processed purchase IDs остаются backend-internal |  |  |
 
 ### RU Billing: заполнить, если feature не `N/A`
 

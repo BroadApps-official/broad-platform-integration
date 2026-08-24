@@ -238,8 +238,8 @@ Generic checkout предназначен для premium entitlements и fail-be
 возвращает safe unavailable: без проверенной суммы нельзя открывать финансовый
 flow, а без durable exactly-once token fulfillment списание могло бы завершиться
 без выдачи. Consumable CTA подключается только отдельной host fulfillment
-composition с idempotent ledger/recovery; generic paywall не обещает token
-delivery.
+composition с exactly-once начислением и отдельным account balance recovery;
+generic paywall не обещает token delivery.
 
 На `viewDidAppear` и после каждого financial outcome ViewModel спрашивает
 `operationGate.isFinancialOperationBlocked()`. Persisted Apple Ask-to-Buy,

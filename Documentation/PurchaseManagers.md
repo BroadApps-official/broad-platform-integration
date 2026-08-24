@@ -63,7 +63,8 @@ struct AppTokenBackend: TokenFulfillmentRepositoryProtocol {
         _ request: TokenFulfillmentRequest
     ) async -> TokenFulfillmentOutcome {
         // Отправить request.evidence.signedTransaction на backend.
-        // Backend дедуплицирует transactionID и возвращает актуальный баланс.
+        // Backend атомарно зачисляет каждый transactionID только один
+        // раз и возвращает актуальный баланс авторизованного app account.
     }
 }
 ```
@@ -72,7 +73,8 @@ struct AppTokenBackend: TokenFulfillmentRepositoryProtocol {
 
 1. На устройстве не увеличиваем баланс «на глаз».
 2. Источник баланса — только backend.
-3. Backend обязан идемпотентно обрабатывать `transactionID`.
+3. Backend обязан атомарно начислять один `transactionID` ровно один раз;
+   повтор возвращает `.alreadyCredited` и текущий balance snapshot.
 4. До открытия Apple sheet сохраняется durable intent.
 5. После подтверждения StoreKit сохраняется signed evidence.
 6. Если приложение закрыли между покупкой и backend sync, вызовите
@@ -86,8 +88,9 @@ struct AppTokenBackend: TokenFulfillmentRepositoryProtocol {
 приложением. Поэтому он защищает покупку, а не является хранилищем баланса.
 
 После login вызовите `RecoverCustomerAccessUseCase` с app-specific
-`RecoverTokenAccountUseCaseProtocol`. Backend обязан сверить Apple/RU ledger и
-вернуть полный `TokenBalanceSnapshot`. Именно этот snapshot показывает UI.
+`RecoverTokenAccountUseCaseProtocol`. Backend определяет user по server authorization и
+возвращает полный `TokenBalanceSnapshot`. Именно этот snapshot показывает UI;
+клиент не передаёт список transaction/checkout ID для обычного recovery.
 
 ```swift
 let recovery = services.makeCustomerAccessRecovery(
@@ -103,7 +106,8 @@ if case let .restored(balance) = snapshot.tokens {
 ```
 
 StoreKit `restorePurchases()` не возвращает consumables. Без стабильного app
-account и server ledger восстановить токены после переустановки невозможно.
+account, server balance и защиты начислений от дублей восстановить токены после
+переустановки невозможно.
 [Полный contract →](AccountRecovery.md).
 
 При внезапном обрыве сети после StoreKit confirmation менеджер не начисляет

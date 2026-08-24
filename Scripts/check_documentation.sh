@@ -173,7 +173,14 @@ for documentation_contract in \
     'Documentation/RemoteConfig.md|Release -> Adapty network / SDK cache / Dashboard fallback -> ru_pay' \
     'Documentation/Templates/AppIntegrationPlan.md|production-значение `ru_pay` в Adapty' \
     'Examples/BroadAppTemplate/README.md|BROADAPPS_ADAPTY_FALLBACK_FILE_NAME' \
-    'Documentation/Logging.md|ru-billing\.availability\.evaluated'
+    'Documentation/Logging.md|ru-billing\.availability\.evaluated' \
+    'Documentation/AccountRecovery.md|GET /me/token-balance' \
+    'Documentation/AccountRecovery.md|Клиент не передаёт список StoreKit transaction ID' \
+    'Documentation/AccountRecovery.md|unique \(provider, environment, externalOperationID\)' \
+    'Documentation/Usedesk.md|Backend — источник, Keychain — локальный cache' \
+    'Documentation/Usedesk.md|pendingBackendSync' \
+    'Documentation/Usedesk.md|deactivateToken' \
+    'Documentation/Usedesk.md|isSaveTokensInUserDefaults: false'
 do
     documentation_file="${documentation_contract%%|*}"
     documentation_pattern="${documentation_contract#*|}"
@@ -181,6 +188,16 @@ do
         record_failure "Documentation contract is missing: $documentation_file -> $documentation_pattern"
     fi
 done
+
+if rg -q -- 'idempotent ledger по StoreKit transaction ID|app backend token ledger' \
+    "$platform_root/Documentation/AccountRecovery.md"; then
+    record_failure "Account recovery still describes purchase-ID storage as the recovery input."
+fi
+
+if rg -q -- 'try\?[[:space:]]+await[[:space:]]+tokenRepository' \
+    "$platform_root/Documentation/Usedesk.md"; then
+    record_failure "Usedesk example silently swallows token persistence failures."
+fi
 
 for reference_path in \
     "$platform_root/Documentation/Assets/README/References/5115-paywall-dark.png" \

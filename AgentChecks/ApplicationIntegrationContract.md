@@ -35,6 +35,13 @@ platform-owned `AgentChecks`.
 | RU Billing | `ru_pay` в Adapty, backend kill switch, catalog/auth/legal и optional Dashboard fallback | `BLOCKED`, если заменено Swift-default/fixture |
 | Support/legal | Email, legal URL и обязательные тексты | `BLOCKED`, владелец — PM/legal |
 
+Для token recovery app contract показывает обычный authenticated endpoint,
+который возвращает полный balance snapshot. StoreKit transaction ID и RU
+checkout ID обрабатываются backend при начислении один раз и не передаются
+клиентом списком во время recovery. Для Usedesk backend app account остаётся
+источником user chat token; Keychain — account-scoped cache/pending sync, но не
+device identity.
+
 Номер проекта и имя приложения записываются только в repository самого host
 app. Platform-owned AgentChecks не создают отдельный отчёт под конкретный номер.
 

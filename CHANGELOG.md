@@ -28,12 +28,13 @@ production-ready версии.
   полей, очищенный support log, checklist и готовый промпт;
 - [Usedesk guide](Documentation/Usedesk.md): запрос данных у ПМ, безопасный
   пример сообщения, CocoaPods GUI, вход `Настройки → Онлайн-чат`, app-owned
-  сервис, backend-хранение user chat token, переустановка, обрыв сети и готовый
-  промпт для Codex/Claude;
+  сервис, backend-источник user chat token, account-scoped Keychain cache с
+  pending sync, переустановка, обрыв сети и готовый промпт для Codex/Claude;
 - `RecoverCustomerAccessUseCase`: fresh-install/reinstall recovery для Apple и
   RU entitlements, server-authoritative token balance и RU subscription status;
 - [Account Recovery guide](Documentation/AccountRecovery.md) с обязательной
-  stable app identity, idempotent Apple/RU token ledger и launch-порядком;
+  stable app identity, account-scoped balance snapshot, duplicate-safe
+  Apple/RU fulfillment и launch-порядком;
 - typed `NetworkFailureClassifier`, RU offline/timeout errors и немедленная
   остановка payment polling без очистки pending или повторного charge;
 - [Network Interruptions guide](Documentation/NetworkInterruptions.md) с
@@ -89,6 +90,13 @@ production-ready версии.
 
 ### Changed
 
+- account recovery теперь явно загружает полный token balance по
+  авторизованному app account; StoreKit transaction ID и RU checkout ID
+  остались только защитой начисления от дублей, а не обязательным входом
+  восстановления;
+- Usedesk contract уточнён до гибридной модели: backend — источник истории
+  между устройствами, account-scoped Keychain — cache и durable pending sync;
+  device ID запрещён как user identity, ошибка синхронизации не проглатывается;
 - staged app workflow теперь полностью покрывает happy path, partial backend,
   missing design, `N/A`, existing app, новый чат и resume после `BLOCKED`; пять
   пар README-схем синхронизированы с Integration Plan, одним vertical slice,

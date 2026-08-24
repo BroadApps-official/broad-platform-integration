@@ -48,10 +48,11 @@ pending intent действительно отсутствует.
 - `-token-paywall-main-fallback`: `.tokens` недоступен, `main` возвращает только
   consumable-пакеты, UI остаётся token paywall и сохраняет requested `.tokens`.
 
-Fixture backend начинает с безопасного server snapshot `120`, хранит ledger по
-transaction ID и возвращает `.alreadyCredited` при повторной доставке того же
-доказательства. Это демонстрация контракта: настоящий баланс между установками
-обязан храниться backend конкретного приложения.
+Fixture backend начинает с безопасного server snapshot `120`, атомарно
+обрабатывает каждый transaction ID один раз и возвращает `.alreadyCredited` при
+повторной доставке того же доказательства. Это демонстрация двух отдельных
+контрактов: fulfillment защищён от дублей, а обычный recovery загружает полный
+баланс авторизованного app account без списка transaction ID.
 
 Отдельная bounded token-аналитика видна прямо на экране. Она содержит только
 типизированные названия событий и не показывает transaction ID или signed

@@ -30,6 +30,10 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
   background/foreground;
 - typed logs, scoped Debug Keychain cleanup, privacy manifest и отсутствие
   Debug-каталога в Release;
+- token recovery возвращает полный backend balance авторизованного app account;
+  transaction/checkout IDs используются только для exactly-once fulfillment;
+- Usedesk contract хранит source token на backend, а account-scoped Keychain
+  использует только как cache/pending sync без device ID identity;
 - `stream_example_logs.sh` сразу показывает safe typed OSLog, корректно
   различает переименованные iPhone Simulator, объясняет выбор UDID и спокойно
   завершается по `Control-C`;

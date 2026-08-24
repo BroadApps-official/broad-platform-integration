@@ -58,7 +58,8 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 | RU first-launch offline | Dashboard fallback filename/version / `N/A` | Bundled resource + offline smoke |
 | RU emergency off | Backend kill switch + `ru_pay = false` procedure | Backend/product owner |
 | Contact Us | support email + standard/ukassa form | `SupportEmail.md` + app configuration |
-| Account recovery | Apple / tokens / RU ownership sources | Backend and entitlement matrix |
+| Account recovery | Apple / tokens / RU ownership sources | Authenticated balance endpoint; purchase IDs только для exactly-once fulfillment |
+| Usedesk, если нужен | Backend chat-token source + Keychain cache/pending sync | Account scope; device ID не используется как identity |
 | Offline | доступные функции и safe fallback | Backend/UX decision |
 
 ## 3. Backend-матрица
@@ -85,6 +86,8 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 - [ ] `OnboardingConfiguration.pages` совпадает с реальным источником.
 - [ ] Subscription и token paywall открываются только в своих местах.
 - [ ] Token purchase использует `TokenPurchaseManager`; баланс меняется после backend.
+- [ ] Обычный token recovery получает полный account balance без списка
+      transaction/checkout ID; backend не начисляет один ID повторно.
 - [ ] Active entitlement пропускает subscription paywall; unresolved не выдаёт premium.
 - [ ] Special offer опционален и не включается platform cache.
 - [ ] Special Offer никогда не открывается первым: крестик subscription paywall
@@ -169,6 +172,8 @@ Git не добавляются.
 - [ ] Keychain cleaner знает только точные app-owned services.
 - [ ] Payment pending не удаляется Debug-инструментами.
 - [ ] Entitlement, token balance и RU ownership не выдаются обычным cache.
+- [ ] Usedesk Keychain cache, если он есть, привязан к account; backend sync
+      failure остаётся pending и не скрывается через `try?`.
 - [ ] Privacy manifest соответствует фактически используемым API.
 - [ ] Release не содержит Debug-каталог и destructive development actions.
 

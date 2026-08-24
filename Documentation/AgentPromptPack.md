@@ -132,7 +132,10 @@ BLOCKED с владельцем. Остановись и жди подтверж
    recovery, pending, analytics и Debug Status.
 3. Для monetization отдельно проверь active/inactive/unresolved, initial
    paywall policy, subscription/token separation, backend token fulfillment,
+   полный account balance recovery без передачи списка purchase ID,
    Special Offer только после close первого paywall и purchase/restore bypass.
+   Если подключён Usedesk, проверь backend source, account-scoped Keychain
+   cache/pending sync и запрет device ID как chat identity.
    Для RU Billing проверь: Release читает `ru_pay` только из Adapty;
    Debug force-on/off не попал в Release; backend kill switch/entitlement не
    обходятся; Dashboard fallback проверен offline, если он нужен.

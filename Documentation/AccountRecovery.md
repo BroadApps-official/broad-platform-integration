@@ -9,16 +9,52 @@
 | Покупка | Откуда восстанавливается | Что требуется от приложения |
 |---|---|---|
 | Apple subscription/lifetime | StoreKit current entitlements, Adapty и настроенный primary backend | тот же App Store account; app account улучшает identity/attribution |
-| Apple token pack | app backend token ledger | вход в тот же app account; idempotent ledger по StoreKit transaction ID |
+| Apple token pack | актуальный balance snapshot текущего app account с backend | войти в тот же app account и вызвать account-scoped balance endpoint |
 | RU subscription/lifetime | RU backend entitlement | вход в тот же app account; покупка привязана к server customer ID |
-| RU token pack | общий app backend token ledger | вход в тот же app account; RU checkout ID обрабатывается идемпотентно |
-| История Usedesk | user chat token в backend-профиле | вход в тот же app account; token загружается до открытия чата |
+| RU token pack | тот же backend balance snapshot текущего app account | войти в тот же app account; клиенту не нужен список checkout ID |
+| История Usedesk | user chat token в backend-профиле | вход в тот же app account; Keychain может быть только account-scoped cache |
 
 > [!IMPORTANT]
 > Consumable-токены нельзя восстановить кнопкой StoreKit Restore. После
 > переустановки возвращается **серверный баланс пользователя**, а не локальная
 > сумма покупок. Без стабильного app account гарантировать восстановление
 > токенов и RU-покупок невозможно.
+
+## Чтение баланса и начисление — разные операции
+
+Обычное восстановление должно быть простым account read:
+
+```text
+login в тот же app account
+  → GET /me/token-balance
+  → backend определяет user по server authorization
+  → возвращает полный TokenBalanceSnapshot
+```
+
+Клиент не передаёт список StoreKit transaction ID или RU checkout ID
+для такого чтения. Эти ID нужны в другой точке — когда backend
+зачисляет новую покупку.
+
+Пример: backend зачислил 50 токенов, но ответ потерялся. Приложение
+повторит то же доказательство. Если backend не запомнил уникальный
+ID операции, он ошибочно зачислит ещё 50. Поэтому зачисление должно
+быть атомарным:
+
+```text
+проверить signed Apple transaction / статус RU checkout
+  → вставить unique (provider, environment, externalOperationID)
+  → если ID новый: увеличить balance того же user
+  → если ID уже был: не начислять повторно
+  → вернуть текущий balance snapshot
+```
+
+Это не требует сложного event-sourcing. Достаточно таблицы баланса по
+`userID` и таблицы уже обработанных покупок с unique constraint. Один
+пользователь может легально купить один token pack несколько раз, поэтому
+дедуплицировать только по `userID` или product ID нельзя.
+
+[Apple: consumable не восстанавливается через Restore](https://developer.apple.com/documentation/storekit/skpaymentqueue/restorecompletedtransactions%28%29) ·
+[Apple: transaction ID уникален для транзакции](https://developer.apple.com/documentation/appstoreserverapi/transactionid)
 
 ## Порядок на чистой установке
 
@@ -66,12 +102,17 @@ if case let .restored(balance) = snapshot.tokens {
 ```
 
 `appTokenAccountRecovery` реализует
-`RecoverTokenAccountUseCaseProtocol`. Один backend-вызов должен:
+`RecoverTokenAccountUseCaseProtocol`. Его обычный backend-вызов:
 
-1. определить текущего пользователя по server authorization;
-2. обработать ещё не зачисленные Apple/RU операции идемпотентно;
-3. использовать StoreKit transaction ID или RU checkout ID как ledger key;
-4. вернуть полный актуальный `TokenBalanceSnapshot` даже при нулевом балансе.
+1. определяет текущего пользователя по server authorization;
+2. не доверяет произвольному `userID` из query/body;
+3. возвращает полный актуальный `TokenBalanceSnapshot` даже при нулевом
+   балансе.
+
+Если backend дополнительно выполняет reconciliation, он сам находит ещё не
+зачисленные Apple/RU операции, атомарно обрабатывает их unique ID и
+всё равно возвращает один полный balance snapshot. Приложению не нужно
+передавать список ID для recovery.
 
 Для окна между списанием и удалением приложения backend должен получать Apple
 операции через App Store Server Notifications / Server API или выполнять
@@ -108,11 +149,12 @@ Email для чека — только удобство формы. Его по�
 - `isPremium = true` в `UserDefaults`;
 - локальный token balance как источник правды;
 - восстановление RU-доступа по locale, device ID или email из формы чека;
-- автоматическое начисление токенов из списка StoreKit без idempotent backend;
+- повторное начисление по тому же StoreKit transaction ID или RU checkout ID;
 - создание новой anonymous identity на каждой установке для server purchases;
 - открытие premium при `.unresolved`, timeout или только cached inactive.
-- хранение единственной копии Usedesk user chat token в `UserDefaults` или
-  передача token предыдущего пользователя после смены аккаунта.
+- хранение единственной копии Usedesk user chat token в `UserDefaults`/Keychain,
+  привязка истории к device ID или передача token предыдущего
+  пользователя после смены аккаунта.
 
 [Entitlements →](Entitlements.md) · [Purchase Managers →](PurchaseManagers.md) ·
 [RU Billing →](RUBilling.md) · [Network Interruptions →](NetworkInterruptions.md) ·

@@ -22,8 +22,9 @@ app-owned данные и backend-контракты, но не архитект
 Usedesk намеренно не встроен в example target: готовый UI этого SDK
 устанавливается через CocoaPods и нужен не каждому приложению. В рабочем
 приложении вход добавляется отдельной строкой `Настройки → Онлайн-чат`, а user
-chat token хранится через backend app account. [Инструкция Usedesk с Podfile и
-готовым промптом →](../../Documentation/Usedesk.md).
+chat token хранится через backend app account; account-scoped Keychain служит
+только cache/pending sync и не использует device ID как identity. [Инструкция
+Usedesk с Podfile и готовым промптом →](../../Documentation/Usedesk.md).
 
 > Example предназначен только для iPhone и генерируется с
 > `TARGETED_DEVICE_FAMILY = 1`. iPad, Mac, Mac Catalyst и visionOS не входят в
@@ -110,9 +111,11 @@ Example использует локальные monetization fixtures и
 launch arguments показывают настоящий platform UI, но не отправляют запросы и
 не выполняют списания.
 
-Переустановку нельзя честно сымитировать только локальным fixture: token balance и
-RU purchases обязаны вернуться из backend того же app account. Готовый
-platform-координатор и обязательный backend contract описаны в
+Переустановку нельзя честно сымитировать только локальным fixture: полный token
+balance и RU purchases загружаются из backend того же app account. Для обычного
+recovery клиенту не нужен список transaction/checkout ID: backend использует их
+только для однократного начисления. Готовый platform-координатор и обязательный
+backend contract описаны в
 [Account Recovery](../../Documentation/AccountRecovery.md). Поведение при обрыве связи
 во время любого шага зафиксировано в
 [Network Interruptions](../../Documentation/NetworkInterruptions.md).

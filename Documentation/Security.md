@@ -18,8 +18,9 @@
    flags или balance.
 9. Событие «сеть снова доступна» не разрешает автоматически повторять charge;
    сначала выполняется reconciliation.
-10. Usedesk API token не помещается в приложение; user chat token хранится на
-    backend конкретного app account, а не только в `UserDefaults`.
+10. Usedesk API token не помещается в приложение; backend app account хранит
+    основной user chat token, account-scoped Keychain — только cache/pending
+    sync, а device ID не заменяет identity пользователя.
 11. Support email может показать ID в системной форме только после действия
     пользователя; support log не содержит токены, payment URL и raw payload.
 12. После изменения платформы запускайте полный `agent_gate.sh`.
@@ -35,7 +36,7 @@
 | Opaque identity | subject fingerprint | только scoped entitlement cache |
 | Safe diagnostics | typed error kind, diagnostic code, counters | да |
 | Catalog metadata | logical placement, product ID, product count | только через typed analytics policy |
-| Usedesk chat identity | user chat token, имя, email, телефон, `additional_id` | не логировать; token хранить через backend app account |
+| Usedesk chat identity | user chat token, имя, email, телефон, `additional_id` | не логировать; backend app account — источник, Keychain — account-scoped cache/pending sync |
 
 Product ID может раскрывать внутреннюю структуру каталога. Он разрешён в typed monetization analytics, но destination приложения должен применять собственную data-retention policy.
 
@@ -93,15 +94,18 @@ Backend adapters получают credential через `SubjectAuthorizationPro
 Никогда не передавайте credential через query string, analytics property, error message или cache key.
 
 Для Usedesk различайте секретный API token и user chat token переписки. Для
-обычного мобильного чата `api_token` должен быть `nil`. User chat token,
-возвращённый SDK, сохраняется через backend для текущего авторизованного
-пользователя и передаётся обратно при следующем открытии. Установите
-`isSaveTokensInUserDefaults: false`: иначе переустановка удалит локальную связь
-с историей, а смена аккаунта может смешать переписки. [Usedesk →](Usedesk.md).
+обычного мобильного чата `api_token` должен быть `nil`. Backend текущего
+авторизованного пользователя — основной источник user chat token. Callback
+сначала сохраняйте в account-scoped Keychain, затем синхронизируйте с backend;
+временная ошибка оставляет durable pending sync и не проглатывается через
+`try?`. Cache другого аккаунта недоступен, device ID не используется как
+identity. Установите `isSaveTokensInUserDefaults: false`.
+[Usedesk →](Usedesk.md).
 
 После переустановки server state можно вернуть только после доказанного login в
 тот же app account. Anonymous subject допустим для Apple ownership policy
-`.appStoreAccount`, но не даёт безопасной связи с token ledger или RU customer.
+`.appStoreAccount`, но не даёт безопасной связи с token balance текущего app
+account или RU customer.
 Не подменяйте identity device ID, locale, receipt email или новым случайным ID
 каждой установки. [Account Recovery →](AccountRecovery.md).
 

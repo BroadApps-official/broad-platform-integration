@@ -58,7 +58,10 @@ loader, bootstrap, `viewDidLoad()` или при старте приложени
 3. Нужна ли База знаний? Если да — её ID и согласованная схема доступа.
 4. Есть ли у операторов доступ к этому каналу?
 5. Нужны ли push-уведомления о новых ответах?
-6. Backend-ручки для загрузки и сохранения chat token пользователя.
+6. Backend-ручки для загрузки и сохранения chat token текущего
+   авторизованного app account, например `/me/usedesk-chat-token`.
+7. Нужен ли account-scoped Keychain cache для повтора синхронизации при
+   временной ошибке backend.
 ```
 
 Так может выглядеть ответ. Значения на изображении скрыты: живые токены и ID
@@ -89,7 +92,7 @@ script web-виджета, попросите ПМ отдельно подтве
 |---|---|---|
 | Публичные `Company ID` и `Channel ID` | Идентификаторы подключения чата | Да, в одном app-owned config |
 | Usedesk API token | Секрет для серверного API или отдельных сценариев Базы знаний | **Нет**; согласовать backend/ограничения |
-| User chat token | Идентификатор переписки конкретного пользователя | Получать и сохранять через backend его app account |
+| User chat token | Идентификатор переписки конкретного пользователя | Backend app account — основной источник; Keychain — только account-scoped cache |
 
 Для обычного чата передавайте `api_token: nil`. Не подставляйте в приложение
 токен из сообщения менеджера только потому, что поле называется `Token`.
@@ -194,40 +197,91 @@ struct UsedeskConfiguration: Sendable {
 load/show. Пометьте их как временные и замените перед выпуском. `api_token`,
 user chat token, account data и backend credentials из reference не копируются.
 
-## Шаг 3. Восстанавливайте историю через backend
+## Шаг 3. Backend — источник, Keychain — локальный cache
 
 Usedesk возвращает user chat token в `connectionStatus`. Этот токен связывает
-пользователя с его перепиской.
+пользователя с его перепиской. `additional_id`, app `userID` и device ID его не
+заменяют.
+
+Официальный SDK прямо предупреждает: локальное хранение не возвращает историю
+на другом устройстве или платформе. Поэтому для account-based приложения
+основная связь хранится на backend:
+
+```text
+authenticated app account → Usedesk user chat token
+```
+
+Keychain полезен как защищённая локальная копия для того же app account,
+но не как единственный источник и не как device identity.
 
 ```mermaid
 flowchart LR
-    A["Пользователь нажал «Онлайн-чат»"] --> B["Загрузить chat token его app account с backend"]
-    B --> C["Открыть Usedesk с этим token"]
-    C --> D["Usedesk вернул актуальный token"]
-    D --> E["Сохранить token в backend того же app account"]
+    A["Тап «Онлайн-чат»"] --> B["Проверить current app account"]
+    B --> C["Загрузить token из authenticated backend /me"]
+    C --> D["Открыть Usedesk"]
+    C -. "backend unavailable" .-> K["Keychain cache того же account"]
+    K --> D
+    D --> E["Callback вернул token"]
+    E --> F["Сохранить в account-scoped Keychain"]
+    F --> G["Синхронизировать в authenticated backend /me"]
+    G -. "temporary error" .-> H["Оставить pending sync и повторить"]
 ```
 
-Общий контракт repository:
+Общий контракт скрывает backend/Keychain детали от SDK-сервиса:
 
 ```swift
+enum UsedeskChatTokenPersistenceOutcome: Sendable {
+    case synced
+    case pendingBackendSync
+    case failed
+}
+
 protocol UsedeskChatTokenRepository: Sendable {
-    func loadToken(for userID: String) async throws -> String?
-    func saveToken(_ token: String, for userID: String) async throws
+    func resolveToken(forAuthenticatedUserID userID: String) async throws -> String?
+    func persistCallbackToken(
+        _ token: String,
+        forAuthenticatedUserID userID: String
+    ) async -> UsedeskChatTokenPersistenceOutcome
+    func deactivateToken(forAuthenticatedUserID userID: String) async
 }
 ```
 
-Правила:
+Контракт `resolveToken`:
+
+1. Backend endpoint определяет account по server authorization. Не доверяйте
+   произвольному `userID` из URL/body.
+2. Token с backend имеет приоритет и обновляет Keychain cache того же account.
+3. Если backend временно недоступен, можно использовать Keychain token только
+   для точного current `userID`.
+4. При logout до удаления session вызовите `deactivateToken`: active/in-memory
+   token очищается сразу. Синхронизированную cache-копию можно удалить;
+   незавершённый pending sync остаётся зашифрованным и жёстко привязанным
+   к этому account. Он не читается, пока не восстановлен тот же account.
+
+Контракт `persistCallbackToken`:
+
+1. Проверяет, что callback всё ещё относится к current authenticated account.
+2. Сохраняет token в Keychain по точному account scope до сетевого `await`.
+3. Синхронизирует token с authenticated backend endpoint.
+4. При temporary backend error возвращает `.pendingBackendSync`, сохраняет
+   durable pending marker и повторяет sync при следующем открытии/входе в account.
+5. Ни Keychain, ни backend не печатают raw token в Console/analytics.
+
+Общие правила:
 
 1. `userID` — стабильный ID авторизованного пользователя приложения.
 2. При первом открытии backend может вернуть `nil`.
-3. Полученный callback token сохраняется на backend для этого же `userID`.
-4. При следующем открытии, после переустановки или на другом устройстве token
-   снова загружается с backend.
-5. После смены аккаунта нельзя передавать token предыдущего пользователя.
-6. В SDK укажите `isSaveTokensInUserDefaults: false`.
+3. После смены аккаунта нельзя передавать token предыдущего пользователя.
+4. Device ID не является chat identity и не объединяет два устройства одного account.
+5. В SDK укажите `isSaveTokensInUserDefaults: false`.
 
-Локальный `UserDefaults` не является единственным хранилищем истории: он
-исчезнет после удаления приложения и не синхронизируется между устройствами.
+> [!IMPORTANT]
+> Keychain-only интеграция допустима только если владелец продукта явно
+> принял device-bound ограничение. Такое приложение не может обещать
+> возврат истории на другом устройстве/платформе. Базовый platform flow для
+> account-based app использует backend + Keychain cache.
+
+[Usedesk iOS SDK: token storage и `isSaveTokensInUserDefaults`](https://github.com/usedesk/UseDeskSwift/blob/master/README_RU.md)
 
 ## Шаг 4. Создайте app-owned сервис
 
@@ -273,7 +327,9 @@ final class UsedeskSupportService {
         from viewController: UIViewController,
         user: UsedeskUser
     ) async throws {
-        let chatToken = try await tokenRepository.loadToken(for: user.id)
+        let chatToken = try await tokenRepository.resolveToken(
+            forAuthenticatedUserID: user.id
+        )
 
         #if canImport(UseDesk) || canImport(UseDesk_SDK_Swift)
         sdk.start(
@@ -307,10 +363,14 @@ final class UsedeskSupportService {
                 guard success, !newToken.isEmpty else { return }
 
                 Task {
-                    try? await tokenRepository.saveToken(
+                    let persistence = await tokenRepository.persistCallbackToken(
                         newToken,
-                        for: user.id
+                        forAuthenticatedUserID: user.id
                     )
+                    if case .failed = persistence {
+                        // Покажите safe diagnostic state без raw token.
+                        // Не выдавайте несохранённую identity за synced.
+                    }
                 }
             },
             errorStatus: { _, _ in
@@ -394,6 +454,8 @@ Info.plist понятные тексты:
 - не создавайте новый chat token при каждом retry;
 - не подменяйте backend token случайным ID устройства;
 - не очищайте сохранённый token после timeout;
+- не проглатывайте ошибку backend sync через `try?`: оставьте Keychain-копию
+  и pending marker для ручного/следующего retry;
 - не отправляйте сообщение автоматически после восстановления сети — SDK
   должен показать пользователю статус и возможность ручной повторной отправки.
 
@@ -407,6 +469,9 @@ Info.plist понятные тексты:
 - [ ] Сообщение попадает в правильный канал Usedesk.
 - [ ] В тикете видны правильные `additional_id`, имя и контакты.
 - [ ] User chat token сохраняется на backend текущего app account.
+- [ ] Keychain cache привязан к точному account, не к device ID; logout очищает
+  active token, а pending sync не становится доступен другому account.
+- [ ] Temporary backend save оставляет pending sync; ошибка не проглатывается.
 - [ ] После переустановки история возвращается после входа в тот же аккаунт.
 - [ ] Два разных аккаунта не видят переписку друг друга.
 - [ ] Фото/камера/файлы работают только с нужными privacy-разрешениями.
@@ -429,7 +494,12 @@ Documentation/Usedesk.md.
 reference-проект ради установки pod. В Settings добавь отдельную строку
 «Онлайн-чат» и открывай SDK только после нажатия пользователя.
 
-User chat token загружай и сохраняй через backend текущего app account.
+User chat token загружай из authenticated backend текущего app account.
+Добавь account-scoped Keychain cache: backend имеет приоритет, cache никогда не
+читается для другого userID или device ID. Callback token сначала сохрани
+локально, затем синхронизируй с backend; temporary error оставляет
+pending sync, а не проглатывается через `try?`.
+
 Установи isSaveTokensInUserDefaults: false. Не передавай token другого
 пользователя и не размещай секретный Usedesk API token в приложении.
 
