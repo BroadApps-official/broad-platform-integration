@@ -1,71 +1,120 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="500" viewBox="0 0 1440 500" role="img" aria-labelledby="title desc">
-  <title id="title">Две итерации создания iPhone-приложения</title>
-  <desc id="desc">Сначала проверяются источники и функциональность, затем каждый экран визуально сверяется с исходным дизайном, просматривается разработчиком и передаётся QA.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="640" viewBox="0 0 1440 640" role="img" aria-labelledby="title desc">
+  <title id="title">Семь этапов создания iPhone-приложения</title>
+  <desc id="desc">Preflight, Integration Plan, skeleton, один вертикальный срез, functional review, visual review и acceptance. Каждый этап заканчивается developer checkpoint. Заблокированная функция ждёт evidence и затем возвращается к остановленному этапу.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#071426"/>
-      <stop offset="1" stop-color="#171126"/>
+      <stop offset="0" stop-color="#0B1220"/>
+      <stop offset="0.55" stop-color="#111827"/>
+      <stop offset="1" stop-color="#1E1633"/>
     </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.32"/>
+    </filter>
     <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
-      <path d="M0,0 L9,4.5 L0,9 Z" fill="#8798b8"/>
+      <path d="M0 0L9 4.5L0 9Z" fill="#94A3B8"/>
     </marker>
   </defs>
-  <rect width="1440" height="500" rx="34" fill="url(#bg)"/>
-  <text x="64" y="66" fill="#f8fafc" font-family="Arial, sans-serif" font-size="34" font-weight="700">Сначала работает. Затем совпадает с дизайном.</text>
-  <text x="64" y="104" fill="#aebbd2" font-family="Arial, sans-serif" font-size="19">QA получает приложение только после функционального PASS, визуальной сверки и личного просмотра разработчиком.</text>
 
-  <rect x="48" y="138" width="630" height="246" rx="26" fill="#14213a" stroke="#3b82f6" stroke-width="2"/>
-  <rect x="702" y="138" width="690" height="246" rx="26" fill="#20172f" stroke="#8b5cf6" stroke-width="2"/>
-  <text x="72" y="172" fill="#75adff" font-family="Arial, sans-serif" font-size="18" font-weight="700">ИТЕРАЦИЯ 1 · ФУНКЦИОНАЛЬНАЯ</text>
-  <text x="726" y="172" fill="#bd9cff" font-family="Arial, sans-serif" font-size="18" font-weight="700">ИТЕРАЦИЯ 2 · ВИЗУАЛЬНАЯ И ПЕРЕДАЧА</text>
+  <rect width="1440" height="640" rx="34" fill="url(#bg)"/>
+  <text x="56" y="58" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="32" font-weight="800">Семь этапов. Ни один checkpoint не пропускаем.</text>
+  <text x="56" y="92" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17">Один prompt — один stage. Agent и ручная разработка используют одинаковый порядок.</text>
 
-  <g font-family="Arial, sans-serif">
-    <rect x="64" y="194" width="180" height="148" rx="20" fill="#1c2c4b" stroke="#3b82f6"/>
-    <text x="154" y="226" text-anchor="middle" fill="#75adff" font-size="14" font-weight="700">1 · PREFLIGHT</text>
-    <text x="154" y="264" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Источники</text>
-    <text x="154" y="290" text-anchor="middle" fill="#aebbd2" font-size="14">Kaiten · design</text>
-    <text x="154" y="312" text-anchor="middle" fill="#aebbd2" font-size="14">reference · backend</text>
+  <rect x="36" y="116" width="972" height="32" rx="16" fill="#172554"/>
+  <text x="522" y="138" text-anchor="middle" fill="#93C5FD" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13" font-weight="800" letter-spacing="1.2">ФУНКЦИОНАЛЬНАЯ ОСНОВА · ЭТАПЫ 0–4</text>
+  <rect x="1026" y="116" width="378" height="32" rx="16" fill="#2E1065"/>
+  <text x="1215" y="138" text-anchor="middle" fill="#C4B5FD" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13" font-weight="800" letter-spacing="1.2">VISUAL + HANDOFF · 5–6</text>
 
-    <rect x="270" y="194" width="180" height="148" rx="20" fill="#1c2c4b" stroke="#3b82f6"/>
-    <text x="360" y="226" text-anchor="middle" fill="#75adff" font-size="14" font-weight="700">2 · BUILD</text>
-    <text x="360" y="264" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Функции</text>
-    <text x="360" y="290" text-anchor="middle" fill="#aebbd2" font-size="14">routes · API</text>
-    <text x="360" y="312" text-anchor="middle" fill="#aebbd2" font-size="14">paywalls · offline</text>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" filter="url(#shadow)">
+    <rect x="36" y="166" width="180" height="188" rx="22" fill="#172033" stroke="#60A5FA" stroke-width="2"/>
+    <rect x="36" y="166" width="180" height="38" rx="22" fill="#1E3A5F"/><rect x="36" y="186" width="180" height="18" fill="#1E3A5F"/>
+    <text x="126" y="191" text-anchor="middle" fill="#93C5FD" font-size="13" font-weight="800">0 · PREFLIGHT</text>
+    <text x="126" y="240" text-anchor="middle" fill="#F8FAFC" font-size="19" font-weight="800">Только чтение</text>
+    <text x="126" y="269" text-anchor="middle" fill="#CBD5E1" font-size="14">requirements · design</text>
+    <text x="126" y="291" text-anchor="middle" fill="#CBD5E1" font-size="14">backend · decisions</text>
+    <rect x="56" y="312" width="140" height="25" rx="12.5" fill="#1E3A5F"/>
+    <text x="126" y="329" text-anchor="middle" fill="#BFDBFE" font-size="11" font-weight="800">READY / BLOCKED</text>
 
-    <rect x="476" y="194" width="180" height="148" rx="20" fill="#12352f" stroke="#10b981"/>
-    <text x="566" y="226" text-anchor="middle" fill="#5ee6b7" font-size="14" font-weight="700">3 · FUNCTION PASS</text>
-    <text x="566" y="264" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Debug + Release</text>
-    <text x="566" y="290" text-anchor="middle" fill="#aebbd2" font-size="14">safe scenarios</text>
-    <text x="566" y="312" text-anchor="middle" fill="#aebbd2" font-size="14">без оплаты</text>
+    <rect x="234" y="166" width="180" height="188" rx="22" fill="#172033" stroke="#818CF8" stroke-width="2"/>
+    <rect x="234" y="166" width="180" height="38" rx="22" fill="#312E5F"/><rect x="234" y="186" width="180" height="18" fill="#312E5F"/>
+    <text x="324" y="191" text-anchor="middle" fill="#A5B4FC" font-size="13" font-weight="800">1 · PLAN</text>
+    <text x="324" y="240" text-anchor="middle" fill="#F8FAFC" font-size="19" font-weight="800">Без Swift</text>
+    <text x="324" y="269" text-anchor="middle" fill="#CBD5E1" font-size="14">screens · API</text>
+    <text x="324" y="291" text-anchor="middle" fill="#CBD5E1" font-size="14">ownership · slices</text>
+    <rect x="248" y="312" width="152" height="25" rx="12.5" fill="#312E5F"/>
+    <text x="324" y="329" text-anchor="middle" fill="#C7D2FE" font-size="10.5" font-weight="800">PLAN REVIEW</text>
 
-    <rect x="720" y="194" width="190" height="148" rx="20" fill="#302447" stroke="#8b5cf6"/>
-    <text x="815" y="226" text-anchor="middle" fill="#bd9cff" font-size="14" font-weight="700">4 · SCREEN MATCH</text>
-    <text x="815" y="264" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Source ↔ Simulator</text>
-    <text x="815" y="290" text-anchor="middle" fill="#aebbd2" font-size="14">один iPhone</text>
-    <text x="815" y="312" text-anchor="middle" fill="#aebbd2" font-size="14">повтор до совпадения</text>
+    <rect x="432" y="166" width="180" height="188" rx="22" fill="#172033" stroke="#22D3EE" stroke-width="2"/>
+    <rect x="432" y="166" width="180" height="38" rx="22" fill="#164E63"/><rect x="432" y="186" width="180" height="18" fill="#164E63"/>
+    <text x="522" y="191" text-anchor="middle" fill="#67E8F9" font-size="13" font-weight="800">2 · SKELETON</text>
+    <text x="522" y="240" text-anchor="middle" fill="#F8FAFC" font-size="19" font-weight="800">Границы + build</text>
+    <text x="522" y="269" text-anchor="middle" fill="#CBD5E1" font-size="14">target · DI · routes</text>
+    <text x="522" y="291" text-anchor="middle" fill="#CBD5E1" font-size="14">без fake backend</text>
+    <rect x="446" y="312" width="152" height="25" rx="12.5" fill="#164E63"/>
+    <text x="522" y="329" text-anchor="middle" fill="#A5F3FC" font-size="10.5" font-weight="800">SKELETON REVIEW</text>
 
-    <rect x="936" y="194" width="190" height="148" rx="20" fill="#302447" stroke="#8b5cf6"/>
-    <text x="1031" y="226" text-anchor="middle" fill="#bd9cff" font-size="14" font-weight="700">5 · SELF REVIEW</text>
-    <text x="1031" y="264" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Разработчик</text>
-    <text x="1031" y="290" text-anchor="middle" fill="#aebbd2" font-size="14">смотрит сам</text>
-    <text x="1031" y="312" text-anchor="middle" fill="#aebbd2" font-size="14">исправляет замечания</text>
+    <rect x="630" y="166" width="180" height="188" rx="22" fill="#172033" stroke="#2DD4BF" stroke-width="2"/>
+    <rect x="630" y="166" width="180" height="38" rx="22" fill="#134E4A"/><rect x="630" y="186" width="180" height="18" fill="#134E4A"/>
+    <text x="720" y="191" text-anchor="middle" fill="#5EEAD4" font-size="13" font-weight="800">3 · ONE SLICE</text>
+    <text x="720" y="240" text-anchor="middle" fill="#F8FAFC" font-size="19" font-weight="800">Один flow</text>
+    <text x="720" y="269" text-anchor="middle" fill="#CBD5E1" font-size="14">View → backend</text>
+    <text x="720" y="291" text-anchor="middle" fill="#CBD5E1" font-size="14">states · retry · logs</text>
+    <rect x="644" y="312" width="152" height="25" rx="12.5" fill="#134E4A"/>
+    <text x="720" y="329" text-anchor="middle" fill="#99F6E4" font-size="10.5" font-weight="800">SLICE REVIEW</text>
 
-    <rect x="1152" y="194" width="190" height="148" rx="20" fill="#3a2b12" stroke="#f59e0b"/>
-    <text x="1247" y="226" text-anchor="middle" fill="#ffc766" font-size="14" font-weight="700">6 · QA</text>
-    <text x="1247" y="264" text-anchor="middle" fill="#f8fafc" font-size="18" font-weight="700">Передача</text>
-    <text x="1247" y="290" text-anchor="middle" fill="#aebbd2" font-size="14">только после</text>
-    <text x="1247" y="312" text-anchor="middle" fill="#aebbd2" font-size="14">двух итераций</text>
+    <rect x="828" y="166" width="180" height="188" rx="22" fill="#172033" stroke="#34D399" stroke-width="2"/>
+    <rect x="828" y="166" width="180" height="38" rx="22" fill="#14532D"/><rect x="828" y="186" width="180" height="18" fill="#14532D"/>
+    <text x="918" y="191" text-anchor="middle" fill="#6EE7B7" font-size="13" font-weight="800">4 · FUNCTIONAL</text>
+    <text x="918" y="240" text-anchor="middle" fill="#F8FAFC" font-size="19" font-weight="800">Поведение</text>
+    <text x="918" y="269" text-anchor="middle" fill="#CBD5E1" font-size="14">Debug · Release</text>
+    <text x="918" y="291" text-anchor="middle" fill="#CBD5E1" font-size="14">API · offline · paywall</text>
+    <rect x="838" y="312" width="160" height="25" rx="12.5" fill="#14532D"/>
+    <text x="918" y="329" text-anchor="middle" fill="#A7F3D0" font-size="9.8" font-weight="800">FUNCTIONAL REVIEW</text>
+
+    <rect x="1026" y="166" width="180" height="188" rx="22" fill="#172033" stroke="#A78BFA" stroke-width="2"/>
+    <rect x="1026" y="166" width="180" height="38" rx="22" fill="#4C1D75"/><rect x="1026" y="186" width="180" height="18" fill="#4C1D75"/>
+    <text x="1116" y="191" text-anchor="middle" fill="#C4B5FD" font-size="13" font-weight="800">5 · VISUAL</text>
+    <text x="1116" y="240" text-anchor="middle" fill="#F8FAFC" font-size="19" font-weight="800">Точный source</text>
+    <text x="1116" y="269" text-anchor="middle" fill="#CBD5E1" font-size="14">small + large iPhone</text>
+    <text x="1116" y="291" text-anchor="middle" fill="#CBD5E1" font-size="14">screenshot diff</text>
+    <rect x="1040" y="312" width="152" height="25" rx="12.5" fill="#4C1D75"/>
+    <text x="1116" y="329" text-anchor="middle" fill="#DDD6FE" font-size="10.5" font-weight="800">VISUAL REVIEW</text>
+
+    <rect x="1224" y="166" width="180" height="188" rx="22" fill="#172033" stroke="#FBBF24" stroke-width="2"/>
+    <rect x="1224" y="166" width="180" height="38" rx="22" fill="#713F12"/><rect x="1224" y="186" width="180" height="18" fill="#713F12"/>
+    <text x="1314" y="191" text-anchor="middle" fill="#FCD34D" font-size="13" font-weight="800">6 · ACCEPTANCE</text>
+    <text x="1314" y="240" text-anchor="middle" fill="#F8FAFC" font-size="19" font-weight="800">Handoff</text>
+    <text x="1314" y="269" text-anchor="middle" fill="#CBD5E1" font-size="14">config · evidence</text>
+    <text x="1314" y="291" text-anchor="middle" fill="#CBD5E1" font-size="14">QA steps · logs</text>
+    <rect x="1238" y="312" width="152" height="25" rx="12.5" fill="#713F12"/>
+    <text x="1314" y="329" text-anchor="middle" fill="#FDE68A" font-size="10.5" font-weight="800">READY FOR QA</text>
   </g>
 
-  <g stroke="#8798b8" stroke-width="3" marker-end="url(#arrow)">
-    <line x1="244" y1="268" x2="262" y2="268"/>
-    <line x1="450" y1="268" x2="468" y2="268"/>
-    <line x1="656" y1="268" x2="710" y2="268"/>
-    <line x1="910" y1="268" x2="928" y2="268"/>
-    <line x1="1126" y1="268" x2="1144" y2="268"/>
+  <g stroke="#94A3B8" stroke-width="3" marker-end="url(#arrow)">
+    <line x1="216" y1="260" x2="228" y2="260"/><line x1="414" y1="260" x2="426" y2="260"/>
+    <line x1="612" y1="260" x2="624" y2="260"/><line x1="810" y1="260" x2="822" y2="260"/>
+    <line x1="1008" y1="260" x2="1020" y2="260"/><line x1="1206" y1="260" x2="1218" y2="260"/>
   </g>
 
-  <text x="64" y="430" fill="#ff8aa0" font-family="Arial, sans-serif" font-size="18" font-weight="700">НЕЛЬЗЯ:</text>
-  <text x="156" y="430" fill="#f8fafc" font-family="Arial, sans-serif" font-size="18">называть «похожий UI» готовым · пропускать экран без источника · отдавать QA после одной сборки</text>
-  <text x="1120" y="472" fill="#7787a5" font-family="Arial, sans-serif" font-size="15">BroadApps iOS Platform</text>
+  <rect x="48" y="404" width="1344" height="134" rx="26" fill="#3A1822" stroke="#FB7185" stroke-width="2"/>
+  <text x="76" y="438" fill="#FDA4AF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="800" letter-spacing="1.2">ВЕТКА BLOCKED · НЕ ПОДМЕНЯЕМ ДОГАДКОЙ</text>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
+    <rect x="76" y="458" width="270" height="54" rx="17" fill="#172033" stroke="#FB7185"/>
+    <text x="211" y="480" text-anchor="middle" fill="#FDA4AF" font-size="15" font-weight="800">1 · Остановить одну функцию</text>
+    <text x="211" y="500" text-anchor="middle" fill="#CBD5E1" font-size="12.5">остальные READY могут продолжить</text>
+    <rect x="388" y="458" width="270" height="54" rx="17" fill="#172033" stroke="#FB7185"/>
+    <text x="523" y="480" text-anchor="middle" fill="#FDA4AF" font-size="15" font-weight="800">2 · Получить evidence</text>
+    <text x="523" y="500" text-anchor="middle" fill="#CBD5E1" font-size="12.5">PM · designer · backend owner</text>
+    <rect x="700" y="458" width="270" height="54" rx="17" fill="#172033" stroke="#FB7185"/>
+    <text x="835" y="480" text-anchor="middle" fill="#FDA4AF" font-size="15" font-weight="800">3 · Обновить Plan</text>
+    <text x="835" y="500" text-anchor="middle" fill="#CBD5E1" font-size="12.5">только связанные строки</text>
+    <rect x="1012" y="458" width="350" height="54" rx="17" fill="#172033" stroke="#FB7185"/>
+    <text x="1187" y="480" text-anchor="middle" fill="#FDA4AF" font-size="15" font-weight="800">4 · Вернуться к тому же stage</text>
+    <text x="1187" y="500" text-anchor="middle" fill="#CBD5E1" font-size="12.5">принятые этапы не генерировать заново</text>
+  </g>
+  <g stroke="#FDA4AF" stroke-width="2.5" marker-end="url(#arrow)">
+    <line x1="346" y1="485" x2="380" y2="485"/><line x1="658" y1="485" x2="692" y2="485"/><line x1="970" y1="485" x2="1004" y2="485"/>
+  </g>
+
+  <text x="56" y="590" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="700">Важно: platform PASS проверяет основу. READY FOR QA подтверждает конкретное приложение.</text>
+  <text x="1384" y="610" text-anchor="end" fill="#94A3B8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13">BroadApps iOS Platform</text>
 </svg>

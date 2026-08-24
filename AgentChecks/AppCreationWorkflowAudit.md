@@ -74,3 +74,18 @@ Adapty configurations. Настоящие purchase, restore и RU-платежи
 доказанные контракты по одному срезу. Разработчик конкретного app подтверждает
 app-owned бизнес-правила, backend hooks и checkpoints. Платформа не хранит
 номер, дизайн, execution status или готовность отдельного приложения.
+
+## Повторный аудит полноты cases и схем
+
+Проверены happy path, partial backend, отсутствующий source frame, доказанный
+`N/A`, разрешённый skeleton при неполных функциях, снятие blocker-а, новый чат,
+существующий app, ручная разработка, host-only change и изменение платформы.
+
+Найдены четыре пары устаревших light/dark схем: roadmap, click path,
+no-code-agent и no-code-manual всё ещё показывали один build prompt либо второй
+prompt проверки. Все восемь SVG синхронизированы с staged workflow. Основная
+схема теперь показывает семь этапов и отдельную ветку
+`BLOCKED → evidence → update Plan → resume same stage`.
+
+Documentation gate запрещает возврат устаревших формулировок в эти assets и
+проверяет наличие stage/checkpoint/acceptance-маркеров.

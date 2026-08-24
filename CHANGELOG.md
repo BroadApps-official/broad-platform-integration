@@ -82,6 +82,10 @@ production-ready версии.
 
 ### Changed
 
+- staged app workflow теперь полностью покрывает happy path, partial backend,
+  missing design, `N/A`, existing app, новый чат и resume после `BLOCKED`; пять
+  пар README-схем синхронизированы с Integration Plan, одним vertical slice,
+  developer checkpoints и acceptance;
 - корневой README прошёл отдельный readability-аудит: плотные объяснения
   преобразованы в короткие таблицы, списки и GitHub callouts, глубокие
   platform-отчёты свёрнуты, а устаревшее название единого финального prompt

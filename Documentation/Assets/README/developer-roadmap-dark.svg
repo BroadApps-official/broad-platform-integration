@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="700" viewBox="0 0 1280 700" role="img" aria-labelledby="title description">
   <title id="title">Два способа собрать приложение на BroadApps iOS Platform</title>
-  <desc id="description">Сначала разработчик собирает исходные материалы, затем выбирает работу с Codex или Claude либо ручную работу в Xcode. Оба пути заканчиваются одинаковой проверкой iPhone-приложения.</desc>
+  <desc id="description">После исходных материалов разработчик выбирает агента или ручную работу. Оба пути используют Integration Plan, stages, checkpoints и отдельную app acceptance.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#071426"/>
@@ -53,25 +53,25 @@
   </g>
 
   <text x="112" y="352" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="24" font-weight="800">2A  С CODEX ИЛИ CLAUDE</text>
-  <text x="112" y="382" fill="#DBEAFE" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16">Откройте папку и вставьте готовый промпт из README.</text>
+  <text x="112" y="382" fill="#DBEAFE" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16">Откройте папку. Отправляйте prompts по одному.</text>
   <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
     <circle cx="126" cy="425" r="16" fill="#FFFFFF" opacity="0.2"/><text x="126" y="431" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="800">1</text>
-    <text x="154" y="431" fill="#FFFFFF" font-size="17" font-weight="700">Агент создаёт проект и подключает модули</text>
+    <text x="154" y="431" fill="#FFFFFF" font-size="17" font-weight="700">Plan → skeleton после checkpoint</text>
     <circle cx="126" cy="468" r="16" fill="#FFFFFF" opacity="0.2"/><text x="126" y="474" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="800">2</text>
-    <text x="154" y="474" fill="#FFFFFF" font-size="17" font-weight="700">Вы проверяете его отчёт по списку</text>
+    <text x="154" y="474" fill="#FFFFFF" font-size="17" font-weight="700">Один slice → developer review</text>
     <circle cx="126" cy="511" r="16" fill="#FFFFFF" opacity="0.2"/><text x="126" y="517" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="800">3</text>
-    <text x="154" y="517" fill="#FFFFFF" font-size="17" font-weight="700">Вставляете промпт проверки и получаете PASS</text>
+    <text x="154" y="517" fill="#FFFFFF" font-size="17" font-weight="700">Functional → visual → acceptance</text>
   </g>
 
   <text x="692" y="352" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="24" font-weight="800">2B  БЕЗ АГЕНТА, В XCODE</text>
-  <text x="692" y="382" fill="#FFEDD5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16">Выполните ручную инструкцию от шага 0 до шага 9.</text>
+  <text x="692" y="382" fill="#FFEDD5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16">Те же stages выполняются вручную в Xcode.</text>
   <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
     <circle cx="706" cy="425" r="16" fill="#FFFFFF" opacity="0.2"/><text x="706" y="431" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="800">1</text>
-    <text x="734" y="431" fill="#FFFFFF" font-size="17" font-weight="700">Создаёте проект и подключаете модули</text>
+    <text x="734" y="431" fill="#FFFFFF" font-size="17" font-weight="700">Plan → target → platform modules</text>
     <circle cx="706" cy="468" r="16" fill="#FFFFFF" opacity="0.2"/><text x="706" y="474" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="800">2</text>
-    <text x="734" y="474" fill="#FFFFFF" font-size="17" font-weight="700">Собираете UI, оплату и восстановление</text>
+    <text x="734" y="474" fill="#FFFFFF" font-size="17" font-weight="700">Один vertical slice за раз</text>
     <circle cx="706" cy="511" r="16" fill="#FFFFFF" opacity="0.2"/><text x="706" y="517" text-anchor="middle" fill="#FFFFFF" font-size="15" font-weight="800">3</text>
-    <text x="734" y="517" fill="#FFFFFF" font-size="17" font-weight="700">Сами проходите тот же список проверок</text>
+    <text x="734" y="517" fill="#FFFFFF" font-size="17" font-weight="700">Functional → visual → acceptance</text>
   </g>
 
   <path d="M350 544V568C350 588 382 598 424 598H620" fill="none" stroke="#94A3B8" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)"/>
@@ -80,6 +80,6 @@
   <g filter="url(#shadow)">
     <rect x="202" y="586" width="876" height="86" rx="28" fill="url(#result)"/>
   </g>
-  <text x="640" y="621" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" font-weight="800">3  ГОТОВОЕ iPHONE-ПРИЛОЖЕНИЕ</text>
+  <text x="640" y="621" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="22" font-weight="800">3  READY FOR QA ПОСЛЕ ACCEPTANCE</text>
   <text x="640" y="649" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="600">Debug + Release • безопасные сценарии • подтверждённый доступ • список временных данных</text>
 </svg>

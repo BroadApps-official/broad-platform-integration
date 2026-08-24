@@ -27,6 +27,7 @@
 |---|---|
 | Перед началом проекта | Основной [README](README.md): вариант с Codex/Claude или ручная сборка |
 | До первого Swift-файла | [Поэтапный workflow](Documentation/AppCreationWorkflow.md) и [шаблон Integration Plan](Documentation/Templates/AppIntegrationPlan.md) |
+| После `BLOCKED`, паузы или смены чата | Открыть Integration Plan, последний checkpoint и diff; продолжить остановленный stage, не повторяя принятые slices |
 | Перед созданием нового экрана | Разделы [«Куда класть код»](#куда-класть-код) и [«Как добавить сцену»](#как-добавить-сцену) |
 | Перед добавлением бизнес-действия | Раздел [«Как добавить use case»](#как-добавить-use-case) |
 | Во время вёрстки | [UI-checklist](#ui-checklist) |
@@ -357,8 +358,13 @@ iPad не входит в scope платформы.
 Не отправляйте агенту один запрос «сделай всё приложение». Используйте
 [`AgentPromptPack.md`](Documentation/AgentPromptPack.md) по одному этапу и
 проверяйте `PLAN`, `SKELETON`, `SLICE`, `FUNCTIONAL` и `VISUAL REVIEW REQUIRED`
-до перехода дальше. Для дополнительной проверки конкретной feature можно
-скопировать этот текст:
+до перехода дальше.
+
+Для уже существующего app этап 1 сначала фиксирует current state и gaps, а
+skeleton stage проверяет существующие target/DI/routes вместо создания второго
+проекта. После паузы используйте resume prompt из конца `AgentPromptPack.md`.
+
+Для дополнительной проверки конкретной feature можно скопировать этот текст:
 
 ```text
 Проверь текущую feature iPhone-приложения по README.dev.md и связанной

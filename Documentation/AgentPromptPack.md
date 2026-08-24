@@ -8,6 +8,10 @@ checkpoint.
 [`AppCreationWorkflow.md`](AppCreationWorkflow.md). Заполняемый документ:
 [`Templates/AppIntegrationPlan.md`](Templates/AppIntegrationPlan.md).
 
+Для уже существующего приложения используйте те же этапы. На этапе 1 сначала
+зафиксируйте current state и gaps; этап 2 становится аудитом существующего
+skeleton/composition root, а не созданием второго проекта.
+
 ## 0. Preflight: только чтение
 
 Замените значения в угловых скобках:
@@ -189,3 +193,20 @@ BLOCKED с одним конкретным следующим действием
 endpoint, один screen state, token fulfillment, Special Offer, offline/pending
 или конкретный visual diff. Любой такой prompt должен ссылаться на строку
 Integration Plan и не разрешать менять соседние функции.
+
+## Возобновление после `BLOCKED` или нового чата
+
+```text
+Продолжи текущий app workflow без повторной генерации принятых этапов.
+
+1. Прочитай Documentation/AppIntegrationPlan.md, последний подтверждённый
+   checkpoint и текущий diff.
+2. Назови незавершённый stage и связанные BLOCKED-строки.
+3. Проверь только новое evidence, которое снимает blocker.
+4. Обнови только связанные строки Plan и повтори остановленный stage.
+5. Не меняй подтверждённые соседние slices и не считай checkpoint принятым без
+   явной записи в Plan.
+
+Если Plan и код расходятся, остановись с PLAN REVIEW REQUIRED и покажи diff
+scope. Иначе закончи штатным checkpoint текущего stage.
+```

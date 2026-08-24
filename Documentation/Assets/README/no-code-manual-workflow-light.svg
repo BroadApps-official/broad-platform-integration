@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1400" height="720" viewBox="0 0 1400 720" role="img" aria-labelledby="title description">
   <title id="title">No-code-разработка вручную в Xcode</title>
-  <desc id="description">Разработчик самостоятельно берёт материалы из Kaiten и согласованный дизайн, создаёт iPhone-проект в Xcode, подключает платформу, собирает интерфейс и backend, затем выполняет проверки.</desc>
+  <desc id="description">Разработчик вручную проходит Integration Plan, skeleton, vertical slices, functional review, visual review и acceptance по тем же правилам, что агент.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFF7ED"/><stop offset="0.5" stop-color="#F8FAFC"/><stop offset="1" stop-color="#FDF2F8"/></linearGradient>
     <linearGradient id="done" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#059669"/><stop offset="1" stop-color="#0D9488"/></linearGradient>
@@ -9,7 +9,7 @@
   </defs>
   <rect width="1400" height="720" rx="36" fill="url(#bg)"/><circle cx="1280" cy="80" r="170" fill="#FB7185" opacity="0.12"/><circle cx="70" cy="680" r="180" fill="#FB923C" opacity="0.12"/>
   <text x="60" y="62" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="32" font-weight="800">NO-CODE ВРУЧНУЮ · БЕЗ АГЕНТА</text>
-  <text x="60" y="94" fill="#475569" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17">Здесь каждый шаг выполняет разработчик. Согласованный дизайн остаётся источником интерфейса, платформа — источником поведения.</text>
+  <text x="60" y="94" fill="#475569" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17">Без агента меняется исполнитель, но не stages: Plan → skeleton → slices → reviews → acceptance.</text>
 
   <text x="60" y="145" fill="#C2410C" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800" letter-spacing="1.5">СНАЧАЛА ПОДГОТОВЬТЕ ИСХОДНИКИ</text>
   <g filter="url(#shadow)" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif">
@@ -21,11 +21,11 @@
 
   <text x="60" y="368" fill="#BE185D" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800" letter-spacing="1.5">ЗАТЕМ СОБЕРИТЕ ПРИЛОЖЕНИЕ В XCODE</text>
   <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" text-anchor="middle">
-    <rect x="60" y="392" width="226" height="126" rx="24" fill="#FFF7ED" stroke="#F97316" stroke-width="2"/><text x="173" y="426" fill="#C2410C" font-size="14" font-weight="800">4 · НОВЫЙ ПРОЕКТ</text><text x="173" y="457" fill="#0F172A" font-size="18" font-weight="800">Xcode → File → New</text><text x="173" y="484" fill="#475569" font-size="14">iOS App · SwiftUI · без Tests</text>
-    <rect x="322" y="392" width="226" height="126" rx="24" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/><text x="435" y="426" fill="#1D4ED8" font-size="14" font-weight="800">5 · PACKAGE</text><text x="435" y="457" fill="#0F172A" font-size="18" font-weight="800">Add Package</text><text x="435" y="484" fill="#475569" font-size="14">подключить нужные модули</text>
-    <rect x="584" y="392" width="226" height="126" rx="24" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="2"/><text x="697" y="426" fill="#6D28D9" font-size="14" font-weight="800">6 · ОСНОВА</text><text x="697" y="457" fill="#0F172A" font-size="18" font-weight="800">AppConfiguration</text><text x="697" y="484" fill="#475569" font-size="14">Core → Monetization → UI</text>
-    <rect x="846" y="392" width="226" height="126" rx="24" fill="#FDF2F8" stroke="#EC4899" stroke-width="2"/><text x="959" y="426" fill="#BE185D" font-size="14" font-weight="800">7 · ПРОДУКТ</text><text x="959" y="457" fill="#0F172A" font-size="18" font-weight="800">SwiftUI + API</text><text x="959" y="484" fill="#475569" font-size="14">экраны, маршруты, backend</text>
-    <rect x="1108" y="392" width="232" height="126" rx="24" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/><text x="1224" y="426" fill="#047857" font-size="14" font-weight="800">8 · ПРОВЕРКА</text><text x="1224" y="457" fill="#0F172A" font-size="18" font-weight="800">Debug + Release</text><text x="1224" y="484" fill="#475569" font-size="14">checklist без оплаты</text>
+    <rect x="60" y="392" width="226" height="126" rx="24" fill="#FFF7ED" stroke="#F97316" stroke-width="2"/><text x="173" y="426" fill="#C2410C" font-size="14" font-weight="800">4 · INTEGRATION PLAN</text><text x="173" y="457" fill="#0F172A" font-size="18" font-weight="800">Screens · API · owners</text><text x="173" y="484" fill="#475569" font-size="14">до первого Swift-файла</text>
+    <rect x="322" y="392" width="226" height="126" rx="24" fill="#EFF6FF" stroke="#3B82F6" stroke-width="2"/><text x="435" y="426" fill="#1D4ED8" font-size="14" font-weight="800">5 · SKELETON</text><text x="435" y="457" fill="#0F172A" font-size="18" font-weight="800">Target + package + DI</text><text x="435" y="484" fill="#475569" font-size="14">без app-specific догадок</text>
+    <rect x="584" y="392" width="226" height="126" rx="24" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="2"/><text x="697" y="426" fill="#6D28D9" font-size="14" font-weight="800">6 · ONE SLICE</text><text x="697" y="457" fill="#0F172A" font-size="18" font-weight="800">View → backend</text><text x="697" y="484" fill="#475569" font-size="14">один flow за раз</text>
+    <rect x="846" y="392" width="226" height="126" rx="24" fill="#FDF2F8" stroke="#EC4899" stroke-width="2"/><text x="959" y="426" fill="#BE185D" font-size="14" font-weight="800">7 · REVIEWS</text><text x="959" y="457" fill="#0F172A" font-size="18" font-weight="800">Functional → Visual</text><text x="959" y="484" fill="#475569" font-size="14">developer checkpoints</text>
+    <rect x="1108" y="392" width="232" height="126" rx="24" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/><text x="1224" y="426" fill="#047857" font-size="14" font-weight="800">8 · ACCEPTANCE</text><text x="1224" y="457" fill="#0F172A" font-size="18" font-weight="800">Debug + Release</text><text x="1224" y="484" fill="#475569" font-size="14">READY FOR QA / BLOCKED</text>
   </g>
   <path d="M286 455H308M548 455H570M810 455H832M1072 455H1094" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>
   <path d="M700 518V558" stroke="#64748B" stroke-width="4" marker-end="url(#arrow)"/>

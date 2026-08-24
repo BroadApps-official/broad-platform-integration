@@ -479,7 +479,7 @@ Settings; [простая инструкция уже подготовлена](
     <td width="50%" valign="top">
       <h3 align="center">🤖 С Codex или Claude</h3>
       <p align="center"><strong>Подходит для обоих типов проекта</strong></p>
-      <p><strong>Куда нажать:</strong> откройте Codex/Claude → выберите <code>Open Folder</code> или <code>Open Project</code> → укажите папку нового приложения → скопируйте готовый промпт из варианта A.</p>
+      <p><strong>Куда нажать:</strong> откройте Codex/Claude → выберите <code>Open Folder</code> или <code>Open Project</code> → укажите папку приложения → отправляйте prompts из Prompt Pack по одному.</p>
       <p align="center"><a href="#agent-setup"><strong>Открыть инструкцию с агентом →</strong></a></p>
     </td>
     <td width="50%" valign="top">
@@ -521,7 +521,7 @@ Settings; [простая инструкция уже подготовлена](
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/agent-click-path-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/agent-click-path-light.svg">
-  <img alt="Куда нажимать при работе с Codex или Claude: создать папку в Finder, открыть её через Open Folder, начать новый чат, приложить материалы и отправить готовый промпт" src="Documentation/Assets/README/agent-click-path-light.svg" width="100%">
+  <img alt="Куда нажимать при работе с Codex или Claude: открыть папку приложения, приложить материалы и отправлять staged prompts по одному с developer checkpoints" src="Documentation/Assets/README/agent-click-path-light.svg" width="100%">
 </picture>
 
 ### Три действия без поиска по странице
@@ -558,7 +558,7 @@ Settings; [простая инструкция уже подготовлена](
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/no-code-agent-workflow-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/no-code-agent-workflow-light.svg">
-  <img alt="No-code-разработка с Codex или Claude: разработчик готовит Kaiten, согласованный дизайн и папку, агент создаёт приложение, затем выполняется отдельная проверка" src="Documentation/Assets/README/no-code-agent-workflow-light.svg" width="100%">
+  <img alt="No-code-разработка с Codex или Claude: источники, Integration Plan, skeleton, один vertical slice за раз, developer checkpoints и acceptance" src="Documentation/Assets/README/no-code-agent-workflow-light.svg" width="100%">
 </picture>
 
 > [!NOTE]
@@ -805,9 +805,9 @@ branch: vers_niiaz
 указана дополнительная схема эксперимента или placement, добавьте её поверх
 базовой конфигурации.
 
-Если приложение создаёт агент, ничего из этой таблицы вручную перепечатывать не
-нужно: правила уже включены в готовый промпт следующего шага. Таблица нужна,
-чтобы разработчик мог быстро проверить результат агента.
+Если приложение создаёт агент, таблицу вручную перепечатывать не нужно: правила
+уже входят в staged workflow и фиксируются в Integration Plan. Таблица нужна,
+чтобы разработчик быстро проверил результат соответствующего stage.
 
 | Что настраиваем | Базовое правило |
 |---|---|
@@ -961,13 +961,31 @@ Adapty Remote Config: ru_pay = true
 
 [Полное объяснение ownership и stop-правил →](Documentation/AppCreationWorkflow.md)
 
+#### Что делать, если процесс не идеальный
+
+| Ситуация | Правильное действие |
+|---|---|
+| Всё доступно | Последовательно пройти этапы 0–6 |
+| Backend доступен частично | Заблокировать только зависимый срез; продолжить независимые `READY` после review |
+| Нет source frame | Не рисовать production UI; получить source и вернуться к visual stage этого экрана |
+| Feature не нужна | Поставить доказанный `N/A`, а не оставлять пустую строку |
+| Blocker снят | Обновить evidence в Plan и повторить только остановленный stage |
+| Новый чат или другой агент | Перечитать Plan, последний checkpoint и diff; не начинать заново |
+| Приложение уже существует | Сначала описать current state/gaps; skeleton stage использовать как аудит существующих границ |
+| Разработка без агента | Выполнять те же stages и checkpoints вручную |
+| Менялась платформа | Дополнительно запустить platform gate; app acceptance всё равно остаётся отдельной |
+
+> [!NOTE]
+> `N/A` означает «функция подтверждённо вне scope». Если не хватает решения,
+> дизайна или API, правильный статус — `BLOCKED`.
+
 
 #### Семь этапов внутри двух больших итераций
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/app-delivery-iterations-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/app-delivery-iterations-light.svg">
-  <img alt="Две итерации создания приложения: preflight и функциональный PASS, затем визуальная сверка, self-review разработчика и передача QA" src="Documentation/Assets/README/app-delivery-iterations-light.svg" width="100%">
+  <img alt="Семь этапов создания приложения с developer checkpoints и отдельной веткой BLOCKED" src="Documentation/Assets/README/app-delivery-iterations-light.svg" width="100%">
 </picture>
 
 Семь review-этапов выше группируются в две большие итерации: функциональную и
@@ -1185,7 +1203,7 @@ reference либо подключаем backend-разработчика.
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/no-code-manual-workflow-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/no-code-manual-workflow-light.svg">
-  <img alt="Ручная no-code-разработка: Kaiten и согласованный дизайн, новый iPhone-проект, подключение package, сборка основы и экранов, затем Debug и Release" src="Documentation/Assets/README/no-code-manual-workflow-light.svg" width="100%">
+  <img alt="Ручная no-code-разработка: Kaiten и дизайн, Integration Plan, skeleton, vertical slices, functional и visual review, acceptance" src="Documentation/Assets/README/no-code-manual-workflow-light.svg" width="100%">
 </picture>
 
 > [!NOTE]

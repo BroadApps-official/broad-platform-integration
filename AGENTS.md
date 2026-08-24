@@ -32,6 +32,10 @@
   по platform template. Неизвестный экран, endpoint, backend hook или правило
   исходника получает `BLOCKED`; агент не придумывает его и не выдаёт fixture за
   production flow. Platform-owned AgentChecks не хранят этот app-specific план.
+- Для existing app сначала зафиксируй current state/gaps в Integration Plan;
+  skeleton stage становится аудитом существующих границ. После паузы, нового
+  чата или снятия `BLOCKED` перечитай Plan, последний checkpoint и diff, затем
+  повтори только остановленный stage — принятые slices не создавай заново.
 - Рабочие public Adapty SDK configurations 5013/5109Codex должны оставаться в
   tracked source по требованию руководства. Не удаляй и не маскируй их.
 - Backend credentials, private signing keys и токены серверного доступа сюда не

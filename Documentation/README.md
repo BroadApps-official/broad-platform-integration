@@ -6,7 +6,7 @@
 |---|---|
 | Сверить архитектуру, use cases и UI перед передачей | [Памятка разработчика](../README.dev.md) |
 | Впервые подключить package | [Getting Started](GettingStarted.md) |
-| Создать новое приложение по этапам | [App Creation Workflow](AppCreationWorkflow.md) · [готовые prompts](AgentPromptPack.md) |
+| Создать новое или безопасно продолжить существующее приложение | [App Creation Workflow](AppCreationWorkflow.md) · [готовые и resume prompts](AgentPromptPack.md) |
 | Зафиксировать экраны, API и ownership до кода | [Шаблон Integration Plan](Templates/AppIntegrationPlan.md) · [нейтральный пример](Examples/NeutralAppIntegrationPlan.md) |
 | Пройти полную ручную приёмку BroadAppTemplate | [Приёмка template](TemplateAcceptance.md) |
 | Посмотреть фактический прогон и QA handoff template | [Acceptance report](../AgentChecks/TemplateAcceptanceReport.md) · [Workflow audit](../AgentChecks/AppCreationWorkflowAudit.md) · [Self-review](../AgentChecks/SelfReview.md) · [QA handoff](../AgentChecks/QAHandoff.md) |

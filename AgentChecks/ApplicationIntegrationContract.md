@@ -52,6 +52,11 @@ app. Platform-owned AgentChecks не создают отдельный отчё�
 | Security/configuration | App-owned значения, logs, privacy и Release | `READY/BLOCKED/N/A` |
 | QA handoff | Заполнен `Documentation/ProjectDelivery.md` | `READY/BLOCKED` |
 
+Для existing app Integration Plan сначала фиксирует current behavior и gaps, а
+Skeleton проверяет существующие target/DI/routes. После `BLOCKED`, паузы или
+смены агента работа продолжается с последнего подтверждённого checkpoint;
+принятые slices не генерируются повторно.
+
 Fixture разрешён для разработки состояния, но не может доказать наличие
 production backend, точного дизайна или конфигурации текущего приложения.
 

@@ -41,6 +41,16 @@ Credentials, bearer tokens, private keys, receipt/JWS и полный payload в
 
 ## Семь этапов вместо одного большого prompt
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Assets/README/app-delivery-iterations-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Assets/README/app-delivery-iterations-light.svg">
+  <img alt="Семь этапов создания приложения, developer checkpoints и безопасное возобновление после BLOCKED" src="Assets/README/app-delivery-iterations-light.svg" width="100%">
+</picture>
+
+Схема читается слева направо. Нижняя ветка не является обходным путём: она
+останавливает только зависимую функцию, ждёт evidence, обновляет Plan и
+возвращает работу к тому же stage.
+
 ### Этап 0. Preflight без записи файлов
 
 Агент проверяет Kaiten, design source, reference, backend и продуктовые решения.
@@ -158,6 +168,36 @@ restore и RU checkout не выполняются.
 Владелец: <PM / designer / backend owner / tech lead>.
 Независимая работа, которую можно продолжить: <список или «нет»>.
 ```
+
+## Как действовать в типовых ситуациях
+
+| Ситуация | Что можно делать | Что нельзя делать | Следующая точка |
+|---|---|---|---|
+| Все обязательные входы `READY` | Идти по этапам 0–6 | Перепрыгивать developer checkpoint | Следующий checkpoint |
+| Backend `PARTIAL` | План, каркас и независимые `READY`-срезы | Придумывать endpoint/schema/hook заблокированной функции | Ответ backend owner → обновить Plan → продолжить этот срез |
+| Нет source frame одного экрана | Функционально проверить независимые области | Рисовать похожий production UI для этого экрана | Source от designer/PM → visual stage этого экрана |
+| Монетизация или другая feature не входит в scope | Зафиксировать доказанный `N/A` | Оставлять пустую строку или подключать feature «на всякий случай» | Продолжить независимый scope |
+| Каркас разрешён, но не все функции | Создать только границы `READY`-областей | Выдавать skeleton/fixture за готовый backend | `SKELETON REVIEW REQUIRED` |
+| Blocker снят | Добавить новое evidence и изменить только связанные строки Plan | Перестраивать подтверждённые соседние срезы без причины | Вернуться к остановленному этапу |
+| Работа продолжается в новом чате/другим агентом | Сначала перечитать Plan, последний checkpoint и diff | Начинать заново или предполагать, что checkpoint подтверждён | Тот же незавершённый этап |
+| Уже существует app-код | Сначала описать текущее и целевое состояние в Plan; этап 2 становится аудитом composition root/границ | Переписывать всё приложение до gap analysis | Один подтверждённый исправляющий срез |
+| Разработка без агента | Использовать тот же Plan, порядок и evidence вручную | Пропускать checkpoints из-за отсутствия prompts | Тот же stage status |
+| Изменён только host app | Собрать и принять target приложения | Выдавать platform gate за app acceptance | `READY FOR QA` или app-level `BLOCKED` |
+| Изменена платформа | Дополнительно запустить `bash Scripts/agent_gate.sh` | Требовать Signing Team или настоящий платёж | Platform PASS + отдельная app acceptance |
+
+`N/A` допустим только при доказанном решении, что функция не входит в scope.
+Отсутствующий источник — это `BLOCKED`, а не `N/A`.
+
+## Как безопасно продолжить после паузы
+
+1. Открыть `Documentation/AppIntegrationPlan.md` host app.
+2. Найти последний подтверждённый checkpoint и незавершённый срез.
+3. Проверить, появилось ли новое evidence по blocker-у.
+4. Обновить только связанные строки Plan.
+5. Повторить остановленный stage; уже принятые этапы не генерировать заново.
+
+Если текущий код расходится с Plan, сначала вернуть `PLAN REVIEW REQUIRED` с
+описанием diff. Молчаливое изменение scope запрещено.
 
 ## Что считается хорошей автоматизацией
 

@@ -78,6 +78,7 @@ for required_pattern in \
     '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
     '^## 🛠️ Вариант B: собрать приложение вручную$' \
     '^### 4\. 🧭 Отправляйте поэтапные prompts по одному$' \
+    '^#### Что делать, если процесс не идеальный$' \
     'Documentation/AppCreationWorkflow\.md' \
     'Documentation/AgentPromptPack\.md' \
     'Documentation/Templates/AppIntegrationPlan\.md' \
@@ -85,6 +86,8 @@ for required_pattern in \
     'SKELETON REVIEW REQUIRED' \
     'SLICE REVIEW REQUIRED' \
     'VISUAL REVIEW REQUIRED' \
+    'Приложение уже существует' \
+    'Новый чат или другой агент' \
     'Один результат — два способа работы' \
     '^### Шаг 0\. 🆕 Создайте новый iPhone-проект$' \
     '^### Шаг 9\. 🔍 Проверьте, меняли ли вы саму платформу$' \
@@ -264,6 +267,63 @@ done
 if ! rg -q -- '\[BLOCKED\] History' "$platform_root/Documentation/Examples/NeutralAppIntegrationPlan.md"; then
     record_failure "Neutral Integration Plan example must demonstrate a feature-level blocker."
 fi
+
+workflow_svgs=(
+    "$platform_root/Documentation/Assets/README/app-delivery-iterations-light.svg"
+    "$platform_root/Documentation/Assets/README/app-delivery-iterations-dark.svg"
+    "$platform_root/Documentation/Assets/README/developer-roadmap-light.svg"
+    "$platform_root/Documentation/Assets/README/developer-roadmap-dark.svg"
+    "$platform_root/Documentation/Assets/README/agent-click-path-light.svg"
+    "$platform_root/Documentation/Assets/README/agent-click-path-dark.svg"
+    "$platform_root/Documentation/Assets/README/no-code-agent-workflow-light.svg"
+    "$platform_root/Documentation/Assets/README/no-code-agent-workflow-dark.svg"
+    "$platform_root/Documentation/Assets/README/no-code-manual-workflow-light.svg"
+    "$platform_root/Documentation/Assets/README/no-code-manual-workflow-dark.svg"
+)
+
+if rg -qi -- 'два промпта|второй промпт|готовый промпт|промпт проверки.*PASS' "${workflow_svgs[@]}"; then
+    record_failure "Workflow SVGs must not describe the obsolete one-build-prompt/two-prompt process."
+fi
+
+for required_svg_pattern in 'INTEGRATION PLAN' 'ONE SLICE' 'CHECKPOINT' 'ACCEPTANCE'; do
+    if ! rg -qi -- "$required_svg_pattern" "${workflow_svgs[@]}"; then
+        record_failure "Workflow SVG contract is missing: $required_svg_pattern"
+    fi
+done
+
+for required_main_flow_pattern in '0 · PREFLIGHT' '1 · PLAN' '2 · SKELETON' '3 · ONE SLICE' '4 · FUNCTIONAL' '5 · VISUAL' '6 · ACCEPTANCE' 'ВЕТКА BLOCKED'; do
+    if ! rg -q -- "$required_main_flow_pattern" "$platform_root/Documentation/Assets/README/app-delivery-iterations-light.svg" "$platform_root/Documentation/Assets/README/app-delivery-iterations-dark.svg"; then
+        record_failure "Seven-stage README diagram is missing: $required_main_flow_pattern"
+    fi
+done
+
+for theme in light dark; do
+    roadmap="$platform_root/Documentation/Assets/README/developer-roadmap-$theme.svg"
+    click_path="$platform_root/Documentation/Assets/README/agent-click-path-$theme.svg"
+    no_code_agent="$platform_root/Documentation/Assets/README/no-code-agent-workflow-$theme.svg"
+    no_code_manual="$platform_root/Documentation/Assets/README/no-code-manual-workflow-$theme.svg"
+
+    for pattern in 'Plan' 'skeleton' 'slice' 'acceptance'; do
+        if ! rg -qi -- "$pattern" "$roadmap"; then
+            record_failure "Developer roadmap ($theme) is missing staged marker: $pattern"
+        fi
+    done
+    for pattern in 'PREFLIGHT' 'PLAN' 'SKELETON' 'SLICE' 'REVIEWS' 'ACCEPTANCE'; do
+        if ! rg -q -- "$pattern" "$click_path"; then
+            record_failure "Agent click path ($theme) is missing staged marker: $pattern"
+        fi
+    done
+    for pattern in 'Plan' 'skeleton' 'vertical slice' 'CHECKPOINTS' 'acceptance'; do
+        if ! rg -qi -- "$pattern" "$no_code_agent"; then
+            record_failure "No-code agent workflow ($theme) is missing staged marker: $pattern"
+        fi
+    done
+    for pattern in 'INTEGRATION PLAN' 'SKELETON' 'ONE SLICE' 'REVIEWS' 'ACCEPTANCE'; do
+        if ! rg -q -- "$pattern" "$no_code_manual"; then
+            record_failure "No-code manual workflow ($theme) is missing staged marker: $pattern"
+        fi
+    done
+done
 
 if ((failure_count > 0)); then
     echo "Documentation validation failed: $failure_count check group(s)."
