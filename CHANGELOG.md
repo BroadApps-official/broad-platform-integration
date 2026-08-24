@@ -83,7 +83,9 @@ production-ready версии.
   файл остаётся provider payload со своим `ru_pay` и не создаёт второй
   app-owned Remote Config source;
 - process-local tri-state `ru_pay` для Debug-проверок и typed availability
-  diagnostics; force cases физически отсутствуют в Release.
+  diagnostics; Release UI не содержит force-control, default store
+  fail-closed следует Adapty, а host разблокирует override только
+  под `#if DEBUG`, включая custom-named Debug configurations.
 
 ### Changed
 
