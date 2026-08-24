@@ -107,8 +107,10 @@ bash Scripts/agent_gate.sh
 <details>
 <summary><strong>Технический source snapshot последнего PASS</strong></summary>
 
-Актуальный digest находится в последнем отчёте
-[`AutomationReports/latest.md`](AutomationReports/latest.md); новый полный gate
-после изменения проверяемых файлов обязан обновить его.
+Формат локального отчёта описан в
+[`AutomationReports/README.md`](AutomationReports/README.md). Команда
+`agent_review_and_fix.sh` создаёт `AutomationReports/latest.md` локально; этот
+runtime-файл намеренно не хранится в Git и поэтому не является ссылкой,
+обязательной для clean clone.
 
 </details>
