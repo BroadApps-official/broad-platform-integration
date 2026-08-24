@@ -1,0 +1,24 @@
+name: Integration quality
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  integration-gate:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install ripgrep
+        run: brew install ripgrep
+      - name: Install pinned build tools
+        run: |
+          bash Scripts/install_swiftformat.sh
+          bash Scripts/install_build_tools.sh
+      - name: Run full integration gate
+        run: bash Scripts/agent_gate.sh

@@ -25,6 +25,7 @@ required_files=(
     "Documentation/ADR/0006-federated-public-repositories.md"
     "Documentation/FederatedRepositories.md"
     "Documentation/ModuleReleasePolicy.md"
+    "Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 )
 
 for relative_path in "${required_files[@]}"; do
@@ -87,6 +88,10 @@ if ((failure_count == 0)); then
         "Integration Package.swift must pin BroadMonetization 1.0.0" \
         "Package.swift" \
         'broad-monetization-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    require_pattern \
+        "Integration Package.swift must pin BroadUIFlows 1.0.0" \
+        "Package.swift" \
+        'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
 
     if ! /usr/bin/ruby -ryaml -e '
       catalog = YAML.safe_load(File.read(ARGV.fetch(0)))
@@ -118,6 +123,22 @@ if ((failure_count == 0)); then
       exit(expected.all? { |key, value| monetization[key].to_s == value } ? 0 : 1)
     ' "$platform_root/Compatibility/current.yml"; then
         record_failure "Released BroadMonetization evidence is missing or inconsistent in Compatibility/current.yml."
+    fi
+
+    if ! /usr/bin/ruby -ryaml -e '
+      catalog = YAML.safe_load(File.read(ARGV.fetch(0)))
+      ui_flows = catalog.fetch("module_verification").fetch("BroadUIFlows")
+      expected = {
+        "version" => "1.0.0",
+        "module_gate" => "passed",
+        "github_actions" => "passed",
+        "release" => "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.0.0",
+        "integration_gate" => "passed",
+        "checked_at" => "2026-08-25"
+      }
+      exit(expected.all? { |key, value| ui_flows[key].to_s == value } ? 0 : 1)
+    ' "$platform_root/Compatibility/current.yml"; then
+        record_failure "Released BroadUIFlows evidence is missing or inconsistent in Compatibility/current.yml."
     fi
 
     for example_contract in \
@@ -154,6 +175,18 @@ if ((failure_count == 0)); then
             "Integration example does not compile BroadMonetization 1.0.0" \
             "Examples/BroadAppTemplate/project.yml" \
             "$monetization_example_contract"
+    done
+
+    for ui_flows_example_contract in \
+        'url: https://github\.com/BroadApps-official/broad-ui-flows-ios\.git' \
+        'exactVersion: 1\.0\.0' \
+        'package: BroadUIFlows' \
+        'product: BroadUIFlows'
+    do
+        require_pattern \
+            "Integration example does not compile BroadUIFlows 1.0.0" \
+            "Examples/BroadAppTemplate/project.yml" \
+            "$ui_flows_example_contract"
     done
 
     require_pattern \
@@ -208,6 +241,16 @@ if [[ -d "$platform_root/Sources/BroadMonetization" ]] && \
     record_failure "BroadMonetization production sources still exist in the integration checkout."
 fi
 
+if rg -q --multiline -- '\.library\(name: "BroadUIFlows"|\.target\([[:space:]]*name: "BroadUIFlows"' \
+    "$platform_root/Package.swift"; then
+    record_failure "Integration Package.swift still publishes a duplicated local BroadUIFlows target."
+fi
+
+if [[ -d "$platform_root/Sources/BroadUIFlows" ]] && \
+    find "$platform_root/Sources/BroadUIFlows" -type f -print -quit | rg -q .; then
+    record_failure "BroadUIFlows production sources still exist in the integration checkout."
+fi
+
 if ! /usr/bin/ruby -rjson -e '
   resolved = JSON.parse(File.read(ARGV.fetch(0)))
   pin = resolved.fetch("pins").find { |item| item["identity"] == "broad-extensions-ios" }
@@ -230,6 +273,28 @@ if ! /usr/bin/ruby -rjson -e '
   exit(pin&.dig("state", "version") == "1.0.0" ? 0 : 1)
 ' "$platform_root/Package.resolved"; then
     record_failure "Package.resolved does not pin BroadMonetization 1.0.0."
+fi
+
+if ! /usr/bin/ruby -rjson -e '
+  resolved = JSON.parse(File.read(ARGV.fetch(0)))
+  pin = resolved.fetch("pins").find { |item| item["identity"] == "broad-ui-flows-ios" }
+  exit(pin&.dig("state", "version") == "1.0.0" ? 0 : 1)
+' "$platform_root/Package.resolved"; then
+    record_failure "Package.resolved does not pin BroadUIFlows 1.0.0."
+fi
+
+if ! /usr/bin/ruby -rjson -e '
+  resolved = JSON.parse(File.read(ARGV.fetch(0)))
+  versions = resolved.fetch("pins").to_h { |item| [item.fetch("identity"), item.dig("state", "version")] }
+  expected = {
+    "broad-core-ios" => "1.0.0",
+    "broad-extensions-ios" => "1.0.0",
+    "broad-monetization-ios" => "1.0.0",
+    "broad-ui-flows-ios" => "1.0.0"
+  }
+  exit(expected.all? { |identity, version| versions[identity] == version } ? 0 : 1)
+' "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"; then
+    record_failure "BroadAppTemplate Xcode lockfile does not pin the four module releases at 1.0.0."
 fi
 
 for forbidden_claim in \

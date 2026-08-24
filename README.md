@@ -60,13 +60,15 @@ backend-ручки и product decisions остаются в конкретном
 | [`broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios) | `BroadExtensions` · [`1.0.0`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.0) | да, по надобности |
 | [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.0.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.0.0) | да, по надобности |
 | [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`1.0.0`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.0.0) | да, по надобности |
-| [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` | да, по надобности |
+| [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`1.0.0`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.0.0) | да, по надобности |
 | `broad-platform-integration` | exact versions, example, cross-module gate | нет, это catalog/evidence |
 | [`broad-docs`](https://github.com/BroadApps-official/broad-docs) | публичный сайт и cross-module guides | нет |
 
 > [!NOTE]
-> Во время пошаговой миграции текущий repository остаётся integration-
-> контуром. Актуальный статус лежит в [`Compatibility/current.yml`](Compatibility/current.yml).
+> Этот repository является integration-контуром: он фиксирует проверенные
+> exact versions, собирает целостный example и не является обязательной
+> dependency host-приложения. Актуальный набор лежит в
+> [`Compatibility/current.yml`](Compatibility/current.yml).
 
 [Архитектурное решение и почему мы так делаем →](Documentation/ADR/0006-federated-public-repositories.md)
 

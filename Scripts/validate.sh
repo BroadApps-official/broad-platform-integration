@@ -49,6 +49,7 @@ required_check_files=(
     "$platform_root/AgentChecks/AUTOMATION_PROMPT.md"
     "$platform_root/AgentChecks/AutomationReports/README.md"
     "$platform_root/AgentChecks/STATUS.md"
+    "$platform_root/.github/workflows/quality.yml"
     "$platform_root/Scripts/lib/console.sh"
 )
 for required_file in "${required_check_files[@]}"; do
@@ -66,6 +67,7 @@ required_automation_files=(
     "$platform_root/Scripts/check_remote_feature_contracts.sh"
     "$platform_root/Scripts/check_special_offer_runtime_contract.sh"
     "$platform_root/Scripts/check_live_adapty_builds.sh"
+    "$platform_root/Scripts/install_build_tools.sh"
     "$platform_root/Scripts/stream_example_logs.sh"
 )
 for required_file in "${required_automation_files[@]}"; do

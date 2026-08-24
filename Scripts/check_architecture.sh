@@ -4,7 +4,6 @@ set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source_roots=(
-    "$platform_root/Sources"
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate"
 )
 violation_count=0
@@ -23,39 +22,6 @@ run_check() {
             echo "$description"
             echo "$output"
             violation_count=$((violation_count + 1))
-            ;;
-        1)
-            ;;
-        *)
-            echo "Architecture check could not run: $description"
-            exit "$status"
-            ;;
-    esac
-}
-
-run_canonical_file_check() {
-    local description="$1"
-    local pattern="$2"
-    local allowed_file="$3"
-    local matches
-    local filtered_output=""
-    local status=0
-
-    matches="$(rg -n --glob '**/*.swift' "$pattern" "${source_roots[@]}")" || status=$?
-
-    case "$status" in
-        0)
-            while IFS= read -r match; do
-                if [[ "$match" != "$allowed_file:"* ]]; then
-                    filtered_output+="$match"$'\n'
-                fi
-            done <<< "$matches"
-
-            if [[ -n "$filtered_output" ]]; then
-                echo "$description"
-                echo "${filtered_output%$'\n'}"
-                violation_count=$((violation_count + 1))
-            fi
             ;;
         1)
             ;;
@@ -158,15 +124,15 @@ run_check \
     --glob '**/*.swift' \
     --glob '!**/*ReviewAdapter.swift'
 
-run_canonical_file_check \
-    "AppTrackingTransparency APIs must stay inside TrackingAuthorizationAdapter:" \
+run_check \
+    "Host integration must use BroadCore instead of raw AppTrackingTransparency APIs:" \
     '\b(AppTrackingTransparency|ATTrackingManager)\b' \
-    "$platform_root/Sources/BroadCore/Infrastructure/Tracking/TrackingAuthorizationAdapter.swift"
+    --glob '**/*.swift'
 
-run_canonical_file_check \
-    "Preference APIs must stay inside the canonical UserDefaultsKeyValueStore:" \
+run_check \
+    "Host integration must use BroadCore instead of raw preference APIs:" \
     '\b(UserDefaults|NSUserDefaults|CFPreferences[A-Za-z]*)\b' \
-    "$platform_root/Sources/BroadCore/Infrastructure/Persistence/UserDefaultsKeyValueStore.swift"
+    --glob '**/*.swift'
 
 run_check \
     "Console output is forbidden; use BroadLoggerProtocol:" \
@@ -178,10 +144,11 @@ run_check \
     '\b(os_log|os_logv|os_signpost|OSSignposter)\b' \
     --glob '**/*.swift'
 
-run_canonical_file_check \
-    "OSLog APIs must stay inside the canonical OSLogBroadLogger:" \
+run_check \
+    "Host integration must use BroadCore instead of raw OSLog APIs:" \
     '(^[[:space:]]*(@[A-Za-z_][A-Za-z0-9_]*(\([^)]*\))?[[:space:]]+)*import([[:space:]]+(class|enum|func|struct|protocol|typealias|var|let))?[[:space:]]+(OSLog|os)(\.|[[:space:]]*$)|\bOSLog\.[A-Za-z_][A-Za-z0-9_]*\b|\bos\.(Logger|OSLog[A-Za-z0-9_]*|OSSignpost[A-Za-z0-9_]*)\b)' \
-    "$platform_root/Sources/BroadCore/Infrastructure/Logging/OSLogBroadLogger.swift"
+    --pcre2 \
+    --glob '**/*.swift'
 
 run_check \
     "Raw error descriptions are forbidden at platform boundaries:" \
@@ -229,21 +196,6 @@ run_check \
     --glob '**/ExampleMonetizationEnvironment.swift'
 
 require_file_pattern \
-    "Paywall product rows must use BroadNoPressEffectButtonStyle:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Paywall/BroadSelectableProductRow.swift" \
-    '\.buttonStyle\([[:space:]]*BroadNoPressEffectButtonStyle\(\)[[:space:]]*\)'
-
-require_file_pattern \
-    "Paywall primary actions must use BroadNoPressEffectButtonStyle:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Paywall/BroadPaywallPrimaryButton.swift" \
-    '\.buttonStyle\([[:space:]]*BroadNoPressEffectButtonStyle\(\)[[:space:]]*\)'
-
-require_file_pattern \
-    "Shared in-flight action button must show a ProgressView:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Loadable/BroadActionButton.swift" \
-    '(?s)configuration\.isInFlight.{0,180}ProgressView\([[:space:]]*\)'
-
-require_file_pattern \
     "Debug Keychain cleaner must stay behind DEBUG compilation:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Security/DebugKeychainCleaner.swift" \
     '(?s)^#if[[:space:]]+DEBUG.*actor[[:space:]]+DebugKeychainCleaner'
@@ -252,31 +204,6 @@ require_file_pattern \
     "Debug Keychain deletion must be scoped by exact service:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Security/DebugKeychainCleaner.swift" \
     'kSecAttrService[[:space:]]+as[[:space:]]+String:[[:space:]]+scope\.service'
-
-require_file_pattern \
-    "Invalid ATT delays must fail closed instead of crashing or requesting immediately:" \
-    "$platform_root/Sources/BroadUIFlows/Domain/Onboarding/OnboardingTrackingAuthorizationPolicy.swift" \
-    'guard[[:space:]]+delay[[:space:]]*>[[:space:]]*\.zero[[:space:]]+else'
-
-require_file_pattern \
-    "ATT must revalidate current window visibility after its delay:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/OnboardingViewModel.swift" \
-    'validateCurrentWindowVisibility\?\(\)[[:space:]]*==[[:space:]]*true'
-
-require_file_pattern \
-    "ATT live window validation must require a foreground-active scene:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/OnboardingWindowVisibilityView.swift" \
-    'window\.windowScene\?\.activationState[[:space:]]*==[[:space:]]*\.foregroundActive'
-
-require_file_pattern \
-    "Interactive targets must share one unscaled 44-point minimum:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Shared/BroadInteractiveMetrics.swift" \
-    'minimumHitDimension:[[:space:]]*CGFloat[[:space:]]*=[[:space:]]*44'
-
-require_file_pattern \
-    "Paywall product rows must include busy and durable-pending selection guards:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Paywall/BroadPaywallView+Content.swift" \
-    'viewModel\.canSelectProducts'
 
 require_file_pattern \
     "BroadAppTemplate analytics must fan out only after deduplication:" \
@@ -352,6 +279,16 @@ require_file_pattern \
     "Integration must consume the released BroadMonetization contract instead of a local copy:" \
     "$platform_root/Package.swift" \
     'broad-monetization-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+
+require_file_pattern \
+    "Integration must consume the released BroadUIFlows contract instead of a local copy:" \
+    "$platform_root/Package.swift" \
+    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+
+require_file_pattern \
+    "Released BroadUIFlows must carry its own module and UI contract evidence:" \
+    "$platform_root/Compatibility/current.yml" \
+    '(?s)BroadUIFlows:.*version:[[:space:]]*"1\.0\.0".*module_gate:[[:space:]]*passed.*github_actions:[[:space:]]*passed.*release:[[:space:]]*"https://github\.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1\.0\.0"'
 
 if ((violation_count > 0)); then
     echo "Architecture checks failed: $violation_count rule group(s) found."

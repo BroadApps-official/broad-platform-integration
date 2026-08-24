@@ -71,7 +71,6 @@
 		3113175E40FB6377F9F178EA /* ExampleTokenBalanceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenBalanceViewModel.swift; sourceTree = "<group>"; };
 		394ADF80EF0BE0E024EF50D4 /* AppFlowSceneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowSceneViewModel.swift; sourceTree = "<group>"; };
 		433F40BAC4673550C5998708 /* ExampleAnalyticsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleAnalyticsViewModel.swift; sourceTree = "<group>"; };
-		454602F0D2DA0BB1EBC9EB23 /* BroadAppsIOSPlatform */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BroadAppsIOSPlatform; path = ../..; sourceTree = SOURCE_ROOT; };
 		471EB57C47361B4D8E62DF6A /* ExampleScenarioCatalogViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleScenarioCatalogViews.swift; sourceTree = "<group>"; };
 		50D947D3645D2242AC025B52 /* BootstrapStatusCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BootstrapStatusCardView.swift; sourceTree = "<group>"; };
 		58A1C8F0E3F91CB480ADCE0F /* ExampleLaunchScenarios.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLaunchScenarios.swift; sourceTree = "<group>"; };
@@ -158,14 +157,6 @@
 				C22EA39CEAB3EE9F1E22C007 /* ExampleRecordingMonetizationAnalytics.swift */,
 			);
 			path = Analytics;
-			sourceTree = "<group>";
-		};
-		5219A9043579A5E817E5D408 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				454602F0D2DA0BB1EBC9EB23 /* BroadAppsIOSPlatform */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		5D1B8EA75FF91A941E6A6CA0 /* Application */ = {
@@ -309,7 +300,6 @@
 			children = (
 				9A3EBD174B9928BA90F160F7 /* BroadAppTemplate */,
 				9BA0BB5B4A8C984CBDF2A353 /* Configuration */,
-				5219A9043579A5E817E5D408 /* Packages */,
 				D7636B57F379D11311097B64 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -368,8 +358,8 @@
 				A4D9E3CF8C27A22D2B8FA96F /* XCRemoteSwiftPackageReference "broad-core-ios" */,
 				AF9F3A76F6D9744E7AC59292 /* XCRemoteSwiftPackageReference "broad-extensions-ios" */,
 				5F8DC2403C161AF1EA9FE1DD /* XCRemoteSwiftPackageReference "broad-monetization-ios" */,
+				E21923989FD51E8C31E98422 /* XCRemoteSwiftPackageReference "broad-ui-flows-ios" */,
 				766E427D766A9ACD0377ED09 /* XCRemoteSwiftPackageReference "Swinject" */,
-				27525D4F4B47170339DB6EAA /* XCLocalSwiftPackageReference "../.." */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D7636B57F379D11311097B64 /* Products */;
@@ -841,13 +831,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		27525D4F4B47170339DB6EAA /* XCLocalSwiftPackageReference "../.." */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../..;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		5F8DC2403C161AF1EA9FE1DD /* XCRemoteSwiftPackageReference "broad-monetization-ios" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -881,6 +864,14 @@
 				version = 1.0.0;
 			};
 		};
+		E21923989FD51E8C31E98422 /* XCRemoteSwiftPackageReference "broad-ui-flows-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BroadApps-official/broad-ui-flows-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -906,6 +897,7 @@
 		};
 		EB208DBF6080158B84F162F0 /* BroadUIFlows */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = E21923989FD51E8C31E98422 /* XCRemoteSwiftPackageReference "broad-ui-flows-ios" */;
 			productName = BroadUIFlows;
 		};
 /* End XCSwiftPackageProductDependency section */

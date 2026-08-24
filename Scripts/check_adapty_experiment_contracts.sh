@@ -55,9 +55,14 @@ forbid_pattern() {
 echo "Adapty integration contract matrix"
 
 require_pattern \
-    "BroadUIFlows consumes the released BroadMonetization product" \
+    "Integration pins the released BroadUIFlows product" \
     "$platform_root/Package.swift" \
-    '\.product\(name:[[:space:]]*"BroadMonetization",[[:space:]]*package:[[:space:]]*"broad-monetization-ios"\)'
+    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+
+require_pattern \
+    "Host connects BroadUIFlows directly" \
+    "$platform_root/Examples/BroadAppTemplate/project.yml" \
+    'BroadUIFlows:(?s:.*?)url:[[:space:]]+https://github\.com/BroadApps-official/broad-ui-flows-ios\.git(?s:.*?)exactVersion:[[:space:]]+1\.0\.0(?s:.*?)package:[[:space:]]+BroadUIFlows(?s:.*?)product:[[:space:]]+BroadUIFlows'
 
 require_pattern \
     "Host analytics still fan out only after deduplication" \
@@ -70,9 +75,8 @@ require_pattern \
     'CompositeMonetizationAnalytics'
 
 forbid_pattern \
-    "Host and UI contain no duplicate experiment assignment" \
+    "Host contains no duplicate experiment assignment" \
     '(?i)\b(ExperimentAssignment|CohortAssignment|SegmentAssignment|ExperimentRandomizer|CohortRandomizer|ClientSideRandomizer)\b' \
-    "$platform_root/Sources/BroadUIFlows" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate" \
     --glob '*.swift'
 
@@ -81,4 +85,4 @@ if ((failure_count > 0)); then
     exit 1
 fi
 
-echo "Adapty integration contracts are delegated to BroadMonetization 1.0.0 and passed."
+echo "Adapty integration contracts are delegated to BroadMonetization 1.0.0 and BroadUIFlows 1.0.0 and passed."

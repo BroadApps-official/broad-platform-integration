@@ -88,14 +88,7 @@ if ! command -v rg >/dev/null 2>&1; then
     exit 1
 fi
 
-onboarding_source_root="$platform_root/Sources/BroadUIFlows"
 example_onboarding_root="$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/Onboarding"
-
-scan_forbidden \
-    "Onboarding source must not contain a fixed three-page length or 0...2 page range:" \
-    "$fixed_length_pattern" \
-    "$onboarding_source_root" \
-    --glob '*.swift'
 
 scan_forbidden \
     "The app-owned onboarding renderer must not contain fixed page indexes:" \
@@ -115,15 +108,13 @@ scan_forbidden \
     --glob '*.md'
 
 scan_forbidden \
-    "Onboarding must not contain Rate Us or native review requests:" \
+    "Host-owned onboarding must not contain Rate Us or native review requests:" \
     '(?i)\b(rate[[:space:]_-]*us|request[[:space:]_-]*review|SKStoreReviewController|AppStore\.requestReview|оценить|отзыв)\b' \
-    "$onboarding_source_root" \
     "$example_onboarding_root" \
     --glob '*.swift'
 
 loader_paths=()
 for loader_path in \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Loadable" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/Root"; do
     if [[ -d "$loader_path" ]]; then
         loader_paths+=("$loader_path")
@@ -139,39 +130,14 @@ if ((${#loader_paths[@]} > 0)); then
 fi
 
 require_pattern \
-    "OnboardingConfiguration.pages must remain the single page source:" \
-    "$platform_root/Sources/BroadUIFlows/Domain/Onboarding/OnboardingConfiguration.swift" \
-    'public[[:space:]]+let[[:space:]]+pages:[[:space:]]*\[OnboardingPageConfiguration\]'
+    "Integration must pin the released BroadUIFlows onboarding contract:" \
+    "$platform_root/Package.swift" \
+    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
 
 require_pattern \
-    "The last page must be derived from pages.count:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/OnboardingViewModel.swift" \
-    'currentIndex[[:space:]]*==[[:space:]]*configuration\.pages\.count[[:space:]]*-[[:space:]]*1'
-
-require_pattern \
-    "ATT eligibility must require the first page to be visible:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/OnboardingViewModel.swift" \
-    '(?s)isEligibleForTrackingAuthorization.*isFirstSlideVisible.*currentIndex[[:space:]]*==[[:space:]]*configuration\.pages\.startIndex'
-
-require_pattern \
-    "Standard onboarding progress must iterate over all configured pages:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/BroadOnboardingView.swift" \
-    'ForEach\(viewModel\.configuration\.pages\)'
-
-require_pattern \
-    "BroadOnboardingView must use the shared logic-only host:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/BroadOnboardingView.swift" \
-    'BroadOnboardingFlowHost\('
-
-require_pattern \
-    "The shared onboarding host must mark the visible first page for ATT:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/BroadOnboardingFlowHost.swift" \
-    '(?s)markFirstPageVisibleIfNeeded\(\).*firstSlideDidAppear\(\)'
-
-require_pattern \
-    "The shared onboarding host must safely complete invalid configuration:" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Onboarding/BroadOnboardingFlowHost.swift" \
-    'completeInvalidConfigurationIfNeeded\(\)'
+    "BroadUIFlows release must have standalone module and CI evidence:" \
+    "$platform_root/Compatibility/current.yml" \
+    '(?s)BroadUIFlows:[[:space:]]*\n[[:space:]]+version:[[:space:]]*"1\.0\.0".*module_gate:[[:space:]]*passed.*github_actions:[[:space:]]*passed'
 
 require_pattern \
     "BroadAppTemplate must expose one, two, four, long, custom, disabled and invalid onboarding fixtures:" \
@@ -198,4 +164,4 @@ if ((violation_count > 0)); then
     exit 1
 fi
 
-echo "Onboarding contract validation passed."
+echo "Onboarding contract validation passed; production flow rules are owned by BroadUIFlows 1.0.0."

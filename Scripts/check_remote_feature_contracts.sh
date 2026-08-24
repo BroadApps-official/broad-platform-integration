@@ -52,8 +52,6 @@ forbid_pattern() {
     esac
 }
 
-paywall_view_model_file="$platform_root/Sources/BroadUIFlows/Presentation/Paywall/PaywallViewModel.swift"
-paywall_loading_file="$platform_root/Sources/BroadUIFlows/Presentation/Paywall/PaywallViewModel+Loading.swift"
 example_environment_file="$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Monetization/ExampleMonetizationEnvironment.swift"
 
 echo "Remote Config integration contract matrix"
@@ -68,12 +66,20 @@ require_pattern \
     "$platform_root/Examples/BroadAppTemplate/project.yml" \
     'BroadMonetization:(?s:.*?)url:[[:space:]]+https://github\.com/BroadApps-official/broad-monetization-ios\.git(?s:.*?)exactVersion:[[:space:]]+1\.0\.0(?s:.*?)package:[[:space:]]+BroadMonetization(?s:.*?)product:[[:space:]]+BroadMonetization'
 
-forbid_pattern \
-    "Paywall UI never expires or disables a Special Offer at visual zero" \
-    '(isSpecialOfferExpired|specialOfferExpirationTask|configureSpecialOfferExpiration|expireSpecialOffer)' \
-    "$paywall_view_model_file" \
-    "$paywall_loading_file" \
-    "$platform_root/Sources/BroadUIFlows/Presentation/Paywall/BroadPaywallView+Content.swift"
+require_pattern \
+    "Integration pins the released BroadUIFlows contract" \
+    "$platform_root/Package.swift" \
+    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+
+require_pattern \
+    "Host example connects BroadUIFlows directly" \
+    "$platform_root/Examples/BroadAppTemplate/project.yml" \
+    'BroadUIFlows:(?s:.*?)url:[[:space:]]+https://github\.com/BroadApps-official/broad-ui-flows-ios\.git(?s:.*?)exactVersion:[[:space:]]+1\.0\.0(?s:.*?)package:[[:space:]]+BroadUIFlows(?s:.*?)product:[[:space:]]+BroadUIFlows'
+
+require_pattern \
+    "BroadUIFlows Special Offer UI contract has release evidence" \
+    "$platform_root/Compatibility/current.yml" \
+    'broad-ui-flows-ios/releases/tag/1\.0\.0'
 
 require_pattern \
     "Host template unlocks RU Billing manual override only in DEBUG" \
@@ -83,7 +89,6 @@ require_pattern \
 forbid_pattern \
     "Integration contains no second client-side experiment randomizer" \
     '(?i)\b(ExperimentAssignment|CohortAssignment|SegmentAssignment|ExperimentRandomizer|CohortRandomizer|ClientSideRandomizer|arc4random|randomElement)\b' \
-    "$platform_root/Sources/BroadUIFlows" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate" \
     --glob '*.swift'
 
@@ -94,4 +99,4 @@ fi
 
 bash "$platform_root/Scripts/check_special_offer_runtime_contract.sh"
 
-echo "Remote Config integration contract matrix passed."
+echo "Remote Config integration contract matrix passed; UI expiry rules are owned by BroadUIFlows 1.0.0."

@@ -11,7 +11,7 @@ modules:
   BroadCore: "1.0.0"
   BroadExtensions: "1.0.0"
   BroadMonetization: "1.0.0"
-  BroadUIFlows: "pending"
+  BroadUIFlows: "1.0.0"
 verification:
   status: pending
   command: "bash Scripts/agent_gate.sh"
@@ -38,6 +38,13 @@ module_verification:
     release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.0.0"
     integration_gate: passed
     checked_at: "2026-08-24"
+  BroadUIFlows:
+    version: "1.0.0"
+    module_gate: passed
+    github_actions: passed
+    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.0.0"
+    integration_gate: passed
+    checked_at: "2026-08-25"
 notes:
   - "Host applications connect only the repositories/products they need."
   - "This catalog is not a mandatory runtime umbrella dependency."

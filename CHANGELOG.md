@@ -37,6 +37,16 @@ production-ready версии.
 - integration package, `BroadUIFlows` и host example собирают exact tag
   `BroadMonetization 1.0.0`; локальная копия production sources удалена,
   а cross-module gate проверяет точный release, lockfile и UI/host behavior;
+- `BroadUIFlows 1.0.0` вынесен в public repository с сохранением Git-истории,
+  публичной iPhone Gallery реальных onboarding/loadable/paywall/Special Offer/
+  token/RU-management экранов, DocC/public API report и static UI contracts;
+- integration package и host example подключают `BroadUIFlows 1.0.0` напрямую;
+  локальная копия UI production sources удалена, поэтому UI review, release и
+  модификация выполняются в небольшом module repository, а integration gate
+  проверяет совместимость всех четырёх exact releases без обязательного umbrella;
+- integration checkout получил clean-runner GitHub Actions workflow, локальную
+  checksum-проверенную установку SwiftLint/XcodeGen и отдельный Xcode lockfile;
+  это делает exact-набор воспроизводимым без заранее установленных Homebrew tools;
 
 ### Почему платформа делится на repositories
 

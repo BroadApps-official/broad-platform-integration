@@ -20,6 +20,7 @@ platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
     "Package.swift",
     "Package.resolved",
     "README.md",
+    ".github/**/*",
     "Sources/**/*",
     "Examples/BroadAppTemplate/BroadAppTemplate/**/*",
     "Examples/BroadAppTemplate/Configuration/Adapty5013.xcconfig",
@@ -27,6 +28,7 @@ platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
     "Examples/BroadAppTemplate/Configuration/LiveAdaptyInfo.plist",
     "Examples/BroadAppTemplate/README.md",
     "Examples/BroadAppTemplate/project.yml",
+    "Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
     "Documentation/**/*",
     "Scripts/**/*",
     "AgentChecks/*.md"
