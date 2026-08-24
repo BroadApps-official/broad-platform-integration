@@ -333,6 +333,47 @@ repository и точные Keychain service/account scopes только если
 - двойной `.disabled(!isEnabled)` на строке продукта paywall;
 - потеря variation attribution между paywall selection и purchase/RU return.
 
+#### Почему Special Offer исправлен именно так
+
+**Корневая причина.** Стандартный `AdaptyPaywallRepository` не может доказать,
+что SDK получил именно свежий network response: Adapty вправе прозрачно вернуть
+свой cache или Dashboard-generated fallback. Поэтому repository корректно
+помечает payload как `.providerCacheFallbackPossible`. Раньше Special Offer и
+RU Billing использовали общий freshness-gate, допускавший только
+`.verifiedFreshRemote`. В результате `RemotePaywallConfiguration.qualified`
+удалял `special_offer`, а дополнительные state/clock-проверки resolver могли
+остановить flow ещё до завершения обычной загрузки и разбора подписок.
+
+**Новый контракт загрузки.** Special Offer использует штатную последовательность
+Adapty: `getPaywall -> getPaywallProducts -> 1:1 mapping -> raw product registry`.
+Только после получения paywall и всех его products resolver проверяет
+`special_offer == true` и presentation lifecycle. Это сохраняет точное
+соответствие выбранного platform product исходному `AdaptyPaywallProduct`, не
+добавляет dictionary/dedup и не требует custom REST-транспорта.
+
+**Почему provider payload теперь достаточен.** `special_offer` — управляемый
+Adapty флаг выбора второй презентации, а не финансовое доказательство и не
+entitlement. Поэтому текущий provider payload, включая возможный SDK
+cache/fallback, вправе разрешить Special Offer. Payload, восстановленный из
+собственного platform cache, и legacy payload по-прежнему не могут заново
+включить офер.
+
+**Почему убраны expiration и trusted clock.** По продуктовому контракту таймер
+Special Offer является только визуальной механикой: он локально показывает
+`24:00:00 -> 00:00:00`, затем начинает новый такой же цикл. Ноль не закрывает
+paywall, не отменяет checkout и не меняет доступность офера. Старые duration,
+state repository и clock сохранены только для source/decoding compatibility;
+они больше не участвуют в runtime-решении. Предпочтительный initializer
+`ResolveSpecialOfferUseCase` принимает только load use case и presentation
+lifecycle.
+
+**Почему RU Billing не использует то же разрешение.** `ru_pay` открывает
+финансовый способ оплаты и остаётся fail-closed: положительный флаг действует
+только из host-controlled `.verifiedFreshRemote` payload. Ни Adapty SDK cache,
+ни Dashboard fallback, ни platform cache не авторизуют RU Billing. Таким
+образом, восстановление Special Offer не ослабляет финансовую границу,
+проверку entitlement или финальный checkout gate.
+
 ## 1.0.0
 
 Platform package передаётся после успешного единого agent review-and-fix cycle.
