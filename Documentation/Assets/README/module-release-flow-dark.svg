@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-labelledby="title desc">
+<title id="title">Release одного модуля</title>
+<desc id="desc">Каждый шаг имеет свой PASS; catalog меняется только после integration gate</desc>
+<rect width="1200" height="540" rx="28" fill="#08111F"/>
+<path d="M54 150H1146" stroke="#33445F" stroke-width="1"/>
+<text x="54" y="70" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="34" font-weight="750">Release одного модуля</text>
+<text x="54" y="112" fill="#9FB0C7" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17">Каждый шаг имеет свой PASS; catalog меняется только после integration gate</text>
+<path d="M262.0 300H272.0" stroke="#33445F" stroke-width="2"/>
+<path d="M265.0 294L272.0 300L265.0 306" fill="none" stroke="#33445F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="54.0" y="205" width="204.0" height="190" rx="18" fill="#111C2F" stroke="#33445F"/>
+<rect x="72.0" y="225" width="42" height="8" rx="4" fill="#3B82F6"/>
+<text x="72.0" y="281" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="750">CHANGE</text>
+<text x="72.0" y="317" fill="#9FB0C7" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">owner repository</text>
+<text x="72.0" y="371" fill="#3B82F6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">01</text>
+<path d="M484.0 300H494.0" stroke="#33445F" stroke-width="2"/>
+<path d="M487.0 294L494.0 300L487.0 306" fill="none" stroke="#33445F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="276.0" y="205" width="204.0" height="190" rx="18" fill="#111C2F" stroke="#33445F"/>
+<rect x="294.0" y="225" width="42" height="8" rx="4" fill="#10B981"/>
+<text x="294.0" y="281" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="750">MODULE GATE</text>
+<text x="294.0" y="317" fill="#9FB0C7" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">build + probes</text>
+<text x="294.0" y="340" fill="#9FB0C7" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">+ docs</text>
+<text x="294.0" y="371" fill="#10B981" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">02</text>
+<path d="M706.0 300H716.0" stroke="#33445F" stroke-width="2"/>
+<path d="M709.0 294L716.0 300L709.0 306" fill="none" stroke="#33445F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="498.0" y="205" width="204.0" height="190" rx="18" fill="#111C2F" stroke="#33445F"/>
+<rect x="516.0" y="225" width="42" height="8" rx="4" fill="#8B5CF6"/>
+<text x="516.0" y="281" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="750">SEMVER TAG</text>
+<text x="516.0" y="317" fill="#9FB0C7" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">public release</text>
+<text x="516.0" y="371" fill="#8B5CF6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">03</text>
+<path d="M928.0 300H938.0" stroke="#33445F" stroke-width="2"/>
+<path d="M931.0 294L938.0 300L931.0 306" fill="none" stroke="#33445F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="720.0" y="205" width="204.0" height="190" rx="18" fill="#111C2F" stroke="#33445F"/>
+<rect x="738.0" y="225" width="42" height="8" rx="4" fill="#EC4899"/>
+<text x="738.0" y="281" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="750">DEPENDENTS</text>
+<text x="738.0" y="317" fill="#9FB0C7" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">raise lower bound</text>
+<text x="738.0" y="371" fill="#EC4899" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">04</text>
+<rect x="942.0" y="205" width="204.0" height="190" rx="18" fill="#111C2F" stroke="#33445F"/>
+<rect x="960.0" y="225" width="42" height="8" rx="4" fill="#F59E0B"/>
+<text x="960.0" y="281" fill="#F8FAFC" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="750">CATALOG</text>
+<text x="960.0" y="317" fill="#9FB0C7" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">exact known-good set</text>
+<text x="960.0" y="371" fill="#F59E0B" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">05</text>
+<text x="54" y="476" fill="#9FB0C7" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" letter-spacing="1.6">BROADAPPS IOS · PUBLIC MODULE ARCHITECTURE</text>
+<circle cx="1134" cy="472" r="7" fill="#10B981"/><text x="1113" y="503" fill="#9FB0C7" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">CHECKED FLOW</text>
+</svg>

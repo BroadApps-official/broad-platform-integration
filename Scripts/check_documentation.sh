@@ -73,100 +73,76 @@ if ! CLANG_MODULE_CACHE_PATH="$swift_module_cache" \
     record_failure "README GIF validation failed."
 fi
 
+readme_line_count="$(/usr/bin/wc -l < "$platform_root/README.md" | /usr/bin/tr -d ' ')"
+if ((readme_line_count < 400 || readme_line_count > 650)); then
+    record_failure "README must stay a 400-650 line landing page (actual: $readme_line_count)."
+fi
+
 for required_pattern in \
-    '^## Перед завершением задачи$' \
+    '^## Что подключать$' \
+    '^## Целевые public repositories$' \
     '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
     '^## 🛠️ Вариант B: собрать приложение вручную$' \
-    '^### 4\. 🧭 Отправляйте поэтапные prompts по одному$' \
-    '^#### Что делать, если процесс не идеальный$' \
+    '^### 🎁 Special Offer — только второй paywall$' \
+    '^## Документация: repository плюс сайт$' \
+    '^## Release и compatibility$' \
+    '^## ✅ Если вы изменили код платформы$' \
+    '^### Без unit tests$' \
+    '^## BroadAppTemplate$' \
+    '^## Карта документации$' \
+    '^## Словарь$' \
+    '^## Перед завершением задачи$' \
+    'Host app подключает \*\*любой нужный модуль\*\*' \
+    '`BroadPlatform` или другого umbrella package нет' \
+    'https://broadapps-ios-docs\.nkhsnv\.chatgpt\.site' \
+    'Documentation/FederatedRepositories\.md' \
+    'Documentation/ModuleReleasePolicy\.md' \
+    'Compatibility/current\.yml' \
     'Documentation/AppCreationWorkflow\.md' \
     'Documentation/AgentPromptPack\.md' \
     'Documentation/Templates/AppIntegrationPlan\.md' \
     'PLAN REVIEW REQUIRED' \
     'SKELETON REVIEW REQUIRED' \
     'SLICE REVIEW REQUIRED' \
-    'VISUAL REVIEW REQUIRED' \
-    'Приложение уже существует' \
-    'Новый чат или другой агент' \
-    'Один результат — два способа работы' \
-    '^### Шаг 0\. 🆕 Создайте новый iPhone-проект$' \
-    '^### Шаг 9\. 🔍 Проверьте, меняли ли вы саму платформу$' \
-    '^## 📖 Словарь: что означают термины$' \
-    'Documentation/Traceability\.md' \
-    'Documentation/Analytics\.md' \
-    'Documentation/AccountRecovery\.md' \
-    'Documentation/NetworkInterruptions\.md' \
-    'Documentation/AgentAutomation\.md' \
-    'Scripts/stream_example_logs\.sh' \
-    'Текущий ответ SDK Adapty: сеть или внутренний кеш Adapty' \
-    'Сохранённая копия из собственного кеша `BroadMonetization`' \
-    '-special-offer-enabled' \
-    '-special-offer-disabled' \
-    '-special-offer-platform-cache' \
-    '-special-offer-main-fallback' \
-    '-special-offer-looping-timer' \
-    '-ru-pay-provider-enabled' \
-    '-ru-pay-provider-disabled' \
-    '-ru-pay-adapty-fallback-rejected' \
-    '-ru-pay-platform-cache' \
-    'Dashboard-generated fallback' \
-    'Debug, `Как в Adapty`' \
-    '^## 💳 RU Billing: последовательность экранов$' \
-    '^## ✅ Если вы изменили код платформы$' \
-    '^### 6\. ✅ Запустите обязательную проверку перед сдачей$' \
-    'AgentChecks/AUTOMATION_PROMPT\.md' \
-    'agent_review_and_fix\.sh --doctor' \
-    '^### Вариант 2 — запустить проверяющего агента вручную$' \
-    'bash Scripts/agent_gate\.sh' \
-    '^## BroadAppTemplate: зачем запускать пример$' \
-    'технический пример подключения' \
-    'Documentation/Assets/README/Screenshots/onboarding-ru-v2\.png' \
-    'Documentation/Assets/README/Screenshots/paywall-showcase-ru-v2\.png' \
-    'Documentation/Assets/README/References/5115-paywall-dark\.png' \
-    'Documentation/Assets/README/References/5115-payment-methods-dark\.png' \
-    'Documentation/Assets/README/References/5115-receipt-email-dark\.png' \
-    'Documentation/Assets/README/References/5115-consent-alert-dark\.png' \
-    'Documentation/Assets/README/References/5115-payment-ready-dark\.png' \
-    'Documentation/Assets/README/References/5115-cloudpayments-light\.png' \
-    'Documentation/Assets/README/References/5115-hosted-checkout-light\.png' \
-    'Documentation/Assets/README/Screenshots/main-ru-v2\.png' \
-    'Documentation/Assets/README/developer-roadmap-light\.svg' \
-    'Documentation/Assets/README/developer-roadmap-dark\.svg' \
-    'Documentation/Assets/README/reference-workflow-light\.svg' \
-    'Documentation/Assets/README/reference-workflow-dark\.svg' \
-    'Documentation/Assets/README/project-inputs-light\.svg' \
-    'Documentation/Assets/README/project-inputs-dark\.svg' \
-    'Documentation/Assets/README/composition-root-light\.svg' \
-    'Documentation/Assets/README/composition-root-dark\.svg' \
-    'Documentation/Assets/README/no-code-agent-workflow-light\.svg' \
-    'Documentation/Assets/README/no-code-agent-workflow-dark\.svg' \
-    'Documentation/Assets/README/no-code-manual-workflow-light\.svg' \
-    'Documentation/Assets/README/no-code-manual-workflow-dark\.svg' \
-    'Documentation/Assets/README/agent-click-path-light\.svg' \
-    'Documentation/Assets/README/agent-click-path-dark\.svg' \
-    'Documentation/Assets/README/onboarding-decision-flow-light\.svg' \
-    'Documentation/Assets/README/onboarding-decision-flow-dark\.svg' \
-    'Documentation/Assets/README/remote-config-cache-flow-light\.svg' \
-    'Documentation/Assets/README/remote-config-cache-flow-dark\.svg' \
-    'Documentation/Assets/README/full-flow\.gif' \
-    'Documentation/Assets/README/adaptive-paywall\.gif' \
-    'Copy-paste: обязательная инструкция агенту перед onboarding' \
-    'Три слайда в `BroadAppTemplate` — только демонстрационный пример' \
-    'production-shape fixture' \
     'FUNCTIONAL REVIEW REQUIRED' \
-    'маленьком и большом iPhone Simulator' \
-    'offer_week_4\.99_nottrial' \
-    'BroadOnboardingFlowHost' \
-    '^### 🎁 Special Offer — всегда второй paywall$' \
-    'presentation=special-offer' \
-    'Documentation/Assets/README/References/special-offer-step-1-paywall\.png' \
-    'Documentation/Assets/README/References/special-offer-step-2-offer\.png'; do
+    'VISUAL REVIEW REQUIRED' \
+    'BroadExtensions' \
+    'BroadCore' \
+    'BroadMonetization' \
+    'BroadUIFlows' \
+    'provider-managed Adapty payload' \
+    'persistent cache `BroadMonetization` не может' \
+    'SDK cache, Dashboard fallback и platform cache не авторизуют RU methods' \
+    'bash Scripts/agent_gate\.sh' \
+    'Tests/' \
+    'XCTest' \
+    'Swift Testing' \
+    'Documentation/Assets/README/platform-module-selection-light\.svg' \
+    'Documentation/Assets/README/platform-module-selection-dark\.svg' \
+    'Documentation/Assets/README/federated-repositories-light\.svg' \
+    'Documentation/Assets/README/federated-repositories-dark\.svg' \
+    'Documentation/Assets/README/documentation-pipeline-light\.svg' \
+    'Documentation/Assets/README/documentation-pipeline-dark\.svg' \
+    'Documentation/Assets/README/module-release-flow-light\.svg' \
+    'Documentation/Assets/README/module-release-flow-dark\.svg' \
+    'Documentation/Assets/README/cross-repo-change-light\.svg' \
+    'Documentation/Assets/README/cross-repo-change-dark\.svg'; do
     if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
     fi
 done
 
 for documentation_contract in \
+    'Documentation/ADR/0006-federated-public-repositories.md|Host app подключает \*\*любой нужный модуль\*\*' \
+    'Documentation/FederatedRepositories.md|broad-platform-integration' \
+    'Documentation/FederatedRepositories.md|broad-docs' \
+    'Documentation/ModuleReleasePolicy.md|upToNextMajor' \
+    'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
+    'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
+    'Documentation/SpecialOffer.md|raw `AdaptyPaywallProduct`' \
+    'Documentation/SpecialOffer.md|ru_pay.*\.verifiedFreshRemote' \
+    'Examples/BroadAppTemplate/README.md|-special-offer-platform-cache' \
+    'README.dev.md|-special-offer-looping-timer' \
     'Documentation/RUBilling.md|Release \| Verified-fresh remote payload' \
     'Documentation/RUBilling.md|Adapty\.setFallback\(fileURL:' \
     'Documentation/RUBilling.md|\.forceEnabled' \
@@ -320,6 +296,44 @@ workflow_svgs=(
     "$platform_root/Documentation/Assets/README/no-code-manual-workflow-light.svg"
     "$platform_root/Documentation/Assets/README/no-code-manual-workflow-dark.svg"
 )
+
+federation_svgs=(
+    "$platform_root/Documentation/Assets/README/platform-module-selection-light.svg"
+    "$platform_root/Documentation/Assets/README/platform-module-selection-dark.svg"
+    "$platform_root/Documentation/Assets/README/federated-repositories-light.svg"
+    "$platform_root/Documentation/Assets/README/federated-repositories-dark.svg"
+    "$platform_root/Documentation/Assets/README/repository-migration-light.svg"
+    "$platform_root/Documentation/Assets/README/repository-migration-dark.svg"
+    "$platform_root/Documentation/Assets/README/module-release-flow-light.svg"
+    "$platform_root/Documentation/Assets/README/module-release-flow-dark.svg"
+    "$platform_root/Documentation/Assets/README/cross-repo-change-light.svg"
+    "$platform_root/Documentation/Assets/README/cross-repo-change-dark.svg"
+    "$platform_root/Documentation/Assets/README/documentation-pipeline-light.svg"
+    "$platform_root/Documentation/Assets/README/documentation-pipeline-dark.svg"
+)
+
+for federation_svg in "${federation_svgs[@]}"; do
+    if [[ ! -s "$federation_svg" ]]; then
+        record_failure "Federation README diagram is missing: ${federation_svg#$platform_root/}"
+    fi
+done
+
+for federation_svg_contract in \
+    'platform-module-selection|Host app выбирает любой нужный модуль' \
+    'federated-repositories|Публичная федерация repositories' \
+    'repository-migration|Порядок безопасной миграции' \
+    'module-release-flow|Release одного модуля' \
+    'cross-repo-change|Cross-repository change идёт снизу вверх' \
+    'documentation-pipeline|Документы остаются рядом с кодом'
+do
+    federation_svg_name="${federation_svg_contract%%|*}"
+    federation_svg_pattern="${federation_svg_contract#*|}"
+    if ! rg -q -- "$federation_svg_pattern" \
+        "$platform_root/Documentation/Assets/README/$federation_svg_name-light.svg" \
+        "$platform_root/Documentation/Assets/README/$federation_svg_name-dark.svg"; then
+        record_failure "Federation README diagram contract is missing: $federation_svg_name -> $federation_svg_pattern"
+    fi
+done
 
 for remote_config_pattern in 'Dashboard fallback Adapty' 'Release: ru_pay только с verified freshness' 'Debug: follow / force-on / force-off'; do
     if ! rg -q -- "$remote_config_pattern" \

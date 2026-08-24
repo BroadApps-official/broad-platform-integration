@@ -8,6 +8,9 @@
 Главный [README](README.md) объясняет, как начать проект через агента или вручную,
 а этот файл помогает не смешать слои, не потерять важный сценарий и провести
 понятную проверку перед передачей.
+Вся база также доступна на
+[public documentation site](https://broadapps-ios-docs.nkhsnv.chatgpt.site) с поиском
+и ссылкой `Edit this page`.
 
 > [!NOTE]
 > Старые template/reference-проекты можно изучать как пример продукта и работы
@@ -45,7 +48,19 @@
 | Composition root | Одно место, где создаются и соединяются зависимости приложения |
 
 Расширенный словарь находится в
-[главном README](README.md#-словарь-что-означают-термины).
+[главном README](README.md#словарь).
+
+## Какой модуль подключает host app
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/platform-module-selection-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/platform-module-selection-light.svg">
+  <img alt="Host app выбирает только нужные Swift-модули" src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
+</picture>
+
+Host app подключает любой нужный public module напрямую. Обязательного
+`BroadPlatform` нет; integration repository хранит exact compatibility,
+example и cross-module gate. Полная карта: [Federated Repositories](Documentation/FederatedRepositories.md).
 
 ## Куда класть код
 

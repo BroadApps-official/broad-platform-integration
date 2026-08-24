@@ -1,5 +1,9 @@
 # Документация BroadApps iOS Platform
 
+Публичная searchable-версия: [BroadApps iOS Docs](https://broadapps-ios-docs.nkhsnv.chatgpt.site).
+Markdown в repositories остаётся canonical source: его можно свободно читать,
+редактировать и предлагать через public pull request.
+
 Не нужно читать всё подряд. Выберите свою задачу:
 
 | Что нужно сделать | Открыть |

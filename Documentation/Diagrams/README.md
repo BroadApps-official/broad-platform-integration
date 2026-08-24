@@ -60,6 +60,7 @@ example, запустить соответствующий fixture и убеди
 | `adaptive-products.mmd` | products 1:1 до UI/purchase |
 | `entitlement-authority.mmd` | aggregation Apple/backend/RU |
 | `generate_readme_gifs.swift` | воспроизводит две короткие GIF-анимации |
+| `Scripts/generate_federation_diagrams.rb` | воспроизводит light/dark SVG новой repository-схемы |
 
 Отдельные SVG, которые объясняют путь разработчика и не требуют Mermaid:
 
@@ -72,6 +73,12 @@ example, запустить соответствующий fixture и убеди
 | `no-code-manual-workflow-*.svg` | полный ручной no-code-маршрут от Kaiten и согласованного дизайна до проверенных сборок |
 | `agent-click-path-*.svg` | на какие элементы Finder и Codex/Claude нажать, чтобы открыть правильную папку, передать материалы и запустить разработку |
 | `app-delivery-iterations-*.svg` | почему функциональный PASS и визуальная сверка являются разными итерациями, а QA начинается только после self-review |
+| `platform-module-selection-*.svg` | host app выбирает любой нужный модуль без обязательного umbrella |
+| `federated-repositories-*.svg` | ownership кода, integration и public docs между repositories |
+| `repository-migration-*.svg` | порядок безопасного выноса модулей из исходного repository |
+| `module-release-flow-*.svg` | standalone gate, SemVer release и обновление compatibility catalog |
+| `cross-repo-change-*.svg` | порядок owner → consumers → integration → docs |
+| `documentation-pipeline-*.svg` | Markdown/DocC как source и public site с search/Edit this page |
 
 Цвета фиксированы общей легендой:
 
@@ -99,3 +106,5 @@ xcrun swift Documentation/Diagrams/generate_readme_gifs.swift
 Изменив анимацию, обновите Swift-генератор и соответствующий GIF, затем
 проверьте внутренние ссылки. Для остальных схем обновляйте Mermaid source или
 обе SVG-темы — в зависимости от формата конкретной схемы.
+Шесть federation-пар не редактируйте вручную: меняйте
+`Scripts/generate_federation_diagrams.rb` и перегенерируйте обе темы.

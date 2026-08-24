@@ -73,7 +73,22 @@ Codex/Claude используется `./Scripts/agent_gate.sh`; автомат�
 другого агента.
 [Короткий checklist перед передачей изменений →](PlatformHandoff.md).
 
-## 3. Подключите package
+## 3. Выберите и подключите модуль
+
+Host app не обязан подключать всю платформу или umbrella package.
+Добавьте только тот public repository, чей product нужен target:
+
+| Нужен app | Repository | Product |
+|---|---|---|
+| Helpers для Color/fonts/keyboard/navigation | `broad-extensions-ios` | `BroadExtensions` |
+| Bootstrap, states, cache, retry, logging | `broad-core-ios` | `BroadCore` |
+| Purchase, entitlement, Adapty, RU Billing | `broad-monetization-ios` | `BroadMonetization` |
+| Готовые onboarding, AppFlow и paywall | `broad-ui-flows-ios` | `BroadUIFlows` |
+
+Зависимости между модулями придут транзитивно. Если app сам импортирует
+public API нижележащего модуля, добавьте и его product напрямую.
+Точные проверенные версии берите из
+[`Compatibility/current.yml`](../Compatibility/current.yml).
 
 ### Вариант A — из GitHub
 
@@ -83,29 +98,28 @@ Codex/Claude используется `./Scripts/agent_gate.sh`; автомат�
 File → Add Package Dependencies…
 ```
 
-Укажите URL:
+Укажите URL выбранного public repository:
 
 ```text
-https://github.com/BroadApps-official/BroadCore.git
+https://github.com/BroadApps-official/broad-extensions-ios
+https://github.com/BroadApps-official/broad-core-ios
+https://github.com/BroadApps-official/broad-monetization-ios
+https://github.com/BroadApps-official/broad-ui-flows-ios
 ```
-
-До появления version tag выберите dependency rule `Branch` и укажите
-`vers_niiaz`. Репозиторий приватный, поэтому GitHub-аккаунту
-разработчика нужен доступ к организации `BroadApps-official`.
 
 Если host сам является Swift Package:
 
 ```swift
 dependencies: [
     .package(
-        url: "https://github.com/BroadApps-official/BroadCore.git",
-        branch: "vers_niiaz"
+        url: "https://github.com/BroadApps-official/broad-core-ios",
+        from: "1.0.0"
     )
 ]
 ```
 
-После согласования version tag branch dependency заменяется на
-`from: "1.0.0"`.
+На время пошаговой миграции ещё не выпущенный модуль можно проверять
+через local checkout. Release app ссылается на SemVer tag, а не на migration branch.
 
 ### Вариант B — локальная checkout-папка
 
@@ -115,12 +129,9 @@ dependencies: [
 File → Add Package Dependencies… → Add Local…
 ```
 
-Выберите папку `BroadAppsIOSPlatform`, затем добавьте нужному app target продукты:
-
-- `BroadCore`;
-- `BroadMonetization`;
-- `BroadUIFlows`;
-- `BroadExtensions` — опционально, если нужны общие helpers.
+Выберите checkout одного module repository и добавьте его product нужному
+app target. Текущий `BroadAppsIOSPlatform` до завершения миграции можно
+добавить локально как временный integration checkout.
 
 Если host сам является Swift Package, используйте относительный путь:
 
@@ -129,16 +140,6 @@ dependencies: [
     .package(path: "../BroadAppsIOSPlatform")
 ]
 ```
-
-В обоих вариантах добавьте нужному iPhone target основные продукты:
-
-- `BroadCore`;
-- `BroadMonetization`;
-- `BroadUIFlows`.
-
-`BroadExtensions` не является скрытой зависимостью платформы. Добавляйте его
-отдельно только тем target, которым нужны Hex Color, custom fonts, dismiss
-keyboard или scoped swipe-back.
 
 Не копируйте исходники модулей в app target: иначе исчезнут проверяемые границы зависимостей.
 

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-labelledby="title desc">
+<title id="title">Порядок безопасной миграции</title>
+<desc id="desc">Переход к следующей фазе только после standalone и integration PASS</desc>
+<rect width="1200" height="540" rx="28" fill="#F8FAFC"/>
+<path d="M54 150H1146" stroke="#CBD5E1" stroke-width="1"/>
+<text x="54" y="70" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="34" font-weight="750">Порядок безопасной миграции</text>
+<text x="54" y="112" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17">Переход к следующей фазе только после standalone и integration PASS</text>
+<path d="M184.0 300H188.0" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M181.0 294L188.0 300L181.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="54.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="72.0" y="225" width="42" height="8" rx="4" fill="#64748B"/>
+<text x="72.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">BASELINE</text>
+<text x="72.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">legacy gate</text>
+<text x="72.0" y="371" fill="#64748B" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">01</text>
+<path d="M322.0 300H326.0" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M319.0 294L326.0 300L319.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="192.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="210.0" y="225" width="42" height="8" rx="4" fill="#F59E0B"/>
+<text x="210.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">CONTRACTS</text>
+<text x="210.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">ADR +</text>
+<text x="210.0" y="340" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">policy</text>
+<text x="210.0" y="371" fill="#F59E0B" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">02</text>
+<path d="M460.0 300H464.0" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M457.0 294L464.0 300L457.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="330.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="348.0" y="225" width="42" height="8" rx="4" fill="#8B5CF6"/>
+<text x="348.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">DOCS</text>
+<text x="348.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">public site</text>
+<text x="348.0" y="371" fill="#8B5CF6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">03</text>
+<path d="M598.0 300H602.0" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M595.0 294L602.0 300L595.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="468.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="486.0" y="225" width="42" height="8" rx="4" fill="#8B5CF6"/>
+<text x="486.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">EXTENSIONS</text>
+<text x="486.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">standalone</text>
+<text x="486.0" y="371" fill="#8B5CF6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">04</text>
+<path d="M736.0 300H740.0" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M733.0 294L740.0 300L733.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="606.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="624.0" y="225" width="42" height="8" rx="4" fill="#3B82F6"/>
+<text x="624.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">CORE</text>
+<text x="624.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">foundation</text>
+<text x="624.0" y="371" fill="#3B82F6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">05</text>
+<path d="M874.0 300H878.0" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M871.0 294L878.0 300L871.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="744.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="762.0" y="225" width="42" height="8" rx="4" fill="#10B981"/>
+<text x="762.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">MONETIZATION</text>
+<text x="762.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">Core dependency</text>
+<text x="762.0" y="371" fill="#10B981" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">06</text>
+<path d="M1012.0 300H1016.0" stroke="#CBD5E1" stroke-width="2"/>
+<path d="M1009.0 294L1016.0 300L1009.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<rect x="882.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="900.0" y="225" width="42" height="8" rx="4" fill="#EC4899"/>
+<text x="900.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">UI FLOWS</text>
+<text x="900.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">upper layer</text>
+<text x="900.0" y="371" fill="#EC4899" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">07</text>
+<rect x="1020.0" y="205" width="126.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
+<rect x="1038.0" y="225" width="42" height="8" rx="4" fill="#F59E0B"/>
+<text x="1038.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15" font-weight="750">CUTOVER</text>
+<text x="1038.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">clean-clone acceptance</text>
+<text x="1038.0" y="371" fill="#F59E0B" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">08</text>
+<text x="54" y="476" fill="#64748B" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="11" letter-spacing="1.6">BROADAPPS IOS · PUBLIC MODULE ARCHITECTURE</text>
+<circle cx="1134" cy="472" r="7" fill="#10B981"/><text x="1113" y="503" fill="#64748B" text-anchor="end" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10">CHECKED FLOW</text>
+</svg>

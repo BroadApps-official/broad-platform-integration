@@ -15,6 +15,11 @@ production-ready версии.
   [release policy](Documentation/ModuleReleasePolicy.md) и машиночитаемый
   `Compatibility/current.yml` фиксируют ownership, SemVer, порядок release
   снизу вверх и acceptance каждого шага;
+- публичный [BroadApps iOS Docs](https://broadapps-ios-docs.nkhsnv.chatgpt.site)
+  с поиском по Markdown, открытым чтением и `Edit this page`;
+- README превращён из монолитного справочника в короткую navigation-точку;
+  шесть воспроизводимых light/dark схем объясняют выбор модулей,
+  repositories, миграцию, release, cross-repo changes и docs pipeline;
 
 ### Почему платформа делится на repositories
 
