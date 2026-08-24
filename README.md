@@ -61,7 +61,7 @@ backend-ручки и product decisions остаются в конкретном
 | [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.0.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.0.0) | да, по надобности |
 | [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`1.0.0`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.0.0) | да, по надобности |
 | [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`1.0.0`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.0.0) | да, по надобности |
-| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate | нет, это catalog/evidence |
+| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`1.0.0`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/1.0.0) | нет, это catalog/evidence |
 | [`broad-docs`](https://github.com/BroadApps-official/broad-docs) | публичный сайт и cross-module guides | нет |
 
 > [!NOTE]

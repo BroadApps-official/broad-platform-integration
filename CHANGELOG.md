@@ -1,10 +1,9 @@
 # Changelog
 
-Все заметные изменения BroadApps iOS Platform фиксируются здесь до публикации
-релиза. Проект пока не имеет Git tag; раздел `Unreleased` не является обещанием
-production-ready версии.
+Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
+объяснением причин, проверок и границ каждого platform set.
 
-## Unreleased
+## 1.0.0 — 2026-08-25
 
 ### Added
 
