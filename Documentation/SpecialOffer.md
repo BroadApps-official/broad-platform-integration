@@ -1,225 +1,144 @@
-# Optional Special Offer
+# Special Offer: второй paywall после закрытия первого
 
-## Главное правило
+## Коротко
 
-Special offer — опциональная фича проекта, но при включении он всегда является
-вторым paywall. Он не заменяет обычный subscription paywall и не открывается
-напрямую при launch, из main или из демонстрационной карточки. Проект включает
-ветку только передачей `SpecialOfferConfiguration`.
-
-```swift
-let result = await resolveSpecialOffer(configuration: appConfiguration.specialOffer)
-```
-
-Если `appConfiguration.specialOffer == nil`, use case сразу вернёт:
-
-```swift
-.unavailable(.notConfigured)
-```
-
-До этого return он не обращается ни к одной зависимости. Не будет:
-
-- запроса placement;
-- network или cache read;
-- запуска таймера;
-- чтения или записи persistence;
-- fallback на `main`;
-- скрытого UI или default offer.
-
-## Ветка после закрытия initial paywall
-
-Если продукту нужен downsell-сценарий, host подключает resolver к закрытию
-обычного subscription paywall:
+Special Offer — опциональный второй paywall. Его единственный campaign gate —
+`special_offer = true` в Remote Config текущего Adapty payload.
 
 ```text
-обычный subscription paywall показан первым
-              ↓
-пользователь нажал крестик без покупки
-              ↓
-SpecialOfferConfiguration существует?
-              ↓
-resolver проверяет текущий payload, provenance и remote gate
-              ↓
-paywall разрешён → special offer → close или verified active → main
-нет / disabled / unavailable ───────────────────────────────→ main
+обычный subscription paywall
+          |
+          | крестик, покупка не подтверждена
+          v
+загрузка placement special_offer и всех его продуктов
+          |
+          | special_offer == true
+          v
+Special Offer с визуальным таймером 24:00:00 -> 00:00:00 -> снова
+          |
+          | close или подтверждённая покупка/restore
+          v
+main
 ```
 
-Purchase/restore первого paywall не вызывает resolver: после подтверждённого
-`active` flow идёт в `main`. Обычный paywall сначала действительно закрывает
-provider presentation. Пока
-resolver работает, host показывает отдельный loader и блокирует повторный close.
-`initialPaywallDismissed()` вызывается только после отрицательного результата
-resolver-а или после закрытия самого special offer. Благодаря этому policy
-`onceAfterOnboarding` фиксирует завершение всей ветки, а
-`everyColdLaunchWhileInactive` пропускает её только в текущем process.
+Special Offer не заменяет initial paywall, не показывается первым при запуске и
+не открывается напрямую из main. Демонстрационная карточка каталога также
+запускает всю пару: сначала обычный paywall, затем offer после крестика.
 
-Verified purchase/restore из special offer вызывает тот же
-`subscriptionDidBecomeActive()`, что и основной paywall. `pending`, cancellation,
-ошибка и непроверенное завершение premium не открывают.
+## Что включает и выключает offer
 
-Один экземпляр flow-view-model выполняет resolution не более одного раза за
-process. Отрицательный результат не показывает промежуточный «пустой» экран и
-не создаёт цикл `main → paywall → offer`.
+Для показа одновременно нужны три условия:
 
-`BroadAppTemplate` проверяет ветку безопасными аргументами:
+1. host передал `SpecialOfferConfiguration`;
+2. стандартный loader вернул payload нужного placement с продуктами;
+3. текущий provider payload содержит валидный `special_offer = true`.
 
-- `-special-offer-enabled` — offer открывается;
-- `-special-offer-disabled` — current remote gate ведёт прямо в `main`;
-- `-special-offer-main-fallback` — requested placement остаётся special offer,
-  resolved placement равен `main`;
-- `-special-offer-platform-cache` — platform cache не может включить offer;
-- `-special-offer-timed` — используется trusted fixture clock.
+Если host передал `nil`, resolver немедленно возвращает
+`.unavailable(.notConfigured)` и не трогает network, cache или UI:
 
-Эти аргументы не обходят AppFlow отдельным стартовым экраном: сначала открывается
-обычный subscription paywall, затем пользователь закрывает его крестиком и
-только после этого проверяется offer. Настоящая покупка не запускается.
+```swift
+let result = await resolveSpecialOffer(
+    configuration: appConfiguration.specialOffer
+)
+```
 
-Наглядная пара экранов находится в
-[главном README](../README.md#special-offer-sequence).
+Отсутствующий, невалидный или ложный флаг возвращает
+`.unavailable(.disabledByRemoteConfiguration)`. Прошлое `true` не
+восстанавливается из last-valid cache.
 
-## Три обязательных условия
-
-Даже когда host-конфиг есть, offer не показывается автоматически. Нужны:
-
-1. загруженный paywall payload;
-2. `payload.remoteConfiguration.specialOffer.isEnabled == true`;
-3. provenance разрешает provider-managed feature gates:
-   `.verifiedFreshRemote` или `.providerCacheFallbackPossible`.
-
-Отсутствующий, невалидный или выключенный remote gate даёт
-`.unavailable(.disabledByRemoteConfiguration)`. Прошлое валидное значение не
-воскрешает фичу: `LastValidRemoteConfigurationStore` намеренно не мерджит старый
-`specialOffer` с новым payload.
-
-| Provenance remote config | Обычный paywall | Special offer |
+| Provenance payload | Обычный paywall | `special_offer = true` может открыть offer |
 |---|---:|---:|
-| `.verifiedFreshRemote` | да | да, при enabled gate |
-| `.providerCacheFallbackPossible` | да | да, при enabled gate |
+| `.verifiedFreshRemote` | да | да |
+| `.providerCacheFallbackPossible` | да | да |
 | `.platformCache` | да | нет |
 | `.legacyUnqualified` | да | нет |
 
-Стандартный `AdaptyPaywallRepository` уже является правильным источником для
-campaign. Pinned Adapty SDK может прозрачно вернуть свой управляемый cache и не
-раскрывает origin в public API, поэтому repository честно ставит
-`.providerCacheFallbackPossible`. Это всё ещё текущий ответ Adapty и он может
-управлять `special_offer`. Собственный REST-транспорт и отдельный
-`PaywallRepositoryProtocol` для Special Offer не нужны.
+`.providerCacheFallbackPossible` — нормальный provenance текущего результата
+публичного Adapty SDK: SDK может прозрачно использовать свой managed cache, не
+раскрывая origin. `.platformCache` означает сохранённую самой
+BroadMonetization копию; она не имеет права заново включать кампанию.
 
-`.platformCache` означает другое: весь payload восстановила сама платформа из
-своего persistent cache. Такой payload можно безопасно показать как обычный
-paywall, но он не может заново включить кампанию.
+> Важно: разрешение Special Offer и разрешение RU Billing — две независимые
+> capability. Special Offer допускает `.providerCacheFallbackPossible`, а
+> Release-правило `ru_pay` остаётся строгим и требует `.verifiedFreshRemote`.
 
-Старые persisted payloads декодируются как `.legacyUnqualified`: их можно показать, но нельзя использовать как свежий campaign gate.
+## Загрузка и парсинг подписок
 
-## Где должен находиться remote gate
-
-Resolver принимает решение по фактически загруженному payload:
-
-- когда placement `special_offer` загрузился самостоятельно, валидный
-  `special_offer = true` нужен в Remote Config этого payload;
-- когда запрос `special_offer` завершился разрешённым fallback на `main`, gate
-  читается из полученного payload `main`;
-- флаг только на `main` не должен включать успешно загруженный самостоятельный
-  offer с отсутствующим или выключенным gate.
-
-## Проверка конкретного продукта без покупки
-
-Локальные fixture доказывают state machine, но не состояние Adapty Dashboard.
-Для конкретного приложения разработчик выполняет отдельный безопасный
-load/show-прогон без purchase/restore и фиксирует:
-
-1. requested и resolved placement;
-2. provenance и значение `special_offer` текущего payload;
-3. все полученные product ID без фильтрации и перестановки;
-4. присутствие каждого ожидаемого ID, например
-   `offer_week_4.99_nottrial`, если он указан в документе проекта.
-
-Отсутствующий ID — внешний `BLOCKED`, который проверяют владельцы Adapty и App
-Store Connect. Его нельзя компенсировать hardcoded строкой. Если продукт есть в
-payload, стандартный `AdaptyPaywallRepository` регистрирует соответствующий raw
-product при маппинге; отдельного публичного API для ручного наполнения registry
-не требуется. Полный финансовый путь подтверждается только разрешённой
-компанией отдельной приёмкой.
-
-## Placement и fallback
-
-Use case запрашивает placement из `SpecialOfferConfiguration`. Общий paywall loader
-может вернуть fallback payload с `main`.
-
-Fallback принимается только когда:
-
-- `origin.requestedPlacementID` всё ещё равен configured offer placement;
-- `origin.resolvedPlacementID == .main`;
-- remote payload на `main` содержит valid и enabled `specialOffer`;
-- provenance разрешает provider-managed gates (`.verifiedFreshRemote` или
-  `.providerCacheFallbackPossible`).
-
-Обычный main paywall без special-offer gate не может случайно стать discount-экраном.
-
-## Window и cooldown
-
-Эффективные durations выбираются так:
+Используется стандартная Adapty-последовательность:
 
 ```text
-remote value ?? host configuration value
+Adapty.getPaywall(placement)
+          v
+Adapty.getPaywallProducts(paywall)
+          v
+map каждого product occurrence 1:1 в исходном порядке
+          v
+сохранение пары mapped reference <-> raw Adapty product в registry
+          v
+парсинг Remote Config и создание PaywallPayload
+          v
+resolver проверяет special_offer и выдаёт presentationAuthorization
 ```
 
-Это не скрытые defaults: оба значения приходят из явной конфигурации.
-Единый `SpecialOfferDurationPolicy` принимает только конечные положительные
-durations не длиннее 10 лет. Это технический safety limit, намного больший
-реальной campaign. Present, но malformed/out-of-range или конфликтующая между
-aliases remote duration выключает offer целиком, а не превращает его в untimed и
-не включает host fallback.
-Persisted active window с недопустимым диапазоном также отклоняется fail-closed.
+Gate не стоит перед `getPaywallProducts`: сначала загружается полный каталог,
+затем принимается решение о показе. Платформа не создаёт словарь по product ID,
+не сортирует и не удаляет дубликаты. Поэтому два occurrence одного SKU остаются
+двумя строками, а покупка получает raw `AdaptyPaywallProduct`, соответствующий
+именно выбранному `ProductPresentationID`.
 
-Любой `windowDuration`, `cooldownDuration` или уже сохранённая временная граница
-требует `SpecialOfferClock` с подтверждённым server-synchronized временем. Default
-clock возвращает `.untrusted`, поэтому timed offer безопасно скрывается с
-`.unavailable(.untrustedTime)`. Нельзя возвращать `.trusted(Date())`: системные
-часы устройства изменяемы пользователем. Host adapter должен получить серверное
-время либо доказать rollback-safe синхронизацию. `trusted(_:)` сразу связывает
-server `Date` с текущим `ContinuousClock.Instant`; эту reading нужно создать в
-момент получения серверного значения. Любые последующие `await` на persistence
-или lifecycle вычитаются из countdown. Если deadline прошёл во время сохранения,
-offer fail-closed не передаётся UI.
+Отдельный REST-запрос, кастомный paywall repository и ручное наполнение product
+registry не нужны. Ожидаемый SKU нельзя хардкодить как замену provider product:
+если его нет в ответе, это проблема конфигурации Adapty/App Store Connect.
 
-| Состояние | Что делает resolver |
-|---|---|
-| `eligible` | Создаёт active window, если configured duration есть |
-| `active` | Возвращает paywall до `expiresAt` |
-| `expired` | Оставляет offer завершённым или переводит в cooldown |
-| `cooldown` | Не возвращает paywall до `until`, затем может начать новое window |
-| `ineligible` | Оставляет user недоступным для offer |
+## Таймер — только визуальный
 
-Если window duration нет ни в remote payload, ни в host config, resolver возвращает
-`eligible` вместе с paywall: предложение можно показать без countdown. Платформа не
-придумывает «24 часа» и не пишет бессрочное окно в persistence.
+Таймер не является сроком действия предложения и не участвует в eligibility:
 
-`PersistedSpecialOfferStateRepository` хранит только `active`, `expired` и `cooldown`.
-`eligible` и `unavailable` не пишутся. Snapshot содержит schema version и полный
-host config; смена placement/durations не подхватит старое окно.
+- стартует с `24:00:00` при создании presentation authorization;
+- уменьшается раз в секунду;
+- показывает `00:00:00`;
+- на следующем тике снова показывает `24:00:00`;
+- не скрывает paywall, не снимает выбор продукта и не запрещает purchase;
+- не использует `Date()`, server time, Keychain/UserDefaults или backend;
+- не переживает presentation как campaign state: новый показ получает новый
+  визуальный цикл.
 
-Persistence работает fail-closed. Ошибка read/write, corrupted entry, schema
-mismatch или неуспешный conditional cleanup возвращает
-`.unavailable(.persistenceUnavailable)`: offer скрывается, provider presentation
-освобождается, а новое окно не создаётся «в памяти». Repository обновляет memory
-state только после успешной записи; недоступный key остаётся недоступным до новой
-composition вместо опасного повторного старта countdown.
+Legacy-поля `windowDuration` и `cooldownDuration`, старые state repository и
+`SpecialOfferClock` оставлены source/decoding-compatible для существующих host
+apps, но стандартный resolver их не читает. Малформатное duration-поле больше не
+может перевести явный `special_offer = true` в false.
 
-## Подключение к общему paywall UI
+Исполняемая проверка точек цикла:
 
-Resolver уже вернул проверенный payload, поэтому повторно загружать placement перед
-показом не нужно. Передайте его как `initialPayload`, а выданную resolver-ом opaque
-`presentationAuthorization` — в `BroadPaywallConfiguration`. Authorization содержит
-конкретный `PaywallPresentationID` и optional monotonic countdown; UI применит remote
-offer metadata/timer только если оба относятся к одному presentation.
+```bash
+bash Scripts/check_special_offer_runtime_contract.sh
+```
+
+## Подключение
+
+Новая composition не требует clock или persistence:
 
 ```swift
-let result = await resolveSpecialOffer(configuration: appConfiguration.specialOffer)
+let resolveSpecialOffer = ResolveSpecialOfferUseCase(
+    loadPaywallUseCase: services.loadPaywall,
+    presentationLifecycle: services.paywallPresentationLifecycle
+)
+
+let specialOffer = SpecialOfferConfiguration(
+    placementID: .specialOffer
+)
+```
+
+При успешном resolution повторно загружать placement нельзя. Передайте готовый
+payload как `initialPayload`, а authorization — в UI configuration:
+
+```swift
+let result = await resolveSpecialOffer(configuration: specialOffer)
 
 guard let payload = result.paywall,
       let authorization = result.presentationAuthorization
 else {
+    // Продолжить в main без пустого промежуточного экрана.
     return
 }
 
@@ -234,83 +153,68 @@ let viewModel = PaywallViewModel(
 )
 ```
 
-Общий UI показывает только реально пришедшие `badge`, crossed price/value,
-multiplier и period text. Countdown появляется только когда
-`authorization.countdown` не `nil`. `expiresAt` остаётся server-time значением для
-диагностики, а runtime countdown и автоматическое истечение используют monotonic
-deadline. Любое отсутствующее поле скрывает только свой
-элемент. Самостоятельно конструировать/переносить authorization между payloads
-нельзя: только `SpecialOfferResolution.presentationAuthorization` доказывает
-enabled provider gate для этой презентации.
+Authorization связан с конкретным `PaywallPresentationID`; переносить его на
+другой payload нельзя. Lifecycle освобождает provider presentation при disabled
+gate, неверном origin, cancellation или после окончания UI.
 
-## Подключение
+## Placement и fallback
 
-```swift
-let stateStore = UserDefaultsKeyValueStore(
-    namespace: "dev.broadapps.my-app.monetization"
-)
-let stateRepository = PersistedSpecialOfferStateRepository(store: stateStore)
-let offerClock = SpecialOfferClock {
-    guard let serverDate = await serverTimeSource.currentDate() else {
-        return .untrusted
-    }
-    return .trusted(serverDate)
-}
-let resolveSpecialOffer = ResolveSpecialOfferUseCase(
-    loadPaywallUseCase: services.loadPaywall,
-    stateRepository: stateRepository,
-    presentationLifecycle: services.paywallPresentationLifecycle,
-    clock: offerClock
-)
-```
+Resolver запрашивает placement из `SpecialOfferConfiguration`. Fallback на
+`main` допустим только если:
 
-`serverTimeSource` — app-owned adapter к доверенному backend time endpoint или к
-rollback-detecting synchronization layer. Для offer без window/cooldown clock можно
-не передавать: resolver его не читает. Для timed offer отсутствие доверенного
-времени — ожидаемый fail-closed результат, а не повод перейти на device clock.
-Возвращайте `.trusted(serverDate)` сразу после получения значения: helper сам
-фиксирует парный monotonic instant, который переживает дальнейшие async-паузы.
+- requested placement остаётся configured Special Offer placement;
+- resolved placement равен `.main`;
+- именно полученный `main` payload содержит `special_offer = true`;
+- provenance разрешает Special Offer.
 
-Lifecycle обязателен: resolver освобождает payload при disabled gate, persistence
-failure, cooldown/ineligible, cancellation и других ветках, где presentation не
-передан UI. Concurrent callers одного placement не получают один provider handle:
-второй ждёт завершения первого resolution и затем загружает собственную
-presentation.
+Если самостоятельный `special_offer` placement успешно загрузился, флаг читается
+из него. Один флаг на `main` не включает другой успешно загруженный payload.
 
-Пример opt-in конфига без хардкода provider placement ID в UI:
+## Что показывает UI
 
-```swift
-let specialOffer = SpecialOfferConfiguration(
-    placementID: .specialOffer,
-    windowDuration: 6 * 60 * 60,
-    cooldownDuration: 7 * 24 * 60 * 60
-)
-```
+Remote display-поля остаются optional. Платформа не придумывает:
 
-Логический `PlacementID.specialOffer` приложение связывает с реальным provider ID в
-typed placement registry. Экран этот ID не знает.
-
-## Никаких придуманных цен
-
-Платформа не вычисляет и не подставляет:
-
-- зачёркнутую цену;
-- зачёркнутое числовое значение;
-- множитель цены;
+- зачёркнутую цену или числовое значение;
+- множитель;
 - текст периода;
-- бейдж.
+- badge.
 
-Каждое поле остаётся optional. UI показывает его только когда оно реально
-пришло в valid remote config. Product array передаётся без фильтрации, сортировки
-и дедупликации. UI обязан безопасно обработать любое количество, включая ноль.
+UI показывает только пришедшие metadata и полный массив products. Таймер входит
+в presentation authorization платформы и показывается независимо от optional
+metadata.
 
-## Ошибки и entitlement
+## Flow после действий пользователя
 
-Ошибка paywall, remote gate или persistence может только скрыть offer. Resolver не
-зависит от `EntitlementRepositoryProtocol`, не записывает entitlement cache и не может
-превратить техническую ошибку в active или inactive premium.
+- крестик initial paywall без подтверждённой покупки — запустить resolver;
+- disabled/unavailable offer — сразу перейти в main;
+- close Special Offer — перейти в main;
+- verified purchase/restore на любом paywall — вызвать общий
+  `subscriptionDidBecomeActive()` и перейти в main;
+- pending/cancel/error/unverified — не выдавать premium.
 
-Acceptance обязательно включает недоступный time source, полный и частичный
-rollback wall clock, relaunch с persisted active window и истечение deadline при
-открытом paywall. Во всех сомнительных случаях timed offer скрывается; перевод
-часов не увеличивает разрешённое время.
+`initialPaywallDismissed()` вызывается после отрицательного результата resolver
+или после закрытия Special Offer. Так policy первой презентации учитывает всю
+ветку и не создаёт loop `main -> paywall -> offer`.
+
+## Безопасная проверка без покупки
+
+Fixture-аргументы запускают настоящий порядок экранов:
+
+| Аргумент | Ожидание |
+|---|---|
+| `-special-offer-enabled` | после крестика первого paywall показывается offer |
+| `-special-offer-disabled` | после крестика открывается main |
+| `-special-offer-main-fallback` | offer приходит через разрешённый `main` fallback |
+| `-special-offer-platform-cache` | platform cache не включает offer |
+| `-special-offer-looping-timer` | виден цикл 24:00:00 -> 00:00:00 -> 24:00:00; offer остаётся активным |
+
+Для live Adapty без purchase/restore зафиксируйте:
+
+1. requested/resolved placement и provenance;
+2. `special_offer` именно текущего payload;
+3. число продуктов и product ID в provider order;
+4. переход `[FLOW] ... from=initial-paywall to=special-offer`;
+5. возможность выбрать продукт до и после визуального нуля таймера.
+
+Наглядная пара экранов находится в
+[главном README](../README.md#special-offer-sequence).

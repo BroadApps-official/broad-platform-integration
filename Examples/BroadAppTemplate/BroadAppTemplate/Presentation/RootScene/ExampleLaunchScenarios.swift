@@ -157,13 +157,17 @@ import UIKit
                         "Сымитировать fallback offer → main.",
                         "Offer не маскируется обычным main paywall."
                     ),
-                    .init("-special-offer-timed", "Добавить окно действия предложения.", "На offer показан fixture-таймер конфигурации."),
+                    .init(
+                        "-special-offer-looping-timer",
+                        "Показать визуальный цикл 24 часа.",
+                        "Счётчик идёт от 24:00:00 до 00:00:00, затем начинается снова и не закрывает offer."
+                    ),
                     .init("-ru-pay-provider-enabled", "Включить RU Pay из provider config.", "Paywall показывает разрешённые RU-методы."),
                     .init("-ru-pay-provider-disabled", "Выключить RU Pay из provider config.", "Явный false оставляет только Apple."),
                     .init(
-                        "-ru-pay-adapty-fallback-enabled",
-                        "Сымитировать Dashboard-generated fallback Adapty с ru_pay = true.",
-                        "Официальный provider fallback разрешает RU-методы; это fixture контракта, не настоящий Dashboard-файл."
+                        "-ru-pay-adapty-fallback-rejected",
+                        "Проверить ru_pay = true без доказанной свежести.",
+                        "Adapty managed fallback не разрешает RU-методы; остаётся только Apple."
                     ),
                     .init(
                         "-ru-pay-platform-cache",

@@ -77,12 +77,12 @@ production-ready версии.
 - актуальные Adapty-owned normal/cross-placement experiment contracts.
 - [analytics guide](Documentation/Analytics.md), canonical shared pipeline и
   bounded typed recording fixture с явным refresh в `BroadAppTemplate`.
-- provider-managed Remote Config contract для `special_offer` и показа
-  `ru_pay`, девять безопасных launch fixtures и обязательная
+- раздельные Remote Config capability для provider-managed `special_offer` и
+  verified-fresh `ru_pay`, девять безопасных launch fixtures и обязательная
   `check_remote_feature_contracts.sh` matrix без настоящих платежей.
 - typed Dashboard-generated Adapty fallback registration до SDK activation;
-  файл остаётся provider payload со своим `ru_pay` и не создаёт второй
-  app-owned Remote Config source;
+  файл остаётся provider payload для paywall/Special Offer, но не даёт
+  verified freshness для `ru_pay`;
 - process-local tri-state `ru_pay` для Debug-проверок и typed availability
   diagnostics; Release UI не содержит force-control, default store
   fail-closed следует Adapty, а host разблокирует override только
@@ -207,8 +207,8 @@ repository и точные Keychain service/account scopes только если
   раз; номер конкретного приложения и его execution status не хранятся в
   platform-owned отчётах;
 - README и все integration/acceptance guides уточняют, что `false` —
-  baseline только для неподключённой feature: рабочий `ru_pay = true` в Adapty
-  нельзя затирать шаблонным JSON;
+  baseline только для неподключённой feature: рабочий verified-fresh
+  `ru_pay = true` нельзя затирать шаблонным JSON;
 - runtime-проверка получила `stream_example_logs.sh`: helper выбирает booted
   iPhone Simulator, фильтрует safe OSLog по subsystem и понятно объясняет выбор
   UDID; README разделяет AppFlow `[FLOW]` и catalog-only analytics/experiment
@@ -250,12 +250,12 @@ repository и точные Keychain service/account scopes только если
   реальной API-ручкой, а недостающий функционал до реализации согласуется с
   тимлидом-разработчиком или проектным менеджером;
 - RU Billing gate приведён к production-правилу: обязательный
-  provider-managed Adapty `ru_pay = true` и дополнительно регион iPhone `RU/RUS` **или** русский
+  verified-fresh `ru_pay = true` и дополнительно регион iPhone `RU/RUS` **или** русский
   первый системный язык; App Store storefront больше не авторизует СБП/карту,
   а gate повторно проверяется непосредственно перед внешним checkout;
-- стандартный Adapty repository теперь напрямую поддерживает Special Offer и
-  RU feature gates без custom REST: platform cache по-прежнему не может включить
-  их, raw products остаются во внутреннем registry, а Remote Config никогда не
+- стандартный Adapty repository теперь напрямую поддерживает Special Offer
+  без custom REST; RU capability остаётся отдельной и strict, raw products остаются
+  во внутреннем registry, а Remote Config никогда не
   заменяет authoritative entitlement;
 - README прошёл внутренний cold-read и аудит навигации: добавлена цветная схема
   двух способов работы, точные переходы по меню Codex/Claude и Xcode, единые
@@ -325,6 +325,11 @@ repository и точные Keychain service/account scopes только если
 
 ### Fixed
 
+- Special Offer больше не блокируется provenance/state/clock до показа:
+  штатный Adapty flow сначала загружает все products, затем `special_offer = true`
+  выдаёт presentation authorization, а таймер остаётся визуальным 24-часовым циклом;
+- RU Billing capability отделена от Special Offer и снова требует
+  `.verifiedFreshRemote`; provider cache не включает `ru_pay`;
 - двойной `.disabled(!isEnabled)` на строке продукта paywall;
 - потеря variation attribution между paywall selection и purchase/RU return.
 

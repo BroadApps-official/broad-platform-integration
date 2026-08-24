@@ -26,9 +26,9 @@ view (`true/false/nil`) и не различает absent/invalid, поэтом�
 ## Стандартные aliases
 
 Для обычных display-полей parser проверяет aliases слева направо и использует первое
-присутствующее значение. RU billing, special-offer gate и timed durations —
-намеренные safety-исключения: parser проверяет **все** aliases, чтобы
-старый/дублирующий ключ не обошёл kill switch или safety limit.
+присутствующее значение. RU billing и special-offer gate — safety-исключения:
+parser проверяет **все** aliases, чтобы старый ключ не обошёл kill
+switch.
 
 | Typed field | Стандартные ключи | Допустимое значение |
 |---|---|---|
@@ -38,8 +38,8 @@ view (`true/false/nil`) и не различает absent/invalid, поэтом�
 | `closeDelay` | `closeDelay`, `close_delay`, `close_delay_seconds` | конечное число секунд `>= 0` |
 | `uiVariantID` | `ui_variant`, `uiVariant` | непустая строка |
 | special-offer gate | `specialOffer`, `special_offer`, `specialoffer`, `coupon`, `cupon`, `kupon` | bool/number/boolean string |
-| offer window | `specialOfferDurationHours`, `special_offer_duration_hours`, `couponDurationHours`, `coupon_duration_hours` | конечное число часов `> 0`, не более 10 лет |
-| offer cooldown | `specialOfferCooldownHours`, `special_offer_cooldown_hours`, `couponCooldownHours`, `coupon_cooldown_hours` | конечное число часов `> 0`, не более 10 лет |
+| legacy offer window | `specialOfferDurationHours`, `special_offer_duration_hours`, `couponDurationHours`, `coupon_duration_hours` | compatibility metadata; standard resolver игнорирует |
+| legacy offer cooldown | `specialOfferCooldownHours`, `special_offer_cooldown_hours`, `couponCooldownHours`, `coupon_cooldown_hours` | compatibility metadata; standard resolver игнорирует |
 | crossed price text | `specialOfferCrossedPriceText`, `special_offer_crossed_price_text`, `crossedPriceText`, `crossed_price_text` | непустая строка |
 | crossed numeric value | `specialOfferCrossedPriceValue`, `special_offer_crossed_price_value`, `crossedPriceValue`, `crossed_price_value` | decimal `> 0` |
 | price multiplier | `specialOfferCrossedPriceMultiplier`, `special_offer_crossed_price_multiplier`, `crossedPriceMultiplier`, `crossed_price_multiplier`, `old_price_multiplier` | decimal `> 0` |
@@ -65,11 +65,10 @@ false: 0, false, no, n, off, ""
 Таким образом `true + false` даёт `.disabled`, а `true + malformed` — `.invalid`.
 Fallback не исправляет conflict/malformed. Для остальных полей неизвестная строка,
 `NaN`, infinity, boolean вместо числа/строки, отрицательная задержка,
-нулевая/слишком большая duration,
-конфликтующие duration aliases и пустой display text считаются invalid. Обычное
-invalid поле даёт `nil`; present invalid
-special-offer duration дополнительно ставит `specialOffer.isEnabled == false`, чтобы typo не
-превратил timed campaign в бессрочную.
+нулевая/слишком большая legacy duration, конфликтующие duration aliases и
+пустой display text считаются invalid и дают `nil` для своего поля. Legacy
+duration не является gate и не может выключить валидное
+`special_offer = true`.
 
 Special-offer aliases используют ещё более простой fail-closed результат: любой
 `false` выключает campaign; malformed/conflict без полного набора valid `true` тоже
@@ -121,33 +120,35 @@ fresh field absent/invalid → сохранить предыдущее valid val
 - `resetAll()` используется при смене app identity/configuration;
 - initial absence без previous value остаётся `nil`.
 
-Финансовый `ruBillingGateDecision` и time-sensitive `specialOffer` — не обычные
+Финансовый `ruBillingGateDecision` и campaign gate `specialOffer` — не обычные
 retained fields. Они всегда берутся из текущего parsed payload и никогда не
 наследуют старый `.enabled`: прошлый gate не может воскресить оплату/кампанию.
 
 ## Какой cache может управлять feature flags
 
-| Provenance payload | Показать обычный paywall | Включить `special_offer` / показ `ru_pay` |
-|---|---:|---:|
-| `.verifiedFreshRemote` | да | да, при валидном положительном флаге |
-| `.providerCacheFallbackPossible` | да | да, при валидном положительном флаге |
-| `.platformCache` | да | нет |
-| `.legacyUnqualified` | да | нет |
+| Provenance payload | Обычный paywall | `special_offer` capability | `ru_pay` capability |
+|---|---:|---:|---:|
+| `.verifiedFreshRemote` | да | да | да |
+| `.providerCacheFallbackPossible` | да | да | нет |
+| `.platformCache` | да | нет | нет |
+| `.legacyUnqualified` | да | нет | нет |
 
-`providerCacheFallbackPossible` — текущий результат стандартного Adapty SDK. SDK
-сам управляет своей cache policy, а платформа не подменяет его ответ старым
-payload. `platformCache` — сохранённая платформой копия всего paywall; она годится
-для безопасного offline UI, но не для повторного включения удалённой функции.
+`providerCacheFallbackPossible` — текущий результат стандартного Adapty SDK. Он
+достаточен для визуального Special Offer, но не доказывает network freshness
+для RU Billing. `platformCache` — сохранённая платформой копия всего paywall;
+она годится только для безопасного offline UI.
 
 Dashboard-generated fallback-файл Adapty регистрируется через
-`Adapty.setFallback(fileURL:)` до активации SDK. Это всё ещё provider
-payload, поэтом `ru_pay` берётся из самого файла. Не редактируйте
-файл вручную и не подменяйте его собственным JSON. После изменения
-Dashboard хост обновляет tracked/bundled fallback по процедуре проекта.
+`Adapty.setFallback(fileURL:)` до активации SDK. Он сохраняет products, variation и
+Remote Config для paywall/Special Offer, но не может авторизовать RU Billing.
 
 Эти флаги разрешают только показать функцию. Они не подтверждают подписку,
 premium, токены или успешный RU-платёж: финансовый результат всегда проверяет
 authoritative entitlement source.
+
+Special Offer и RU Billing получают authority через разные typed
+capability. Special Offer допускает provider-managed payload, RU Billing — только
+доказанно свежий remote payload.
 
 ## Special offer — намеренное исключение
 
@@ -164,26 +165,27 @@ valid gate = true → enabled, остальные поля optional
 
 Host-level `SpecialOfferConfiguration?` — ещё более ранний gate:
 
-- `nil` — не загружать placement, не читать remote config, не запускать cache/timer/UI;
+- `nil` — не загружать placement, не читать remote config и не запускать UI;
 - non-`nil` — resolver может загрузить placement, но enabled gate и provenance,
-  разрешающий provider-managed flags, всё равно обязательны.
+  разрешающий Special Offer, всё равно обязательны.
 
 Если special-offer placement ушёл на fallback `.main`, offer допустим только
 когда реально загруженный payload `.main` содержит валидный enabled block.
-Стандартные `.verifiedFreshRemote` и `.providerCacheFallbackPossible` разрешают
-provider-managed flags. `.platformCache` и `.legacyUnqualified` их не разрешают.
+Для Special Offer `.verifiedFreshRemote` и `.providerCacheFallbackPossible` разрешены;
+`.platformCache` и `.legacyUnqualified` его не разрешают.
 Для кампании используется обычный `AdaptyPaywallRepository`: собственный Adapty
 REST или отдельный repository не требуется.
 
-Если gate enabled, но effective window duration отсутствует, resolver возвращает
-`.eligible` с paywall. Это валидный offer без countdown, а не configuration error.
-Если duration/cooldown есть, remote config сам по себе недостаточен: resolver также
-требует trusted `SpecialOfferClock`; device `Date()` не считается authorization.
+При `special_offer = true` resolver возвращает `.eligible` с готовым paywall.
+`windowDuration`, `cooldownDuration`, persisted state и trusted clock не участвуют
+в eligibility. Authorization всегда содержит визуальный цикл
+`24:00:00 -> 00:00:00 -> 24:00:00`, который не закрывает offer.
 Готовый payload передаётся через `PaywallViewModel(initialPayload:)`, а
 `SpecialOfferResolution.presentationAuthorization` — через
 `BroadPaywallConfiguration.specialOfferAuthorization`. Optional badge/crossed
 text или value/multiplier/period скрываются по одному, если их нет. Countdown
-строится только из authorization, привязанной к тому же presentation.
+строится только из authorization, привязанной к тому же presentation,
+и не является remote campaign timer.
 
 [Полный lifecycle special offer →](SpecialOffer.md)
 
@@ -206,24 +208,22 @@ Remote field — только одно из трёх условий:
 
 ```text
 host feature enabled
-AND current Adapty/provider payload has ru_pay == true
+AND verified-fresh remote payload has ru_pay == true
 AND (iPhone region == RU/RUS OR first system language starts with ru)
 ```
 
-Decision `.enabled` может авторизовать billing только когда payload provenance
-разрешает provider-managed gates. Для стандартного Adapty-пути это
-`.providerCacheFallbackPossible`; `.verifiedFreshRemote` остаётся допустимым для
-host transport, который действительно умеет доказать network origin.
+Decision `.enabled` может авторизовать billing только при provenance
+`.verifiedFreshRemote`. Стандартный `AdaptyPaywallRepository` ставит
+`.providerCacheFallbackPossible`, поэтому его положительный `ru_pay` не включает RU methods.
 
-`.absent`, `.disabled` и `.invalid` всегда fail-closed. Provider-managed `false`
-безопасно работает как kill switch. Значение `true` из собственного
-`.platformCache` или legacy payload не включает RU methods. Host fallback без
-явного `ru_pay = true` не поддерживается.
+`.absent`, `.disabled` и `.invalid` всегда fail-closed. Любой valid `false`
+безопасно работает как kill switch. `true` из provider cache, Dashboard fallback,
+`.platformCache` или legacy payload не включает RU methods.
 
 ### Production и Debug
 
 ```text
-Release -> Adapty network / SDK cache / Dashboard fallback -> ru_pay
+Release -> verified-fresh remote payload -> ru_pay
 Debug   -> Как в Adapty (default) / Включить / Выключить
 ```
 
@@ -284,15 +284,15 @@ config не содержит второй cohort authority.
 - [ ] отсутствие всех offer keys даёт `specialOffer == nil`;
 - [ ] offer display key без gate даёт disabled, а не enabled;
 - [ ] все special-offer gate aliases проверяются; false/malformed/conflict выключают offer;
-- [ ] все duration/cooldown aliases валидны и совпадают; malformed/out-of-range/conflict выключает offer;
+- [ ] legacy duration/cooldown не влияют на `special_offer = true` и на визуальный 24-часовой цикл;
 - [ ] удаление offer gate не восстанавливает прошлую кампанию;
 - [ ] fallback `.main` без valid enabled offer gate не включает special offer;
 - [ ] absent RU gate при default policy не показывает RU methods;
-- [ ] все RU aliases true + provider-managed provenance → RU gate enabled;
+- [ ] все RU aliases true + `.verifiedFreshRemote` → RU gate enabled;
 - [ ] любой false alias → disabled, даже рядом с true/malformed;
 - [ ] true + malformed без false → invalid и fail-closed;
-- [ ] Dashboard fallback зарегистрирован до Adapty activation и читает свой `ru_pay`;
-- [ ] unqualified/platform-cache `.enabled` не авторизует RU;
-- [ ] Debug force-on/off работает только в Debug, а Release следует Adapty;
+- [ ] Dashboard fallback зарегистрирован до Adapty activation, но не авторизует RU;
+- [ ] provider-cache/unqualified/platform-cache `.enabled` не авторизует RU;
+- [ ] Debug force-on/off работает только в Debug, а Release сохраняет strict provenance gate;
 - [ ] backend отклоняет checkout при закрытой feature даже после Debug force-on;
 - [ ] unknown UI variant переходит на app default без crash.

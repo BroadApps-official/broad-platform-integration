@@ -71,15 +71,13 @@ struct BroadSpecialOfferMetadataView: View {
         if let countdownAuthorization {
             TimelineView(.periodic(from: .now, by: 1)) { _ in
                 let remaining = countdownAuthorization.remainingTimeInterval
-                if remaining > 0 {
-                    let value = Self.durationText(remaining)
-                    Text(value)
-                        .font(theme.typography.productDetail)
-                        .foregroundStyle(theme.palette.secondaryText)
-                        .monospacedDigit()
-                        .accessibilityLabel(copy.countdownAccessibilityLabel)
-                        .accessibilityValue(value)
-                }
+                let value = Self.durationText(remaining)
+                Text(value)
+                    .font(theme.typography.productDetail)
+                    .foregroundStyle(theme.palette.secondaryText)
+                    .monospacedDigit()
+                    .accessibilityLabel(copy.countdownAccessibilityLabel)
+                    .accessibilityValue(value)
             }
         }
     }
@@ -89,7 +87,7 @@ struct BroadSpecialOfferMetadataView: View {
             || crossedValueText != nil
             || configuration.priceMultiplier != nil
             || configuration.periodText != nil
-            || countdownAuthorization?.isExpired == false
+            || countdownAuthorization != nil
     }
 
     private var crossedValueText: String? {

@@ -544,7 +544,7 @@ let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 
 ### RU billing нужен
 
-Eligibility требует host opt-in, `ru_pay = true` из текущего provider-managed
+Eligibility требует host opt-in, `ru_pay = true` из `.verifiedFreshRemote`
 payload и хотя бы один признак iPhone: регион `RU/RUS` **или** первый системный язык с префиксом `ru`. Remote
 decision различает absent/enabled/disabled/invalid: отсутствующий, false,
 malformed или conflicting флаг выключает RU. Platform-cache/legacy enabled не
@@ -552,7 +552,7 @@ malformed или conflicting флаг выключает RU. Platform-cache/lega
 [Настройка RU billing](RUBilling.md).
 
 В Release не задавайте локальный default/override для `ru_pay`: его источником
-остаётся Adapty. Debug-only tri-state переключатель нужен только для
+должен быть host-controlled verified-fresh transport. Debug-only tri-state переключатель нужен только для
 воспроизводимой проверки UI/gate и не обходит backend/entitlement.
 
 Production adapters собирайте через `RUBillingCompositionFactory`: сначала `makeEntitlementRegistration()` добавляется в общий engine, затем `makeServices(refreshEntitlement:operationGate:)` получает уже созданный engine и тот же financial operation gate, что Apple purchase/restore. Это разрывает цикл «RU source нужен engine → RU checkout нужен refresh engine» и не позволяет Apple/RU оплатам идти параллельно.
@@ -684,20 +684,15 @@ let viewModel = PaywallViewModel(
 )
 ```
 
-`.eligible` тоже содержит payload, если campaign включена, но duration не задана.
-Тогда `presentationAuthorization.expiresAt == nil`, countdown скрыт, а
-badge/crossed value/multiplier/period отображаются только при наличии valid remote
-полей. Authorization непрозрачно связан с конкретным presentation, поэтому нельзя
-перенести remote metadata или timer на другой paywall payload. Ошибка persistence
-возвращает `.unavailable(.persistenceUnavailable)` и скрывает offer.
+При валидном `special_offer = true` result содержит `.eligible`, payload и
+authorization с визуальным таймером. Таймер идёт от `24:00:00` до
+`00:00:00`, затем снова начинает с `24:00:00`. Он не является
+expiration, не скрывает offer и не блокирует purchase.
 
-Для timed special offer (`windowDuration`, `cooldownDuration` или persisted timed
-state) при сборке `ResolveSpecialOfferUseCase` обязательно передайте
-`SpecialOfferClock`, который возвращает только подтверждённое server-synchronized
-время. Default `.untrusted` специально скрывает timed offer; никогда не оборачивайте
-`Date()` в `.trusted`. Возвращённый server Date сразу связывается с monotonic
-instant, поэтому последующий async save не добавляет время. После authorization UI
-использует тот же deadline, и изменение системных часов не продлевает countdown. Полный recipe находится в
+`windowDuration`, `cooldownDuration`, state repository и `SpecialOfferClock` в
+стандартной composition не нужны. Authorization непрозрачно связан с
+конкретным presentation, поэтому нельзя перенести remote metadata или timer
+на другой paywall payload. Полный recipe находится в
 [Special Offer](SpecialOffer.md).
 
 ## 11. Проверьте интеграцию
@@ -722,12 +717,12 @@ instant, поэтому последующий async save не добавляе�
 - [ ] token и RU backend используют стабильный app account между переустановками;
 - [ ] offline/timeout показывают конечный Retry UI; ambiguous purchase/checkout не повторяется автоматически;
 - [ ] special offer `nil` не создаёт никакой работы;
-- [ ] presentable special offer передаёт `presentationAuthorization`, persistence fail-closed;
-- [ ] timed special offer получает trusted server clock; unavailable/rollback time скрывает offer;
-- [ ] RU CTA требует provider-managed `ru_pay = true` и RU region или русский системный язык;
-- [ ] Release читает `ru_pay` только из Adapty; force-control и
+- [ ] presentable special offer передаёт `presentationAuthorization` того же payload;
+- [ ] визуальный Special Offer timer зациклен на 24 часа и не меняе eligibility;
+- [ ] RU CTA требует verified-fresh `ru_pay = true` и RU region или русский системный язык;
+- [ ] Release читает `ru_pay` только из verified-fresh source; force-control и
   `allowsManualOverrides: true` находятся только под host `#if DEBUG`;
-- [ ] если нужен first-launch offline, Dashboard-generated fallback вложен в bundle и проверен без сети;
+- [ ] Adapty fallback не считается freshness proof для RU Billing;
 - [ ] backend kill switch и authoritative entitlement не зависят от Debug override;
 - [ ] real credentials и PII отсутствуют в source/cache/logs/analytics;
 - [ ] Debug Status объясняет результат без Console, а safe runtime-поток

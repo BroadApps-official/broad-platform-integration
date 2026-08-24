@@ -32,7 +32,7 @@ platform-owned `AgentChecks`.
 | Reference | Однозначный read-only пример, если он нужен | `BLOCKED`, владелец — tech lead/PM |
 | Backend | Method, endpoint, request/response, auth, errors и retry | `BLOCKED`, владелец — backend owner |
 | Монетизация | Policy, placements, products, access level и optional flow | `BLOCKED`, владелец — product/tech lead |
-| RU Billing | `ru_pay` в Adapty, backend kill switch, catalog/auth/legal и optional Dashboard fallback | `BLOCKED`, если заменено Swift-default/fixture |
+| RU Billing | Verified-fresh `ru_pay`, backend kill switch, catalog/auth/legal | `BLOCKED`, если нет freshness proof или оно заменено fixture |
 | Support/legal | Email, legal URL и обязательные тексты | `BLOCKED`, владелец — PM/legal |
 
 Для token recovery app contract показывает обычный authenticated endpoint,

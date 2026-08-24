@@ -182,6 +182,12 @@ subscription paywall** и не открывается напрямую при з
 приложения. Механика перехода при этом одинакова: карточка Special Offer в
 `BroadAppTemplate` тоже воспроизводит оба шага и не открывает offer напрямую.
 
+> [!IMPORTANT]
+> **Gate — только `special_offer = true` в текущем Adapty payload.**
+> Таймер второго экрана чисто визуальный: `24:00:00 -> 00:00:00 ->
+> 24:00:00`. Ноль не закрывает offer и не блокирует выбор/покупку.
+> Server clock, persisted window и cooldown для этого flow не нужны.
+
 Debug-значение `broadapps.app-flow.root` показывает route и текущую presentation
 отдельно:
 
@@ -851,9 +857,12 @@ branch: vers_niiaz
 > проверки доступа со статусом `active`.
 
 ```text
-Adapty paywall
-  ├─ продукты → внутренний registry → purchase
-  └─ Remote Config → special_offer / ru_pay → только показ функции
+Adapty.getPaywall
+  → Adapty.getPaywallProducts
+  → 1:1 mapping без словаря, сортировки или дедупликации
+  → exact raw-product registry
+  → Remote Config gate
+  → resolver и UI
 
 purchase / restore / RU return → entitlement refresh → active → premium
 ```
@@ -863,20 +872,21 @@ purchase / restore / RU return → entitlement refresh → active → premium
 > paywall прямо из сети или прозрачно взять его из собственного внутреннего
 > кеша либо из заранее зарегистрированного Dashboard fallback. Во всех
 > случаях это один ответ Adapty с теми же продуктами, variation и
-> Remote Config. Платформе не нужно определять, каким из этих provider-путей SDK
-> получил данные, и не нужно делать второй REST-запрос.
+> Remote Config. Этого достаточно для Special Offer без второго REST-запроса,
+> но не для финансового `ru_pay`, который требует доказанной свежести.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/remote-config-cache-flow-dark.svg">
   <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/remote-config-cache-flow-light.svg">
-  <img alt="Adapty network, SDK cache и Dashboard fallback могут управлять special offer и RU Billing; кеш BroadMonetization — нет; force-on/off доступен только в Debug" src="Documentation/Assets/README/remote-config-cache-flow-light.svg" width="100%">
+  <img alt="Adapty provider payload может включить Special Offer; RU Billing требует verified-fresh remote; кеш BroadMonetization не включает ни одну функцию" src="Documentation/Assets/README/remote-config-cache-flow-light.svg" width="100%">
 </picture>
 
-| Откуда пришёл paywall | Можно показать обычные продукты | Можно включить `special_offer` / `ru_pay` |
-|---|---:|---:|
-| Текущий ответ SDK Adapty: сеть или внутренний кеш Adapty | Да | Да, только при явном валидном `true` |
-| Dashboard-generated fallback, зарегистрированный через Adapty SDK | Да | Да, по тому же `ru_pay` из файла Adapty |
-| Сохранённая копия из собственного кеша `BroadMonetization` | Да | **Нет** — положительный флаг из такой копии не используется |
+| Откуда пришёл paywall | Обычные products | `special_offer` | `ru_pay` |
+|---|---:|---:|---:|
+| Текущий ответ SDK Adapty: сеть или внутренний кеш Adapty | Да | По своему `true` | **Нет** без `.verifiedFreshRemote` |
+| Dashboard-generated fallback, зарегистрированный через Adapty SDK | Да | По `special_offer` из файла | **Нет** |
+| Host-controlled verified-fresh remote payload | Да | По своему `true` | По `ru_pay = true` |
+| Сохранённая копия из собственного кеша `BroadMonetization` | Да | **Нет** | **Нет** |
 
 Это различие относится только к **показу функции**. Ни один Remote Config и ни
 один кеш не подтверждают покупку, подписку или баланс токенов.
@@ -889,8 +899,8 @@ purchase / restore / RU return → entitlement refresh → active → premium
 
 | Сборка | Откуда берётся `ru_pay` | Ручное переключение |
 |---|---|---|
-| Release | Только payload Adapty: network, SDK cache или Dashboard fallback | Нет |
-| Debug, `Как в Adapty` | Тот же payload Adapty | Нет |
+| Release | Только verified-fresh remote payload | Нет |
+| Debug, `Как в Adapty` | Тот же strict provenance gate | Нет |
 | Debug, `Включить` / `Выключить` | Временный process-local override | Да; только для UI/gate-проверки |
 
 Debug force-on не меняет Adapty, не сохраняется между запусками и не
@@ -923,9 +933,9 @@ Adapty Remote Config: ru_pay = true
 
 > [!IMPORTANT]
 > `ru_pay = true` обязателен. Регион России или русский язык сами по себе RU
-> Billing не включают. Разрешение читается из текущего ответа SDK Adapty — неважно,
-> пришёл он из сети, внутреннего кеша или Dashboard fallback самого Adapty. Сохранённая копия из
-> кеша `BroadMonetization` такое разрешение не выдаёт. Если флаг отсутствует,
+> Billing не включают. Положительное разрешение также требует
+> `.verifiedFreshRemote`. Внутренний кеш/Dashboard fallback Adapty и кеш
+> `BroadMonetization` такое разрешение не выдают. Если флаг отсутствует,
 > равен `false` или имеет неверный формат, платформа безопасно оставляет только
 > оплату через Apple.
 
@@ -1580,6 +1590,8 @@ placement недоступен, загрузка повторяется чере
    - локальная копия `BroadMonetization` RU Billing не включает;
    - placement `special_offer` получает собственный Remote Config с
      `special_offer = true`;
+   - стандартный resolver не требует offer duration/server clock:
+     его timer — циклическая визуальная метаданная;
    - gate из `main` используется только при фактическом fallback loader-а на
      `main`.
 4. Не фильтруйте, не сортируйте и не объединяйте продукты, которые вернул
@@ -1612,9 +1624,9 @@ placement недоступен, загрузка повторяется чере
 }
 ```
 
-Если RU Billing уже настроен и разрешён, в этом же payload будет
+Если RU Billing уже настроен и разрешён, verified-fresh payload содержит
 `"ru_pay": true`. Переключаемый локальный режим для этого флага есть
-только в Debug-каталоге примера; Release всегда следует Adapty.
+только в Debug-каталоге примера; Release сохраняет strict provenance gate.
 
 Проверка выполняется внутри платформы дважды: перед показом СБП/карты и ещё раз
 перед открытием внешней оплаты. Разработчик не пишет свою проверку языка или
@@ -2234,10 +2246,10 @@ bash Scripts/stream_example_logs.sh
 | `-special-offer-disabled` | Явный `special_offer = false` оставляет кампанию закрытой |
 | `-special-offer-platform-cache` | Даже `special_offer = true` из кеша `BroadMonetization` не открывает кампанию |
 | `-special-offer-main-fallback` | Placement кампании недоступен, резервный `main` корректно открывает её и сохраняет источник показа |
-| `-special-offer-timed` | Кампания с доверенным серверным временем показывает трёхминутный таймер |
-| `-ru-pay-provider-enabled` | `ru_pay = true` из текущего ответа Adapty и российский контекст iPhone показывают Apple, СБП и карту |
+| `-special-offer-looping-timer` | Таймер идёт 24:00:00 → 00:00:00 → 24:00:00 и не закрывает offer |
+| `-ru-pay-provider-enabled` | Verified-fresh fixture с `ru_pay = true` и российский контекст iPhone показывают Apple, СБП и карту |
 | `-ru-pay-provider-disabled` | Явный `ru_pay = false` из provider-like payload оставляет только Apple |
-| `-ru-pay-adapty-fallback-enabled` | Contract fixture имитирует Dashboard-generated fallback Adapty с `ru_pay = true`; это не замена live offline smoke |
+| `-ru-pay-adapty-fallback-rejected` | `ru_pay = true` из Adapty managed fallback не включает RU methods без доказанной свежести |
 | `-ru-pay-platform-cache` | Даже `ru_pay = true` из кеша `BroadMonetization` оставляет только Apple |
 
 > [!NOTE]
@@ -2742,7 +2754,7 @@ BroadApps iOS Platform agent gate passed.
 | Payload / ответ провайдера | Один набор данных paywall: продукты, variation и Remote Config, которые пришли вместе |
 | Текущий ответ SDK Adapty | Paywall, который сейчас вернул SDK: напрямую из сети или из внутреннего кеша самого Adapty |
 | Внутренний кеш Adapty | Кеш внутри SDK Adapty. Платформа не загружала эту копию сама, поэтому продукты и Remote Config остаются одной поставкой Adapty |
-| Dashboard fallback Adapty | JSON, скачанный из Dashboard и зарегистрированный SDK до activation. Это provider payload со своим `ru_pay`, а не Swift-default |
+| Dashboard fallback Adapty | JSON, скачанный из Dashboard и зарегистрированный SDK до activation. Это provider payload для paywall/Special Offer, но не freshness proof для `ru_pay` |
 | Кеш `BroadMonetization` / кеш платформы | Сохранённая самой платформой копия для безопасного показа обычного paywall без сети; она не может включить `special_offer` или `ru_pay` |
 | Access level / entitlement | Подтверждённый ответ о том, имеет ли пользователь premium-доступ |
 | Purchase / restore | Новая покупка / восстановление ранее совершённой Apple-покупки |

@@ -279,8 +279,8 @@ entitlement refresh, server token reconciliation и RU subscription status до�
 - invalid поле не превращается в `false/0` автоматически;
 - RU parser проверяет все aliases: любой false → `.disabled`, malformed/conflict
   без false → `.invalid`, ни одного alias → `.absent`;
-- `.providerCacheFallbackPossible` от стандартного Adapty repository авторизует
-  текущий `ru_pay`; `.platformCache` и legacy `.enabled` не авторизуют RU methods;
+- `.providerCacheFallbackPossible` от стандартного Adapty repository не
+  авторизует `ru_pay`; RU methods требуют `.verifiedFreshRemote`;
 - special offer не наследует previous gate;
 - unknown UI variant использует app default;
 - remote hard policy не может сделать empty/error экран без выхода.
@@ -297,9 +297,10 @@ entitlement refresh, server token reconciliation и RU subscription status до�
 let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 ```
 
-Не создавайте пустой config «на будущее»: `nil` гарантирует ноль запросов/cache/timer/UI.
+Не создавайте пустой config «на будущее»: `nil` гарантирует ноль запросов и UI.
 
-Если feature есть, мигрируйте placement, gate, window/cooldown и optional display fields. Старые hardcoded crossed prices удалите.
+Если feature есть, мигрируйте placement, gate и optional display fields. Старые
+hardcoded crossed prices удалите.
 Оставьте стандартную цепочку
 `AdaptyPaywallRepository → ResolveSpecialOfferUseCase → PaywallViewModel`.
 Собственный Adapty REST/fresh-remote repository не нужен: текущий
@@ -307,19 +308,13 @@ provider-managed payload разрешает gate, а raw products остаютс
 registry для exact purchase attribution. Platform cache может показать обычный
 paywall, но не включает кампанию.
 
-Resolver может вернуть `.eligible + paywall`, когда duration отсутствует:
-показывайте offer без countdown. Передавайте только выданный
+Resolver возвращает `.eligible + paywall`, когда текущий payload содержит
+`special_offer = true`. Передавайте только выданный
 `SpecialOfferResolution.presentationAuthorization` в
 `BroadPaywallConfiguration.specialOfferAuthorization`, а уже загруженный payload —
-в `PaywallViewModel(initialPayload:)`. Это не создаёт второй placement request и
-не даёт metadata/timer перейти на другой presentation. Любая persistence failure
-скрывает offer fail-closed.
-
-Если есть window/cooldown, добавьте `SpecialOfferClock` поверх доверенного server
-time source. Не переносите старые сравнения с `Date()`: при отсутствии trusted
-reading resolver возвращает `.unavailable(.untrustedTime)`. Создавайте
-`.trusted(serverDate)` сразу после получения server time: reading сохраняет парный
-monotonic instant, и открытый countdown не продлевается async-задержками.
+в `PaywallViewModel(initialPayload:)`. Таймер циклический 24 часа и не требует
+server time, window/cooldown или persistence. При нуле он не скрывает offer и
+не блокирует покупку.
 
 ### RU billing
 
@@ -327,7 +322,7 @@ monotonic instant, и открытый countdown не продлевается a
 
 Если готова:
 
-- eligibility требует provider-managed `ru_pay = true` и RU-регион iPhone или русский первый системный язык;
+- eligibility требует verified-fresh `ru_pay = true` и RU-регион iPhone или русский первый системный язык;
 - absent/false/invalid/platform-cache `ru_pay` fail-closed;
 - catalog match typed/deterministic;
 - HTTPS endpoints и subject-bound auth;
@@ -413,7 +408,7 @@ Paywall provider lifecycle не переносите в analytics destination. V
 - [ ] stable app account/subject связывает token и RU ledger между установками;
 - [ ] offline/timeout дают конечный UI state; ambiguous financial result не запускается повторно до reconciliation;
 - [ ] all configured entitlement combinations проверены;
-- [ ] RU требует provider-managed `ru_pay = true` и RU region или русский первый системный язык;
+- [ ] RU требует verified-fresh `ru_pay = true` и RU region или русский первый системный язык;
 - [ ] special offer отсутствует через `nil` там, где не нужен;
 - [ ] remote config keys/defaults задокументированы;
 - [ ] analytics typed, дедуплицированы и без PII;

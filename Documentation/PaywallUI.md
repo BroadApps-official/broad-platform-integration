@@ -89,8 +89,8 @@ hard policy: disabled каталог не может запереть польз
 - `badge`, `crossedPrice/crossedValue`, `priceMultiplier` и `periodText` показываются только при наличии;
 - пропущенное поле скрывает только свой элемент;
 - countdown получает `SpecialOfferCountdownAuthorization` из verified resolution;
-- runtime expiry использует monotonic deadline; `expiresAt` нельзя сравнивать с device `Date()`;
-- без duration offer показывается без countdown;
+- countdown зациклен `24:00:00 -> 00:00:00 -> 24:00:00`;
+- ноль не скрывает metadata, не снимает selection и не блокирует CTA;
 - числа локализуются, но не вычисляются из цены продукта.
 
 Remote metadata и timer разрешены только когда
@@ -98,12 +98,9 @@ Remote metadata и timer разрешены только когда
 совпадает с текущим payload. Это не даёт cached/другой презентации унаследовать
 чужой special-offer gate.
 
-Когда monotonic deadline в `specialOfferAuthorization.countdown` наступил, ViewModel отменяет ещё не начатый
-checkout-resolution, скрывает offer metadata, снимает выбор продукта, блокирует
-CTA/строки без визуального dimming, показывает app-supplied expired message и
-делает close доступным. Уже начатая финансовая операция не отменяется и всё равно
-доходит до authoritative entitlement refresh. При отсутствии `countdown` задача
-таймера вообще не создаётся.
+Таймер обновляет только текст раз в секунду. Он не создаёт expiration task в
+`PaywallViewModel`; product selection, checkout methods и entitlement flow от него не
+зависят.
 
 `PaywallViewModel(initialPayload:)` позволяет передать payload, уже проверенный `ResolveSpecialOfferUseCase`, без повторного placement-запроса. Shown analytics и hard-close delay стартуют только при фактическом `onAppear`.
 
@@ -218,8 +215,8 @@ CTA сначала вызывает `ResolveCheckoutMethodsUseCaseProtocol` дл
 - `.failed` показывает только безопасный `AppError.userMessage`.
 
 RU billing не определяется самим UI. Sheet отображает только методы,
-разрешённые monetization use case после проверки `ru_pay = true` из текущего
-provider-managed payload и контекста iPhone: RU-регион **или** русский первый
+разрешённые monetization use case после проверки `ru_pay = true` из
+`.verifiedFreshRemote` payload и контекста iPhone: RU-регион **или** русский первый
 системный язык. Собственный platform cache не может включить методы. IP, timezone
 и App Store storefront не участвуют. Для СБП/карты sheet собирает обязательные
 offer/data-processing и recurring-charge consent, а также опциональный receipt

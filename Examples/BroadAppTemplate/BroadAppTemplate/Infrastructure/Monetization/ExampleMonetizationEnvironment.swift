@@ -125,18 +125,8 @@ struct ExampleMonetizationEnvironment {
         }
         return ResolveSpecialOfferUseCase(
             loadPaywallUseCase: services.loadPaywall,
-            stateRepository: ExampleSpecialOfferStateRepository(),
-            presentationLifecycle: services.paywallPresentationLifecycle,
-            clock: scenario == .specialOfferTimed ? fixtureTrustedClock : .untrusted
+            presentationLifecycle: services.paywallPresentationLifecycle
         )
-    }
-
-    private static var fixtureTrustedClock: SpecialOfferClock {
-        SpecialOfferClock {
-            // Fixed fixture server time: this is intentionally not device
-            // `Date()` and never leaves the example target.
-            .trusted(Date(timeIntervalSince1970: 1_800_000_000))
-        }
     }
 
     private static func makeServices(

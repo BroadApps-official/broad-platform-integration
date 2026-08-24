@@ -136,8 +136,9 @@ requested remote
 
 `PaywallPayload.remoteConfigurationProvenance` фиксирует `.verifiedFreshRemote`,
 `.providerCacheFallbackPossible`, `.platformCache` или `.legacyUnqualified`.
-Текущий Adapty/provider payload может управлять `special_offer` и показом
-`ru_pay`; payload из собственного cache платформы — нет.
+Текущий Adapty/provider payload может авторизовать Special Offer. RU Billing
+имеет отдельную capability и требует `.verifiedFreshRemote`; payload из
+собственного cache платформы не разрешает ни одну функцию.
 
 Стандартный Adapty-путь остаётся одной непрерывной цепочкой. Special Offer
 никогда не подменяет первый subscription paywall:
@@ -184,7 +185,15 @@ gate допускает только самый новый sequence; более 
 
 ## 4. Products: строгий контракт 1:1
 
-Для результата `Adapty.getPaywallProducts` выполняется только mapping:
+Канонический provider flow всегда идёт в таком порядке:
+
+```text
+Adapty.getPaywall -> Adapty.getPaywallProducts -> 1:1 mapping -> raw registry
+```
+
+Только после этого resolver функции, например Special Offer,
+решает, показывать ли готовый payload. Для результата
+`Adapty.getPaywallProducts` выполняется только mapping:
 
 ```text
 [provider product 0, provider product 1, provider product 2, ...]
@@ -250,7 +259,7 @@ Remote payload маппится в `RemotePaywallConfiguration`:
 Обычные отсутствующие поля могут сохранить последнее валидное значение **для того
 же placement**. RU decision и special offer — исключения: они не наследуются.
 Любой RU false alias даёт `.disabled`, malformed/conflict без false — `.invalid`.
-Positive `.enabled` требует provider-managed provenance; previous `true` никогда
+Для RU positive `.enabled` требует `.verifiedFreshRemote`; previous `true` никогда
 не применяется к новому absent/invalid payload.
 
 Aliases, типы и правила invalid values: [Remote Config](RemoteConfig.md).
@@ -363,7 +372,7 @@ Adapty profile можно добавить как Apple verifier только к
 RU billing — optional adapter chain, не автоматическая замена Apple:
 
 ```text
-host enabled + current provider-managed ru_pay = true
+host enabled + verified-fresh remote ru_pay = true
     + (iPhone region RU/RUS OR first system language starts with ru)
     → match exact RU catalog product
     → Apple / SBP / card methods
@@ -391,7 +400,7 @@ Host opt-in начинается с optional configuration:
 let specialOffer: SpecialOfferConfiguration? = appFeatures.specialOffer
 ```
 
-При `nil` resolver возвращает `.unavailable(.notConfigured)` до обращения к любой зависимости. Нет network, placement, cache, persistence, timer, fallback или UI.
+При `nil` resolver возвращает `.unavailable(.notConfigured)` до обращения к любой зависимости. Нет network, placement, cache, fallback или UI.
 
 Resolver вызывается только после крестика первого subscription paywall без
 покупки. Подтверждённые purchase/restore первого paywall сразу продолжают
@@ -403,16 +412,10 @@ Resolver вызывается только после крестика перв�
 Adapty REST/repository не нужен. При fallback решение принимает только реально
 загруженный `.main` payload. Display-поля остаются optional.
 
-Timed window/cooldown дополнительно требует app-owned `SpecialOfferClock` с
-server-synchronized/rollback-safe временем. Default clock возвращает `.untrusted`:
-device wall clock не может открыть или продлить offer. Trusted Date захватывается
-вместе с monotonic instant до persistence, а после resolution UI считает остаток
-по этому же deadline.
-
-Без effective window duration resolver возвращает `.eligible` и готовый `paywall`:
-campaign можно показать без countdown, не выдумывая duration. Presentable result
-всегда содержит opaque `presentationAuthorization`, привязанный к тому же
-`PaywallPresentationID`:
+`special_offer = true` — единственный campaign gate. Resolver не читает
+`windowDuration`, `cooldownDuration`, persisted state или clock. Presentable
+result всегда содержит opaque `presentationAuthorization`, привязанный к
+тому же `PaywallPresentationID`, и визуальный цикл 24 часа:
 
 ```swift
 guard let payload = resolution.paywall,
@@ -433,12 +436,12 @@ let viewModel = PaywallViewModel(
 ```
 
 `initialPayload` исключает повторный placement request. Только совпавшая authorization
-разрешает renderer-у прочитать offer metadata и запустить timer; перенос remote
-config на другой payload невозможен. Persistence read/write/corruption работает
-fail-closed: resolver возвращает `.persistenceUnavailable`, освобождает provider
-presentation и не показывает offer. Общий renderer показывает optional badge,
-crossed text/value, multiplier, period и countdown только при наличии
-соответствующего значения. [Special Offer guide →](SpecialOffer.md).
+разрешает renderer-у прочитать offer metadata и запустить визуальный timer;
+перенос remote config на другой payload невозможен. Таймер идёт от
+`24:00:00` до `00:00:00`, затем сбрасывается на `24:00:00` и не скрывает
+offer. Общий renderer показывает optional badge, crossed text/value,
+multiplier и period только при наличии соответствующего значения.
+[Special Offer guide →](SpecialOffer.md).
 
 ## 10. Experiments и analytics
 

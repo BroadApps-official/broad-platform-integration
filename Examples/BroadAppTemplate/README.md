@@ -174,10 +174,10 @@ fail-before-charge.
 | `-special-offer-disabled` | явный `special_offer = false`: кампания остаётся закрытой |
 | `-special-offer-platform-cache` | кеш `BroadMonetization` содержит `true`, но кампания остаётся закрытой |
 | `-special-offer-main-fallback` | placement кампании недоступен; Remote Config резервного `main` открывает её и сохраняет исходный placement |
-| `-special-offer-timed` | кампания с фиксированным доверенным серверным временем и таймером на три минуты |
-| `-ru-pay-provider-enabled` | provider-like fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
+| `-special-offer-looping-timer` | визуальный таймер 24:00:00 → 00:00:00 → 24:00:00 не закрывает offer |
+| `-ru-pay-provider-enabled` | verified-fresh fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
 | `-ru-pay-provider-disabled` | provider-like fixture явно возвращает `ru_pay = false`; остаётся только Apple |
-| `-ru-pay-adapty-fallback-enabled` | contract fixture имитирует Dashboard-generated fallback Adapty с `ru_pay = true`; не заменяет live offline smoke |
+| `-ru-pay-adapty-fallback-rejected` | `ru_pay = true` из Adapty managed fallback остаётся закрытым без verified freshness |
 | `-ru-pay-platform-cache` | `ru_pay = true` из кеша `BroadMonetization` отклоняется; остаётся только Apple |
 | `-ru-payment-sheet` | технический СБП fixture: две обязательные галочки, чек и сохранённый email; без отдельных строк legal links |
 | `-ru-payment-sheet-apple` | Apple выбран; RU consent/receipt поля отсутствуют |
@@ -214,8 +214,13 @@ fail-before-charge.
 Apple/СБП/карта, у сохранённой копии из кеша `BroadMonetization` останется только
 Apple.
 
+Продукты Special Offer получаются обычной цепочкой
+`getPaywall -> getPaywallProducts -> 1:1 mapping -> raw registry`. Только
+после этого resolver проверяет `special_offer`. Таймер циклический,
+не требует server time и не блокирует покупку при нуле.
+
 В Debug-каталоге есть отдельная секция `RU Billing — только Debug`.
-Режим `Как в Adapty` использует fixture/provider-флаг, `Включить` и
+Режим `Как в Adapty` использует strict provenance gate, `Включить` и
 `Выключить` меняют его process-local. После restart снова выбран
 `Как в Adapty`. В Release Debug-секции нет, а default store
 заблокирован в `Как в Adapty`.

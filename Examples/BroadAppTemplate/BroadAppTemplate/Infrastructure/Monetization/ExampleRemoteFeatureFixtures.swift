@@ -140,13 +140,14 @@ private enum ExampleRemoteFeaturePayloadFactory {
         switch scenario {
         case .specialOfferPlatformCache, .ruPayPlatformCache:
             .platformCache
+        case .ruPayProviderEnabled:
+            .verifiedFreshRemote
         case .specialOfferEnabled,
              .specialOfferDisabled,
              .specialOfferMainFallback,
-             .specialOfferTimed,
-             .ruPayProviderEnabled,
+             .specialOfferLoopingTimer,
              .ruPayProviderDisabled,
-             .ruPayAdaptyFallbackEnabled:
+             .ruPayAdaptyFallbackRejected:
             .providerCacheFallbackPossible
         case nil:
             .verifiedFreshRemote
@@ -166,20 +167,18 @@ private enum ExampleRemoteFeaturePayloadFactory {
             configuration(isEnabled: true)
         case .specialOfferMainFallback where placementID == .main:
             configuration(isEnabled: true)
-        case .specialOfferTimed where placementID == .specialOffer:
-            configuration(isEnabled: true, windowDuration: 180)
+        case .specialOfferLoopingTimer where placementID == .specialOffer:
+            configuration(isEnabled: true)
         default:
             nil
         }
     }
 
     private static func configuration(
-        isEnabled: Bool,
-        windowDuration: TimeInterval? = nil
+        isEnabled: Bool
     ) -> SpecialOfferRemoteConfiguration {
         SpecialOfferRemoteConfiguration(
             isEnabled: isEnabled,
-            windowDuration: windowDuration,
             crossedPrice: "1 990 ₽",
             crossedValue: 1990,
             priceMultiplier: 2,

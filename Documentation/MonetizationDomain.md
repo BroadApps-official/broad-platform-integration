@@ -163,7 +163,7 @@ Adapter не зависит от `EntitlementEngine`.
 `RUBillingDeviceContext.isRussian` проверяет два независимых сигнала: регион
 iPhone `RU`/`RUS` и первый системный язык с префиксом `ru`. Одного совпадения
 достаточно, но оно разрешает RU Billing только вместе с `ru_pay = true` из
-текущего provider-managed payload. `Storefront` остаётся информационной моделью App Store и не
+`.verifiedFreshRemote` payload. `Storefront` остаётся информационной моделью App Store и не
 участвует в этом решении.
 
 RU billing намеренно не имеет одного большого `RUBillingRepositoryProtocol`.

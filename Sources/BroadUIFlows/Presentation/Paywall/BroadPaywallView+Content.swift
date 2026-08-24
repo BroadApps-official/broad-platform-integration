@@ -159,8 +159,7 @@ extension BroadPaywallView {
             if viewModel.configuration.specialOfferAuthorization?.paywallPresentationID
                 == payload.presentationID,
                 let specialOffer = payload.remoteConfiguration.specialOffer,
-                specialOffer.isEnabled,
-                !viewModel.isSpecialOfferExpired {
+                specialOffer.isEnabled {
                 BroadSpecialOfferMetadataView(
                     configuration: specialOffer,
                     countdownAuthorization: viewModel.configuration

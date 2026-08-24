@@ -61,12 +61,10 @@ extension PaywallViewModel {
         loadTask?.cancel()
         checkoutTask?.cancel()
         closeAvailabilityTask?.cancel()
-        specialOfferExpirationTask?.cancel()
 
         loadTask = nil
         checkoutTask = nil
         closeAvailabilityTask = nil
-        specialOfferExpirationTask = nil
         checkoutMethods = []
         isResolvingCheckoutMethods = false
     }

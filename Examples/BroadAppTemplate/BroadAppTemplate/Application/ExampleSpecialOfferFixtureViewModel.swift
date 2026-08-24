@@ -160,10 +160,10 @@ private extension ExampleRemoteFeatureScenario {
         case .specialOfferDisabled: .specialOfferDisabled
         case .specialOfferPlatformCache: .specialOfferPlatformCache
         case .specialOfferMainFallback: .specialOfferMainFallback
-        case .specialOfferTimed: .specialOfferTimed
+        case .specialOfferLoopingTimer: .specialOfferLoopingTimer
         case .ruPayProviderEnabled: .ruPayProviderEnabled
         case .ruPayProviderDisabled: .ruPayProviderDisabled
-        case .ruPayAdaptyFallbackEnabled: .ruPayAdaptyFallbackEnabled
+        case .ruPayAdaptyFallbackRejected: .ruPayAdaptyFallbackRejected
         case .ruPayPlatformCache: .ruPayPlatformCache
         }
     }

@@ -276,10 +276,10 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
     case specialOfferDisabled = "special-offer-disabled"
     case specialOfferPlatformCache = "special-offer-platform-cache"
     case specialOfferMainFallback = "special-offer-main-fallback"
-    case specialOfferTimed = "special-offer-timed"
+    case specialOfferLoopingTimer = "special-offer-looping-timer"
     case ruPayProviderEnabled = "ru-pay-provider-enabled"
     case ruPayProviderDisabled = "ru-pay-provider-disabled"
-    case ruPayAdaptyFallbackEnabled = "ru-pay-adapty-fallback-enabled"
+    case ruPayAdaptyFallbackRejected = "ru-pay-adapty-fallback-rejected"
     case ruPayPlatformCache = "ru-pay-platform-cache"
 
     var launchArgument: String {
@@ -292,11 +292,11 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
              .specialOfferDisabled,
              .specialOfferPlatformCache,
              .specialOfferMainFallback,
-             .specialOfferTimed:
+             .specialOfferLoopingTimer:
             true
         case .ruPayProviderEnabled,
              .ruPayProviderDisabled,
-             .ruPayAdaptyFallbackEnabled,
+             .ruPayAdaptyFallbackRejected,
              .ruPayPlatformCache:
             false
         }
@@ -309,7 +309,7 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
     var isRUPayEnabled: Bool {
         switch self {
         case .ruPayProviderEnabled,
-             .ruPayAdaptyFallbackEnabled,
+             .ruPayAdaptyFallbackRejected,
              .ruPayPlatformCache:
             true
         case .ruPayProviderDisabled,
@@ -317,7 +317,7 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
              .specialOfferDisabled,
              .specialOfferPlatformCache,
              .specialOfferMainFallback,
-             .specialOfferTimed:
+             .specialOfferLoopingTimer:
             false
         }
     }
@@ -326,10 +326,7 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
         guard isSpecialOffer else {
             return nil
         }
-        return SpecialOfferConfiguration(
-            placementID: .specialOffer,
-            windowDuration: self == .specialOfferTimed ? 180 : nil
-        )
+        return SpecialOfferConfiguration(placementID: .specialOffer)
     }
 
     static func current(

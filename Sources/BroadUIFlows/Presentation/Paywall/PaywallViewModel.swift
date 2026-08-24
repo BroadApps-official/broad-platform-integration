@@ -73,7 +73,6 @@ public final class PaywallViewModel: ObservableObject {
     @Published public internal(set) var isRestoreInFlight = false
     /// Unknown gate state is blocked until the durable stores have been read.
     @Published public internal(set) var isFinancialOperationPending = true
-    @Published public internal(set) var isSpecialOfferExpired = false
 
     public let configuration: BroadPaywallConfiguration
 
@@ -85,7 +84,6 @@ public final class PaywallViewModel: ObservableObject {
     var purchaseTask: Task<Void, Never>?
     var restoreTask: Task<Void, Never>?
     var closeAvailabilityTask: Task<Void, Never>?
-    var specialOfferExpirationTask: Task<Void, Never>?
     var eventTask: Task<Void, Never>?
     var financialStatusTask: Task<Void, Never>?
     var financialStatusObservationTask: Task<Void, Never>?
@@ -114,7 +112,6 @@ public final class PaywallViewModel: ObservableObject {
         loadTask?.cancel()
         checkoutTask?.cancel()
         closeAvailabilityTask?.cancel()
-        specialOfferExpirationTask?.cancel()
         financialStatusTask?.cancel()
         financialStatusObservationTask?.cancel()
         // Do not cancel `eventTask`: its final close owns provider cleanup.
@@ -139,7 +136,7 @@ public final class PaywallViewModel: ObservableObject {
     }
 
     public var canSelectProducts: Bool {
-        !isBusy && !isFinancialOperationPending && !isSpecialOfferExpired
+        !isBusy && !isFinancialOperationPending
     }
 
     public func viewDidAppear() {
@@ -147,7 +144,6 @@ public final class PaywallViewModel: ObservableObject {
         refreshFinancialOperationStatus()
         if case let .content(payload) = state {
             configureCloseAvailability(for: payload)
-            configureSpecialOfferExpiration(for: payload)
         } else {
             loadIfNeeded()
         }
@@ -202,14 +198,12 @@ public final class PaywallViewModel: ObservableObject {
         loadTask?.cancel()
         checkoutTask?.cancel()
         closeAvailabilityTask?.cancel()
-        specialOfferExpirationTask?.cancel()
         financialStatusTask?.cancel()
         financialStatusObservationTask?.cancel()
 
         loadTask = nil
         checkoutTask = nil
         closeAvailabilityTask = nil
-        specialOfferExpirationTask = nil
         financialStatusTask = nil
         financialStatusObservationTask = nil
         checkoutMethods = []

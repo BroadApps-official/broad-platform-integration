@@ -52,7 +52,7 @@ forbid_pattern() {
     esac
 }
 
-payload_file="$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallPayload.swift"
+provenance_file="$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallRemoteConfigurationProvenance.swift"
 configuration_file="$platform_root/Sources/BroadMonetization/Domain/Paywalls/RemotePaywallConfiguration.swift"
 adapty_repository_file="$platform_root/Sources/BroadMonetization/Data/Adapty/AdaptyPaywallRepository.swift"
 purchase_file="$platform_root/Sources/BroadMonetization/Data/Adapty/AdaptyPurchaseRepository.swift"
@@ -61,6 +61,10 @@ load_file="$platform_root/Sources/BroadMonetization/Application/Paywalls/LoadPay
 last_valid_file="$platform_root/Sources/BroadMonetization/Data/Paywalls/LastValidRemoteConfigurationStore.swift"
 special_use_case_file="$platform_root/Sources/BroadMonetization/Application/SpecialOffers/ResolveSpecialOfferUseCase.swift"
 special_resolution_file="$platform_root/Sources/BroadMonetization/Domain/SpecialOffers/SpecialOfferResolution.swift"
+special_countdown_file="$platform_root/Sources/BroadMonetization/Domain/SpecialOffers/SpecialOfferCountdownAuthorization.swift"
+remote_parser_file="$platform_root/Sources/BroadMonetization/Infrastructure/RemoteConfig/RemotePaywallConfigurationParser.swift"
+paywall_view_model_file="$platform_root/Sources/BroadUIFlows/Presentation/Paywall/PaywallViewModel.swift"
+paywall_loading_file="$platform_root/Sources/BroadUIFlows/Presentation/Paywall/PaywallViewModel+Loading.swift"
 ru_gate_file="$platform_root/Sources/BroadMonetization/Application/RUBilling/RUBillingGate.swift"
 ru_debug_override_file="$platform_root/Sources/BroadMonetization/Application/RUBilling/RUBillingDebugOverride.swift"
 ru_resolution_file="$platform_root/Sources/BroadMonetization/Application/RUBilling/ResolveCheckoutMethodsUseCase.swift"
@@ -73,14 +77,19 @@ adapty_activation_file="$platform_root/Sources/BroadMonetization/Infrastructure/
 echo "Remote Config feature-gate contract matrix"
 
 require_pattern \
-    "A current Adapty/provider payload may drive provider-managed feature gates" \
-    "$payload_file" \
+    "A current Adapty/provider payload may drive the Special Offer gate" \
+    "$provenance_file" \
     'case[[:space:]]+\.verifiedFreshRemote,[[:space:]]+\.providerCacheFallbackPossible:(?s:.*?)[[:space:]]+true'
 
 require_pattern \
-    "A BroadMonetization cache or legacy payload cannot enable provider gates" \
-    "$payload_file" \
+    "A BroadMonetization cache or legacy payload cannot enable Special Offer" \
+    "$provenance_file" \
     'case[[:space:]]+\.platformCache,[[:space:]]+\.legacyUnqualified:(?s:.*?)[[:space:]]+false'
+
+require_pattern \
+    "RU Billing requires verified-fresh remote provenance" \
+    "$provenance_file" \
+    'authorizesRUBillingPresentation:[[:space:]]*Bool[[:space:]]*\{[[:space:]]*self[[:space:]]*==[[:space:]]*\.verifiedFreshRemote'
 
 require_pattern \
     "Adapty explicitly marks its payload as provider-managed" \
@@ -90,22 +99,54 @@ require_pattern \
 require_pattern \
     "Remote configuration strips special_offer when provider authority is absent" \
     "$configuration_file" \
-    'specialOffer:[[:space:]]*authorizesProviderFeatureGates[[:space:]]*\?[[:space:]]*specialOffer[[:space:]]*:[[:space:]]*nil'
+    'specialOffer:[[:space:]]*provenance\.authorizesSpecialOfferPresentation[[:space:]]*\?[[:space:]]*specialOffer[[:space:]]*:[[:space:]]*nil'
 
 require_pattern \
-    "Remote configuration records the same authority for RU presentation" \
+    "Remote configuration resolves RU authority through its independent capability" \
     "$configuration_file" \
-    'authorizesRUBillingPresentation:[[:space:]]*authorizesProviderFeatureGates'
+    'authorizesRUBillingPresentation:[[:space:]]*provenance(?s:.*?)\.authorizesRUBillingPresentation'
 
 require_pattern \
-    "Special-offer resolution checks provider-managed provenance" \
+    "Special-offer resolution checks its dedicated provenance capability" \
     "$special_use_case_file" \
-    'remoteConfigurationProvenance\.authorizesProviderManagedFeatureGates'
+    'remoteConfigurationProvenance(?s:.*?)\.authorizesSpecialOfferPresentation'
 
 require_pattern \
-    "Special-offer presentation authorization repeats the provenance guard" \
+    "Special-offer presentation authorization repeats its dedicated guard" \
     "$special_resolution_file" \
-    'remoteConfigurationProvenance\.authorizesProviderManagedFeatureGates'
+    'remoteConfigurationProvenance(?s:.*?)\.authorizesSpecialOfferPresentation'
+
+require_pattern \
+    "Special Offer uses only the parsed flag as its campaign gate" \
+    "$remote_parser_file" \
+    'isEnabled:[[:space:]]*parseSpecialOfferGate\(in:[[:space:]]*dictionary\)'
+
+forbid_pattern \
+    "Legacy duration metadata cannot disable Special Offer" \
+    'isEnabled:(?s:.{0,250})(windowDuration|cooldownDuration)\.isValid' \
+    "$remote_parser_file"
+
+forbid_pattern \
+    "Special Offer resolution has no state, clock, window or cooldown gate" \
+    '(stateRepository\.(state|save)|clock\.reading|currentTime\(|resolveState\(|beginWindow\(|resolveExpiredWindow\()' \
+    "$special_use_case_file"
+
+require_pattern \
+    "Special Offer resolution reaches presentation after provider flag true" \
+    "$special_use_case_file" \
+    'specialOffer\?\.isEnabled[[:space:]]*==[[:space:]]*true(?s:.*?)SpecialOfferResolution\(state:[[:space:]]*\.eligible,[[:space:]]*paywall:[[:space:]]*paywall\)'
+
+require_pattern \
+    "Special Offer display timer is a 24-hour recurring cycle" \
+    "$special_countdown_file" \
+    'cycleDuration:[[:space:]]*TimeInterval[[:space:]]*=[[:space:]]*24[[:space:]]*\*[[:space:]]*60[[:space:]]*\*[[:space:]]*60(?s:.*?)wholeSeconds[[:space:]]*%[[:space:]]*cycleFrameCount'
+
+forbid_pattern \
+    "Paywall UI never expires or disables a Special Offer at visual zero" \
+    '(isSpecialOfferExpired|specialOfferExpirationTask|configureSpecialOfferExpiration|expireSpecialOffer)' \
+    "$paywall_view_model_file" \
+    "$paywall_loading_file" \
+    "$platform_root/Sources/BroadUIFlows/Presentation/Paywall/BroadPaywallView+Content.swift"
 
 require_pattern \
     "RU Billing requires explicit ru_pay enabled plus provider authorization" \
@@ -193,6 +234,11 @@ require_pattern \
     'requestedPlacementID:[[:space:]]*requestedPlacementID(?s:.*?)resolvedPlacementID:[[:space:]]*resolvedPlacementID'
 
 require_pattern \
+    "Adapty loads the paywall before loading all of its products" \
+    "$adapty_repository_file" \
+    'Adapty\.getPaywall\((?s:.*?)Adapty\.getPaywallProducts\(paywall:[[:space:]]*paywall\)'
+
+require_pattern \
     "Adapty paywall loading keeps raw products in its internal registry" \
     "$adapty_repository_file" \
     'context\.productRegistry\.store\((?s:.*?)products:[[:space:]]*zip\(mappedProducts,[[:space:]]*adaptyProducts\)'
@@ -225,5 +271,7 @@ if ((failure_count > 0)); then
     echo "Remote Config feature-gate contract matrix failed: $failure_count item(s)."
     exit 1
 fi
+
+bash "$platform_root/Scripts/check_special_offer_runtime_contract.sh"
 
 echo "Remote Config feature-gate contract matrix passed."

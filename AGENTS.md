@@ -68,21 +68,27 @@
 - Нажатие на продукт paywall не должно давать затемнение, мерцание или
   стандартный press-effect.
 - Special offer полностью опционален: отсутствие config не считается ошибкой.
-- Текущий Adapty payload может управлять `special_offer` и показом `ru_pay`,
-  даже если SDK прозрачно использовал свой provider cache. Paywall, который
-  восстановил собственный cache BroadMonetization, не может включить эти
-  флаги. Для Adapty не создаётся отдельный REST-транспорт или второй источник
-  продуктов.
+- Текущий Adapty payload может включить `special_offer`, даже если SDK
+  прозрачно использовал свой provider cache. `ru_pay` имеет
+  независимую более строгую capability и требует `.verifiedFreshRemote`.
+  Paywall из cache BroadMonetization не может включить ни один флаг.
+- Special Offer показывается только вторым paywall после крестика первого.
+  Единственный campaign gate — `special_offer = true`; таймер визуальный и
+  циклический `24:00:00 -> 00:00:00 -> 24:00:00`, не использует clock/state и не
+  блокирует offer на нуле.
+- Adapty products всегда идут через `getPaywall -> getPaywallProducts -> 1:1
+  mapping -> raw registry`; не создавай отдельный REST-транспорт, второй
+  источник products или словарь, схлопывающий дубли SKU.
 - `ru_pay = false`, отсутствующий или некорректный флаг всегда закрывает RU
   Billing. Предыдущее разрешающее значение не восстанавливается из last-valid
   cache.
-- В Release `ru_pay` всегда берётся из Adapty payload; app-default/force
-  override запрещён. Host template разблокирует process-local force-on/off
-  только из собственного `#if DEBUG`; store по умолчанию fail-closed и не
-  обходит device/catalog/backend/entitlement gates.
-- Для first-launch offline разрешён только Dashboard-generated Adapty
-  fallback, зарегистрированный до SDK activation. Не редактируй его
-  вручную и не создавай рядом второй `ru_pay` source.
+- В Release `ru_pay` может включить RU Billing только из payload с
+  `.verifiedFreshRemote`; app-default/force override запрещён. Host template
+  разблокирует process-local force-on/off только из собственного
+  `#if DEBUG`; store по умолчанию fail-closed и не обходит
+  device/catalog/backend/entitlement gates.
+- Dashboard-generated Adapty fallback может показать обычный paywall и
+  Special Offer, но не доказывает свежесть `ru_pay` и не включает RU Billing.
 - Purchase/restore не открывают premium до подтверждения entitlement.
 - После переустановки subscription ownership восстанавливается через
   StoreKit/backend, а полный token balance и RU purchases загружаются для

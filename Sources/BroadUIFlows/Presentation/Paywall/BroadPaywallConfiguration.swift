@@ -304,8 +304,9 @@ public struct BroadPaywallConfiguration: Equatable, Sendable {
     public let specialOfferCopy: BroadPaywallSpecialOfferCopy
     public let specialOfferAuthorization: SpecialOfferPresentationAuthorization?
 
+    @available(*, deprecated, message: "Special Offer display countdown never expires")
     public var specialOfferExpiresAt: Date? {
-        specialOfferAuthorization?.expiresAt
+        nil
     }
 
     public init(

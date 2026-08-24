@@ -384,14 +384,19 @@ require_file_pattern \
     '(?s)error\.kind[[:space:]]*==[[:space:]]*\.offline.{0,100}error\.kind[[:space:]]*==[[:space:]]*\.timeout'
 
 require_file_pattern \
-    "Provider-managed payloads must authorize their own feature gates:" \
-    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallPayload.swift" \
+    "Provider-managed payloads must authorize the Special Offer gate:" \
+    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallRemoteConfigurationProvenance.swift" \
     'case[[:space:]]+\.verifiedFreshRemote,[[:space:]]+\.providerCacheFallbackPossible:(?s:.*?)[[:space:]]+true'
 
 require_file_pattern \
-    "Platform-cache payloads must not authorize provider feature gates:" \
-    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallPayload.swift" \
+    "Platform-cache payloads must not authorize the Special Offer gate:" \
+    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallRemoteConfigurationProvenance.swift" \
     'case[[:space:]]+\.platformCache,[[:space:]]+\.legacyUnqualified:(?s:.*?)[[:space:]]+false'
+
+require_file_pattern \
+    "RU Billing must remain restricted to verified-fresh payloads:" \
+    "$platform_root/Sources/BroadMonetization/Domain/Paywalls/PaywallRemoteConfigurationProvenance.swift" \
+    'authorizesRUBillingPresentation[[:space:]]*:[[:space:]]*Bool[[:space:]]*\{(?s:.*)self[[:space:]]*==[[:space:]]*\.verifiedFreshRemote'
 
 if ((violation_count > 0)); then
     echo "Architecture checks failed: $violation_count rule group(s) found."

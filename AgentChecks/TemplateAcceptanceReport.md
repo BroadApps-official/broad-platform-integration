@@ -37,15 +37,15 @@
 
 | Сценарий | Доказательство | Результат |
 |---|---|---|
-| Release без manual override | Default store fail-closed к Adapty; template разблокирует UI/store только под `#if DEBUG`; Release Simulator и generic iOS собраны | PASS |
+| Release без manual override | Default store остаётся locked без verified-fresh `ru_pay`; template разблокирует UI/store только под `#if DEBUG`; Release Simulator и generic iOS собраны | PASS |
 | Provider `true/false/absent/invalid` | `Scripts/check_remote_feature_contracts.sh` проверяет каждую fail-closed ветку | PASS |
-| Dashboard fallback registration | Typed JSON file URL и `Adapty.setFallback(fileURL:)` до `Adapty.activate` | PASS |
+| Dashboard fallback registration | Typed JSON file URL и `Adapty.setFallback(fileURL:)` до `Adapty.activate`; RU authority не выдаётся | PASS |
 | Debug consistency | Method resolver и final checkout gate получают один process-local store | PASS |
 | Безопасная диагностика | Typed availability reason + method count; raw Remote Config/product/path не печатаются | PASS |
-| Live clean-install offline | Зависит от fallback-файла конкретного host app | APP-OWNED |
+| Verified-fresh RU transport | Зависит от host-controlled transport конкретного app | APP-OWNED |
 
-`-ru-pay-adapty-fallback-enabled` доказывает platform contract, но не
-заменяет host-owned live offline smoke.
+`-ru-pay-adapty-fallback-rejected` доказывает, что provider-managed
+fallback не подменяет verified freshness и оставляет RU methods закрытыми.
 
 ## AppFlow
 

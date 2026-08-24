@@ -1,17 +1,15 @@
 # ADR-0004: обязательный `ru_pay` и контекст iPhone для RU Billing
 
-- Статус: принято; часть решения о provenance заменена ADR-0005
+- Статус: принято; provenance capability уточнена ADR-0005
 - Дата: 2026-08-09
 - Обновлено: 2026-08-24
 
 > [!NOTE]
 > Обязательный `ru_pay = true`, правило «регион **или** язык», backend-authoritative
 > entitlement и запрет выдавать premium после одного возврата из Safari остаются
-> в силе. Требование принимать положительный gate только с
-> `.verifiedFreshRemote` заменено
-> [ADR-0005](0005-provider-managed-remote-feature-gates.md): текущий стандартный
-> Adapty payload с `.providerCacheFallbackPossible` тоже может управлять показом
-> RU methods, а `.platformCache` — не может.
+> в силе. [ADR-0005](0005-provider-managed-remote-feature-gates.md)
+> разделяет Special Offer и RU capability; RU сохраняет требование
+> `.verifiedFreshRemote`.
 
 ## Контекст
 
@@ -29,7 +27,7 @@ RU methods доступны только при трёх gates:
 
 ```text
 host feature enabled
-AND current provider-managed Adapty ru_pay == true
+AND verified-fresh remote ru_pay == true
 AND (iPhone region == RU/RUS OR first system language starts with ru)
 ```
 
@@ -39,8 +37,8 @@ timezone и формат валюты в eligibility не участвуют.
 Remote decision имеет четыре состояния: `absent`, `enabled`, `disabled`,
 `invalid`. Parser читает все aliases; любой explicit `false` побеждает,
 malformed или conflicting values дают `invalid`. Только `enabled` с provenance
-`.verifiedFreshRemote` или `.providerCacheFallbackPossible` может разрешить
-показ RU methods. `.platformCache` и `.legacyUnqualified` не могут включить RU
+Только `.verifiedFreshRemote` может разрешить показ RU methods.
+`.providerCacheFallbackPossible`, `.platformCache` и `.legacyUnqualified` не могут включить RU
 Billing. Это не финансовая авторизация: оплату и premium подтверждает backend.
 
 Host fallback без явного `ru_pay = true` не поддерживается:
@@ -49,9 +47,8 @@ Host fallback без явного `ru_pay = true` не поддерживает�
 - platform-cache/unqualified `enabled` не показывает RU methods;
 - российский регион или русский язык без `ru_pay = true` оставляет только Apple.
 
-Официальный Dashboard-generated fallback Adapty не является host
-fallback: его регистрирует сам Adapty SDK, а `ru_pay` читается из этого
-же provider payload. Release не имеет второго app-default для флага.
+Dashboard-generated fallback Adapty имеет
+`.providerCacheFallbackPossible` и не авторизует RU Billing, даже если его `ru_pay = true`.
 
 Debug может process-local переопределить только remote gate для
 проверки UI. Host template разблокирует store только под `#if DEBUG`;
@@ -170,7 +167,7 @@ entitlement.
 - `ru_pay = true` + non-RU region + нерусский язык → только Apple;
 - `ru_pay = false` + RU region + русский язык → только Apple;
 - absent/malformed/conflicting/platform-cache `ru_pay` → только Apple;
-- provider-managed `ru_pay = true` + подходящий region/language → доступные RU methods;
+- verified-fresh `ru_pay = true` + подходящий region/language → доступные RU methods;
 - повторная проверка перед checkout использует актуальный контекст iPhone;
 - RU backend disabled → source отсутствует в engine;
 - URL open failure очищает pending context;

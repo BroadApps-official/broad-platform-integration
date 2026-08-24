@@ -16,23 +16,18 @@ cache и не сообщает через public API, пришёл ли конк
 из provider-managed cache. Поэтому repository честно отмечает такой payload как
 `.providerCacheFallbackPossible`.
 
-Ранее положительные `special_offer` и `ru_pay` принимались только для
-`.verifiedFreshRemote`. Стандартный Adapty-путь такого provenance не создаёт,
-поэтому обе возможности были недостижимы без отдельного host repository. Такой
-repository также терял внутреннюю связь с raw `AdaptyPaywallProduct`, которую
-используют показ, покупка и attribution.
+Один общий capability для `special_offer` и `ru_pay` создавал неверную связь:
+достижимость визуального Special Offer одновременно ослабляла финансовый
+RU gate до provider cache. Эти решения должны иметь разную provenance-матрицу.
 
 ## Решение
 
 Разделяются две независимые ответственности.
 
-### Provider-managed feature gate
+### Special Offer capability
 
-Текущий payload стандартного Adapty SDK может управлять:
-
-- показом Special Offer при явном enabled gate;
-- показом RU-способов оплаты при `ru_pay = true` и выполненных host/device
-  условиях.
+Текущий payload стандартного Adapty SDK может управлять показом Special Offer
+при явном `special_offer = true`.
 
 Эти UI-возможности разрешены для:
 
@@ -46,6 +41,13 @@ repository также терял внутреннюю связь с raw `AdaptyP
 
 Отсутствующий, malformed или explicit `false` gate остаётся fail-closed.
 Предыдущее положительное значение не переносится в новый payload.
+
+### RU Billing capability
+
+`ru_pay = true` разрешает RU methods только для `.verifiedFreshRemote`.
+`.providerCacheFallbackPossible`, `.platformCache` и `.legacyUnqualified` остаются
+fail-closed. Отрицательный/absent/invalid `ru_pay` закрывает feature при любом
+provenance.
 
 ### Authoritative entitlement
 
@@ -72,17 +74,17 @@ provider show, продукты и последующую покупку.
 
 Provider-managed cache и platform cache имеют разные права:
 
-| Источник | Обычный paywall | Provider feature gates |
-|---|---:|---:|
-| verified remote | да | да |
-| текущий payload Adapty SDK | да | да |
-| cache BroadMonetization | да | нет |
-| legacy/unqualified payload | да | нет |
+| Источник | Обычный paywall | Special Offer | RU Billing |
+|---|---:|---:|---:|
+| verified remote | да | да | да |
+| текущий payload Adapty SDK | да | да | нет |
+| cache BroadMonetization | да | нет | нет |
+| legacy/unqualified payload | да | нет | нет |
 
 Dashboard-generated fallback, зарегистрированный через
 `Adapty.setFallback(fileURL:)`, относится к текущему payload Adapty SDK.
-Он сохраняет свои продукты, variation и Remote Config; отдельный
-app-default `ru_pay` для него не создаётся.
+Он сохраняет свои продукты, variation и Remote Config для paywall/Special Offer,
+но не доказывает свежесть `ru_pay`.
 
 Fallback на `main` использует Remote Config фактически resolved payload. Он не
 переносит положительный gate с requested placement.
@@ -98,14 +100,12 @@ RU gates. Host template показывает control и разблокирует
 
 - Special Offer работает через стандартный Adapty repository;
 - покупка сохраняет точную raw product reference и attribution;
-- `ru_pay` управляет только доступностью способа оплаты;
+- `ru_pay` не ослабляется до provider cache ради достижимости Special Offer;
 - собственный persistent cache платформы не включает чувствительные функции;
 - защита premium-доступа не ослабляется.
 
-Ограничение: provider-managed cache может на короткое время сохранить прошлое
-положительное UI-решение, если Adapty SDK не получил сеть. Для RU Billing
-backend остаётся финальным kill switch и authority. Для кампаний с временным
-окном дополнительно требуется доверенный `SpecialOfferClock`.
+Ограничение: provider-managed cache может на короткое время сохранить прошлый
+`special_offer = true`. Это принято для нефинансового визуального downsell, но не для RU Billing.
 
 ## Проверка решения
 

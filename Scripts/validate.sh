@@ -63,6 +63,7 @@ required_automation_files=(
     "$platform_root/Scripts/check_adapty_experiment_contracts.sh"
     "$platform_root/Scripts/check_onboarding_contract.sh"
     "$platform_root/Scripts/check_remote_feature_contracts.sh"
+    "$platform_root/Scripts/check_special_offer_runtime_contract.sh"
     "$platform_root/Scripts/check_live_adapty_builds.sh"
     "$platform_root/Scripts/stream_example_logs.sh"
 )

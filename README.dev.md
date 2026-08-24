@@ -326,8 +326,8 @@ iPad не входит в scope платформы.
 Для воспроизводимой ручной проверки используйте launch arguments
 `-special-offer-enabled`, `-special-offer-disabled`,
 `-special-offer-platform-cache`, `-special-offer-main-fallback`,
-`-special-offer-timed`, `-ru-pay-provider-enabled`,
-`-ru-pay-provider-disabled`, `-ru-pay-adapty-fallback-enabled` и
+`-special-offer-looping-timer`, `-ru-pay-provider-enabled`,
+`-ru-pay-provider-disabled`, `-ru-pay-adapty-fallback-rejected` и
 `-ru-pay-platform-cache` из `Examples/BroadAppTemplate/README.md`.
 
 </details>

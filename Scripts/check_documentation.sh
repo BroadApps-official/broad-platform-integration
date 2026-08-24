@@ -104,10 +104,10 @@ for required_pattern in \
     '-special-offer-disabled' \
     '-special-offer-platform-cache' \
     '-special-offer-main-fallback' \
-    '-special-offer-timed' \
+    '-special-offer-looping-timer' \
     '-ru-pay-provider-enabled' \
     '-ru-pay-provider-disabled' \
-    '-ru-pay-adapty-fallback-enabled' \
+    '-ru-pay-adapty-fallback-rejected' \
     '-ru-pay-platform-cache' \
     'Dashboard-generated fallback' \
     'Debug, `Как в Adapty`' \
@@ -167,11 +167,11 @@ for required_pattern in \
 done
 
 for documentation_contract in \
-    'Documentation/RUBilling.md|Release \| Текущий payload Adapty' \
+    'Documentation/RUBilling.md|Release \| Verified-fresh remote payload' \
     'Documentation/RUBilling.md|Adapty\.setFallback\(fileURL:' \
     'Documentation/RUBilling.md|\.forceEnabled' \
-    'Documentation/RemoteConfig.md|Release -> Adapty network / SDK cache / Dashboard fallback -> ru_pay' \
-    'Documentation/Templates/AppIntegrationPlan.md|production-значение `ru_pay` в Adapty' \
+    'Documentation/RemoteConfig.md|Release -> verified-fresh remote payload -> ru_pay' \
+    'Documentation/Templates/AppIntegrationPlan.md|Как доказывается freshness' \
     'Examples/BroadAppTemplate/README.md|BROADAPPS_ADAPTY_FALLBACK_FILE_NAME' \
     'Documentation/Logging.md|ru-billing\.availability\.evaluated' \
     'Documentation/AccountRecovery.md|GET /me/token-balance' \
@@ -321,7 +321,7 @@ workflow_svgs=(
     "$platform_root/Documentation/Assets/README/no-code-manual-workflow-dark.svg"
 )
 
-for remote_config_pattern in 'Dashboard fallback Adapty' 'Release: ru_pay только из Adapty' 'Debug: follow / force-on / force-off'; do
+for remote_config_pattern in 'Dashboard fallback Adapty' 'Release: ru_pay только с verified freshness' 'Debug: follow / force-on / force-off'; do
     if ! rg -q -- "$remote_config_pattern" \
         "$platform_root/Documentation/Assets/README/remote-config-cache-flow-light.svg" \
         "$platform_root/Documentation/Assets/README/remote-config-cache-flow-dark.svg"; then

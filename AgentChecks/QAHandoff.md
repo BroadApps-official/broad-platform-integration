@@ -28,7 +28,7 @@
 | Subscription paywall | Fixture subscriptions; premium только после entitlement |
 | Token paywall | Consumables, backend confirmation/retry/recovery, без premium |
 | Special offer | Subscription paywall → крестик без покупки → resolver → optional второй paywall; confirmed purchase/restore обходит offer; debug-state отдельно показывает route и presentation |
-| RU Billing | Release следует `ru_pay` из Adapty; Debug tri-state проверяет UI/gates; настоящая оплата не запускается |
+| RU Billing | Release требует verified-fresh `ru_pay`; Debug tri-state проверяет UI/gates; настоящая оплата не запускается |
 | Loader и ошибки | Немедленный spinner, disabled double tap, error и Retry |
 | Аналитика | Общий recorder, видимый refresh и clear feedback |
 | Contact Us | Composer, если доступен, либо Copy/Close fallback |
@@ -44,8 +44,8 @@
 - onboarding 1/2/3/4/8 страниц, custom/disabled/invalid;
 - initial paywall once/every cold launch/disabled;
 - entitlement active/inactive/unknown/timeout/StoreKit fallback;
-- special offer absent/false/true/main fallback/platform cache/timer/no loop;
-- RU provider true/false, Adapty-fallback contract, platform-cache rejection и Debug follow/force-on/force-off;
+- special offer absent/false/true/main fallback/platform cache/looping timer/no flow loop;
+- RU verified true/provider false, Adapty-fallback rejection, platform-cache rejection и Debug follow/force-on/force-off;
 - token credited/pending/retry/cancel/failure/offline/reconciliation/recovery;
 - все девять карточек на маленьком и большом iPhone Simulator.
 
@@ -95,7 +95,7 @@ configuration проверяется compile/load contract без финансо
 4. Оставить `Team = None`; не запрашивать платный аккаунт или provisioning.
 5. Для своего приложения заполнить
    [`Documentation/ProjectDelivery.md`](../Documentation/ProjectDelivery.md).
-6. Если host заявляет first-launch offline RU Billing, вложить свой
-   Dashboard-generated fallback и пройти clean-install smoke без сети.
+6. Для RU Billing подтвердить host-controlled source
+   `.verifiedFreshRemote`; Dashboard fallback не считать freshness proof.
 7. Передавать credentials и тестовые аккаунты только разрешённым защищённым
    каналом, отдельно от Git.

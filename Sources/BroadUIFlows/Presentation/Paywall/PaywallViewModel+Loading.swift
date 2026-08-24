@@ -72,9 +72,6 @@ extension PaywallViewModel {
 
         closeAvailabilityTask?.cancel()
         closeAvailabilityTask = nil
-        specialOfferExpirationTask?.cancel()
-        specialOfferExpirationTask = nil
-        isSpecialOfferExpired = false
         if !preservingCloseAvailability {
             isCloseAvailable = configuration.access.defaultPolicy == .soft
         }
@@ -118,7 +115,6 @@ extension PaywallViewModel {
             state = .content(payload)
             selectInitialProduct(in: payload)
             configureCloseAvailability(for: payload)
-            configureSpecialOfferExpiration(for: payload)
         case let .unavailable(error):
             state = .failure(error)
             isCloseAvailable = true
@@ -192,55 +188,5 @@ extension PaywallViewModel {
             closeAvailabilityTask = nil
             isCloseAvailable = true
         }
-    }
-
-    func configureSpecialOfferExpiration(for payload: PaywallPayload) {
-        specialOfferExpirationTask?.cancel()
-        specialOfferExpirationTask = nil
-
-        guard configuration.specialOfferAuthorization?.paywallPresentationID
-            == payload.presentationID,
-            payload.remoteConfiguration.specialOffer?.isEnabled == true,
-            let countdown = configuration.specialOfferAuthorization?.countdown
-        else {
-            isSpecialOfferExpired = false
-            return
-        }
-
-        guard !countdown.isExpired else {
-            expireSpecialOffer()
-            return
-        }
-
-        let presentationID = payload.presentationID
-        specialOfferExpirationTask = Task { @MainActor [weak self] in
-            do {
-                try await countdown.sleepUntilExpiration()
-            } catch {
-                return
-            }
-
-            guard let self,
-                  !Task.isCancelled,
-                  state.payload?.presentationID == presentationID
-            else {
-                return
-            }
-
-            specialOfferExpirationTask = nil
-            expireSpecialOffer()
-        }
-    }
-
-    private func expireSpecialOffer() {
-        isSpecialOfferExpired = true
-        checkoutTask?.cancel()
-        checkoutTask = nil
-        checkoutMethods = []
-        isResolvingCheckoutMethods = false
-        selectedSelection = nil
-        selectedProductPresentationID = nil
-        isCloseAvailable = true
-        inlineFeedback = .notice(configuration.specialOfferCopy.expiredMessage)
     }
 }
