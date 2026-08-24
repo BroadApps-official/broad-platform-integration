@@ -82,6 +82,10 @@ production-ready версии.
 
 ### Changed
 
+- корневой README прошёл отдельный readability-аудит: плотные объяснения
+  преобразованы в короткие таблицы, списки и GitHub callouts, глубокие
+  platform-отчёты свёрнуты, а устаревшее название единого финального prompt
+  заменено на отдельные visual review и acceptance;
 - README, developer guide, app integration contract и Project Delivery теперь
   одинаково ведут разработку с агентом и без него: сначала доказанные
   screen/backend/ownership contracts, затем каркас и один вертикальный срез за
