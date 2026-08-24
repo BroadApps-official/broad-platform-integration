@@ -11,6 +11,8 @@
 - Scheme: `BroadAppTemplate`, iPhone only, iOS 17+.
 - Debug/Release Simulator и generic `iphoneos` compile без подписи.
 - Понятный runtime Console helper: `bash Scripts/stream_example_logs.sh`.
+- Универсальный staged workflow, Prompt Pack и Integration Plan template для
+  host apps без привязки к номеру проекта.
 - Фактическая acceptance-матрица:
   [`TemplateAcceptanceReport.md`](TemplateAcceptanceReport.md).
 
@@ -70,6 +72,7 @@ configuration проверяется compile/load contract без финансо
 | Visual self-review Simulator | PASS | [`SelfReview.md`](SelfReview.md) |
 | Debug/Release/generic unsigned compile | Последний full gate | [`STATUS.md`](STATUS.md) |
 | README/Terminal/runtime Console | PASS после midpoint-исправлений | [`SelfReview.md`](SelfReview.md) |
+| Staged app-creation workflow | PASS после midpoint и full gate | [`AppCreationWorkflowAudit.md`](AppCreationWorkflowAudit.md) |
 | Любой host app | Отдельный app-level статус | [`ApplicationIntegrationContract.md`](ApplicationIntegrationContract.md) |
 
 ## 6. Известные ограничения

@@ -20,7 +20,10 @@ Platform `PASS` не доказывает готовность автомати�
 
 ## Preflight любого приложения
 
-До основного build prompt агент заполняет универсальную матрицу:
+До любого app-кода агент заполняет универсальную матрицу, затем копирует
+[`AppIntegrationPlan.md`](../Documentation/Templates/AppIntegrationPlan.md) в
+repository создаваемого приложения. План хранится рядом с приложением, а не в
+platform-owned `AgentChecks`.
 
 | Вход | Что должно быть известно | Если данных нет |
 |---|---|---|
@@ -41,6 +44,8 @@ app. Platform-owned AgentChecks не создают отдельный отчё�
 | Этап | Доказательство | Допустимый статус |
 |---|---|---|
 | Preflight | Все обязательные входы найдены или имеют владельца blocker-а | `READY/BLOCKED/N/A` |
+| Integration Plan | Screen map, backend contracts, ownership и vertical slices записаны без Swift-кода | `PLAN REVIEW REQUIRED/BLOCKED` |
+| Skeleton | Навигация, DI, состояния и безопасные заглушки собираются без выдуманной логики | `SKELETON REVIEW REQUIRED/BLOCKED` |
 | Functional iteration | Routes, API, state machine, offline/retry и monetization fixtures | `READY/BLOCKED/N/A` |
 | Functional review | Разработчик лично подтвердил поведение до визуальной полировки | `READY/BLOCKED` |
 | Visual iteration | Каждый source frame сверен на двух размерах Simulator | `READY/BLOCKED/N/A` |
@@ -74,3 +79,8 @@ provisioning или выбора Signing Team:
 Именно в repository приложения разработчик хранит screen map, backend matrix,
 статусы функций и QA evidence. Этот platform contract остаётся универсальным и
 не копируется под каждый номер проекта.
+
+Полный порядок остановок и review-точек описан в
+[`AppCreationWorkflow.md`](../Documentation/AppCreationWorkflow.md), а готовые
+поэтапные запросы — в
+[`AgentPromptPack.md`](../Documentation/AgentPromptPack.md).

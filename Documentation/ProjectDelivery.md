@@ -5,6 +5,13 @@
 позволяет подменить недоступные Kaiten, дизайн, backend или внешнюю
 конфигурацию зелёной сборкой платформы.
 
+До первого Swift-файла скопируйте
+[`Templates/AppIntegrationPlan.md`](Templates/AppIntegrationPlan.md) в
+repository приложения и заполните его по
+[`AppCreationWorkflow.md`](AppCreationWorkflow.md). Функции реализуются по
+одному вертикальному срезу; следующий срез начинается только после
+`SLICE REVIEW REQUIRED` и проверки предыдущего разработчиком.
+
 ## Статусы
 
 Для каждой строки используйте только один статус:

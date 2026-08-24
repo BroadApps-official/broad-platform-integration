@@ -77,6 +77,14 @@ for required_pattern in \
     '^## Перед завершением задачи$' \
     '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
     '^## 🛠️ Вариант B: собрать приложение вручную$' \
+    '^### 4\. 🧭 Отправляйте поэтапные prompts по одному$' \
+    'Documentation/AppCreationWorkflow\.md' \
+    'Documentation/AgentPromptPack\.md' \
+    'Documentation/Templates/AppIntegrationPlan\.md' \
+    'PLAN REVIEW REQUIRED' \
+    'SKELETON REVIEW REQUIRED' \
+    'SLICE REVIEW REQUIRED' \
+    'VISUAL REVIEW REQUIRED' \
     'Один результат — два способа работы' \
     '^### Шаг 0\. 🆕 Создайте новый iPhone-проект$' \
     '^### Шаг 9\. 🔍 Проверьте, меняли ли вы саму платформу$' \
@@ -216,6 +224,10 @@ done
 
 for required_file in \
     "$platform_root/Documentation/AccountRecovery.md" \
+    "$platform_root/Documentation/AppCreationWorkflow.md" \
+    "$platform_root/Documentation/AgentPromptPack.md" \
+    "$platform_root/Documentation/Templates/AppIntegrationPlan.md" \
+    "$platform_root/Documentation/Examples/NeutralAppIntegrationPlan.md" \
     "$platform_root/Documentation/AgentAutomation.md" \
     "$platform_root/Documentation/NetworkInterruptions.md" \
     "$platform_root/Documentation/PurchaseManagers.md" \
@@ -231,6 +243,27 @@ do
         record_failure "Required documentation or example configuration is missing: ${required_file#$platform_root/}"
     fi
 done
+
+if rg -q -- 'Архив: прежний монолитный build prompt|АРХИВНЫЙ PROMPT|^### 4\. 📋 Скопируйте основной build prompt$|^Проверь созданное iPhone-приложение и исправь найденные проблемы\.$' "$platform_root/README.md"; then
+    record_failure "README must not contain an obsolete combined app build or final-review prompt."
+fi
+
+for checkpoint in \
+    'PLAN REVIEW REQUIRED' \
+    'SKELETON REVIEW REQUIRED' \
+    'SLICE REVIEW REQUIRED' \
+    'FUNCTIONAL REVIEW REQUIRED' \
+    'VISUAL REVIEW REQUIRED' \
+    'READY FOR QA'
+do
+    if ! rg -q -- "$checkpoint" "$platform_root/Documentation/AppCreationWorkflow.md" "$platform_root/Documentation/AgentPromptPack.md"; then
+        record_failure "Staged app workflow checkpoint is missing: $checkpoint"
+    fi
+done
+
+if ! rg -q -- '\[BLOCKED\] History' "$platform_root/Documentation/Examples/NeutralAppIntegrationPlan.md"; then
+    record_failure "Neutral Integration Plan example must demonstrate a feature-level blocker."
+fi
 
 if ((failure_count > 0)); then
     echo "Documentation validation failed: $failure_count check group(s)."

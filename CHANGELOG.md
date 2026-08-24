@@ -8,6 +8,12 @@ production-ready версии.
 
 ### Added
 
+- универсальный staged workflow создания host app: отдельные preflight,
+  Integration Plan, skeleton, vertical-slice, functional, visual и acceptance
+  prompts с обязательными developer checkpoints;
+- копируемый `AppIntegrationPlan.md`, обезличенный пример feature-level
+  `BLOCKED` и documentation gate, не позволяющий вернуть устаревший монолитный
+  build prompt;
 - public logic-only `BroadOnboardingFlowHost` для полностью app-owned
   onboarding UI без дублирования переходов, завершения, invalid-state и ATT
   lifecycle;
@@ -76,6 +82,11 @@ production-ready версии.
 
 ### Changed
 
+- README, developer guide, app integration contract и Project Delivery теперь
+  одинаково ведут разработку с агентом и без него: сначала доказанные
+  screen/backend/ownership contracts, затем каркас и один вертикальный срез за
+  раз; номер конкретного приложения и его execution status не хранятся в
+  platform-owned отчётах;
 - runtime-проверка получила `stream_example_logs.sh`: helper выбирает booted
   iPhone Simulator, фильтрует safe OSLog по subsystem и понятно объясняет выбор
   UDID; README разделяет AppFlow `[FLOW]` и catalog-only analytics/experiment

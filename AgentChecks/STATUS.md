@@ -3,9 +3,9 @@
 ## Результат
 
 `PASS` — полный local gate прошёл 24 августа 2026 года после повторного аудита
-README, developer/manual flow, Terminal, runtime Console и Special Offer
-downsell. Midpoint-аудит нашёл две ошибки нового log-helper; обе исправлены до
-финального gate.
+README, developer/manual flow, staged app-creation workflow, Terminal, runtime
+Console и Special Offer downsell. Найденные дефекты исправлены до финального
+gate.
 
 Scope результата — только `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не
 переносится автоматически ни на одно приложение, созданное поверх платформы.
@@ -38,6 +38,11 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
 - README и developer guide согласованы для работы с агентом и вручную:
   `unresolved`/timeout разрешают обычный main без premium, а pending не
   превращается в успех;
+- создание любого host app разделено на preflight, Integration Plan, skeleton,
+  vertical slices, functional, visual и acceptance stages; старый монолитный
+  build prompt удалён и запрещён documentation gate;
+- универсальный копируемый Integration Plan отделяет platform-owned contracts
+  от app-owned экранов, backend hooks и решений разработчика;
 - универсальный app integration contract, Project Delivery checklist,
   functional-review checkpoint и QA handoff без привязки к номеру приложения.
 
@@ -53,6 +58,8 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
 - [`QAHandoff.md`](QAHandoff.md) — пакет передачи QA;
 - [`ApplicationIntegrationContract.md`](ApplicationIntegrationContract.md) —
   универсальная граница platform и любого host app.
+- [`AppCreationWorkflowAudit.md`](AppCreationWorkflowAudit.md) — midpoint и
+  финальный аудит поэтапного создания приложений.
 
 ## Границы результата
 

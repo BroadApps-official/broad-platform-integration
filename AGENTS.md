@@ -23,6 +23,15 @@
   template и не заменяет Simulator-проверки.
 - Platform-owned документация и AgentChecks остаются универсальными: не
   привязывай их к номеру, названию или статусу отдельного приложения.
+- Host app создаётся только по staged workflow из
+  `Documentation/AppCreationWorkflow.md`: preflight → Integration Plan без
+  Swift → подтверждённый каркас → по одному вертикальному срезу → functional
+  review → visual review → acceptance. Не предлагай один монолитный prompt на
+  всё приложение и не переходи через developer checkpoint автоматически.
+- До app-кода host repository получает `Documentation/AppIntegrationPlan.md`
+  по platform template. Неизвестный экран, endpoint, backend hook или правило
+  исходника получает `BLOCKED`; агент не придумывает его и не выдаёт fixture за
+  production flow. Platform-owned AgentChecks не хранят этот app-specific план.
 - Рабочие public Adapty SDK configurations 5013/5109Codex должны оставаться в
   tracked source по требованию руководства. Не удаляй и не маскируй их.
 - Backend credentials, private signing keys и токены серверного доступа сюда не

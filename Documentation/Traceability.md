@@ -36,6 +36,14 @@
   chat token;
 - основной экран и бизнес-функции продукта.
 
+До первого app-кода эти решения фиксируются в
+[`AppIntegrationPlan.md`](Templates/AppIntegrationPlan.md). Один большой prompt
+не используется: [workflow](AppCreationWorkflow.md) разделяет preflight, план,
+каркас, вертикальные срезы, functional review, visual review и acceptance, а
+[`AgentPromptPack.md`](AgentPromptPack.md) даёт отдельный copy-paste запрос для
+каждого этапа. Неизвестная app-owned функция остаётся `BLOCKED` и не снижает
+готовность независимого платформенного компонента.
+
 Если финальные public client values ещё не готовы, используется fixture либо
 явно согласованные public SDK/placement/product values похожего live-приложения
 только для load/show. Bundle, provisioning, credentials, keys/certificates,

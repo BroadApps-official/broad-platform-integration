@@ -26,6 +26,7 @@
 | Когда | Что открыть |
 |---|---|
 | Перед началом проекта | Основной [README](README.md): вариант с Codex/Claude или ручная сборка |
+| До первого Swift-файла | [Поэтапный workflow](Documentation/AppCreationWorkflow.md) и [шаблон Integration Plan](Documentation/Templates/AppIntegrationPlan.md) |
 | Перед созданием нового экрана | Разделы [«Куда класть код»](#куда-класть-код) и [«Как добавить сцену»](#как-добавить-сцену) |
 | Перед добавлением бизнес-действия | Раздел [«Как добавить use case»](#как-добавить-use-case) |
 | Во время вёрстки | [UI-checklist](#ui-checklist) |
@@ -353,7 +354,11 @@ iPad не входит в scope платформы.
 
 Основной сценарий работы через Codex/Claude описан в
 [варианте A главного README](README.md#-вариант-a-сделать-приложение-через-codex-или-claude).
-Для дополнительной проверки конкретной feature можно скопировать этот текст:
+Не отправляйте агенту один запрос «сделай всё приложение». Используйте
+[`AgentPromptPack.md`](Documentation/AgentPromptPack.md) по одному этапу и
+проверяйте `PLAN`, `SKELETON`, `SLICE`, `FUNCTIONAL` и `VISUAL REVIEW REQUIRED`
+до перехода дальше. Для дополнительной проверки конкретной feature можно
+скопировать этот текст:
 
 ```text
 Проверь текущую feature iPhone-приложения по README.dev.md и связанной
@@ -380,16 +385,20 @@ bash Scripts/agent_gate.sh.
 
 Без Codex/Claude требования не меняются. Разработчик самостоятельно:
 
-1. проходит цепочку `View → ViewModel → use case → repository → client` и
+1. заполняет `Documentation/AppIntegrationPlan.md` из
+   [шаблона](Documentation/Templates/AppIntegrationPlan.md), отмечая неизвестные
+   API и решения как `BLOCKED`;
+2. реализует и проверяет один вертикальный срез за раз;
+3. проходит цепочку `View → ViewModel → use case → repository → client` и
    убеждается, что слои не перепутаны;
-2. собирает приложение в Debug и Release;
-3. проверяет три размера iPhone;
-4. проходит первый запуск, повторный вход, offline/error/retry и связанные с
+4. собирает приложение в Debug и Release;
+5. проверяет три размера iPhone;
+6. проходит первый запуск, повторный вход, offline/error/retry и связанные с
    feature граничные состояния;
-5. сверяет фактические backend-ответы с моделями без публикации приватных данных;
-6. сверяет Debug Status и безопасные runtime-события командой
+7. сверяет фактические backend-ответы с моделями без публикации приватных данных;
+8. сверяет Debug Status и безопасные runtime-события командой
    `bash Scripts/stream_example_logs.sh` либо тем же logger/subsystem в host app;
-7. заполняет checklist ниже и описывает тестировщику точные шаги проверки.
+9. заполняет checklist ниже и описывает тестировщику точные шаги проверки.
 
 Если менялось только приложение, полный gate исходников платформы не нужен. Если
 изменены файлы самой платформы, `Scripts/agent_gate.sh` обязателен и без агента.
