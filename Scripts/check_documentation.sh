@@ -180,7 +180,10 @@ for documentation_contract in \
     'Documentation/Usedesk.md|Backend — источник, Keychain — локальный cache' \
     'Documentation/Usedesk.md|pendingBackendSync' \
     'Documentation/Usedesk.md|deactivateToken' \
-    'Documentation/Usedesk.md|isSaveTokensInUserDefaults: false'
+    'Documentation/Usedesk.md|isSaveTokensInUserDefaults: false' \
+    'CHANGELOG.md|Ответы на замечания: token recovery и Usedesk' \
+    'CHANGELOG.md|Не проще ли после входа просто получать токены по backend-аккаунту' \
+    'CHANGELOG.md|Почему Usedesk token не хранить в Keychain как deviceId/userId'
 do
     documentation_file="${documentation_contract%%|*}"
     documentation_pattern="${documentation_contract#*|}"

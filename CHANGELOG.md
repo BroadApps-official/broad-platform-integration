@@ -88,6 +88,102 @@ production-ready версии.
   fail-closed следует Adapty, а host разблокирует override только
   под `#if DEBUG`, включая custom-named Debug configurations.
 
+### Ответы на замечания: token recovery и Usedesk
+
+#### 1. «Не проще ли после входа просто получать токены по backend-аккаунту?»
+
+**Ответ:** да. Обычное восстановление после входа теперь описано как один
+account-scoped read: приложение вызывает, например, `GET /me/token-balance`,
+backend определяет пользователя по server authorization и возвращает полный
+актуальный `TokenBalanceSnapshot`. Клиент не восстанавливает сумму локально и
+не отправляет backend список StoreKit transaction ID или RU checkout ID.
+
+**Почему transaction/checkout ID всё равно нужен:** это вход не операции
+восстановления, а операции начисления. Если backend уже начислил токены, но
+ответ потерялся, приложение повторно отправит то же доказательство покупки. Без
+unique operation ID повтор превратится во второе начисление. При этом один
+пользователь вправе несколько раз купить один и тот же пакет, поэтому
+дедупликация только по `userID` или product ID также неверна.
+
+Минимальная корректная backend-модель не требует event sourcing:
+
+1. таблица текущего баланса по app account;
+2. таблица обработанных покупок с unique constraint по
+   `(provider, environment, externalOperationID)`;
+3. одна атомарная операция: зарегистрировать ещё не обработанный ID, начислить
+   баланс и вернуть полный snapshot; для уже обработанного ID вернуть текущий
+   snapshot без повторного начисления.
+
+**Что изменено в платформе:**
+
+- [Account Recovery](Documentation/AccountRecovery.md) теперь визуально и
+  текстом разделяет `login → balance read` и `purchase → exactly-once credit`;
+- [Purchase Managers](Documentation/PurchaseManagers.md),
+  [Token Paywall](Documentation/TokenPaywall.md) и
+  [RU Billing](Documentation/RUBilling.md) используют ту же модель;
+- комментарии `RecoverTokenAccountUseCaseProtocol` требуют полный snapshot
+  авторизованного account без списка purchase ID;
+- комментарии `TokenFulfillmentRepositoryProtocol` оставляют transaction ID
+  только на duplicate-safe fulfillment boundary;
+- README, developer checklist, Integration Plan и Project Delivery одинаково
+  объясняют контракт разработчику и агенту;
+- documentation gate запрещает вернуть старую формулировку, в которой ledger
+  выглядит обязательным входом обычного recovery.
+
+**Граница ответственности:** платформа даёт модели, flow и требования. Backend
+endpoint, авторизация, таблицы баланса и processed operations принадлежат
+конкретному host-приложению. Локальный fixture не считается доказательством их
+production-готовности.
+
+#### 2. «Почему Usedesk token не хранить в Keychain как deviceId/userId?»
+
+**Ответ:** Keychain нужен, но не как единственный источник и не под device ID.
+Для авторизованного приложения принята гибридная модель:
+
+```text
+backend текущего app account = источник chat token между установками/устройствами
+account-scoped Keychain      = защищённый локальный cache и pending sync
+device ID                    = не является identity пользователя или переписки
+```
+
+**Почему Keychain-only недостаточен:** локальная запись может помочь на этом
+устройстве и пережить обычный offline-сценарий, но не связывает историю с тем же
+аккаунтом на другом устройстве или платформе. Device ID, наоборот, связывает
+чат с установкой/устройством и ломает account recovery. `userID` допустим как
+namespace Keychain-записи, однако backend endpoint всё равно должен определять
+account по своей authorization session, а не доверять произвольному ID из
+query/body.
+
+**Что изменено в платформе:**
+
+- [Usedesk guide](Documentation/Usedesk.md) получил схему
+  `backend source → Keychain cache → pending backend sync`;
+- новый repository contract отдельно описывает загрузку, сохранение callback
+  token и деактивацию token при logout/account switch;
+- callback сначала сохраняет token в Keychain точного account, затем делает
+  backend sync; temporary error возвращает `pendingBackendSync` и не
+  проглатывается через `try?`;
+- backend token имеет приоритет, а fallback из Keychain разрешён только для
+  того же current account;
+- при logout active/in-memory token очищается сразу; незавершённый encrypted
+  pending sync остаётся недоступным другим аккаунтам и может продолжиться
+  только после повторного входа в исходный account;
+- Security, README, developer/agent checklist и app integration contract
+  запрещают device ID как chat identity и raw token в Console/analytics;
+- документационный gate проверяет наличие `pendingBackendSync`, logout boundary
+  и `isSaveTokensInUserDefaults: false`, а также запрещает молчаливый `try?`.
+
+**Допустимое исключение:** Keychain-only можно выбрать только как явное
+продуктовое ограничение device-bound чата. В таком варианте приложение не может
+обещать восстановление истории на другом устройстве/платформе. Базовый contract
+BroadApps для account-based приложений остаётся `backend + account-scoped
+Keychain cache`.
+
+**Граница ответственности:** платформа не добавляет Usedesk в каждое приложение
+автоматически. Host app подключает CocoaPods SDK, authenticated backend
+repository и точные Keychain service/account scopes только если ПМ подтвердил
+наличие Usedesk в проекте.
+
 ### Changed
 
 - account recovery теперь явно загружает полный token balance по
