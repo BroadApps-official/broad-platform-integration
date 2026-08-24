@@ -51,6 +51,7 @@ if ((failure_count == 0)); then
         '^schema: 1$' \
         '^platform_set: "1\.0\.0"$' \
         '^ios: "17\.0"$' \
+        '^swift_language_mode: "5"$' \
         '^swift_tools: "6\.0"$' \
         '^modules:$' \
         '^verification:$' \

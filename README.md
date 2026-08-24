@@ -26,6 +26,37 @@ backend-ручки и product decisions остаются в конкретном
 
 ---
 
+## С чего начать
+
+| Если вам нужно | Откройте |
+|---|---|
+| За 5 минут понять, какой product подключать | раздел [«Что подключать»](#что-подключать) ниже |
+| Подключить первый модуль к host app | [Getting Started на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started) |
+| Найти правило по Special Offer, entitlement, cache или release | [поиск по публичной документации](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search) |
+| Перенести существующее приложение на отдельные modules | [Migration Guide](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/migration) |
+| Проверить совместимые версии | [Compatibility catalog](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility) |
+| Изменить API конкретного модуля | README и DocC в repository этого модуля |
+
+> [!TIP]
+> Начиная с platform set `1.0.0`, Core, Extensions, Monetization и UIFlows
+> выпускаются отдельно. Integration repository хранит проверенный набор
+> версий, но host app не подключает его как dependency.
+
+### Swift 5 и SwiftPM 6.0 — это не одно и то же
+
+- production sources собираются в **Swift 5 language mode**;
+- host example явно использует `SWIFT_VERSION = 5.0`;
+- `// swift-tools-version: 6.0` в `Package.swift` — версия формата manifest и
+  SwiftPM toolchain, а не перевод исходников на Swift 6 language mode;
+- для package resolve нужен toolchain, понимающий SwiftPM 6.0, но app target
+  остаётся в Swift 5 mode.
+
+Точные значения для проверенного набора хранятся в
+[`Compatibility/current.yml`](Compatibility/current.yml): отдельно
+`swift_language_mode` и `swift_tools`.
+
+---
+
 ## Что подключать
 
 <picture>
@@ -310,14 +341,45 @@ device ID                    = не identity пользователя/чата
   <img alt="Публичный pipeline Markdown, DocC, поиска и Edit this page" src="Documentation/Assets/README/documentation-pipeline-light.svg" width="100%">
 </picture>
 
-Мы не убираем документы из repositories:
+Документы не переносятся в закрытую CMS и не исчезают из Git. У каждого
+формата своя задача:
 
-- README остаётся короткой versioned точкой входа;
-- detailed Markdown лежит рядом с кодом;
-- DocC описывает public API конкретного tag;
-- [public site](https://broadapps-ios-docs.nkhsnv.chatgpt.site) добавляет навигацию и
-  поиск по ключевым словам;
-- `Edit this page` открывает public pull request к canonical Markdown.
+| Где читать | Когда использовать | Что там canonical |
+|---|---|---|
+| Этот README | Первое знакомство, выбор product, быстрый запуск и обязательные platform rules | Короткая карта текущего integration repository |
+| [Публичный сайт](https://broadapps-ios-docs.nkhsnv.chatgpt.site) | Поиск по ключевым словам, cross-module сценарии, migration, compatibility и release | Страницы из public repository `broad-docs` |
+| README и DocC модуля | Реализация или review конкретного Core/Extensions/Monetization/UIFlows tag | Public API и usage именно этого module release |
+| `Compatibility/current.yml` | Выбор набора версий перед подключением или release | Exact versions и evidence integration gate |
+
+README не копирует подробные статьи сайта: он объясняет, **куда идти**.
+Сайт не заменяет module README/DocC: он связывает repositories и позволяет
+искать по cross-module документации. Integration-specific инструкции остаются
+в `Documentation/` этого repository и перечислены в карте ниже.
+
+### Как открыть сайт локально
+
+Нужны Node.js `22.13+` и pnpm `10.15.1`. Сайт живёт в отдельном public
+repository:
+
+```bash
+git clone https://github.com/BroadApps-official/broad-docs.git
+cd broad-docs
+pnpm install --frozen-lockfile
+pnpm run dev
+```
+
+Откройте адрес `Local`, который напечатает команда; по умолчанию это
+`http://localhost:3000`. Перед pull request выполните:
+
+```bash
+pnpm run check
+```
+
+Команда проверяет content contract, lint и production build. Unit tests и test
+targets здесь намеренно не добавляются. Для маленькой правки можно открыть
+нужную страницу сайта и нажать `Edit this page`; ссылка ведёт прямо в
+canonical Markdown на GitHub. Полные правила лежат в
+[`broad-docs/CONTRIBUTING.md`](https://github.com/BroadApps-official/broad-docs/blob/main/CONTRIBUTING.md).
 
 Всё публично и редактируемо. Авторизация не нужна для чтения сайта.
 

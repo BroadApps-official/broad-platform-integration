@@ -79,6 +79,7 @@ if ((readme_line_count < 400 || readme_line_count > 650)); then
 fi
 
 for required_pattern in \
+    '^## С чего начать$' \
     '^## Что подключать$' \
     '^## Целевые public repositories$' \
     '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
@@ -94,6 +95,12 @@ for required_pattern in \
     '^## Перед завершением задачи$' \
     'Host app подключает \*\*любой нужный модуль\*\*' \
     '`BroadPlatform` или другого umbrella package нет' \
+    'Swift 5 language mode' \
+    'SwiftPM 6\.0 — это не одно и то же' \
+    '^### Как открыть сайт локально$' \
+    'pnpm install --frozen-lockfile' \
+    'pnpm run dev' \
+    'README не копирует подробные статьи сайта' \
     'https://broadapps-ios-docs\.nkhsnv\.chatgpt\.site' \
     'Documentation/FederatedRepositories\.md' \
     'Documentation/ModuleReleasePolicy\.md' \
@@ -137,6 +144,8 @@ for documentation_contract in \
     'Documentation/FederatedRepositories.md|broad-platform-integration' \
     'Documentation/FederatedRepositories.md|broad-docs' \
     'Documentation/ModuleReleasePolicy.md|upToNextMajor' \
+    'Documentation/ModuleReleasePolicy.md|swift_language_mode: "5"' \
+    'Documentation/GettingStarted.md|platform sources и host example компилируются в Swift 5 language mode' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
     'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
     'Documentation/SpecialOffer.md|raw `AdaptyPaywallProduct`' \

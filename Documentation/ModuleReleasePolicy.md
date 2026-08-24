@@ -46,6 +46,7 @@ Canonical schema лежит в `Compatibility/current.yml` integration repositor
 schema: 1
 platform_set: "1.0.0"
 ios: "17.0"
+swift_language_mode: "5"
 swift_tools: "6.0"
 modules:
   BroadCore: "1.0.0"
@@ -59,6 +60,8 @@ verification:
 
 `platform_set` — версия проверенного набора, а не обязательного runtime
 umbrella. Host app может взять один модуль из этой матрицы.
+`swift_language_mode` относится к production sources, а `swift_tools` — к
+формату Package.swift и способности SwiftPM toolchain прочитать manifest.
 
 ## Emergency fix
 

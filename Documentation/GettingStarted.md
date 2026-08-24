@@ -32,6 +32,10 @@ Example показывает сборку и состояния платформ
 | SwiftLint | `0.62.2` | строгий lint; другую версию scripts отклоняют |
 | SwiftFormat | локальный installer | `Scripts/install_swiftformat.sh` ставит pinned-версию в `.build/tooling` и проверяет SHA-256 |
 
+Xcode включает toolchain, который понимает `swift-tools-version: 6.0`, но
+platform sources и host example компилируются в Swift 5 language mode. Это не
+требование переводить app target на Swift 6 mode.
+
 Проверка окружения:
 
 ```bash

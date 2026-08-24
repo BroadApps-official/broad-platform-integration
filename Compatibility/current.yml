@@ -1,6 +1,7 @@
 schema: 1
 platform_set: "1.0.0"
 ios: "17.0"
+swift_language_mode: "5"
 swift_tools: "6.0"
 repositories:
   BroadCore: "https://github.com/BroadApps-official/broad-core-ios"
@@ -48,4 +49,5 @@ module_verification:
 notes:
   - "Host applications connect only the repositories/products they need."
   - "This catalog is not a mandatory runtime umbrella dependency."
+  - "Production sources compile in Swift 5 language mode; swift_tools is the package manifest/toolchain version."
   - "Tests, test targets, XCTest and Swift Testing are intentionally absent."
