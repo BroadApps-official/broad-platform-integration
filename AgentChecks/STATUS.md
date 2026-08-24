@@ -45,6 +45,16 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
   от app-owned экранов, backend hooks и решений разработчика;
 - универсальный app integration contract, Project Delivery checklist,
   functional-review checkpoint и QA handoff без привязки к номеру приложения.
+- в Release доступность RU Billing определяется только `ru_pay` из актуального
+  payload Adapty: network response, SDK cache либо официальный Dashboard
+  fallback-файл; собственного положительного кеша и app-default `true` нет;
+- ручное `ru_pay`-переопределение имеет три режима (`как в Adapty`, `включить`,
+  `выключить`), хранится только в процессе, а template UI и store
+  разблокируются только под `#if DEBUG`; default store fail-closed к
+  Adapty и не обходит host configuration, контекст устройства, RU-каталог,
+  backend authorization, backend kill switch или entitlement;
+- причина доступности RU Billing выводится в Console типизированным safe-log без
+  конфигурационного payload, идентификаторов пользователя и платёжных данных.
 
 Настоящие purchase, restore и RU-платежи не запускались.
 

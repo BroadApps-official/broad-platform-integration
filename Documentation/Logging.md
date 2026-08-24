@@ -49,6 +49,13 @@ scenario, итог resolution, логические `main`/`special-offer`/`toke
 флаг наличия variation и закрытый provenance. Сам variation ID и provider
 placement в Console не попадают.
 
+`[RU_BILLING] ru-billing.availability.evaluated` объясняет, почему
+показаны или скрыты RU methods. Событие содержит только
+`BroadLogRUBillingAvailabilityReason` и `method_count`. Примеры причин:
+`available`, `remote-flag-disabled`, `device-context-not-russian`,
+`catalog-unavailable`, `debug-forced-enabled`. Значение `ru_pay`,
+payload, product ID и fallback path не пишутся.
+
 ## Подключение
 
 Production-приложение создаёт один logger в composition root и передаёт тот же экземпляр всем компонентам:
@@ -102,6 +109,7 @@ Console не заменяет результат для разработчика
 [FLOW] initial paywall → special offer
 [TOKENS] Backend подтвердил баланс
 [ANALYTICS] Записано 5 событий
+[RU_BILLING] RU methods недоступны: remote-flag-disabled
 [UI] Требуется визуальная сверка 2 экранов
 [BLOCKED] Для функции history отсутствует endpoint
 [PASS] Функциональная проверка завершена
@@ -121,6 +129,7 @@ payload и причины из SDK туда не переносятся. Дет�
 - успех или безопасный класс ошибки операций `read/write/remove/cleanup`.
 - доступность четырёх источников, числовой прогресс backend/UI и переход flow;
 - факт подтверждения token balance и число безопасных analytics events;
+- typed-причина доступности RU methods и их количество;
 - закрытая причина блокера и scope действительно завершённой проверки.
 
 Индекс шага безопасно связывает события внутри одного запуска. Имя и ID шага намеренно не записываются: host app может случайно положить в них приватное значение.

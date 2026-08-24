@@ -139,6 +139,12 @@ retained fields. Они всегда берутся из текущего parsed
 payload. `platformCache` — сохранённая платформой копия всего paywall; она годится
 для безопасного offline UI, но не для повторного включения удалённой функции.
 
+Dashboard-generated fallback-файл Adapty регистрируется через
+`Adapty.setFallback(fileURL:)` до активации SDK. Это всё ещё provider
+payload, поэтом `ru_pay` берётся из самого файла. Не редактируйте
+файл вручную и не подменяйте его собственным JSON. После изменения
+Dashboard хост обновляет tracked/bundled fallback по процедуре проекта.
+
 Эти флаги разрешают только показать функцию. Они не подтверждают подписку,
 premium, токены или успешный RU-платёж: финансовый результат всегда проверяет
 authoritative entitlement source.
@@ -214,6 +220,20 @@ host transport, который действительно умеет доказ�
 `.platformCache` или legacy payload не включает RU methods. Host fallback без
 явного `ru_pay = true` не поддерживается.
 
+### Production и Debug
+
+```text
+Release -> Adapty network / SDK cache / Dashboard fallback -> ru_pay
+Debug   -> Как в Adapty (default) / Включить / Выключить
+```
+
+В Release нет app-default или локального override для `ru_pay`. Host template
+разблокирует `forceEnabled` / `forceDisabled` только под `#if DEBUG`;
+обычный store fail-closed к `.followAdapty`. Debug-режим живёт только в текущем
+процессе и не меняет Remote Config. Force-on заменяет только решение
+remote-флага; host opt-in, RU-контекст iPhone, catalog/backend, авторизация
+и entitlement-проверка остаются обязательными.
+
 Parser отвечает только за `ru_pay`. Регион и первый системный язык iPhone
 проверяет `RUBillingGate`: достаточно региона `RU/RUS` **или** языка с префиксом
 `ru`. [RU Billing →](RUBilling.md).
@@ -236,7 +256,9 @@ config не содержит второй cohort authority.
 
 ## Пример payload
 
-Ниже только демонстрационная структура без app-specific ID и цен:
+Ниже только демонстрационная структура для отключённых feature,
+без app-specific ID и цен. Для уже подключённого RU Billing сохраните
+согласованное значение `ru_pay` из Adapty Dashboard:
 
 ```json
 {
@@ -267,8 +289,10 @@ config не содержит второй cohort authority.
 - [ ] fallback `.main` без valid enabled offer gate не включает special offer;
 - [ ] absent RU gate при default policy не показывает RU methods;
 - [ ] все RU aliases true + provider-managed provenance → RU gate enabled;
-- [ ] любой false alias → disabled, даже рядом с true/malformed и host fallback;
+- [ ] любой false alias → disabled, даже рядом с true/malformed;
 - [ ] true + malformed без false → invalid и fail-closed;
-- [ ] host fallback `.enabled` применяется только к `.absent`;
-- [ ] unqualified/cached `.enabled` не авторизует RU и не использует fallback;
+- [ ] Dashboard fallback зарегистрирован до Adapty activation и читает свой `ru_pay`;
+- [ ] unqualified/platform-cache `.enabled` не авторизует RU;
+- [ ] Debug force-on/off работает только в Debug, а Release следует Adapty;
+- [ ] backend отклоняет checkout при закрытой feature даже после Debug force-on;
 - [ ] unknown UI variant переходит на app default без crash.

@@ -159,6 +159,12 @@ import UIKit
                     ),
                     .init("-special-offer-timed", "Добавить окно действия предложения.", "На offer показан fixture-таймер конфигурации."),
                     .init("-ru-pay-provider-enabled", "Включить RU Pay из provider config.", "Paywall показывает разрешённые RU-методы."),
+                    .init("-ru-pay-provider-disabled", "Выключить RU Pay из provider config.", "Явный false оставляет только Apple."),
+                    .init(
+                        "-ru-pay-adapty-fallback-enabled",
+                        "Сымитировать Dashboard-generated fallback Adapty с ru_pay = true.",
+                        "Официальный provider fallback разрешает RU-методы; это fixture контракта, не настоящий Dashboard-файл."
+                    ),
                     .init(
                         "-ru-pay-platform-cache",
                         "Взять RU Pay config из platform cache.",

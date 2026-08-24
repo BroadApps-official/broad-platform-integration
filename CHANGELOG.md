@@ -77,8 +77,13 @@ production-ready версии.
 - [analytics guide](Documentation/Analytics.md), canonical shared pipeline и
   bounded typed recording fixture с явным refresh в `BroadAppTemplate`.
 - provider-managed Remote Config contract для `special_offer` и показа
-  `ru_pay`, семь безопасных launch fixtures и обязательная
+  `ru_pay`, девять безопасных launch fixtures и обязательная
   `check_remote_feature_contracts.sh` matrix без настоящих платежей.
+- typed Dashboard-generated Adapty fallback registration до SDK activation;
+  файл остаётся provider payload со своим `ru_pay` и не создаёт второй
+  app-owned Remote Config source;
+- process-local tri-state `ru_pay` для Debug-проверок и typed availability
+  diagnostics; force cases физически отсутствуют в Release.
 
 ### Changed
 
@@ -95,6 +100,9 @@ production-ready версии.
   screen/backend/ownership contracts, затем каркас и один вертикальный срез за
   раз; номер конкретного приложения и его execution status не хранятся в
   platform-owned отчётах;
+- README и все integration/acceptance guides уточняют, что `false` —
+  baseline только для неподключённой feature: рабочий `ru_pay = true` в Adapty
+  нельзя затирать шаблонным JSON;
 - runtime-проверка получила `stream_example_logs.sh`: helper выбирает booted
   iPhone Simulator, фильтрует safe OSLog по subsystem и понятно объясняет выбор
   UDID; README разделяет AppFlow `[FLOW]` и catalog-only analytics/experiment

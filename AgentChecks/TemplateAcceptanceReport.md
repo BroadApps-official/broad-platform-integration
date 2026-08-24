@@ -1,6 +1,6 @@
 # Фактическая приёмка BroadAppTemplate
 
-Дата прогона: 2026-08-23. Единственный нормативный checklist —
+Дата прогона: 2026-08-24. Единственный нормативный checklist —
 [`Documentation/TemplateAcceptance.md`](../Documentation/TemplateAcceptance.md).
 Ниже записан фактический результат безопасного ручного прогона; наличие кода
 или похожей кнопки само по себе не считалось доказательством.
@@ -32,6 +32,20 @@
 На обоих размерах у карточек есть понятный возврат. Основные заголовки,
 длинные описания и нижние действия оставались читаемыми; видимого наложения или
 обрезки обязательного действия не обнаружено.
+
+## `ru_pay`: техническая приёмка
+
+| Сценарий | Доказательство | Результат |
+|---|---|---|
+| Release без manual override | Default store fail-closed к Adapty; template разблокирует UI/store только под `#if DEBUG`; Release Simulator и generic iOS собраны | PASS |
+| Provider `true/false/absent/invalid` | `Scripts/check_remote_feature_contracts.sh` проверяет каждую fail-closed ветку | PASS |
+| Dashboard fallback registration | Typed JSON file URL и `Adapty.setFallback(fileURL:)` до `Adapty.activate` | PASS |
+| Debug consistency | Method resolver и final checkout gate получают один process-local store | PASS |
+| Безопасная диагностика | Typed availability reason + method count; raw Remote Config/product/path не печатаются | PASS |
+| Live clean-install offline | Зависит от fallback-файла конкретного host app | APP-OWNED |
+
+`-ru-pay-adapty-fallback-enabled` доказывает platform contract, но не
+заменяет host-owned live offline smoke.
 
 ## AppFlow
 

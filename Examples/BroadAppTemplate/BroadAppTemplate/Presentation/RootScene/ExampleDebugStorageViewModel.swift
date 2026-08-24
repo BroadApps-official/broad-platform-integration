@@ -55,11 +55,13 @@ import Foundation
             ExampleDebugStorageAction: ExampleDebugStorageFeedback
         ] = [:]
         @Published private(set) var backendFeedback: ExampleDebugSettingsNotice?
+        @Published private(set) var ruBillingOverrideMode: RUBillingDebugOverrideMode
 
         private let keychainCleaner: DebugKeychainCleaner
         private let progressRepository: any AppFlowProgressRepositoryProtocol
         private let contentCacheCleaner: ExampleDebugContentCacheCleaner
         private let analyticsRecorder: ExampleRecordingMonetizationAnalytics
+        private let ruBillingOverrideStore: RUBillingDebugOverrideStore
         private var backendTask: Task<Void, Never>?
         private var storageTask: Task<Void, Never>?
 
@@ -67,12 +69,15 @@ import Foundation
             keychainCleaner: DebugKeychainCleaner,
             progressRepository: any AppFlowProgressRepositoryProtocol,
             contentCacheCleaner: ExampleDebugContentCacheCleaner,
-            analyticsRecorder: ExampleRecordingMonetizationAnalytics
+            analyticsRecorder: ExampleRecordingMonetizationAnalytics,
+            ruBillingOverrideStore: RUBillingDebugOverrideStore
         ) {
             self.keychainCleaner = keychainCleaner
             self.progressRepository = progressRepository
             self.contentCacheCleaner = contentCacheCleaner
             self.analyticsRecorder = analyticsRecorder
+            self.ruBillingOverrideStore = ruBillingOverrideStore
+            ruBillingOverrideMode = ruBillingOverrideStore.currentMode
         }
 
         deinit {
@@ -166,6 +171,13 @@ import Foundation
                     isSuccess: true
                 )
             }
+        }
+
+        func updateRUBillingOverride(
+            _ mode: RUBillingDebugOverrideMode
+        ) {
+            ruBillingOverrideStore.update(mode)
+            ruBillingOverrideMode = mode
         }
 
         private func perform(

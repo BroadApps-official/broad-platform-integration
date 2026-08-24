@@ -106,7 +106,11 @@ for required_pattern in \
     '-special-offer-main-fallback' \
     '-special-offer-timed' \
     '-ru-pay-provider-enabled' \
+    '-ru-pay-provider-disabled' \
+    '-ru-pay-adapty-fallback-enabled' \
     '-ru-pay-platform-cache' \
+    'Dashboard-generated fallback' \
+    'Debug, `Как в Adapty`' \
     '^## 💳 RU Billing: последовательность экранов$' \
     '^## ✅ Если вы изменили код платформы$' \
     '^### 6\. ✅ Запустите обязательную проверку перед сдачей$' \
@@ -159,6 +163,22 @@ for required_pattern in \
     'Documentation/Assets/README/References/special-offer-step-2-offer\.png'; do
     if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
+    fi
+done
+
+for documentation_contract in \
+    'Documentation/RUBilling.md|Release \| Текущий payload Adapty' \
+    'Documentation/RUBilling.md|Adapty\.setFallback\(fileURL:' \
+    'Documentation/RUBilling.md|\.forceEnabled' \
+    'Documentation/RemoteConfig.md|Release -> Adapty network / SDK cache / Dashboard fallback -> ru_pay' \
+    'Documentation/Templates/AppIntegrationPlan.md|production-значение `ru_pay` в Adapty' \
+    'Examples/BroadAppTemplate/README.md|BROADAPPS_ADAPTY_FALLBACK_FILE_NAME' \
+    'Documentation/Logging.md|ru-billing\.availability\.evaluated'
+do
+    documentation_file="${documentation_contract%%|*}"
+    documentation_pattern="${documentation_contract#*|}"
+    if ! rg -q -- "$documentation_pattern" "$platform_root/$documentation_file"; then
+        record_failure "Documentation contract is missing: $documentation_file -> $documentation_pattern"
     fi
 done
 
@@ -280,6 +300,14 @@ workflow_svgs=(
     "$platform_root/Documentation/Assets/README/no-code-manual-workflow-light.svg"
     "$platform_root/Documentation/Assets/README/no-code-manual-workflow-dark.svg"
 )
+
+for remote_config_pattern in 'Dashboard fallback Adapty' 'Release: ru_pay только из Adapty' 'Debug: follow / force-on / force-off'; do
+    if ! rg -q -- "$remote_config_pattern" \
+        "$platform_root/Documentation/Assets/README/remote-config-cache-flow-light.svg" \
+        "$platform_root/Documentation/Assets/README/remote-config-cache-flow-dark.svg"; then
+        record_failure "Remote Config README diagram is missing: $remote_config_pattern"
+    fi
+done
 
 if rg -qi -- 'два промпта|второй промпт|готовый промпт|промпт проверки.*PASS' "${workflow_svgs[@]}"; then
     record_failure "Workflow SVGs must not describe the obsolete one-build-prompt/two-prompt process."

@@ -302,8 +302,13 @@ iPad не входит в scope платформы.
   его payload. Gate резервного `main` используется только при фактическом
   fallback на `main`.
 - `ru_pay` из того же ответа разрешает только показать RU-способы оплаты.
-  Сохранённая копия из кеша `BroadMonetization` их не включает, а premium
-  появляется только после новой подтверждённой проверки доступа со статусом
+  В Release он всегда приходит из Adapty: network, внутренний SDK cache или
+  официальный Dashboard-generated fallback. Локального production-default
+  нет. Сохранённая копия из кеша `BroadMonetization` RU methods не включает.
+- Debug имеет process-local `Как в Adapty` / `Включить` / `Выключить`.
+  Release UI не содержит force-control, а default store заблокирован в
+  `Как в Adapty`; Debug force не обходит device/backend/entitlement gates.
+- Premium появляется только после новой подтверждённой проверки доступа со статусом
   `active`.
 - Special Offer purchase использует raw product из того же внутреннего Adapty
   registry и не перезагружает paywall перед оплатой.
@@ -321,7 +326,8 @@ iPad не входит в scope платформы.
 Для воспроизводимой ручной проверки используйте launch arguments
 `-special-offer-enabled`, `-special-offer-disabled`,
 `-special-offer-platform-cache`, `-special-offer-main-fallback`,
-`-special-offer-timed`, `-ru-pay-provider-enabled` и
+`-special-offer-timed`, `-ru-pay-provider-enabled`,
+`-ru-pay-provider-disabled`, `-ru-pay-adapty-fallback-enabled` и
 `-ru-pay-platform-cache` из `Examples/BroadAppTemplate/README.md`.
 
 </details>

@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="680" viewBox="0 0 1280 680" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title description">
   <title id="title">Какой кеш может управлять Special Offer и RU Billing</title>
-  <desc id="description">Ответ SDK Adapty из сети или внутреннего кеша сохраняет связанными продукты, variation и Remote Config. Кеш BroadMonetization разрешён для показа обычного paywall, но не включает special offer и RU Billing.</desc>
+  <desc id="description">Ответ SDK Adapty из сети, внутреннего кеша или Dashboard fallback сохраняет связанными продукты, variation и Remote Config. Кеш BroadMonetization разрешён для показа обычного paywall, но не включает special offer и RU Billing. В Release ru_pay берётся из Adapty, а force-on/off доступен только в Debug.</desc>
   <defs>
     <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#071426"/>
@@ -26,14 +26,15 @@
   </g>
 
   <text x="82" y="172" fill="#6EE7B7" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">ТЕКУЩИЙ ОТВЕТ SDK ADAPTY</text>
-  <rect x="82" y="198" width="105" height="38" rx="19" fill="#10B981" fill-opacity="0.24"/>
-  <text x="134" y="222" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14" font-weight="700">сеть</text>
-  <text x="202" y="222" fill="#94A3B8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">ИЛИ</text>
-  <rect x="248" y="198" width="90" height="38" rx="19" fill="#10B981" fill-opacity="0.24"/>
-  <text x="293" y="216" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12" font-weight="700">кеш внутри</text>
-  <text x="293" y="230" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12" font-weight="700">Adapty</text>
-  <text x="82" y="278" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">Платформа получает один готовый</text>
-  <text x="82" y="303" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15">ответ и не делает второй REST-запрос.</text>
+  <rect x="82" y="198" width="76" height="36" rx="18" fill="#10B981" fill-opacity="0.24"/>
+  <text x="120" y="221" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="13" font-weight="700">сеть</text>
+  <text x="168" y="221" fill="#94A3B8" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12" font-weight="800">ИЛИ</text>
+  <rect x="198" y="198" width="140" height="36" rx="18" fill="#10B981" fill-opacity="0.24"/>
+  <text x="268" y="221" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12" font-weight="700">кеш SDK Adapty</text>
+  <rect x="82" y="245" width="256" height="36" rx="18" fill="#10B981" fill-opacity="0.24"/>
+  <text x="210" y="268" text-anchor="middle" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="12" font-weight="700">ИЛИ Dashboard fallback Adapty</text>
+  <text x="82" y="307" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">Один provider payload, без второго REST.</text>
+  <text x="82" y="328" fill="#D1FAE5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="14">ru_pay читается из этой же поставки.</text>
 
   <line x1="380" y1="237" x2="414" y2="237" stroke="#94A3B8" stroke-width="4" marker-end="url(#arrow)"/>
   <text x="458" y="172" fill="#93C5FD" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="800">ОДНА СВЯЗАННАЯ ПОСТАВКА</text>
@@ -74,6 +75,7 @@
   <text x="928" y="502" fill="#FDA4AF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="800">✕ Special Offer</text>
   <text x="928" y="535" fill="#FDA4AF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="17" font-weight="800">✕ RU Billing</text>
 
-  <rect x="52" y="602" width="1176" height="50" rx="18" fill="#312E81" fill-opacity="0.68" stroke="#818CF8" stroke-width="2"/>
-  <text x="640" y="633" text-anchor="middle" fill="#E0E7FF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="800">Remote Config управляет показом функции, но не подтверждает покупку, подписку или токены</text>
+  <rect x="52" y="602" width="1176" height="88" rx="18" fill="#312E81" fill-opacity="0.68" stroke="#818CF8" stroke-width="2"/>
+  <text x="640" y="632" text-anchor="middle" fill="#E0E7FF" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="16" font-weight="800">Release: ru_pay только из Adapty · Debug: follow / force-on / force-off для проверки</text>
+  <text x="640" y="663" text-anchor="middle" fill="#CBD5E1" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" font-size="15" font-weight="700">Remote Config управляет показом, но покупку и premium всегда подтверждают backend/entitlement</text>
 </svg>

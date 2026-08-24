@@ -76,6 +76,13 @@
 - `ru_pay = false`, отсутствующий или некорректный флаг всегда закрывает RU
   Billing. Предыдущее разрешающее значение не восстанавливается из last-valid
   cache.
+- В Release `ru_pay` всегда берётся из Adapty payload; app-default/force
+  override запрещён. Host template разблокирует process-local force-on/off
+  только из собственного `#if DEBUG`; store по умолчанию fail-closed и не
+  обходит device/catalog/backend/entitlement gates.
+- Для first-launch offline разрешён только Dashboard-generated Adapty
+  fallback, зарегистрированный до SDK activation. Не редактируй его
+  вручную и не создавай рядом второй `ru_pay` source.
 - Purchase/restore не открывают premium до подтверждения entitlement.
 - После переустановки subscription ownership восстанавливается через
   StoreKit/backend, а token balance и RU purchases — только через стабильный app

@@ -122,7 +122,8 @@ private enum ExampleRemoteFeaturePayloadFactory {
         usesLegacyPaymentFixture: Bool
     ) -> RemotePaywallConfiguration {
         RemotePaywallConfiguration(
-            isRUBillingEnabled: usesLegacyPaymentFixture || scenario?.isRUPay == true,
+            isRUBillingEnabled: usesLegacyPaymentFixture
+                || scenario?.isRUPayEnabled == true,
             accessPolicy: isHardPaywall ? .hard : .soft,
             closeDelay: isHardPaywall ? nil : 0,
             uiVariantID: PaywallUIVariantID(rawValue: "example-adaptive"),
@@ -143,7 +144,9 @@ private enum ExampleRemoteFeaturePayloadFactory {
              .specialOfferDisabled,
              .specialOfferMainFallback,
              .specialOfferTimed,
-             .ruPayProviderEnabled:
+             .ruPayProviderEnabled,
+             .ruPayProviderDisabled,
+             .ruPayAdaptyFallbackEnabled:
             .providerCacheFallbackPossible
         case nil:
             .verifiedFreshRemote

@@ -9,8 +9,11 @@ struct ExampleLiveAdaptyConfiguration {
         arguments: [String],
         bundle: Bundle = .main
     ) -> ExampleLiveAdaptyConfiguration? {
+        let fallbackFileName = bundle.liveAdaptyFallbackFileName
+        let fallbackFileURL = bundle.liveAdaptyFallbackFileURL
         guard arguments.contains("-live-adapty"),
               bundle.liveAdaptyEnabled,
+              fallbackFileName == nil || fallbackFileURL != nil,
               let apiKey = bundle.nonEmptyString(for: "BroadAppsAdaptyAPIKey"),
               let accessLevelID = bundle.nonEmptyString(
                   for: "BroadAppsAdaptyAccessLevelID"
@@ -21,7 +24,8 @@ struct ExampleLiveAdaptyConfiguration {
               let platform = AdaptyPlatformConfiguration(
                   apiKey: apiKey,
                   accessLevelID: accessLevelID,
-                  subject: .anonymous
+                  subject: .anonymous,
+                  fallbackFileURL: fallbackFileURL
               )
         else {
             return nil
@@ -64,6 +68,22 @@ private extension Bundle {
                 }
             }
         )
+    }
+
+    var liveAdaptyFallbackFileName: String? {
+        nonEmptyString(for: "BroadAppsAdaptyFallbackFileName")
+    }
+
+    var liveAdaptyFallbackFileURL: URL? {
+        guard let fileName = liveAdaptyFallbackFileName else {
+            return nil
+        }
+        let fileURL = URL(fileURLWithPath: fileName)
+        let resource = fileURL.deletingPathExtension().lastPathComponent
+        let fileExtension = fileURL.pathExtension.isEmpty
+            ? "json"
+            : fileURL.pathExtension
+        return url(forResource: resource, withExtension: fileExtension)
     }
 
     func nonEmptyString(for key: String) -> String? {

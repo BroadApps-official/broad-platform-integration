@@ -2,7 +2,7 @@
 
 - Статус: принято; часть решения о provenance заменена ADR-0005
 - Дата: 2026-08-09
-- Обновлено: 2026-08-22
+- Обновлено: 2026-08-24
 
 > [!NOTE]
 > Обязательный `ru_pay = true`, правило «регион **или** язык», backend-authoritative
@@ -15,10 +15,10 @@
 
 ## Контекст
 
-RU Billing нужен как опциональный способ оплаты рядом с Apple. В production-
-приложении 5115 его доступность определяется флагом Adapty `ru_pay`, регионом
-iPhone и первым системным языком. Платформа должна использовать то же правило и
-не разрешать СБП/карту из кешированного или отсутствующего флага.
+RU Billing нужен как опциональный способ оплаты рядом с Apple. Его
+доступность определяется флагом Adapty `ru_pay`, регионом iPhone и первым
+системным языком. Платформа не должна разрешать СБП/карту из собственного
+кеша или отсутствующего флага.
 
 Legacy backend и cancellation endpoint могут существовать во время миграции,
 однако их fallback остаётся отдельным решением и не меняет eligibility.
@@ -48,6 +48,15 @@ Host fallback без явного `ru_pay = true` не поддерживает�
 - `absent`, `disabled` и `invalid` всегда выключают feature;
 - platform-cache/unqualified `enabled` не показывает RU methods;
 - российский регион или русский язык без `ru_pay = true` оставляет только Apple.
+
+Официальный Dashboard-generated fallback Adapty не является host
+fallback: его регистрирует сам Adapty SDK, а `ru_pay` читается из этого
+же provider payload. Release не имеет второго app-default для флага.
+
+Debug может process-local переопределить только remote gate для
+проверки UI. Host template разблокирует store только под `#if DEBUG`;
+обычный initializer fail-closed к Adapty. Force modes не обходят
+host/device/catalog/backend/entitlement gates.
 
 `SystemRUBillingDeviceContextProvider` читает
 `Locale.current.region?.identifier` и `Locale.preferredLanguages.first`.

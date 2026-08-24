@@ -45,6 +45,13 @@ import SwiftUI
 
                     storageSections
 
+                    ExampleRUBillingDebugOverrideSection(
+                        settingsViewModel: settingsViewModel,
+                        onOpenPaywall: {
+                            onOpenScenario(.subscriptionPaywall)
+                        }
+                    )
+
                     ExampleLaunchScenariosSections(
                         onOpenScenario: onOpenScenario
                     )
@@ -296,6 +303,51 @@ import SwiftUI
         }
     }
 
+    private struct ExampleRUBillingDebugOverrideSection: View {
+        @ObservedObject var settingsViewModel: ExampleDebugSettingsViewModel
+        let onOpenPaywall: () -> Void
+
+        var body: some View {
+            Section("5. RU Billing — только Debug") {
+                Text(
+                    "В Release ru_pay всегда читается из текущего payload Adapty. "
+                        + "Здесь можно временно переопределить только этот флаг для UI-проверки."
+                )
+                .font(AppTokens.Font.body)
+
+                Picker(
+                    "Источник ru_pay",
+                    selection: Binding(
+                        get: { settingsViewModel.ruBillingOverrideMode },
+                        set: { mode in
+                            settingsViewModel.updateRUBillingOverride(mode)
+                        }
+                    )
+                ) {
+                    ForEach(RUBillingDebugOverrideMode.allCases, id: \.self) { mode in
+                        Text(mode.title).tag(mode)
+                    }
+                }
+                .pickerStyle(.inline)
+                .accessibilityIdentifier("debug.ru-billing.override")
+
+                Text(settingsViewModel.ruBillingOverrideMode.explanation)
+                    .font(AppTokens.Font.caption)
+                    .foregroundStyle(AppTokens.Color.secondaryText)
+
+                Text(
+                    "Force Enabled не обходит host configuration, российский контекст iPhone, "
+                        + "RU-каталог, backend authorization и entitlement-проверку."
+                )
+                .font(AppTokens.Font.caption)
+                .foregroundStyle(AppTokens.Color.warning)
+
+                Button("Открыть subscription paywall", action: onOpenPaywall)
+                    .accessibilityIdentifier("debug.ru-billing.open-paywall")
+            }
+        }
+    }
+
     private extension ExampleDebugStorageAction {
         var accessibilityName: String {
             switch self {
@@ -303,6 +355,27 @@ import SwiftUI
             case .flowProgress: "flow-progress"
             case .contentCache: "content-cache"
             case .analytics: "analytics"
+            }
+        }
+    }
+
+    private extension RUBillingDebugOverrideMode {
+        var title: String {
+            switch self {
+            case .followAdapty: "Как в Adapty"
+            case .forceEnabled: "Включить"
+            case .forceDisabled: "Выключить"
+            }
+        }
+
+        var explanation: String {
+            switch self {
+            case .followAdapty:
+                "Используется настоящий ru_pay из Remote Config текущего paywall."
+            case .forceEnabled:
+                "Debug временно считает ru_pay включённым. Remote Config не изменяется."
+            case .forceDisabled:
+                "Debug временно скрывает RU-методы, даже если Adapty вернул true."
             }
         }
     }

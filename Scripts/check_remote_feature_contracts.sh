@@ -62,6 +62,13 @@ last_valid_file="$platform_root/Sources/BroadMonetization/Data/Paywalls/LastVali
 special_use_case_file="$platform_root/Sources/BroadMonetization/Application/SpecialOffers/ResolveSpecialOfferUseCase.swift"
 special_resolution_file="$platform_root/Sources/BroadMonetization/Domain/SpecialOffers/SpecialOfferResolution.swift"
 ru_gate_file="$platform_root/Sources/BroadMonetization/Application/RUBilling/RUBillingGate.swift"
+ru_debug_override_file="$platform_root/Sources/BroadMonetization/Application/RUBilling/RUBillingDebugOverride.swift"
+ru_resolution_file="$platform_root/Sources/BroadMonetization/Application/RUBilling/ResolveCheckoutMethodsUseCase.swift"
+ru_composition_models_file="$platform_root/Sources/BroadMonetization/Application/DI/RUBillingCompositionModels.swift"
+ru_composition_factory_file="$platform_root/Sources/BroadMonetization/Application/DI/RUBillingCompositionFactory.swift"
+example_environment_file="$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Monetization/ExampleMonetizationEnvironment.swift"
+adapty_configuration_file="$platform_root/Sources/BroadMonetization/Infrastructure/Adapty/AdaptyPlatformConfiguration.swift"
+adapty_activation_file="$platform_root/Sources/BroadMonetization/Infrastructure/Adapty/AdaptySDKActivationGate.swift"
 
 echo "Remote Config feature-gate contract matrix"
 
@@ -101,14 +108,69 @@ require_pattern \
     'remoteConfigurationProvenance\.authorizesProviderManagedFeatureGates'
 
 require_pattern \
-    "RU Billing requires explicit ru_pay enabled plus an authorized presentation" \
+    "RU Billing requires explicit ru_pay enabled plus provider authorization" \
     "$ru_gate_file" \
-    'case[[:space:]]+\.enabled:(?s:.*?)return[[:space:]]+remoteConfiguration\.authorizesRUBillingPresentation'
+    'case[[:space:]]+\.enabled:(?s:.*?)guard[[:space:]]+remoteConfiguration\.authorizesRUBillingPresentation[[:space:]]+else'
 
 require_pattern \
     "Explicit false remains a RU Billing kill switch" \
     "$ru_gate_file" \
-    'case[[:space:]]+\.disabled,[[:space:]]+\.invalid:(?s:.*?)return[[:space:]]+false'
+    'case[[:space:]]+\.disabled:[[:space:]]*return[[:space:]]+\.remoteFlagDisabled'
+
+require_pattern \
+    "Malformed ru_pay remains fail-closed" \
+    "$ru_gate_file" \
+    'case[[:space:]]+\.invalid:[[:space:]]*return[[:space:]]+\.remoteFlagInvalid'
+
+require_pattern \
+    "Missing ru_pay remains fail-closed" \
+    "$ru_gate_file" \
+    'case[[:space:]]+\.absent:(?s:.*?)return[[:space:]]+\.remoteFlagAbsent'
+
+require_pattern \
+    "RU Billing exposes typed modes for custom-named Debug configurations" \
+    "$ru_debug_override_file" \
+    'case[[:space:]]+followAdapty(?s:.*?)case[[:space:]]+forceEnabled(?s:.*?)case[[:space:]]+forceDisabled'
+
+require_pattern \
+    "RU Billing production store rejects manual overrides by default" \
+    "$ru_debug_override_file" \
+    'allowsManualOverrides:[[:space:]]*Bool[[:space:]]*=[[:space:]]*false(?s:.*?)mode[[:space:]]*=[[:space:]]*allowsManualOverrides[[:space:]]*\?[[:space:]]*initialMode[[:space:]]*:[[:space:]]*\.followAdapty(?s:.*?)self\.mode[[:space:]]*=[[:space:]]*allowsManualOverrides[[:space:]]*\?[[:space:]]*mode[[:space:]]*:[[:space:]]*\.followAdapty'
+
+require_pattern \
+    "Host template unlocks RU Billing manual override only in DEBUG" \
+    "$example_environment_file" \
+    '#if[[:space:]]+DEBUG(?s:.*?)RUBillingDebugOverrideStore\(allowsManualOverrides:[[:space:]]*true\)(?s:.*?)#else(?s:.*?)RUBillingDebugOverrideStore\(\)(?s:.*?)#endif'
+
+require_pattern \
+    "RU Billing gate consumes the locked store before the Adapty decision" \
+    "$ru_gate_file" \
+    'switch[[:space:]]+debugOverrideStore\.currentMode(?s:.*?)case[[:space:]]+\.forceEnabled:(?s:.*?)case[[:space:]]+\.forceDisabled:(?s:.*?)switch[[:space:]]+remoteConfiguration\.ruBillingGateDecision'
+
+require_pattern \
+    "RU Billing logs the resolved availability reason without payload data" \
+    "$ru_resolution_file" \
+    '\.ruBillingAvailabilityEvaluated\([[:space:]]*reason:[[:space:]]*reason\.logValue,[[:space:]]*methodCount:[[:space:]]*methods\.count'
+
+require_pattern \
+    "RU Billing composition owns one shared Debug override store" \
+    "$ru_composition_models_file" \
+    'public[[:space:]]+let[[:space:]]+debugOverrideStore:[[:space:]]*RUBillingDebugOverrideStore'
+
+require_pattern \
+    "Method resolution and final checkout recheck share the Debug override" \
+    "$ru_composition_factory_file" \
+    'let[[:space:]]+gate[[:space:]]*=[[:space:]]*RUBillingGate\((?s:.*?)debugOverrideStore:[[:space:]]*dependencies\.debugOverrideStore(?s:.*?)ResolveCheckoutMethodsUseCase\((?s:.*?)debugOverrideStore:[[:space:]]*dependencies\.debugOverrideStore'
+
+require_pattern \
+    "Adapty configuration accepts only a typed local fallback file URL" \
+    "$adapty_configuration_file" \
+    'public[[:space:]]+let[[:space:]]+fallbackFileURL:[[:space:]]*URL\?(?s:.*?)\$0\.isFileURL[[:space:]]*&&[[:space:]]*\$0\.pathExtension\.lowercased\(\)[[:space:]]*==[[:space:]]*"json"'
+
+require_pattern \
+    "Dashboard-generated Adapty fallback is registered before SDK activation" \
+    "$adapty_activation_file" \
+    'Adapty\.setFallback\(fileURL:[[:space:]]*fallbackFileURL\)(?s:.*?)Adapty\.activate'
 
 require_pattern \
     "Last-valid storage never resurrects old RU or special-offer gates" \

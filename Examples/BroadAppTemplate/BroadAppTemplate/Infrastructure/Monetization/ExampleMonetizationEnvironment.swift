@@ -10,6 +10,7 @@ struct ExampleMonetizationEnvironment {
     let analytics: any MonetizationAnalyticsProtocol
     let analyticsRecorder: ExampleRecordingMonetizationAnalytics
     let resolveSpecialOffer: (any ResolveSpecialOfferUseCaseProtocol)?
+    let debugRUBillingOverrideStore: RUBillingDebugOverrideStore
 
     init(
         arguments: [String] = ProcessInfo.processInfo.arguments,
@@ -28,6 +29,7 @@ struct ExampleMonetizationEnvironment {
             analytics: analytics
         )
         let operationGate = MonetizationOperationGate()
+        let debugRUBillingOverrideStore = Self.makeDebugRUBillingOverrideStore()
         let remoteFeatureScenario = ExampleRemoteFeatureScenario.current(
             arguments: arguments
         )
@@ -44,9 +46,11 @@ struct ExampleMonetizationEnvironment {
         self.analytics = analytics
         self.analyticsRecorder = analyticsRecorder
         self.services = services
+        self.debugRUBillingOverrideStore = debugRUBillingOverrideStore
         resolveCheckoutMethods = Self.makeCheckoutMethodsUseCase(
             arguments: arguments,
-            scenario: remoteFeatureScenario
+            debugOverrideStore: debugRUBillingOverrideStore,
+            logger: logger
         )
         trackPaywallEvent = services.trackPaywallEvent
         resolveSpecialOffer = Self.makeSpecialOfferResolver(
@@ -92,15 +96,24 @@ struct ExampleMonetizationEnvironment {
 
     private static func makeCheckoutMethodsUseCase(
         arguments: [String],
-        scenario: ExampleRemoteFeatureScenario?
+        debugOverrideStore: RUBillingDebugOverrideStore,
+        logger: any BroadLoggerProtocol
     ) -> any ResolveCheckoutMethodsUseCaseProtocol {
-        if scenario?.isRUPay == true {
-            return makeRUPayFixtureMethodsUseCase()
-        }
         if arguments.contains("-paywall-payment-methods") {
             return ExampleCheckoutMethodsUseCase()
         }
-        return DisabledRUBillingCheckoutMethodsUseCase()
+        return makeRUPayFixtureMethodsUseCase(
+            debugOverrideStore: debugOverrideStore,
+            logger: logger
+        )
+    }
+
+    private static func makeDebugRUBillingOverrideStore() -> RUBillingDebugOverrideStore {
+        #if DEBUG
+            RUBillingDebugOverrideStore(allowsManualOverrides: true)
+        #else
+            RUBillingDebugOverrideStore()
+        #endif
     }
 
     private static func makeSpecialOfferResolver(
@@ -180,13 +193,18 @@ struct ExampleMonetizationEnvironment {
         )
     }
 
-    private static func makeRUPayFixtureMethodsUseCase()
+    private static func makeRUPayFixtureMethodsUseCase(
+        debugOverrideStore: RUBillingDebugOverrideStore,
+        logger: any BroadLoggerProtocol
+    )
         -> any ResolveCheckoutMethodsUseCaseProtocol {
         ResolveCheckoutMethodsUseCase(
             storefrontRepository: ExampleRUStorefrontRepository(),
             catalogRepository: ExampleRUCatalogRepository(),
             isFeatureEnabled: true,
-            deviceContextProvider: ExampleRussianDeviceContextProvider()
+            deviceContextProvider: ExampleRussianDeviceContextProvider(),
+            debugOverrideStore: debugOverrideStore,
+            logger: logger
         )
     }
 

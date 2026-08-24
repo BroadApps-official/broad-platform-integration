@@ -133,6 +133,9 @@ BLOCKED с владельцем. Остановись и жди подтверж
 3. Для monetization отдельно проверь active/inactive/unresolved, initial
    paywall policy, subscription/token separation, backend token fulfillment,
    Special Offer только после close первого paywall и purchase/restore bypass.
+   Для RU Billing проверь: Release читает `ru_pay` только из Adapty;
+   Debug force-on/off не попал в Release; backend kill switch/entitlement не
+   обходятся; Dashboard fallback проверен offline, если он нужен.
 4. Проверь Contact Us fallback и независимые Debug storage actions.
 5. Собери Debug/Release и пройди безопасные fixtures на iPhone Simulator.
 6. Не выполняй настоящие purchase, restore или RU checkout.

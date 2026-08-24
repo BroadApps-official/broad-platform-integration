@@ -49,7 +49,9 @@ final class AppCompositionRoot {
                 progressRepository: runtime.composition.progressRepository,
                 cacheRepository: runtime.cache.repository,
                 cacheKey: runtime.cache.key,
-                analyticsRecorder: runtime.monetizationEnvironment.analyticsRecorder
+                analyticsRecorder: runtime.monetizationEnvironment.analyticsRecorder,
+                ruBillingOverrideStore: runtime.monetizationEnvironment
+                    .debugRUBillingOverrideStore
             )
         #endif
     }
@@ -166,7 +168,8 @@ private extension AppCompositionRoot {
             progressRepository: any AppFlowProgressRepositoryProtocol,
             cacheRepository: any CacheRepositoryProtocol,
             cacheKey: CacheKey<ExampleCachedConfiguration>,
-            analyticsRecorder: ExampleRecordingMonetizationAnalytics
+            analyticsRecorder: ExampleRecordingMonetizationAnalytics,
+            ruBillingOverrideStore: RUBillingDebugOverrideStore
         )
             -> ExampleDebugSettingsViewModel {
             let cleaner = DebugKeychainCleaner(
@@ -185,7 +188,8 @@ private extension AppCompositionRoot {
                     repository: cacheRepository,
                     key: cacheKey
                 ),
-                analyticsRecorder: analyticsRecorder
+                analyticsRecorder: analyticsRecorder,
+                ruBillingOverrideStore: ruBillingOverrideStore
             )
         }
     #endif

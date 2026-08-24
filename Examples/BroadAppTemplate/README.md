@@ -101,6 +101,7 @@ UDID и точную команду с выбранным устройством
 - bounded typed recorder и debug-панель без PII/raw SDK data;
 - bootstrap/cache/timeout fixtures;
 - технический RU payment fixture без endpoint и реального списания;
+- Debug-only `ru_pay`: `Как в Adapty`, `Включить`, `Выключить`;
 - экран RU subscription management до и после отмены;
 - safe disabled production RU adapter без fake endpoint/token/`.ruBilling` source.
 
@@ -123,6 +124,12 @@ platform-координатор и обязательный backend contract о�
 
 Рабочие bundle/Adapty/placement values хранятся в соответствующих tracked
 `.xcconfig`. Дополнительный импорт перед запуском не нужен.
+
+`BROADAPPS_ADAPTY_FALLBACK_FILE_NAME` по умолчанию пуст. Если host-проекту
+нужен first-launch offline, скачайте JSON из его Adapty Dashboard,
+добавьте в Copy Bundle Resources и укажите имя файла. Настроенное имя
+без файла fail-closed отключает live composition. Не кладите чужой
+fallback в универсальный template.
 
 Reference repositories остаются read-only. Live scheme проверяет только Adapty
 activation/load/show. StoreKit purchase и restore запрещены company policy и
@@ -166,6 +173,8 @@ fail-before-charge.
 | `-special-offer-main-fallback` | placement кампании недоступен; Remote Config резервного `main` открывает её и сохраняет исходный placement |
 | `-special-offer-timed` | кампания с фиксированным доверенным серверным временем и таймером на три минуты |
 | `-ru-pay-provider-enabled` | provider-like fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
+| `-ru-pay-provider-disabled` | provider-like fixture явно возвращает `ru_pay = false`; остаётся только Apple |
+| `-ru-pay-adapty-fallback-enabled` | contract fixture имитирует Dashboard-generated fallback Adapty с `ru_pay = true`; не заменяет live offline smoke |
 | `-ru-pay-platform-cache` | `ru_pay = true` из кеша `BroadMonetization` отклоняется; остаётся только Apple |
 | `-ru-payment-sheet` | технический СБП fixture: две обязательные галочки, чек и сохранённый email; без отдельных строк legal links |
 | `-ru-payment-sheet-apple` | Apple выбран; RU consent/receipt поля отсутствуют |
@@ -191,7 +200,7 @@ fail-before-charge.
 
 ### Проверка Special Offer и `ru_pay`
 
-Эти семь сценариев проверяют не нарисованный экран, а настоящий контракт
+Эти девять сценариев проверяют не нарисованный экран, а настоящий контракт
 `BroadMonetization`. Special Offer проходит через `ResolveSpecialOfferUseCase`,
 а RU methods — через `ResolveCheckoutMethodsUseCase` и `RUBillingGate`.
 
@@ -202,11 +211,20 @@ fail-before-charge.
 Apple/СБП/карта, у сохранённой копии из кеша `BroadMonetization` останется только
 Apple.
 
+В Debug-каталоге есть отдельная секция `RU Billing — только Debug`.
+Режим `Как в Adapty` использует fixture/provider-флаг, `Включить` и
+`Выключить` меняют его process-local. После restart снова выбран
+`Как в Adapty`. В Release Debug-секции нет, а default store
+заблокирован в `Как в Adapty`.
+
 В Console появляется безопасная typed-запись
 `remote-feature.fixture.resolved` со сценарием, итогом, логическими
 requested/resolved placement, наличием variation и источником данных. Так можно
 проверить резерв на `main` без настоящего платежа, произвольных строк в OSLog и
 доступа к Adapty Dashboard.
+
+RU resolver дополнительно пишет `ru-billing.availability.evaluated`
+с typed reason и `method_count`, но без raw `ru_pay`, product ID и fallback path.
 
 Cold-launch AppFlow дополнительно пишет `[FLOW] ... from=initial-paywall
 to=special-offer`. Карточка каталога показывает ту же пару paywall внутри main,

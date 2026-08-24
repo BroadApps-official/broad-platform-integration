@@ -75,6 +75,20 @@
 | RU Billing | enabled / disabled + backend/legal |  |  |
 | Recovery | Apple/backend/token ledger |  |  |
 
+### RU Billing: заполнить, если feature не `N/A`
+
+| Вопрос | Решение / evidence | Статус |
+|---|---|---|
+| Host composition и backend/legal подключены? |  |  |
+| Какое production-значение `ru_pay` в Adapty? | `true` / `false`; владелец Dashboard |  |
+| Нужен first-launch offline? | Dashboard fallback filename/version и bundle evidence / `N/A` |  |
+| Где backend kill switch? | Endpoint/policy и владелец |  |
+| Debug override подключён? | `Как в Adapty` / force-on / force-off; только Debug |  |
+| Какой live smoke пройден? | Online `true/false`; clean-install offline fallback; без purchase |  |
+
+Release не может иметь app-default или force override для `ru_pay`.
+Fixture/Debug force-on не считается evidence Dashboard, backend или успешной оплаты.
+
 ## 6. Вертикальные срезы
 
 | Порядок | Срез | Вход → итог | Зависимости | Статус | Developer review |

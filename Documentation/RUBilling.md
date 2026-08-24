@@ -17,6 +17,23 @@ RU Billing — опциональная цепочка адаптеров для
 > backend status и запускает новый authoritative entitlement refresh; только
 > итоговый `active` выдаёт доступ.
 
+## Главное правило `ru_pay`
+
+`ru_pay` — это флаг Adapty, а не локальная настройка приложения.
+
+| Режим | Источник `ru_pay` | Назначение |
+|---|---|---|
+| Release | Текущий payload Adapty: network, SDK cache или Dashboard fallback | Production |
+| Debug · `Как в Adapty` | Тот же payload Adapty | Интеграционная проверка |
+| Debug · `Включить` / `Выключить` | Process-local override | Проверка UI и gate-веток |
+
+Новый проект без RU Billing начинает с `false`. Если feature уже
+подключена и должна работать, её согласованное значение в Adapty может
+быть `true`; не перезаписывайте его шаблонным JSON. Удаление приложения из
+App Store не переключает Adapty Remote Config автоматически. Для
+экстренного отключения нужны управляемый `ru_pay = false` и backend
+kill switch; backend в любом случае остаётся финальной финансовой authority.
+
 ## Что уже делает пакет
 
 Приложение передаёт адреса API, авторизацию, сопоставление продуктов и,
@@ -208,6 +225,81 @@ let checkoutMethods = ResolveCheckoutMethodsUseCase(
 `.providerCacheFallbackPossible`, если совпал российский регион либо русский
 первый системный язык. Значение из `.platformCache` или legacy payload не даёт
 этого разрешения. Host fallback без `ru_pay = true` не поддерживается.
+
+## Официальный offline fallback Adapty
+
+Если `ru_pay` должен быть доступен при первом запуске без сети, скачайте
+fallback JSON из Adapty Dashboard, добавьте его в app bundle и передайте URL:
+
+```swift
+guard let fallbackURL = Bundle.main.url(
+    forResource: "adapty_fallback",
+    withExtension: "json"
+) else {
+    preconditionFailure("Adapty fallback is configured but missing from the bundle")
+}
+
+let configuration = AdaptyPlatformConfiguration(
+    apiKey: runtimeConfiguration.adaptyKey,
+    accessLevelID: runtimeConfiguration.premiumAccessLevel,
+    subject: entitlementSubject,
+    fallbackFileURL: fallbackURL
+)
+```
+
+Платформа вызывает `Adapty.setFallback(fileURL:)` до первой activation.
+Файл остаётся Adapty-owned payload: продукты, variation и Remote Config
+не разрываются. Не создавайте custom REST, не редактируйте fallback
+вручную и не кладите рядом отдельный app-default `ru_pay`.
+[Официальная инструкция Adapty по fallback paywalls](https://adapty.io/docs/ios-use-fallback-paywalls).
+
+После изменения Adapty Dashboard обновите файл и проведите два smoke:
+
+1. online load/show с `ru_pay = true/false`;
+2. чистая установка без сети, когда fallback должен сработать.
+
+Fixture `-ru-pay-adapty-fallback-enabled` проверяет contract платформы,
+но не доказывает, что конкретный Dashboard-файл вложен в host app.
+
+## Debug-переключатель
+
+Для UI/gate-проверок Debug-сборка имеет `.followAdapty`, `.forceEnabled`
+и `.forceDisabled`. Host template создаёт store с
+`allowsManualOverrides: true` только из своего `#if DEBUG`;
+обычный initializer всегда принудительно возвращает `.followAdapty`. Это
+работает и для именованных Debug Xcode configurations, когда Swift Package
+и host target могут по-разному видеть compilation condition.
+
+Переключение живёт в текущем процессе, не меняет Adapty и не
+попадает в Release UI/composition.
+
+Один `RUBillingDebugOverrideStore` передаётся в Debug UI и
+`RUBillingCompositionDependencies`. Так resolver и финальная проверка перед
+checkout видят одно решение. Force-on заменяет только remote-флаг и не
+обходит:
+
+- `isFeatureEnabled` в composition;
+- RU-регион/язык iPhone;
+- наличие и точное сопоставление backend catalog;
+- backend authorization и финальный entitlement refresh.
+
+Поэтому Debug force-on не симулирует успешную production-оплату.
+
+### Что искать в Console
+
+`ResolveCheckoutMethodsUseCase` пишет typed-событие
+`ru-billing.availability.evaluated` только с закрытой причиной и числом
+доступных методов. Raw Remote Config, product ID, URL, email и token не
+логируются.
+
+| Причина | Что проверить |
+|---|---|
+| `available` | Adapty, device context и catalog разрешили RU methods |
+| `remote-flag-absent/disabled/invalid` | Payload текущего resolved paywall в Adapty |
+| `unqualified-remote-configuration` | Данные пришли из platform/legacy cache, а не provider payload |
+| `device-context-not-russian` | Регион и первый язык iPhone |
+| `catalog-unavailable/product-not-matched/methods-unavailable` | Backend catalog и exact mapping |
+| `debug-forced-enabled/disabled` | Текущий process-local Debug-режим |
 
 <a id="http-configuration-and-authorization"></a>
 ## Настройка HTTP и авторизации

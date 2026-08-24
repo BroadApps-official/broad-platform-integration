@@ -2,6 +2,7 @@
 
 - Статус: принято
 - Дата: 2026-08-22
+- Обновлено: 2026-08-24
 
 ## Контекст
 
@@ -78,8 +79,18 @@ Provider-managed cache и platform cache имеют разные права:
 | cache BroadMonetization | да | нет |
 | legacy/unqualified payload | да | нет |
 
+Dashboard-generated fallback, зарегистрированный через
+`Adapty.setFallback(fileURL:)`, относится к текущему payload Adapty SDK.
+Он сохраняет свои продукты, variation и Remote Config; отдельный
+app-default `ru_pay` для него не создаётся.
+
 Fallback на `main` использует Remote Config фактически resolved payload. Он не
 переносит положительный gate с requested placement.
+
+Debug-only force-on/off — узкое исключение для проверки UI/gate.
+Оно не меняет provider payload, не персистится, не обходит остальные
+RU gates. Host template показывает control и разблокирует store только
+под `#if DEBUG`; в Release default store принудительно возвращает `.followAdapty`.
 
 ## Последствия
 

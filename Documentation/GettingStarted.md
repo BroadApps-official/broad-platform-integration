@@ -263,12 +263,17 @@ mapping. Provider ID не должны попадать в View или shared sc
 ```swift
 // App-lifetime dependency: создаётся до первой subject/SDK composition.
 let financialOperationGate = MonetizationOperationGate()
+let adaptyFallbackURL = Bundle.main.url(
+    forResource: runtimeConfiguration.adaptyFallbackResourceName,
+    withExtension: "json"
+)
 
 guard let adaptyConfiguration = AdaptyPlatformConfiguration(
     apiKey: runtimeConfiguration.adaptyKey,
     accessLevelID: runtimeConfiguration.premiumAccessLevel,
     subject: entitlementSubject,
-    paywallLoadTimeout: 12
+    paywallLoadTimeout: 12,
+    fallbackFileURL: adaptyFallbackURL
 ) else {
     preconditionFailure("Invalid app-owned Adapty configuration")
 }
@@ -332,6 +337,11 @@ entitlement-инвариантами.
 Reference example хранит согласованные client-visible Adapty public SDK keys в
 tracked `.xcconfig`. Не выводите их в логи и не смешивайте с backend credentials.
 `AdaptyPlatformConfiguration` и identity redacted при reflection.
+
+`fallbackFileURL` optional. Если он задан, это должен быть JSON, скачанный
+из Adapty Dashboard и добавленный в app bundle. Платформа регистрирует его
+через `Adapty.setFallback(fileURL:)` до активации SDK. Файл не является
+app-default Remote Config: `ru_pay` по-прежнему читается из payload Adapty.
 
 `AdaptyPaywallRepository` передаёт каждый product один к одному, сохраняя provider
 order, дубликаты и consumables. UI identity — `ProductPresentationID`, purchase
@@ -541,6 +551,10 @@ malformed или conflicting флаг выключает RU. Platform-cache/lega
 авторизует показ RU methods. App Store storefront в этой проверке не участвует.
 [Настройка RU billing](RUBilling.md).
 
+В Release не задавайте локальный default/override для `ru_pay`: его источником
+остаётся Adapty. Debug-only tri-state переключатель нужен только для
+воспроизводимой проверки UI/gate и не обходит backend/entitlement.
+
 Production adapters собирайте через `RUBillingCompositionFactory`: сначала `makeEntitlementRegistration()` добавляется в общий engine, затем `makeServices(refreshEntitlement:operationGate:)` получает уже созданный engine и тот же financial operation gate, что Apple purchase/restore. Это разрывает цикл «RU source нужен engine → RU checkout нужен refresh engine» и не позволяет Apple/RU оплатам идти параллельно.
 
 В enabled dependencies обязательно передайте тот же стабильный app identifier:
@@ -711,6 +725,10 @@ instant, поэтому последующий async save не добавляе�
 - [ ] presentable special offer передаёт `presentationAuthorization`, persistence fail-closed;
 - [ ] timed special offer получает trusted server clock; unavailable/rollback time скрывает offer;
 - [ ] RU CTA требует provider-managed `ru_pay = true` и RU region или русский системный язык;
+- [ ] Release читает `ru_pay` только из Adapty; force-control и
+  `allowsManualOverrides: true` находятся только под host `#if DEBUG`;
+- [ ] если нужен first-launch offline, Dashboard-generated fallback вложен в bundle и проверен без сети;
+- [ ] backend kill switch и authoritative entitlement не зависят от Debug override;
 - [ ] real credentials и PII отсутствуют в source/cache/logs/analytics;
 - [ ] Debug Status объясняет результат без Console, а safe runtime-поток
   подтверждает фактический порядок flow;

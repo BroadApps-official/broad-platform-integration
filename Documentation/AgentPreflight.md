@@ -44,6 +44,16 @@ endpoint, request, response, обязательными полями, автор
 retry. Отсутствующую ручку нельзя придумывать или заменять локальным fixture в
 production flow.
 
+Если нужен RU Billing, monetization preflight отдельно фиксирует:
+
+- production-значение `ru_pay` в Adapty и владельца Dashboard;
+- backend catalog/checkout/authorization и финальный kill switch;
+- нужен ли Dashboard-generated fallback для first-launch offline;
+- что Debug force-on/off — только тест UI, а не production configuration.
+
+Отсутствие доступа к Dashboard/backend даёт `Monetization: BLOCKED`, а не
+разрешение зашить `ru_pay = true` в Swift.
+
 ## Обязательный отчёт
 
 До app-кода агент возвращает эти строки с коротким пояснением:
@@ -88,7 +98,9 @@ Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
    Reference не изменяй. При неоднозначности запроси решение тимлида или ПМ.
 5. Сопоставь функции с backend: method, endpoint, request, response,
    обязательные поля, auth, ошибки и retry. Не придумывай endpoint.
-6. Верни ровно этот статус и короткие доказательства:
+6. Для RU Billing запиши `ru_pay` из Adapty, backend kill switch и
+   необходимость Dashboard fallback. Не создавай Release-default для флага.
+7. Верни ровно этот статус и короткие доказательства:
 
 Kaiten: READY / BLOCKED
 Design source: READY / BLOCKED

@@ -278,6 +278,8 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
     case specialOfferMainFallback = "special-offer-main-fallback"
     case specialOfferTimed = "special-offer-timed"
     case ruPayProviderEnabled = "ru-pay-provider-enabled"
+    case ruPayProviderDisabled = "ru-pay-provider-disabled"
+    case ruPayAdaptyFallbackEnabled = "ru-pay-adapty-fallback-enabled"
     case ruPayPlatformCache = "ru-pay-platform-cache"
 
     var launchArgument: String {
@@ -292,13 +294,32 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
              .specialOfferMainFallback,
              .specialOfferTimed:
             true
-        case .ruPayProviderEnabled, .ruPayPlatformCache:
+        case .ruPayProviderEnabled,
+             .ruPayProviderDisabled,
+             .ruPayAdaptyFallbackEnabled,
+             .ruPayPlatformCache:
             false
         }
     }
 
     var isRUPay: Bool {
         !isSpecialOffer
+    }
+
+    var isRUPayEnabled: Bool {
+        switch self {
+        case .ruPayProviderEnabled,
+             .ruPayAdaptyFallbackEnabled,
+             .ruPayPlatformCache:
+            true
+        case .ruPayProviderDisabled,
+             .specialOfferEnabled,
+             .specialOfferDisabled,
+             .specialOfferPlatformCache,
+             .specialOfferMainFallback,
+             .specialOfferTimed:
+            false
+        }
     }
 
     var specialOfferConfiguration: SpecialOfferConfiguration? {

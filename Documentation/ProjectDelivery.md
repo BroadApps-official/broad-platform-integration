@@ -54,6 +54,9 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 | Tokens | нужны / не нужны | Entry point + backend fulfillment contract |
 | Special offer | нужен / не нужен | Placement + current Remote Config contract |
 | RU Billing | нужен / не нужен | Backend + legal + remote gate |
+| `ru_pay` | `true` / `false` в Adapty; владелец флага | Adapty Dashboard / product decision |
+| RU first-launch offline | Dashboard fallback filename/version / `N/A` | Bundled resource + offline smoke |
+| RU emergency off | Backend kill switch + `ru_pay = false` procedure | Backend/product owner |
 | Contact Us | support email + standard/ukassa form | `SupportEmail.md` + app configuration |
 | Account recovery | Apple / tokens / RU ownership sources | Backend and entitlement matrix |
 | Offline | доступные функции и safe fallback | Backend/UX decision |
@@ -89,6 +92,9 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
   purchase/restore первого paywall обходит offer.
 - [ ] Один analytics pipeline видит события subscription и special-offer презентаций.
 - [ ] RU methods требуют текущий разрешающий gate и app-owned backend.
+- [ ] Release берёт `ru_pay` только из Adapty; локальный force-on/off существует только в Debug.
+- [ ] Debug force-on не обходит RU device context, catalog, backend authorization и entitlement.
+- [ ] Если заявлен first-launch offline, bundled fallback скачан из Adapty Dashboard и проверен на чистой установке без сети.
 - [ ] Contact Us имеет composer и fallback.
 - [ ] Backend/SDK кнопки сразу показывают spinner и блокируют double tap.
 - [ ] Empty/error/offline/retry состояния видимы пользователю.

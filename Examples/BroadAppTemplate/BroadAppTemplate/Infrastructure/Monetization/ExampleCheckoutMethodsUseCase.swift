@@ -13,7 +13,8 @@ struct ExampleCheckoutMethodsUseCase: ResolveCheckoutMethodsUseCaseProtocol {
             storefront: Storefront(
                 identifier: "example-ru-storefront",
                 countryCode: "RU"
-            )
+            ),
+            ruBillingAvailability: .available
         )
     }
 }

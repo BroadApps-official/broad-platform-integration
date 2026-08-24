@@ -25,12 +25,12 @@
 | 7 | `ExampleRecordingMonetizationAnalytics` + экран `Аналитика` | Live stream, count, update time, refresh/clear feedback и safe-paywall entry |
 | 8 | `ExampleLaunchScenarios` | In-app действия отделены от cold-launch аргументов; у аргумента есть Copy, смысл, ожидание и путь Xcode |
 | 9 | `BroadSupportEmailComposer` + `ExampleContactUsView` | Системный composer; Simulator fallback, Copy/Close и отдельный empty-address alert |
-| 10 | `AgentPreflight.md` + `#agent-preflight` | Kaiten/Figma: MCP → Chrome → export → `BLOCKED`, затем ровно пять строк статуса |
+| 10 | `AgentPreflight.md` + `#agent-preflight` | Kaiten/Figma: MCP → Chrome → export → `BLOCKED`, затем ровно семь строк статуса |
 | 11 | `#agent-build-prompt` | До UI обязательны screen map, backend matrix и monetization decision |
 | 12 | `app-delivery-iterations-*.svg` + оба варианта README | Функциональная итерация отделена от screenshot-to-source и self-review |
 | 13 | Якоря `#agent-preflight`, `#agent-build-prompt`, `#agent-app-check` | Три прямые ссылки сразу в Variant A; ручной путь повторяет шесть стадий |
 | 14 | Корневой и example README + парные light/dark SVG | Быстрый выбор пути, карта всех flow, актуальные ссылки и объяснения |
-| 15 | `BroadLogEvent` + `OSLogBroadLogger` + `Logging.md` | Закрытые enum/Bool/count; raw IDs и legacy metadata не попадают в Console |
+| 15 | `BroadLogEvent` + `OSLogBroadLogger` + `RUBillingDebugOverrideStore` | Закрытые enum/Bool/count; `ru_pay` из Adapty в Release, tri-state только Debug, Dashboard fallback до SDK activation |
 | 16 | `Scripts/agent_gate.sh` + эта ручная матрица | Отдельные technical, functional, visual и instruction проверки без реальных платежей |
 
 ## Обязательные сценарии
@@ -51,6 +51,9 @@
 | Subscription paywall | Открыть каталог подписок | 0/1/2/12/N продуктов в provider order | Typed analytics UI; Console получает только безопасный `[ANALYTICS] ... count=N` | Только safe presentation state | Фильтровать/сортировать SKU или открывать premium до refresh |
 | Token paywall | Нажать на token balance или карточку fixture | Отдельные consumable-пакеты; новый баланс только после backend confirmation | Token-аналитика показывает outcomes; `[TOKENS] tokens.balance.confirmed` появляется только после backend snapshot | Pending evidence и backend balance того же account | Использовать subscription checkout, выдавать premium или начислять дважды |
 | Token fallback на main | Запустить `-app-flow-main-only -token-paywall-main-fallback`, открыть token paywall | Остаётся consumable token UI; Accessibility value показывает requested `.tokens`, resolved `.main` | Token-аналитика показывает успешную загрузку; subscription completion отсутствует | Только safe presentation state | Принимать fallback, если в `main` есть subscription/unknown product |
+| `ru_pay` из provider | Сравнить `-ru-pay-provider-enabled` и `-ru-pay-provider-disabled` | Enabled показывает Apple/СБП/карту при RU-контексте; disabled — только Apple | `ru-billing.availability.evaluated` с typed reason и method count | Ничего | Считать App Store removal автоматическим изменением Adapty |
+| Dashboard fallback contract | Запустить `-ru-pay-adapty-fallback-enabled`; для host app отдельно пройти clean-install offline smoke | Fixture показывает RU methods; live smoke читает bundled Adapty JSON | Typed reason без raw config/path | Bundled file — app-owned resource | Выдавать fixture за доказательство конкретного Dashboard-файла |
+| Debug override `ru_pay` | Debug → RU Billing → по очереди `Как в Adapty` / `Включить` / `Выключить` | Список методов меняется без restart; режим объяснён рядом | `debug-forced-enabled/disabled` или фактическая Adapty-причина | Нет; после restart снова `Как в Adapty` | Обходить device/catalog/backend/entitlement или попадать в Release |
 | Analytics | Открыть/закрыть safe paywall и Special Offer flow, затем открыть аналитику; отдельно нажать refresh при пустом списке | Счётчик, общий live-список обеих презентаций, spinner, время update и явный результат «событий пока нет» | `[ANALYTICS] analytics.events.recorded count=N` | Один bounded in-memory recorder только до закрытия process | Показывать секреты/raw payload, терять события отдельного каталога или обещать persistence |
 | Очистка Keychain | Debug → «Очистить Keychain» → подтвердить | Inline-результат с числом service; есть указание о перезапуске | UI — source of truth; отдельный OSLog с именами service намеренно не создаётся | Onboarding/paywall/cache/analytics/payment pending не меняются | Очищать чужие service, payment pending или попадать в Release |
 | Сброс flow progress | Debug → «Сбросить onboarding/paywall» → подтвердить | Inline-результат и явное указание, что для нового flow нужен перезапуск | UI — source of truth; следующий cold launch доказывает новый route через `[FLOW]` | Keychain/cache/analytics/payment pending не меняются | Считать сброс entitlement или restore |

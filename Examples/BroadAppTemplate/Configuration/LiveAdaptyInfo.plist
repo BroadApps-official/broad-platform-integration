@@ -60,5 +60,7 @@
     <string>$(BROADAPPS_ADAPTY_DISCOUNT_PLACEMENT_ID)</string>
     <key>BroadAppsAdaptySpecialOfferPlacementID</key>
     <string>$(BROADAPPS_ADAPTY_SPECIAL_OFFER_PLACEMENT_ID)</string>
+    <key>BroadAppsAdaptyFallbackFileName</key>
+    <string>$(BROADAPPS_ADAPTY_FALLBACK_FILE_NAME)</string>
 </dict>
 </plist>

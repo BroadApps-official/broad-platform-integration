@@ -14,12 +14,14 @@
 | Upload backend | Версионированная schema `POST /transform` | `READY` |
 | History backend | В требованиях есть, в backend docs ручки нет | `BLOCKED` |
 | Monetization | Subscription only, once after onboarding | `READY` |
+| RU Billing | Не нужен: adapters/entitlement source не регистрируются | `N/A` |
 
 ## Ownership
 
 | Область | Ответственность |
 |---|---|
 | AppFlow, entitlement, subscription mechanics | Platform component; агент только подключает |
+| `ru_pay` | Для этого приложения `N/A`; не добавлять app-default или Debug override в Release |
 | Upload mapping и экран результата | Агент реализует по доказанной schema и frames |
 | History contract | Backend owner должен предоставить решение |
 | Точные тексты/assets и visual acceptance | App-owned, подтверждает разработчик |
