@@ -7,6 +7,11 @@
 
 ### Changed
 
+- главный README получил актуальную карту входа `Что это → Быстрый маршрут →
+  Все flow → Перед QA → Что открыть → С чего начать`, а подробности ведут в
+  единый сайт вместо создания второй расходящейся копии workflow;
+- таблица первого шага теперь отдельно маршрутизирует создание app с агентом
+  и без него, выбор workspace, product flow, QA и три вида поиска по docs;
 - последний полный pre-federation README (`ff54c4d`, 2 829 строк, 58 media)
   проаудирован против текущих module APIs, dependency graph и platform rules;
 - актуальные bootstrap/cache/Adapty/paywall/token/RU/Special Offer/Usedesk

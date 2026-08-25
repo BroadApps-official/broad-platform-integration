@@ -26,11 +26,7 @@
 > migration guides и поиск по всей документации.
 
 <p align="center">
-  <a href="Documentation/GettingStarted.md">Быстрый старт</a>
-  ·
-  <a href="Documentation/FederatedRepositories.md">Карта repositories</a>
-  ·
-  <a href="CHANGELOG.md">Changelog</a>
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-это">💡 Что это</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#быстрый-маршрут">⚡ Быстрый маршрут</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#все-flow">🗺️ Все flow</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#перед-qa">🚦 Перед QA</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-открыть">📂 Что открыть</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#с-чего-начать">🚀 С чего начать</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#с-codex-claude">🤖 С Codex / Claude</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#без-агента">🛠️ Без агента</a> · <a href="CHANGELOG.md">Changelog</a>
 </p>
 
 > [!IMPORTANT]
@@ -48,12 +44,17 @@ backend-ручки и product decisions остаются в конкретном
 
 | Если вам нужно | Откройте |
 |---|---|
-| За 5 минут понять, какой product подключать | раздел [«Что подключать»](#что-подключать) ниже |
+| Понять платформу, owners и какой product подключать | [«Что это»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-это) и раздел [«Что подключать»](#что-подключать) ниже |
+| Выбрать кратчайший путь для своей задачи | [«Быстрый маршрут»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#быстрый-маршрут) |
+| Увидеть карту onboarding, paywall, Special Offer, tokens, RU Billing и support | [«Все flow»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#все-flow) |
+| Создать приложение с Codex/Claude или вручную | [«С чего начать»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#с-чего-начать) |
+| Понять, какой workspace, package или example открыть | [«Что открыть»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-открыть) |
 | Подключить первый модуль к host app | [Getting Started на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started) |
 | Xcode просит GitHub password или доступ к Keychain | [Public package access](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/public-package-access) |
-| Найти правило по Special Offer, entitlement, cache или release | [поиск по публичной документации](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search) |
+| Найти правило по Special Offer, entitlement, cache или release | [текстовый, GitHub- и алфавитный поиск](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs) |
 | Перенести существующее приложение со старой платформы | [Legacy migration](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration) |
 | Проверить совместимые версии | [Compatibility catalog](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility) |
+| Подготовить приложение к QA | [«Перед QA»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#перед-qa) |
 | Изменить API конкретного модуля | README и DocC в repository этого модуля |
 
 > [!TIP]
