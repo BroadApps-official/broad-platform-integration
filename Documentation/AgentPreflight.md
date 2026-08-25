@@ -5,16 +5,22 @@
 reference и backend-контракт. Сообщения «примерно понятно» или «сделаю похожий
 экран» не являются успешным результатом.
 
+> [!IMPORTANT]
+> Это canonical source правил и copy-paste prompt для Stage 0. Блок в
+> [Agent Prompt Pack](AgentPromptPack.md#0-preflight-только-чтение) зеркалит
+> prompt дословно для удобства; documentation gate отклоняет любое расхождение.
+
 ## Порядок доступа
 
 ### Источник платформы
 
 Canonical workflow и compatibility читаются из public repository
 [`BroadApps-official/broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration).
-Агент записывает фактически прочитанный commit SHA и `platform_set` в
-`Documentation/AppIntegrationPlan.md`. Private `BroadApps-official/BroadCore`
-может быть только legacy evidence существующего приложения; он не заменяет
-canonical platform source.
+Агент возвращает фактически прочитанный commit SHA и `platform_set` в
+preflight report. На Stage 1 эти значения записываются в
+`Documentation/AppIntegrationPlan.md`. Stage 0 не создаёт и не изменяет
+файлы. Private `BroadApps-official/BroadCore` может быть только legacy
+evidence существующего приложения; он не заменяет canonical platform source.
 
 Если public repository, нужный документ или `Compatibility/current.yml`
 недоступны, вернуть `Platform source: BLOCKED`. Нельзя выбирать package URL или
@@ -67,17 +73,25 @@ production flow.
 Отсутствие доступа к Dashboard/backend даёт `Monetization: BLOCKED`, а не
 разрешение зашить `ru_pay = true` в Swift.
 
+### Support и legal
+
+Preflight проверяет источник support address, Privacy Policy/Terms HTTPS URLs
+и владельца каждого отсутствующего решения. Неизвестное значение получает
+`Support/legal: BLOCKED`; `N/A` допустим только для явно исключённой области.
+Агент не копирует support/legal данные из reference по сходству.
+
 ## Обязательный отчёт
 
 До app-кода агент возвращает эти строки с коротким пояснением:
 
 ```text
-Platform source: READY / BLOCKED
+Platform source: READY / BLOCKED — <URL, COMMIT SHA, PLATFORM_SET>
 Kaiten: READY / BLOCKED
 Design source: READY / BLOCKED
 Reference: READY / BLOCKED / N/A
 Backend: READY / PARTIAL / BLOCKED
 Monetization: READY / BLOCKED / N/A
+Support/legal: READY / BLOCKED / N/A
 Можно создать безопасный каркас: ДА / НЕТ
 Можно реализовать все обязательные функции: ДА / НЕТ
 ```
@@ -92,47 +106,54 @@ Monetization: READY / BLOCKED / N/A
 
 Замените только значения в угловых скобках:
 
+<!-- AGENT_PREFLIGHT_PROMPT:START -->
 ```text
-Проверь доступ к исходным материалам до создания iPhone-приложения.
+Проведи preflight текущего iPhone-приложения на BroadApps iOS Platform.
 
-Проект: <НОМЕР И НАЗВАНИЕ>.
-Kaiten: <ССЫЛКА ИЛИ ТОЧНОЕ НАЗВАНИЕ>.
+Проект: <НАЗВАНИЕ ИЛИ ИДЕНТИФИКАТОР>.
+Kaiten: <ССЫЛКА / ТОЧНОЕ НАЗВАНИЕ / ЭКСПОРТ>.
 Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
 Platform repository: https://github.com/BroadApps-official/broad-platform-integration.
 
 Пока не создавай и не изменяй файлы приложения.
 
-1. Из host repository прочитай AGENTS.md/CLAUDE.md и README.md. Из canonical
-   platform repository прочитай Documentation/AgentPreflight.md и
-   Compatibility/current.yml. Запиши фактический platform commit SHA и
-   platform_set. Если источник недоступен — остановись с Platform source:
-   BLOCKED; private BroadCore не используй как замену.
-2. Для Kaiten попробуй по порядку: Kaiten MCP; авторизованный Kaiten в Chrome;
+1. Из HOST REPOSITORY прочитай AGENTS.md/CLAUDE.md и README.md.
+2. Из canonical PLATFORM REPOSITORY прочитай
+   Documentation/AgentPreflight.md, Documentation/AppCreationWorkflow.md и
+   Compatibility/current.yml. Верни фактически прочитанные commit SHA и
+   platform_set. Если источник недоступен — остановись с
+   Platform source: BLOCKED; private BroadCore не используй как замену.
+3. Для Kaiten попробуй по порядку: Kaiten MCP; авторизованный Kaiten в Chrome;
    полный экспорт из рабочей папки. Если ничего нет — остановись с BLOCKED.
-3. Определи тип дизайна только по метке Kaiten. Для Figma попробуй Figma MCP;
+4. Определи тип дизайна только по метке Kaiten. Для Figma попробуй Figma MCP;
    авторизованную Figma в Chrome; экспортированные frames/скриншоты. Для
    no-code открой согласованный Claude Design/Pencil или его экспорт. Если
    источник не виден — BLOCKED; не придумывай похожий интерфейс.
-4. Найди reference в Kaiten, доступных Git-репозиториях или live-проектах.
+5. Найди reference в Kaiten, доступных Git-репозиториях или live-проектах.
    Reference не изменяй. При неоднозначности запроси решение тимлида или ПМ.
-5. Сопоставь функции с backend: method, endpoint, request, response,
+6. Сопоставь функции с backend: method, endpoint, request, response,
    обязательные поля, auth, ошибки и retry. Не придумывай endpoint.
-6. Для RU Billing запиши `ru_pay` из Adapty, backend kill switch и
-   необходимость Dashboard fallback. Не создавай Release-default для флага.
-7. Верни ровно этот статус и короткие доказательства:
+7. Проверь monetization decisions. Для RU Billing запиши `ru_pay` из Adapty,
+   backend kill switch и необходимость Dashboard fallback. Не создавай
+   Release-default для флага.
+8. Проверь support/legal: источник support address, Privacy Policy/Terms URLs и
+   владелец каждого отсутствующего решения. Не придумывай значения.
+9. Верни ровно этот статус и короткие доказательства:
 
-Platform source: READY / BLOCKED
+Platform source: READY / BLOCKED — <URL, COMMIT SHA, PLATFORM_SET>
 Kaiten: READY / BLOCKED
 Design source: READY / BLOCKED
 Reference: READY / BLOCKED / N/A
 Backend: READY / PARTIAL / BLOCKED
 Monetization: READY / BLOCKED / N/A
+Support/legal: READY / BLOCKED / N/A
 Можно создать безопасный каркас: ДА / НЕТ
 Можно реализовать все обязательные функции: ДА / НЕТ
 
 Затем добавь [BLOCKED], чего именно нет, где это проверено, у кого запросить и
 какую независимую работу можно продолжить. Не создавай код.
 ```
+<!-- AGENT_PREFLIGHT_PROMPT:END -->
 
 Следующий шаг после preflight — создать только
 `Documentation/AppIntegrationPlan.md` по

@@ -60,9 +60,14 @@ Credentials, bearer tokens, private keys, receipt/JWS и полный payload в
 ### Этап 0. Preflight без записи файлов
 
 Агент проверяет Kaiten, design source, reference, backend и продуктовые решения.
-Он отдельно отвечает:
+Единственный canonical copy-paste prompt находится в
+[`AgentPreflight.md`](AgentPreflight.md#готовый-preflight-prompt);
+[`AgentPromptPack.md`](AgentPromptPack.md#0-preflight-только-чтение) показывает
+его дословное зеркало, а не альтернативную инструкцию. Агент отдельно отвечает:
 
 ```text
+Platform source: READY / BLOCKED — <URL, COMMIT SHA, PLATFORM_SET>
+Support/legal: READY / BLOCKED / N/A
 Можно создать безопасный каркас: ДА / НЕТ
 Можно реализовать все обязательные функции: ДА / НЕТ
 ```

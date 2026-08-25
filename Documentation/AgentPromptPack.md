@@ -8,44 +8,66 @@ checkpoint.
 [`AppCreationWorkflow.md`](AppCreationWorkflow.md). Заполняемый документ:
 [`Templates/AppIntegrationPlan.md`](Templates/AppIntegrationPlan.md).
 
+Stage 0 не является вторым вариантом preflight. Canonical правила и prompt
+живут в [`AgentPreflight.md`](AgentPreflight.md#готовый-preflight-prompt);
+блок ниже зеркалит их дословно, а documentation gate сравнивает обе копии.
+
 Для уже существующего приложения используйте те же этапы. На этапе 1 сначала
 зафиксируйте current state и gaps; этап 2 становится аудитом существующего
 skeleton/composition root, а не созданием второго проекта.
 
 ## 0. Preflight: только чтение
 
-Замените значения в угловых скобках:
+Замените только значения в угловых скобках:
 
+<!-- AGENT_PREFLIGHT_PROMPT:START -->
 ```text
-Проведи preflight нового iPhone-приложения на BroadApps iOS Platform.
+Проведи preflight текущего iPhone-приложения на BroadApps iOS Platform.
 
-Проект: <НАЗВАНИЕ ТЕКУЩЕГО ПРИЛОЖЕНИЯ>.
-Kaiten: <ССЫЛКА / НАЗВАНИЕ / ЭКСПОРТ>.
-Reference: <ССЫЛКА / ПУТЬ / НАЙДИ>.
+Проект: <НАЗВАНИЕ ИЛИ ИДЕНТИФИКАТОР>.
+Kaiten: <ССЫЛКА / ТОЧНОЕ НАЗВАНИЕ / ЭКСПОРТ>.
+Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
+Platform repository: https://github.com/BroadApps-official/broad-platform-integration.
 
 Пока не создавай и не изменяй файлы приложения.
 
-1. Прочитай AGENTS.md, README.md, Documentation/AgentPreflight.md и
-   Documentation/AppCreationWorkflow.md платформы.
-2. Проверь фактический доступ к Kaiten, design source, read-only reference,
-   backend contracts, monetization decisions и support/legal.
-3. Не считай ссылку доказательством, пока её содержимое не прочитано.
-4. Не придумывай экран, endpoint, поле, auth, backend hook или правило исходника.
-5. Для каждого расхождения укажи функцию, доказательство и владельца решения.
+1. Из HOST REPOSITORY прочитай AGENTS.md/CLAUDE.md и README.md.
+2. Из canonical PLATFORM REPOSITORY прочитай
+   Documentation/AgentPreflight.md, Documentation/AppCreationWorkflow.md и
+   Compatibility/current.yml. Верни фактически прочитанные commit SHA и
+   platform_set. Если источник недоступен — остановись с
+   Platform source: BLOCKED; private BroadCore не используй как замену.
+3. Для Kaiten попробуй по порядку: Kaiten MCP; авторизованный Kaiten в Chrome;
+   полный экспорт из рабочей папки. Если ничего нет — остановись с BLOCKED.
+4. Определи тип дизайна только по метке Kaiten. Для Figma попробуй Figma MCP;
+   авторизованную Figma в Chrome; экспортированные frames/скриншоты. Для
+   no-code открой согласованный Claude Design/Pencil или его экспорт. Если
+   источник не виден — BLOCKED; не придумывай похожий интерфейс.
+5. Найди reference в Kaiten, доступных Git-репозиториях или live-проектах.
+   Reference не изменяй. При неоднозначности запроси решение тимлида или ПМ.
+6. Сопоставь функции с backend: method, endpoint, request, response,
+   обязательные поля, auth, ошибки и retry. Не придумывай endpoint.
+7. Проверь monetization decisions. Для RU Billing запиши `ru_pay` из Adapty,
+   backend kill switch и необходимость Dashboard fallback. Не создавай
+   Release-default для флага.
+8. Проверь support/legal: источник support address, Privacy Policy/Terms URLs и
+   владелец каждого отсутствующего решения. Не придумывай значения.
+9. Верни ровно этот статус и короткие доказательства:
 
-Верни только:
-
+Platform source: READY / BLOCKED — <URL, COMMIT SHA, PLATFORM_SET>
 Kaiten: READY / BLOCKED
 Design source: READY / BLOCKED
 Reference: READY / BLOCKED / N/A
 Backend: READY / PARTIAL / BLOCKED
 Monetization: READY / BLOCKED / N/A
+Support/legal: READY / BLOCKED / N/A
 Можно создать безопасный каркас: ДА / НЕТ
 Можно реализовать все обязательные функции: ДА / НЕТ
 
-Затем перечисли [BLOCKED] в формате из AppCreationWorkflow.md и независимые
-области, которые можно продолжить. Не пиши Swift и не создавай проект.
+Затем добавь [BLOCKED], чего именно нет, где это проверено, у кого запросить и
+какую независимую работу можно продолжить. Не создавай код.
 ```
+<!-- AGENT_PREFLIGHT_PROMPT:END -->
 
 ## 1. Integration Plan: без Swift
 

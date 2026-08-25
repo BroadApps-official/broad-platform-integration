@@ -180,6 +180,11 @@ for documentation_contract in \
     'Documentation/Templates/AppIntegrationPlan.md|Atomic cutover group' \
     'Documentation/Templates/AppIntegrationPlan.md|Runtime slices after cutover' \
     'Documentation/AgentPreflight.md|Platform source: READY / BLOCKED' \
+    'Documentation/AgentPreflight.md|AGENT_PREFLIGHT_PROMPT:START' \
+    'Documentation/AgentPreflight.md|Support/legal: READY / BLOCKED / N/A' \
+    'Documentation/AgentPromptPack.md|AGENT_PREFLIGHT_PROMPT:START' \
+    'Documentation/AgentPromptPack.md|Platform source: READY / BLOCKED' \
+    'Documentation/AgentPromptPack.md|Support/legal: READY / BLOCKED / N/A' \
     'Documentation/PlatformHandoff.md|exact: "1\.0\.0"' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
     'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
@@ -211,6 +216,20 @@ do
         record_failure "Documentation contract is missing: $documentation_file -> $documentation_pattern"
     fi
 done
+
+canonical_preflight_prompt="$(
+    sed -n '/<!-- AGENT_PREFLIGHT_PROMPT:START -->/,/<!-- AGENT_PREFLIGHT_PROMPT:END -->/p' \
+        "$platform_root/Documentation/AgentPreflight.md"
+)"
+prompt_pack_preflight_prompt="$(
+    sed -n '/<!-- AGENT_PREFLIGHT_PROMPT:START -->/,/<!-- AGENT_PREFLIGHT_PROMPT:END -->/p' \
+        "$platform_root/Documentation/AgentPromptPack.md"
+)"
+if [[ -z "$canonical_preflight_prompt" || -z "$prompt_pack_preflight_prompt" ]]; then
+    record_failure "Canonical preflight prompt markers are missing."
+elif [[ "$canonical_preflight_prompt" != "$prompt_pack_preflight_prompt" ]]; then
+    record_failure "AgentPromptPack preflight must mirror AgentPreflight verbatim."
+fi
 
 if rg -q -- 'idempotent ledger по StoreKit transaction ID|app backend token ledger' \
     "$platform_root/Documentation/AccountRecovery.md"; then

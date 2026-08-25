@@ -7,6 +7,15 @@
 
 ### Changed
 
+- `Documentation/AgentPreflight.md` теперь является единственным canonical
+  source Stage 0: он возвращает platform URL/commit/`platform_set`, одинаково
+  проверяет Kaiten, design, reference, backend, monetization и support/legal и
+  не записывает файлы до Integration Plan;
+- Stage 0 в `AgentPromptPack.md` заменён дословным зеркалом canonical prompt,
+  а documentation gate сравнивает оба блока и отклоняет любое расхождение;
+- README и App Creation Workflow теперь объясняют разные роли ссылок:
+  Agent Preflight — правила и Stage 0, Workflow — порядок/checkpoints, Prompt
+  Pack — то же Stage 0 плюс prompts следующих stages и resume;
 - legacy migration workflow теперь универсально классифицирует фактический
   package graph как `atomic package cutover`, `independent package boundaries`,
   `copied-source boundary`, `wrapper boundary` или `mixed`, а не предполагает
@@ -76,6 +85,13 @@
   случайного удаления.
 
 ### Почему
+
+Два похожих, но разных preflight prompt создавали ложный выбор. В Prompt Pack
+не было canonical platform URL, commit SHA, `platform_set` и статуса
+`Platform source`, хотя отдельный Agent Preflight уже требовал их. Теперь
+разработчик получает одинаковый Stage 0 по обеим ссылкам, а проверка не позволит
+одной копии устареть отдельно от другой. Stage 0 только возвращает evidence;
+запись platform ref выполняется на Stage 1 вместе с Integration Plan.
 
 Разработчик, запустивший только copy-paste prompt внутри host repository, не
 мог понять, где искать platform workflow и compatibility: относительные пути

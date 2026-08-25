@@ -292,13 +292,12 @@ flowchart LR
             → 4 FUNCTIONAL → 5 VISUAL → 6 ACCEPTANCE
 ```
 
-1. [Agent Preflight](Documentation/AgentPreflight.md) проверяет Kaiten, design,
-   reference, backend и blockers.
-2. [Integration Plan](Documentation/Templates/AppIntegrationPlan.md) фиксирует
-   screens, API, ownership и `BLOCKED` до кода.
-3. [App Creation Workflow](Documentation/AppCreationWorkflow.md) ведёт по stage за раз.
-4. [Agent Prompt Pack](Documentation/AgentPromptPack.md) даёт copy-paste prompts и resume-
-   сценарий для нового чата.
+| Документ | Единственная роль |
+|---|---|
+| [Agent Preflight](Documentation/AgentPreflight.md) | Canonical правила и единственный Stage 0 prompt |
+| [Integration Plan](Documentation/Templates/AppIntegrationPlan.md) | Screens, API, ownership и `BLOCKED` до кода |
+| [App Creation Workflow](Documentation/AppCreationWorkflow.md) | Порядок stages, stop rules и checkpoints |
+| [Agent Prompt Pack](Documentation/AgentPromptPack.md) | Дословное зеркало Stage 0 плюс prompts stages 1–6 и resume |
 
 Обязательные checkpoints:
 
