@@ -7,6 +7,20 @@
 
 ### Changed
 
+- legacy migration workflow теперь универсально классифицирует фактический
+  package graph как `atomic package cutover`, `independent package boundaries`,
+  `copied-source boundary`, `wrapper boundary` или `mixed`, а не предполагает
+  одинаковый порядок «снизу вверх» для любого host app;
+- Integration Plan фиксирует `Cutover topology`, точный `Legacy owner`,
+  `Conflicting targets`, каждую `Atomic cutover group` и `Runtime slices after
+  cutover`; documentation gate защищает эти поля от удаления;
+- Stage 2 теперь переключает одну подтверждённую cutover group: независимый
+  boundary остаётся маленьким, а legacy package с несколькими конфликтующими
+  targets заменяется одной atomic dependency/project group без resolve
+  промежуточного old/new graph;
+- runtime behavior после dependency cutover по-прежнему мигрируется по одному
+  slice с отдельным review; несколько products внутри atomic group не
+  превращают последующую migration в один большой rewrite;
 - legacy migration prompt теперь самодостаточен: он явно разделяет host
   repository, canonical public integration source и private legacy evidence,
   записывает platform commit/platform_set в Integration Plan и возвращает
@@ -69,8 +83,8 @@
 второй canonical source. Явная карта источников устраняет эту неоднозначность и
 сохраняет точный platform ref между checkpoint-ами.
 
-Для агента разработчицы это означает: он начинает в repository её
-приложения, сам находит public platform instructions по указанному URL,
+Для агента в любом host app это означает: он начинает в repository приложения,
+сам находит public platform instructions по указанному URL,
 фиксирует прочитанную версию и только после этого выполняет аудит legacy graph.
 Если platform source, template, compatibility catalog или legacy evidence
 недоступны, он не додумывает источник и не меняет код, а возвращает
@@ -80,6 +94,16 @@
 решений и blocker-ов, а не одноразовая заготовка. Его перезапись могла
 бы стереть фактическое состояние migration и заставить агента повторить уже
 принятую работу, поэтому schema update разрешён только как additive diff.
+
+Один и тот же совет «переключать modules снизу вверх» нельзя применять к любому
+host graph. Он корректен для выпуска зависимых platform repositories, но не
+делает валидным промежуточное состояние, где legacy owner и новый package
+одновременно объявляют одинаковый target name. Поэтому агент сначала выводит
+topology из manifests и project membership. Если boundaries независимы, он
+переключает их отдельно; если targets связаны одним legacy owner, он формирует
+минимальную atomic group из фактически нужных replacements и required
+dependencies. Resolve запускается только на final graph, а behavior затем
+проверяется небольшими runtime slices.
 
 Обычная текстовая ссылка на сайт терялась среди остальной навигации.
 Новая обложка и кнопки сразу объясняют, что у платформы есть отдельная

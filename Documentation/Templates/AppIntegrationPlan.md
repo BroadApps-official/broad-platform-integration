@@ -40,7 +40,30 @@ integration repository. Private `BroadApps-official/BroadCore`, local package
 | Monetization decisions |  |  |  |
 | Support/legal |  |  |  |
 
-## 2. Ownership
+## 2. Cutover topology
+
+Для `new app` укажите `N/A`. Для `existing app` заполните по фактическим
+package manifests, Xcode references, target membership и imports.
+
+| Поле | Значение / evidence |
+|---|---|
+| `Cutover topology` | `atomic package cutover` / `independent package boundaries` / `copied-source boundary` / `wrapper boundary` / `mixed` / `N/A` |
+| `Legacy owner` | package identity/URL/ref, local path, copied target membership или implementation за wrapper |
+| `Conflicting targets` | target/module names; если конфликтов нет — доказательство из final graph |
+| Final graph invariant | ровно один source owner на каждый target name |
+
+### Cutover groups
+
+| ID | `Atomic cutover group` — что меняется вместе | Public repositories / products / exact versions | Compile-only adaptations | Resolve point | Rollback | Статус |
+|---|---|---|---|---|---|---|
+|  |  |  |  | только final graph |  |  |
+
+Для `independent package boundaries` каждая boundary получает отдельную group.
+Для `atomic package cutover` одна group может включать несколько public
+repositories/products, но только реально используемые и их обязательные
+transitive dependencies. Не запускайте resolve внутри неполной group.
+
+## 3. Ownership
 
 | Область | Platform component | Что делает агент | App-owned решение/код | Кто подтверждает |
 |---|---|---|---|---|
@@ -53,7 +76,7 @@ integration repository. Private `BroadApps-official/BroadCore`, local package
 | Analytics |  |  |  |  |
 | Support |  |  |  |  |
 
-## 3. Карта экранов и состояний
+## 4. Карта экранов и состояний
 
 | Экран/состояние | Source frame | Entry point | Data/use case | Статус |
 |---|---|---|---|---|
@@ -67,7 +90,7 @@ integration repository. Private `BroadApps-official/BroadCore`, local package
 | Empty/error/offline |  |  |  |  |
 | Contact Us |  |  |  |  |
 
-## 4. Backend и hooks
+## 5. Backend и hooks
 
 | Функция | Method/endpoint или SDK | Request/response schema | Обязательные поля | Auth | Retry/offline | Server-owned hook/result | Статус |
 |---|---|---|---|---|---|---|---|
@@ -77,7 +100,7 @@ integration repository. Private `BroadApps-official/BroadCore`, local package
 обезличенному production-shape fixture. Локальная заглушка, кнопка или успешная
 компиляция не доказывают backend.
 
-## 5. Монетизация
+## 6. Монетизация
 
 | Решение | Выбранный вариант | Источник | Статус |
 |---|---|---|---|
@@ -102,22 +125,24 @@ integration repository. Private `BroadApps-official/BroadCore`, local package
 Release не может иметь app-default или force override для `ru_pay`.
 Fixture/Debug force-on не считается evidence freshness, backend или успешной оплаты.
 
-## 6. Вертикальные срезы
+## 7. Runtime slices after cutover
 
-| Порядок | Срез | Вход → итог | Зависимости | Статус | Developer review |
-|---:|---|---|---|---|---|
-| 1 |  |  |  |  |  |
+| Cutover group | Порядок после cutover | Runtime slice | Вход → итог | Зависимости | Статус | Developer review |
+|---|---:|---|---|---|---|---|
+|  | 1 |  |  |  |  |  |
 
+Runtime slice начинается только после принятого dependency switch своей group.
 Каждый срез проходит `View → ViewModel → use case → repository → client` и
-заканчивается `SLICE REVIEW REQUIRED` до начала следующего.
+заканчивается `MIGRATION SLICE REVIEW REQUIRED` для migration или
+`SLICE REVIEW REQUIRED` для new app до начала следующего.
 
-## 7. Blockers
+## 8. Blockers
 
 | Функция | Чего нет | Где проверено | Владелец | Что можно продолжить независимо |
 |---|---|---|---|---|
 |  |  |  |  |  |
 
-## 8. Checkpoints
+## 9. Checkpoints
 
 | Checkpoint | Статус | Кто подтвердил | Evidence |
 |---|---|---|---|
@@ -126,6 +151,16 @@ Fixture/Debug force-on не считается evidence freshness, backend ил�
 | `FUNCTIONAL REVIEW REQUIRED` |  |  |  |
 | `VISUAL REVIEW REQUIRED` |  |  |  |
 | `READY FOR QA` |  |  |  |
+
+Для legacy migration дополнительно заполните:
+
+| Checkpoint | Статус | Кто подтвердил | Evidence |
+|---|---|---|---|
+| `MIGRATION PREFLIGHT REVIEW REQUIRED` |  |  |  |
+| `MIGRATION PLAN REVIEW REQUIRED` |  |  |  |
+| `DEPENDENCY SWITCH REVIEW REQUIRED` |  |  |  |
+| `MIGRATION SLICE REVIEW REQUIRED` |  |  |  |
+| `LEGACY CLEANUP REVIEW REQUIRED` |  |  |  |
 
 Пустая строка не означает согласование. Агент не переходит через checkpoint без
 явного ответа разработчика.

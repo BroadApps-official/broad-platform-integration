@@ -153,7 +153,9 @@ for documentation_contract in \
     'Documentation/ModuleReleasePolicy.md|swift_language_mode: "5"' \
     'Documentation/GettingStarted.md|platform sources и host example компилируются в Swift 5 language mode' \
     'Documentation/MigrationGuide.md|^# Ручная миграция старого приложения$' \
-    'Documentation/MigrationGuide.md|Не подключать одновременно packages, экспортирующие одинаковый Swift module' \
+    'Documentation/MigrationGuide.md|packages, экспортирующие одинаковый Swift module' \
+    'Documentation/MigrationGuide.md|## Определите cutover topology' \
+    'Documentation/MigrationGuide.md|Runtime slices after cutover' \
     'Documentation/LegacyAppMigrationAgent.md|MIGRATION PREFLIGHT REVIEW REQUIRED' \
     'Documentation/LegacyAppMigrationAgent.md|MIGRATION PLAN REVIEW REQUIRED' \
     'Documentation/LegacyAppMigrationAgent.md|DEPENDENCY SWITCH REVIEW REQUIRED' \
@@ -165,9 +167,18 @@ for documentation_contract in \
     'Documentation/LegacyAppMigrationAgent.md|PLATFORM REPOSITORY' \
     'Documentation/LegacyAppMigrationAgent.md|APP MIGRATION · BLOCKED' \
     'Documentation/LegacyAppMigrationAgent.md|не заменяй его' \
+    'Documentation/LegacyAppMigrationAgent.md|Универсальная модель cutover' \
+    'Documentation/LegacyAppMigrationAgent.md|Atomic cutover group' \
+    'Documentation/LegacyAppMigrationAgent.md|Conflicting targets' \
+    'Documentation/LegacyAppMigrationAgent.md|Runtime slices after cutover' \
     'Documentation/Templates/AppIntegrationPlan.md|Plan не перезаписывайте' \
     'Documentation/Templates/AppIntegrationPlan.md|Platform documentation commit' \
     'Documentation/Templates/AppIntegrationPlan.md|Compatibility `platform_set`' \
+    'Documentation/Templates/AppIntegrationPlan.md|## 2\. Cutover topology' \
+    'Documentation/Templates/AppIntegrationPlan.md|Legacy owner' \
+    'Documentation/Templates/AppIntegrationPlan.md|Conflicting targets' \
+    'Documentation/Templates/AppIntegrationPlan.md|Atomic cutover group' \
+    'Documentation/Templates/AppIntegrationPlan.md|Runtime slices after cutover' \
     'Documentation/AgentPreflight.md|Platform source: READY / BLOCKED' \
     'Documentation/PlatformHandoff.md|exact: "1\.0\.0"' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \

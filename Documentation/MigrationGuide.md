@@ -7,18 +7,36 @@ monolith, local package checkout или скопированные platform sour
 миграции через coding agent используйте отдельный файл
 [LegacyAppMigrationAgent.md](LegacyAppMigrationAgent.md).
 
-## Определите вид legacy integration
+## Определите cutover topology
 
-| Текущее состояние | Безопасное переключение |
-|---|---|
-| Старый package URL или local package | Заменить reference на public module repositories. Не подключать одновременно packages, экспортирующие одинаковый Swift module |
-| Platform `.swift`-файлы скопированы в app target | Добавить новый product и атомарно исключить совпадающие legacy-файлы из target membership |
-| App wrapper повторяет platform API | Сохранить wrapper как app adapter, заменить его implementation и удалить только доказанный дубль |
-| Источник типа неизвестен | Найти package product, target membership, imports и construction point; до этого migration row остаётся `BLOCKED` |
+Не выбирайте порядок по названию module. Сначала прочитайте фактические package
+manifests, Xcode references, products, target membership и imports.
+
+| `Cutover topology` | Как распознать | Безопасное переключение |
+|---|---|---|
+| `atomic package cutover` | один legacy package объявляет несколько target names, конфликтующих с target names новых packages | удалить legacy package owner и добавить минимальный набор реально используемых public products с обязательными dependencies одной `Atomic cutover group` |
+| `independent package boundaries` | у modules разные legacy owners и промежуточный graph не создаёт duplicate target names | переключать каждую независимую boundary отдельной group |
+| `copied-source boundary` | platform `.swift`-файлы скопированы в app target | добавить новый product и атомарно исключить совпадающие files из target membership |
+| `wrapper boundary` | app wrapper скрывает platform implementation | сохранить wrapper как app adapter и заменить owner его implementation одной group |
+| `mixed` | в app присутствует несколько схем выше | разбить graph на независимые связанные groups; внутри каждой не делать частичный resolve |
+
+Для каждой области запишите:
+
+- `Legacy owner` — точный package URL/identity/ref, local path, copied target
+  membership или implementation за wrapper;
+- `Conflicting targets` — target/module names, которые получили бы двух owners
+  в промежуточном graph;
+- `Atomic cutover group` — минимальный набор package/project/membership
+  изменений, после которого каждый target name снова имеет одного owner;
+- `Runtime slices after cutover` — behavior-срезы, которые проверяются по одному
+  после dependency switch.
 
 Не создавайте второй app target и не смешивайте migration с новой feature.
-Переключайте один dependency boundary/вертикальный срез, сохраняйте rollback и
-удаляйте legacy owner только после поиска usages, сборки и developer review.
+Одна group может содержать несколько public products, но только реально
+используемые и их обязательные transitive dependencies. Не подключайте одновременно
+packages, экспортирующие одинаковый Swift module. Сохраняйте group-level
+rollback и удаляйте legacy implementation только после поиска usages, сборки
+и developer review.
 
 ### Если Xcode просит GitHub password или Keychain
 
@@ -85,14 +103,21 @@ manifest поиском `BroadApps-official/BroadCore`. Результат до�
 
 Эти места нельзя переносить как есть.
 
-## 1. Переключите package boundary без изменения UI
+## 1. Переключите одну cutover group без изменения behavior
 
 Выберите только используемые products и exact versions из
-`Compatibility/current.yml`. Добавьте отдельные public repositories, затем
-удалите конфликтующий old product/local reference или совпадающие copied
-sources. Если старый package экспортирует несколько одноимённых modules и
-частичный switch невозможен, замените package references одним небольшим
-dependency-only commit; runtime slices всё равно проверяйте по одному.
+`Compatibility/current.yml`. Для independent topology одна group может быть
+одним boundary. Если один legacy package объявляет несколько конфликтующих
+targets, удалите его owner и добавьте все нужные public references одной atomic
+group; не запускайте resolve на промежуточном old/new graph. Для copied sources
+добавьте product и исключите совпадающий target membership в той же group.
+
+Перед resolve проверьте final graph: каждый `Conflicting target` должен иметь
+ровно одного owner. `moduleAliases`, временный fork manifest и второй owner не
+являются автоматическим обходом — для них нужен отдельный architecture plan.
+Если после switch нужны только механические compile adaptations, перечислите их
+заранее и не меняйте intentional runtime behavior. Runtime slices after
+cutover всё равно проверяйте по одному.
 
 Создайте один `AppCompositionRoot`, но сначала оставьте legacy screen builders.
 
@@ -412,7 +437,7 @@ Paywall provider lifecycle не переносите в analytics destination. V
 
 [Experiments and analytics →](Experiments.md)
 
-## 12. Переключение по вертикальным срезам
+## 12. Runtime slices after cutover
 
 Рекомендуемый порядок rollout:
 

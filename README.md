@@ -247,21 +247,21 @@ Platform scope:
 ## Если приложение уже сделано на старой платформе
 
 Не создавайте новое приложение и не переписывайте рабочий flow целиком.
-Сначала снимите baseline, затем переключайте один dependency boundary и один
-вертикальный срез за раз.
+Сначала снимите baseline и классифицируйте package graph. Затем переключайте
+одну cutover group: это либо независимый boundary, либо минимальная atomic
+group из нескольких конфликтующих references. Runtime behavior после cutover
+всё равно переносится по одному вертикальному срезу.
 
 ```mermaid
 flowchart LR
-    A["Работающий legacy app"] --> B["Baseline + inventory"]
-    B --> C{"Кто мигрирует?"}
-    C -->|"Разработчик"| D["Manual instruction"]
-    C -->|"Codex / Claude"| E["Staged AI instruction"]
-    D --> F["Один module boundary / slice"]
-    E --> F
-    F --> G["Build + functional review"]
-    G --> H{"Legacy owners остались?"}
-    H -->|"Да"| F
-    H -->|"Нет"| I["Удалить monolith/local copies → QA"]
+    A["Работающий legacy app"] --> B["Baseline + package graph"]
+    B --> C["Cutover topology + legacy owners"]
+    C --> D["Одна atomic cutover group"]
+    D --> E["Final graph: один owner на target"]
+    E --> F["Runtime slices по одному + review"]
+    F --> G{"READY groups остались?"}
+    G -->|"Да"| D
+    G -->|"Нет"| H["Legacy cleanup → QA"]
 ```
 
 | Подход | Когда выбирать | Отдельная инструкция |
