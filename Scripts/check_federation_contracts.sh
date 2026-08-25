@@ -28,9 +28,24 @@ required_files=(
     "Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 )
 
+package_reference_files=(
+    "Package.swift"
+    "Package.resolved"
+    "Examples/BroadAppTemplate/project.yml"
+    "Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj/project.pbxproj"
+    "Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+)
+
 for relative_path in "${required_files[@]}"; do
     if [[ ! -s "$platform_root/$relative_path" ]]; then
         record_failure "Federation contract is missing: $relative_path"
+    fi
+done
+
+for relative_path in "${package_reference_files[@]}"; do
+    if rg -q -- 'github\.com/BroadApps-official/BroadCore(?:\.git)?' \
+        "$platform_root/$relative_path"; then
+        record_failure "Private legacy package URL is forbidden: $relative_path"
     fi
 done
 
@@ -211,6 +226,10 @@ if ((failure_count == 0)); then
         "Release policy must explain what changed and why" \
         "Documentation/ModuleReleasePolicy.md" \
         'объясняет \*\*что\*\* изменилось и \*\*почему\*\*'
+    require_pattern \
+        "README must explain anonymous public package access" \
+        "README.md" \
+        'без GitHub account, password,[[:space:]]*token или API key'
 fi
 
 if rg -q -- '\.library\(name: "BroadExtensions"|\.target\([[:space:]]*name: "BroadExtensions"' \

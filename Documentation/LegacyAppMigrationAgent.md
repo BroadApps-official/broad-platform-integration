@@ -62,13 +62,15 @@ Unknown endpoint, screen, feature rule или app-owned configuration нельз
 
 1. прочитать repository rules, README и существующую документацию;
 2. определить legacy integration: package/local path/copied sources/wrapper;
-3. снять package/product/target-membership graph;
-4. найти imports, construction points, adapters и composition root;
-5. перечислить реально используемые BroadExtensions/Core/Monetization/UIFlows
+3. отдельно найти private monolith URL `BroadApps-official/BroadCore`, Git URL
+   rewrites и package references, которые могут вызвать credential prompt;
+4. снять package/product/target-membership graph;
+5. найти imports, construction points, adapters и composition root;
+6. перечислить реально используемые BroadExtensions/Core/Monetization/UIFlows
    capabilities;
-6. выполнить доступные baseline builds без исправления старых ошибок;
-7. отделить pre-existing failures от migration blockers;
-8. заполнить current state/gaps в `Documentation/AppIntegrationPlan.md`.
+7. выполнить доступные baseline builds без исправления старых ошибок;
+8. отделить pre-existing failures от migration blockers;
+9. заполнить current state/gaps в `Documentation/AppIntegrationPlan.md`.
 
 Финальный ответ stage:
 
@@ -106,13 +108,15 @@ MIGRATION PLAN REVIEW REQUIRED
 После подтверждения плана агент выбирает первый READY boundary:
 
 1. добавляет public repository/version из compatibility catalog;
-2. добавляет product нужному iPhone target;
-3. атомарно удаляет конфликтующий old product/local reference или исключает
+2. заменяет private monolith URL на нужный `BroadApps-official/broad-*-ios.git`
+   URL без password, token и API key;
+3. добавляет product нужному iPhone target;
+4. атомарно удаляет конфликтующий old product/local reference или исключает
    совпадающие copied sources;
-4. не меняет соседние features;
-5. выполняет package resolve, Debug/Release Simulator и generic iOS compile;
-6. показывает dependency diff и rollback;
-7. обновляет только строки этого boundary в Integration Plan.
+5. не меняет соседние features;
+6. выполняет package resolve, Debug/Release Simulator и generic iOS compile;
+7. показывает dependency diff и rollback;
+8. обновляет только строки этого boundary в Integration Plan.
 
 Если old package содержит несколько одноимённых products и частичный switch
 невозможен, агент останавливается и предлагает минимальный dependency-only

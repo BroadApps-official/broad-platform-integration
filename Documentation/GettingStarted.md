@@ -111,12 +111,29 @@ https://github.com/BroadApps-official/broad-monetization-ios
 https://github.com/BroadApps-official/broad-ui-flows-ios
 ```
 
+Для чтения этих repositories не нужны GitHub account, password, Personal
+Access Token или app API key. Если Xcode показывает
+`git-credential-osxkeychain`, не вводите секрет как требование библиотеки:
+
+1. проверьте URL в `Project → Package Dependencies`;
+2. удалите старый private reference
+   `https://github.com/BroadApps-official/BroadCore.git`;
+3. добавьте нужный public `broad-*-ios.git` URL и version из catalog;
+4. выполните `File → Packages → Reset Package Caches`, затем
+   `Resolve Package Versions`.
+
+Старый reference хранится в самом host `.xcodeproj`/`Package.resolved`, поэтому
+обычный `git pull` platform repository не заменяет его автоматически. Не
+удаляйте глобальные Git credentials: они могут быть нужны другим private repos.
+Полная проверка без Keychain описана на странице
+[Public package access](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/public-package-access).
+
 Если host сам является Swift Package:
 
 ```swift
 dependencies: [
     .package(
-        url: "https://github.com/BroadApps-official/broad-core-ios",
+        url: "https://github.com/BroadApps-official/broad-core-ios.git",
         from: "1.0.0"
     )
 ]

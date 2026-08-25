@@ -7,6 +7,12 @@
 
 ### Changed
 
+- public package access теперь описан явно: новые `broad-*-ios` repositories
+  скачиваются без GitHub account/password/token, а credential prompt разобран
+  как признак старого private `BroadCore` URL или локального Git rewrite;
+- migration guides получили точный Xcode cutover и запрет встраивать API key в
+  host app, а federation contract отклоняет возврат private monolith URL в
+  реальные package references;
 - architecture wording теперь описывает отдельную область review/release без
   ложной гарантии: backward-compatible fix может выйти в owner module, но
   dependent gates повторяются, а breaking contract может потребовать cascade;
@@ -37,6 +43,12 @@ Legacy app нельзя безопасно мигрировать тем же pr
 app: сначала нужен audit фактического graph, затем атомарный dependency switch
 и только один проверяемый slice. Отдельные manual/AI маршруты делают эти
 checkpoint-ы явными и сохраняют rollback.
+
+Public source package не должен зависеть от GitHub credential пользователя.
+Отдельная диагностика нужна потому, что старый URL сохраняется внутри host
+`.xcodeproj` и не меняется обычным pull платформы. API key в клиенте не решает
+доступ к source и создаёт ложный секрет; корректное решение — public HTTPS URL,
+SemVer tag и воспроизводимый anonymous resolve.
 
 ## 1.0.0 — 2026-08-25
 

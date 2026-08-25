@@ -32,6 +32,7 @@ backend-ручки и product decisions остаются в конкретном
 |---|---|
 | За 5 минут понять, какой product подключать | раздел [«Что подключать»](#что-подключать) ниже |
 | Подключить первый модуль к host app | [Getting Started на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started) |
+| Xcode просит GitHub password или доступ к Keychain | [Public package access](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/public-package-access) |
 | Найти правило по Special Offer, entitlement, cache или release | [поиск по публичной документации](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search) |
 | Перенести существующее приложение со старой платформы | [Legacy migration](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration) |
 | Проверить совместимые версии | [Compatibility catalog](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility) |
@@ -145,11 +146,18 @@ File → Add Package Dependencies…
 ```swift
 dependencies: [
     .package(
-        url: "https://github.com/BroadApps-official/broad-core-ios",
+        url: "https://github.com/BroadApps-official/broad-core-ios.git",
         from: "1.0.0"
     )
 ]
 ```
+
+Public module repositories читаются по HTTPS **без GitHub account, password,
+token или API key**. Окно `git-credential-osxkeychain` обычно означает, что
+host project всё ещё ссылается на старый private URL
+`BroadApps-official/BroadCore` или использует сохранённое Git-перенаправление.
+Не добавляйте секрет в app: отмените запрос и замените package reference на
+нужный `broad-*-ios` URL. [Диагностика и clean-machine проверка →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/public-package-access)
 
 Release-проект должен ссылаться на опубликованный SemVer tag из
 compatibility catalog, а не на branch или локальную checkout-папку.

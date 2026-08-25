@@ -20,6 +20,20 @@ monolith, local package checkout или скопированные platform sour
 Переключайте один dependency boundary/вертикальный срез, сохраняйте rollback и
 удаляйте legacy owner только после поиска usages, сборки и developer review.
 
+### Если Xcode просит GitHub password или Keychain
+
+Legacy URL `https://github.com/BroadApps-official/BroadCore.git` относится к
+старому private monolith. Его нельзя оставлять в release host project и нельзя
+«исправлять» встраиванием token/API key. Удалите старый package reference и
+подключите только нужные public repositories из
+[`Compatibility/current.yml`](../Compatibility/current.yml).
+
+После замены проверьте `.xcodeproj`, workspace `Package.resolved` и Swift
+manifest поиском `BroadApps-official/BroadCore`. Результат должен быть пустым;
+`BroadCore` как **product/module name** при этом остаётся корректным. Затем
+сбросьте package cache и выполните resolve заново. GitHub credentials для
+анонимного чтения public module repositories не требуются.
+
 ## Главный принцип
 
 ```text
