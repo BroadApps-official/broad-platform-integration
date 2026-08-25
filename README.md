@@ -68,15 +68,15 @@ backend-ручки и product decisions остаются в конкретном
 ### Идея новой архитектуры
 
 Host app больше не зависит от общего изменяемого «комбайна». Код принадлежит
-маленьким module repositories, каждый module ревьюится и выпускается отдельно,
-а integration repository только доказывает, что конкретные версии работают
-вместе. Documentation repository добавляет общий поиск, но не забирает API docs
-у владельца модуля.
+маленьким module repositories: каждый module можно ревьюить и выпускать
+отдельно, а integration repository доказывает, что конкретные версии работают
+вместе. Documentation repository добавляет поиск по cross-module guides, но не
+забирает API docs у владельца модуля.
 
 | Раньше | Теперь | Почему лучше |
 |---|---|---|
-| Одна большая область изменений | Core, Extensions, Monetization и UIFlows разделены | Review видит только относящийся к задаче код |
-| Release затрагивает всю платформу | У каждого module свой SemVer | Fix одного слоя не выпускает остальные заново |
+| Одна большая область изменений | Core, Extensions, Monetization и UIFlows разделены | Review можно ограничить изменяемым module repository |
+| Release затрагивает всю платформу | У каждого module свой SemVer | Backward-compatible fix можно выпустить в owner module; dependent gates всё равно повторяются |
 | Host получает весь umbrella | Host выбирает нужные products напрямую | Меньше dependencies и скрытых side effects |
 | Совместимость приходилось угадывать | Integration фиксирует exact known-good set | Есть воспроизводимый пример и clean-runner evidence |
 | Документацию трудно найти | README направляет, сайт ищет, DocC описывает tag | Нет одной огромной инструкции и второй копии API |
@@ -153,6 +153,10 @@ dependencies: [
 
 Release-проект должен ссылаться на опубликованный SemVer tag из
 compatibility catalog, а не на branch или локальную checkout-папку.
+
+`from: "1.0.0"` разрешает совместимые версии до следующего major. Для точного
+воспроизведения verified set или на время legacy migration выберите exact
+catalog version; фактический результат resolve фиксирует `Package.resolved`.
 
 ### 3. Оставьте app-owned данные в app
 

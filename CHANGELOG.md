@@ -7,6 +7,11 @@
 
 ### Changed
 
+- architecture wording теперь описывает отдельную область review/release без
+  ложной гарантии: backward-compatible fix может выйти в owner module, но
+  dependent gates повторяются, а breaking contract может потребовать cascade;
+- README явно разделяет SwiftPM `from` range и exact compatibility/migration
+  set, а release policy называет фактически используемые аннотированные tags;
 - README теперь прямо объясняет новую repository architecture, показывает её
   преимущества относительно монолита и содержит схему безопасной migration
   существующего app с отдельным выбором manual/AI;

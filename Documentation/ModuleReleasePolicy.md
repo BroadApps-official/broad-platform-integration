@@ -35,7 +35,7 @@ integration catalog: exact: "1.2.3"
 6. DocC, README, links и assets прошли проверку.
 7. Если менялся dependency contract, dependent module gates повторены.
 8. Integration repository собран с candidate commit/tag.
-9. Только затем создан подписанный tag и GitHub Release.
+9. Только затем создан аннотированный SemVer tag и GitHub Release.
 10. Compatibility catalog и docs-site обновлены теми же exact versions.
 
 ## Compatibility catalog
