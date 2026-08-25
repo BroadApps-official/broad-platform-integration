@@ -24,9 +24,13 @@ iPhone-приложение нужно перевести со старого Br
    Клонировать его внутрь host repository не нужно. Если GitHub недоступен,
    приложите экспорт этого файла и `Compatibility/current.yml`; иначе stage
    возвращает `APP MIGRATION · BLOCKED`.
-3. Скопируйте canonical
+3. Если `Documentation/AppIntegrationPlan.md` отсутствует, скопируйте
+   canonical
    [`Templates/AppIntegrationPlan.md`](https://github.com/BroadApps-official/broad-platform-integration/blob/main/Documentation/Templates/AppIntegrationPlan.md)
-   в host repository как `Documentation/AppIntegrationPlan.md`.
+   в host repository. Если Plan уже существует, не заменяйте его
+   шаблоном: сохраните все решения, evidence, `BLOCKED` и
+   подтверждённые checkpoint-ы, затем добавьте только отсутствующие
+   поля актуального template и покажите diff.
 4. Дайте агенту доступ к требованиям и read-only reference приложения.
 5. Передайте стартовый prompt из конца этого файла. Предварительный скрытый
    контекст о platform repository не требуется: источник указан в prompt.
@@ -69,6 +73,10 @@ Unknown endpoint, screen, feature rule или app-owned configuration нельз
    Team.
 10. После паузы перечитывай Integration Plan, последний checkpoint и current
     diff; принятые stages повторно не генерируй.
+11. Не перезаписывай существующий `Documentation/AppIntegrationPlan.md`
+    пустым template. Добавляй только отсутствующие поля; непустое
+    значение, принятое решение или checkpoint можно менять только
+    после developer review.
 
 ## Stage 0 — только аудит
 
@@ -235,6 +243,12 @@ monolith/local sources на независимые public modules.
 Если Documentation/AppIntegrationPlan.md отсутствует, создай его только из
 canonical template:
 https://github.com/BroadApps-official/broad-platform-integration/blob/main/Documentation/Templates/AppIntegrationPlan.md
+Если Documentation/AppIntegrationPlan.md уже существует, не заменяй его
+пустым template. Сохрани все непустые значения, evidence, `BLOCKED`,
+решения и подтверждённые checkpoint-ы. Сравни структуру с canonical
+template и добавь только отсутствующие поля. Если нужно удалить или
+заменить существующее значение, не делай это на Stage 0: покажи diff
+и верни MIGRATION PREFLIGHT REVIEW REQUIRED.
 Другие app-файлы на Stage 0 не создавай и не меняй.
 
 Обязательно прочитай из PLATFORM REPOSITORY:

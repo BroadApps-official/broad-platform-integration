@@ -1,7 +1,10 @@
 # App Integration Plan
 
-> Скопируйте этот файл в `Documentation/AppIntegrationPlan.md` repository
-> конкретного приложения. Не добавляйте credentials или персональные данные.
+> Если в repository конкретного приложения ещё нет
+> `Documentation/AppIntegrationPlan.md`, скопируйте этот файл. Существующий
+> Plan не перезаписывайте: сохраните его значения и добавьте только
+> отсутствующие поля с developer review. Не добавляйте credentials или
+> персональные данные.
 
 ## 0. Контекст
 

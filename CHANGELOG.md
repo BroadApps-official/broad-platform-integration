@@ -24,6 +24,11 @@
   как source новых package versions: агент берёт версии только из
   `Compatibility/current.yml`, а private repository читает только для
   аудита фактической legacy integration;
+- migration workflow теперь явно запрещает затирать существующий
+  `Documentation/AppIntegrationPlan.md` пустым template: агент создаёт
+  Plan только при его отсутствии, а в существующий добавляет только
+  отсутствующие поля и выносит любую замену непустого значения на
+  developer review;
 - Agent Preflight получил проверку platform source, а устаревшая рекомендация
   `branch: "vers_niiaz"` в Platform Handoff заменена на exact SemVer release из
   compatibility catalog;
@@ -71,6 +76,10 @@
 недоступны, он не додумывает источник и не меняет код, а возвращает
 `APP MIGRATION · BLOCKED` с конкретной причиной. Это убирает риск миграции по
 неправильному repository, branch или неподтверждённой версии модуля.
+Существующий Integration Plan — это журнал уже принятых checkpoint-ов,
+решений и blocker-ов, а не одноразовая заготовка. Его перезапись могла
+бы стереть фактическое состояние migration и заставить агента повторить уже
+принятую работу, поэтому schema update разрешён только как additive diff.
 
 Обычная текстовая ссылка на сайт терялась среди остальной навигации.
 Новая обложка и кнопки сразу объясняют, что у платформы есть отдельная

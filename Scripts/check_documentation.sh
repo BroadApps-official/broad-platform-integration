@@ -164,6 +164,8 @@ for documentation_contract in \
     'Documentation/LegacyAppMigrationAgent.md|HOST REPOSITORY' \
     'Documentation/LegacyAppMigrationAgent.md|PLATFORM REPOSITORY' \
     'Documentation/LegacyAppMigrationAgent.md|APP MIGRATION · BLOCKED' \
+    'Documentation/LegacyAppMigrationAgent.md|не заменяй его' \
+    'Documentation/Templates/AppIntegrationPlan.md|Plan не перезаписывайте' \
     'Documentation/Templates/AppIntegrationPlan.md|Platform documentation commit' \
     'Documentation/Templates/AppIntegrationPlan.md|Compatibility `platform_set`' \
     'Documentation/AgentPreflight.md|Platform source: READY / BLOCKED' \
