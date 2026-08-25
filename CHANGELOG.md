@@ -11,6 +11,19 @@
   repository, canonical public integration source и private legacy evidence,
   записывает platform commit/platform_set в Integration Plan и возвращает
   `APP MIGRATION · BLOCKED`, если source недоступен;
+- в стартовый prompt для агента добавлена явная карта источников:
+  `HOST REPOSITORY` — открытое приложение, `PLATFORM REPOSITORY` — public
+  [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration),
+  `LEGACY SOURCE` — старый private `BroadCore`, local package или
+  copied sources только как evidence текущего подключения;
+- агенту больше не нужно заранее «закидывать» скрытый контекст:
+  prompt содержит absolute canonical URL шаблона Integration Plan,
+  требует прочитать platform workflow и compatibility catalog, а затем
+  сохранить фактический commit SHA и `platform_set` в host repository;
+- старый private `BroadApps-official/BroadCore` запрещено использовать
+  как source новых package versions: агент берёт версии только из
+  `Compatibility/current.yml`, а private repository читает только для
+  аудита фактической legacy integration;
 - Agent Preflight получил проверку platform source, а устаревшая рекомендация
   `branch: "vers_niiaz"` в Platform Handoff заменена на exact SemVer release из
   compatibility catalog;
@@ -50,6 +63,14 @@
 выглядели как файлы приложения, а доступный private `BroadCore` выглядел как
 второй canonical source. Явная карта источников устраняет эту неоднозначность и
 сохраняет точный platform ref между checkpoint-ами.
+
+Для агента разработчицы это означает: он начинает в repository её
+приложения, сам находит public platform instructions по указанному URL,
+фиксирует прочитанную версию и только после этого выполняет аудит legacy graph.
+Если platform source, template, compatibility catalog или legacy evidence
+недоступны, он не додумывает источник и не меняет код, а возвращает
+`APP MIGRATION · BLOCKED` с конкретной причиной. Это убирает риск миграции по
+неправильному repository, branch или неподтверждённой версии модуля.
 
 Обычная текстовая ссылка на сайт терялась среди остальной навигации.
 Новая обложка и кнопки сразу объясняют, что у платформы есть отдельная
