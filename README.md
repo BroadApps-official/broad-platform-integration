@@ -6,8 +6,26 @@
 </p>
 
 <p align="center">
-  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site"><strong>Открыть документацию</strong></a>
-  ·
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site" title="Открыть BroadApps iOS Docs">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/hero-dark.svg">
+      <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/hero-light.svg">
+      <img alt="BroadApps iOS Platform — открыть публичную документацию" src="Documentation/Assets/README/hero-light.svg" width="100%">
+    </picture>
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site"><img alt="Open Docs Website" src="https://img.shields.io/badge/OPEN_DOCS_WEBSITE-2563EB?style=for-the-badge&amp;logo=safari&amp;logoColor=white"></a>
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/search"><img alt="Search Documentation" src="https://img.shields.io/badge/SEARCH_DOCUMENTATION-0F172A?style=for-the-badge&amp;logo=algolia&amp;logoColor=white"></a>
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started"><img alt="Getting Started" src="https://img.shields.io/badge/GETTING_STARTED-10B981?style=for-the-badge&amp;logo=readthedocs&amp;logoColor=white"></a>
+</p>
+
+> [!TIP]
+> **🌐 Посмотрите публичный сайт:** на нём есть выбор модулей, compatibility,
+> migration guides и поиск по всей документации.
+
+<p align="center">
   <a href="Documentation/GettingStarted.md">Быстрый старт</a>
   ·
   <a href="Documentation/FederatedRepositories.md">Карта repositories</a>
