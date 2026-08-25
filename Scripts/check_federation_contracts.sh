@@ -49,6 +49,12 @@ for relative_path in "${package_reference_files[@]}"; do
     fi
 done
 
+if rg -q --glob '*.md' -- 'branch:[[:space:]]*"vers_niiaz"' \
+    "$platform_root/README.md" "$platform_root/Documentation"; then
+    record_failure \
+        "Released module documentation must use a compatibility tag, not branch vers_niiaz."
+fi
+
 if ((failure_count == 0)); then
     for repository in \
         broad-core-ios \

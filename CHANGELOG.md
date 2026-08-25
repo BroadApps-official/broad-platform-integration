@@ -7,6 +7,13 @@
 
 ### Changed
 
+- legacy migration prompt теперь самодостаточен: он явно разделяет host
+  repository, canonical public integration source и private legacy evidence,
+  записывает platform commit/platform_set в Integration Plan и возвращает
+  `APP MIGRATION · BLOCKED`, если source недоступен;
+- Agent Preflight получил проверку platform source, а устаревшая рекомендация
+  `branch: "vers_niiaz"` в Platform Handoff заменена на exact SemVer release из
+  compatibility catalog;
 - верх README теперь показывает кликабельную light/dark-обложку платформы,
   крупные кнопки Docs/Search/Getting Started и явный призыв открыть
   публичный сайт;
@@ -37,6 +44,12 @@
   случайного удаления.
 
 ### Почему
+
+Разработчик, запустивший только copy-paste prompt внутри host repository, не
+мог понять, где искать platform workflow и compatibility: относительные пути
+выглядели как файлы приложения, а доступный private `BroadCore` выглядел как
+второй canonical source. Явная карта источников устраняет эту неоднозначность и
+сохраняет точный platform ref между checkpoint-ами.
 
 Обычная текстовая ссылка на сайт терялась среди остальной навигации.
 Новая обложка и кнопки сразу объясняют, что у платформы есть отдельная

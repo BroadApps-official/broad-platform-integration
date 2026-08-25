@@ -160,6 +160,14 @@ for documentation_contract in \
     'Documentation/LegacyAppMigrationAgent.md|MIGRATION SLICE REVIEW REQUIRED' \
     'Documentation/LegacyAppMigrationAgent.md|LEGACY CLEANUP REVIEW REQUIRED' \
     'Documentation/LegacyAppMigrationAgent.md|READY FOR QA' \
+    'Documentation/LegacyAppMigrationAgent.md|https://github.com/BroadApps-official/broad-platform-integration' \
+    'Documentation/LegacyAppMigrationAgent.md|HOST REPOSITORY' \
+    'Documentation/LegacyAppMigrationAgent.md|PLATFORM REPOSITORY' \
+    'Documentation/LegacyAppMigrationAgent.md|APP MIGRATION · BLOCKED' \
+    'Documentation/Templates/AppIntegrationPlan.md|Platform documentation commit' \
+    'Documentation/Templates/AppIntegrationPlan.md|Compatibility `platform_set`' \
+    'Documentation/AgentPreflight.md|Platform source: READY / BLOCKED' \
+    'Documentation/PlatformHandoff.md|exact: "1\.0\.0"' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
     'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
     'Documentation/SpecialOffer.md|raw `AdaptyPaywallProduct`' \

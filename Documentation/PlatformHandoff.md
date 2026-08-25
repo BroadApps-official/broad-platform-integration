@@ -60,14 +60,20 @@ bash Scripts/agent_gate.sh
 
 ## Подключение package
 
-До появления version tag используется ветка:
+Host app подключает release из `Compatibility/current.yml`, а не рабочую ветку
+платформы. Для текущего verified set BroadCore подключается так:
 
 ```swift
 .package(
     url: "https://github.com/BroadApps-official/broad-core-ios.git",
-    branch: "vers_niiaz"
+    exact: "1.0.0"
 )
 ```
+
+Private `BroadApps-official/BroadCore`, branch `vers_niiaz` и local integration
+checkout не являются источниками release dependency. Если catalog изменился,
+сначала возьмите новый exact tag из `Compatibility/current.yml` и повторите
+module/integration acceptance.
 
 Проверка конкретного приложения выполняется отдельно: его app target должен
 собираться в Debug/Release и проходить собственные safe fixture-сценарии.

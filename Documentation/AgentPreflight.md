@@ -7,6 +7,19 @@ reference и backend-контракт. Сообщения «примерно п�
 
 ## Порядок доступа
 
+### Источник платформы
+
+Canonical workflow и compatibility читаются из public repository
+[`BroadApps-official/broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration).
+Агент записывает фактически прочитанный commit SHA и `platform_set` в
+`Documentation/AppIntegrationPlan.md`. Private `BroadApps-official/BroadCore`
+может быть только legacy evidence существующего приложения; он не заменяет
+canonical platform source.
+
+Если public repository, нужный документ или `Compatibility/current.yml`
+недоступны, вернуть `Platform source: BLOCKED`. Нельзя выбирать package URL или
+version по памяти, private mirror либо названию Swift product.
+
 ### Kaiten
 
 1. Kaiten MCP: открыть точный документ проекта и метку карточки.
@@ -59,6 +72,7 @@ production flow.
 До app-кода агент возвращает эти строки с коротким пояснением:
 
 ```text
+Platform source: READY / BLOCKED
 Kaiten: READY / BLOCKED
 Design source: READY / BLOCKED
 Reference: READY / BLOCKED / N/A
@@ -84,10 +98,15 @@ Monetization: READY / BLOCKED / N/A
 Проект: <НОМЕР И НАЗВАНИЕ>.
 Kaiten: <ССЫЛКА ИЛИ ТОЧНОЕ НАЗВАНИЕ>.
 Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
+Platform repository: https://github.com/BroadApps-official/broad-platform-integration.
 
 Пока не создавай и не изменяй файлы приложения.
 
-1. Прочитай AGENTS.md, README.md и Documentation/AgentPreflight.md платформы.
+1. Из host repository прочитай AGENTS.md/CLAUDE.md и README.md. Из canonical
+   platform repository прочитай Documentation/AgentPreflight.md и
+   Compatibility/current.yml. Запиши фактический platform commit SHA и
+   platform_set. Если источник недоступен — остановись с Platform source:
+   BLOCKED; private BroadCore не используй как замену.
 2. Для Kaiten попробуй по порядку: Kaiten MCP; авторизованный Kaiten в Chrome;
    полный экспорт из рабочей папки. Если ничего нет — остановись с BLOCKED.
 3. Определи тип дизайна только по метке Kaiten. Для Figma попробуй Figma MCP;
@@ -102,6 +121,7 @@ Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
    необходимость Dashboard fallback. Не создавай Release-default для флага.
 7. Верни ровно этот статус и короткие доказательства:
 
+Platform source: READY / BLOCKED
 Kaiten: READY / BLOCKED
 Design source: READY / BLOCKED
 Reference: READY / BLOCKED / N/A

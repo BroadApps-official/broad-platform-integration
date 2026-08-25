@@ -28,6 +28,13 @@ Legacy URL `https://github.com/BroadApps-official/BroadCore.git` относит�
 подключите только нужные public repositories из
 [`Compatibility/current.yml`](../Compatibility/current.yml).
 
+Сотрудник организации может по-прежнему открыть private repository и увидеть
+похожую документацию. Это не делает его canonical source: migration workflow и
+compatibility читаются из public
+[`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration),
+а код модулей — из `broad-*-ios` releases. Private repository используется
+только для аудита фактического legacy graph.
+
 После замены проверьте `.xcodeproj`, workspace `Package.resolved` и Swift
 manifest поиском `BroadApps-official/BroadCore`. Результат должен быть пустым;
 `BroadCore` как **product/module name** при этом остаётся корректным. Затем

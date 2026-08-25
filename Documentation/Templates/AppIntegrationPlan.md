@@ -8,18 +8,28 @@
 | Поле | Значение |
 |---|---|
 | Режим | `new app` / `existing app` |
+| Host repository |  |
 | App target / workspace |  |
+| Platform repository | `https://github.com/BroadApps-official/broad-platform-integration` |
+| Platform documentation commit |  |
+| Compatibility `platform_set` |  |
+| Legacy source / package reference |  |
 | Текущий stage |  |
 | Последний подтверждённый checkpoint |  |
 | Ссылка на source requirements |  |
 
 Для `existing app` сначала перечислите current behavior и gaps. Не создавайте
 второй target и не переписывайте подтверждённые части до review плана.
+`Platform documentation commit` — фактически прочитанный SHA canonical public
+integration repository. Private `BroadApps-official/BroadCore`, local package
+или copied sources записываются только как legacy evidence, а не как источник
+новых module versions.
 
 ## 1. Статус входов
 
 | Вход | Источник | Статус `READY/BLOCKED/N/A` | Владелец blocker-а |
 |---|---|---|---|
+| Platform workflow + compatibility |  |  |  |
 | Kaiten / требования |  |  |  |
 | Design source |  |  |  |
 | Reference read-only |  |  |  |

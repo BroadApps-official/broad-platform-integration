@@ -10,13 +10,28 @@ iPhone-приложение нужно перевести со старого Br
 
 ## Как использовать файл
 
-1. Скопируйте
-   [`Templates/AppIntegrationPlan.md`](Templates/AppIntegrationPlan.md) в host
-   repository как `Documentation/AppIntegrationPlan.md`.
-2. Дайте агенту доступ к host repository, требованиям и read-only reference.
-3. Передайте стартовый prompt из конца этого файла.
-4. Агент выполняет один stage и останавливается на checkpoint.
-5. Разработчик проверяет отчёт/diff и явно разрешает следующий stage.
+В процессе участвуют три разных источника. Не смешивайте их:
+
+| Источник | Роль | Можно изменять |
+|---|---|---:|
+| host repository открытого приложения | app rules, текущий код и `Documentation/AppIntegrationPlan.md` | да, только в границах подтверждённого stage |
+| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | canonical read-only workflow и `Compatibility/current.yml` | нет |
+| старый private `BroadApps-official/BroadCore` или local/copied sources | только evidence фактической legacy integration | нет до отдельного cleanup checkpoint |
+
+1. Откройте агенту host repository конкретного приложения.
+2. Убедитесь, что агент может прочитать public
+   [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration).
+   Клонировать его внутрь host repository не нужно. Если GitHub недоступен,
+   приложите экспорт этого файла и `Compatibility/current.yml`; иначе stage
+   возвращает `APP MIGRATION · BLOCKED`.
+3. Скопируйте canonical
+   [`Templates/AppIntegrationPlan.md`](https://github.com/BroadApps-official/broad-platform-integration/blob/main/Documentation/Templates/AppIntegrationPlan.md)
+   в host repository как `Documentation/AppIntegrationPlan.md`.
+4. Дайте агенту доступ к требованиям и read-only reference приложения.
+5. Передайте стартовый prompt из конца этого файла. Предварительный скрытый
+   контекст о platform repository не требуется: источник указан в prompt.
+6. Агент выполняет один stage и останавливается на checkpoint.
+7. Разработчик проверяет отчёт/diff и явно разрешает следующий stage.
 
 Файл не разрешает настоящий purchase, restore, RU payment, signing,
 публикацию или изменение Dashboard/backend данных.
@@ -25,6 +40,7 @@ iPhone-приложение нужно перевести со старого Br
 
 До изменения кода агент должен найти или пометить `BLOCKED`:
 
+- canonical platform repository, его прочитанный commit SHA и `platform_set`;
 - app target, workspace/project и supported configurations;
 - текущий способ подключения старой платформы;
 - package graph, target membership и local/copied sources;
@@ -60,17 +76,20 @@ Unknown endpoint, screen, feature rule или app-owned configuration нельз
 
 Агент должен:
 
-1. прочитать repository rules, README и существующую документацию;
-2. определить legacy integration: package/local path/copied sources/wrapper;
-3. отдельно найти private monolith URL `BroadApps-official/BroadCore`, Git URL
+1. прочитать host repository rules, README и существующую app-документацию;
+2. прочитать этот workflow и `Compatibility/current.yml` из canonical public
+   `BroadApps-official/broad-platform-integration`, записать фактический commit
+   SHA и `platform_set` в App Integration Plan;
+3. определить legacy integration: package/local path/copied sources/wrapper;
+4. отдельно найти private monolith URL `BroadApps-official/BroadCore`, Git URL
    rewrites и package references, которые могут вызвать credential prompt;
-4. снять package/product/target-membership graph;
-5. найти imports, construction points, adapters и composition root;
-6. перечислить реально используемые BroadExtensions/Core/Monetization/UIFlows
+5. снять package/product/target-membership graph;
+6. найти imports, construction points, adapters и composition root;
+7. перечислить реально используемые BroadExtensions/Core/Monetization/UIFlows
    capabilities;
-7. выполнить доступные baseline builds без исправления старых ошибок;
-8. отделить pre-existing failures от migration blockers;
-9. заполнить current state/gaps в `Documentation/AppIntegrationPlan.md`.
+8. выполнить доступные baseline builds без исправления старых ошибок;
+9. отделить pre-existing failures от migration blockers;
+10. заполнить current state/gaps в `Documentation/AppIntegrationPlan.md`.
 
 Финальный ответ stage:
 
@@ -201,11 +220,32 @@ APP MIGRATION · BLOCKED
 Ты мигрируешь существующее iPhone-приложение со старого BroadApps
 monolith/local sources на независимые public modules.
 
-Обязательно прочитай:
-1. repository AGENTS.md/CLAUDE.md и README;
-2. Documentation/LegacyAppMigrationAgent.md;
-3. Documentation/AppIntegrationPlan.md;
-4. актуальный Compatibility/current.yml платформы.
+Источники не взаимозаменяемы:
+- HOST REPOSITORY — текущий открытый repository приложения; здесь находится
+  app-код и сюда разрешено записывать результаты подтверждённого stage;
+- PLATFORM REPOSITORY — canonical read-only public repository
+  https://github.com/BroadApps-official/broad-platform-integration;
+- LEGACY SOURCE — private BroadApps-official/BroadCore, local package или
+  copied sources; это только evidence текущей integration, не новый package.
+
+Обязательно прочитай из host repository:
+1. AGENTS.md/CLAUDE.md и README;
+2. Documentation/AppIntegrationPlan.md.
+
+Если Documentation/AppIntegrationPlan.md отсутствует, создай его только из
+canonical template:
+https://github.com/BroadApps-official/broad-platform-integration/blob/main/Documentation/Templates/AppIntegrationPlan.md
+Другие app-файлы на Stage 0 не создавай и не меняй.
+
+Обязательно прочитай из PLATFORM REPOSITORY:
+3. Documentation/LegacyAppMigrationAgent.md;
+4. Compatibility/current.yml.
+
+Запиши в AppIntegrationPlan.md URL platform repository, фактический commit SHA,
+platform_set и найденный legacy source. Если PLATFORM REPOSITORY,
+LegacyAppMigrationAgent.md или Compatibility/current.yml недоступны, ничего не
+угадывай: верни APP MIGRATION · BLOCKED с точным отсутствующим входом. Не
+используй private BroadCore как источник новых package versions.
 
 Сейчас выполни только Stage 0 — аудит. Не меняй Swift, Xcode project,
 Package.swift/Package.resolved или source membership. Не создавай новый app и
@@ -224,11 +264,17 @@ blockers. Обнови только current state/gaps в AppIntegrationPlan.md.
 ```text
 Продолжи legacy migration с последнего явно подтверждённого checkpoint.
 
-Перечитай Documentation/AppIntegrationPlan.md, current diff и
-Documentation/LegacyAppMigrationAgent.md. Назови подтверждённый checkpoint и
-следующий stage. Выполни только этот stage, не повторяй принятые изменения и не
-затрагивай соседние modules/slices. При blocker-е обнови Plan и остановись с
-точным REVIEW REQUIRED или APP MIGRATION · BLOCKED.
+Из host repository перечитай Documentation/AppIntegrationPlan.md и current
+diff. Из canonical public
+https://github.com/BroadApps-official/broad-platform-integration перечитай
+Documentation/LegacyAppMigrationAgent.md на commit SHA, записанном в Plan.
+Сверь platform_set с Compatibility/current.yml. Если источник/ref недоступен,
+остановись с APP MIGRATION · BLOCKED.
+
+Назови подтверждённый checkpoint и следующий stage. Выполни только этот stage,
+не повторяй принятые изменения и не затрагивай соседние modules/slices. При
+blocker-е обнови Plan и остановись с точным REVIEW REQUIRED или
+APP MIGRATION · BLOCKED.
 ```
 
 ## Связанные документы
