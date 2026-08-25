@@ -432,14 +432,14 @@ device ID                    = не identity пользователя/чата
 | Где читать | Когда использовать | Что там canonical |
 |---|---|---|
 | Этот README | Первое знакомство, выбор product, быстрый запуск и обязательные platform rules | Короткая карта текущего integration repository |
-| [Публичный сайт](https://broadapps-ios-docs.nkhsnv.chatgpt.site) | Поиск по ключевым словам, cross-module сценарии, migration, compatibility и release | Страницы из public repository `broad-docs` |
+| [Публичный сайт](https://broadapps-ios-docs.nkhsnv.chatgpt.site) | Главный справочник: visual guides, cross-module сценарии и поиск по всем repositories | Страницы и public search snapshot из `broad-docs` |
 | README и DocC модуля | Реализация или review конкретного Core/Extensions/Monetization/UIFlows tag | Public API и usage именно этого module release |
 | `Compatibility/current.yml` | Выбор набора версий перед подключением или release | Exact versions и evidence integration gate |
 
-README не копирует подробные статьи сайта: он объясняет, **куда идти**.
-Сайт не заменяет module README/DocC: он связывает repositories и позволяет
-искать по cross-module документации. Integration-specific инструкции остаются
-в `Documentation/` этого repository и перечислены в карте ниже.
+Сайт дублирует обязательные operational guides и visual references как главный
+человекочитаемый справочник. Module README повторяет свой behavior рядом с
+кодом, а DocC остаётся точным symbol-level источником конкретного tag.
+Integration-specific инструкции остаются в `Documentation/` и входят в поиск.
 
 ### Как открыть сайт локально
 
@@ -645,5 +645,5 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 - Compatibility catalog получает `passed` только после clean-clone acceptance.
 - Changelog объясняет, что сделано и почему.
 
-Текущий исполняемый план: [Federated Repositories](Documentation/FederatedRepositories.md).
+Текущий план: [Federated Repositories](Documentation/FederatedRepositories.md) · [аудит полного README](Documentation/LegacyREADMEContentAudit.md).
 Последний подтверждённый local result: [AgentChecks/STATUS.md](AgentChecks/STATUS.md).

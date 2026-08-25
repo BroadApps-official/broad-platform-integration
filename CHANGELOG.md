@@ -7,6 +7,16 @@
 
 ### Changed
 
+- последний полный pre-federation README (`ff54c4d`, 2 829 строк, 58 media)
+  проаудирован против текущих module APIs, dependency graph и platform rules;
+- актуальные bootstrap/cache/Adapty/paywall/token/RU/Special Offer/Usedesk
+  материалы распределены по owner module README и first-class страницам сайта;
+- UI screenshots и GIF восстановлены как явно помеченные fixture/reference,
+  а не app design, hardcoded catalog или evidence реального платежа;
+- старый umbrella install, `vers_niiaz` как new-version source и внутренний
+  screenshot с персональным контекстом намеренно не размножены;
+- README теперь называет сайт главным человекочитаемым справочником, module
+  README — локальной копией owner behavior, а DocC — symbol-level source tag;
 - `Documentation/AgentPreflight.md` теперь является единственным canonical
   source Stage 0: он возвращает platform URL/commit/`platform_set`, одинаково
   проверяет Kaiten, design, reference, backend, monetization и support/legal и
@@ -85,6 +95,14 @@
   случайного удаления.
 
 ### Почему
+
+При разделении монолита большой README был заменён короткой картой новой
+архитектуры. Технические contracts остались в документации и коде, но полезные
+объяснения, screenshots и GIF перестали быть видны из README новых repositories.
+Аудит возвращает действующее знание туда, где его ищет разработчик, не
+возвращая устаревший umbrella package и не смешивая ownership модулей.
+
+### Предыдущие причины
 
 Два похожих, но разных preflight prompt создавали ложный выбор. В Prompt Pack
 не было canonical platform URL, commit SHA, `platform_set` и статуса

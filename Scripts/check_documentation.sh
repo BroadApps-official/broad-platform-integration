@@ -102,7 +102,8 @@ for required_pattern in \
     '^### Как открыть сайт локально$' \
     'pnpm install --frozen-lockfile' \
     'pnpm run dev' \
-    'README не копирует подробные статьи сайта' \
+    'Сайт дублирует обязательные operational guides' \
+    'Documentation/LegacyREADMEContentAudit\.md' \
     'flowchart LR' \
     'Documentation/MigrationGuide\.md' \
     'Documentation/LegacyAppMigrationAgent\.md' \
