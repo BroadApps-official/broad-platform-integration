@@ -2,10 +2,10 @@
 
 - Статус: принято; provenance capability уточнена ADR-0005
 - Дата: 2026-08-09
-- Обновлено: 2026-08-24
+- Обновлено: 2026-08-30
 
 > [!NOTE]
-> Обязательный `ru_pay = true`, правило «регион **или** язык», backend-authoritative
+> Обязательный `ru_pay = true`, правило «Storefront **или** регион iPhone», backend-authoritative
 > entitlement и запрет выдавать premium после одного возврата из Safari остаются
 > в силе. [ADR-0005](0005-provider-managed-remote-feature-gates.md)
 > разделяет Special Offer и RU capability; RU сохраняет требование
@@ -14,8 +14,8 @@
 ## Контекст
 
 RU Billing нужен как опциональный способ оплаты рядом с Apple. Его
-доступность определяется флагом Adapty `ru_pay`, регионом iPhone и первым
-системным языком. Платформа не должна разрешать СБП/карту из собственного
+доступность определяется флагом Adapty `ru_pay`, App Store Storefront и регионом
+iPhone. Платформа не должна разрешать СБП/карту из собственного
 кеша или отсутствующего флага.
 
 Legacy backend и cancellation endpoint могут существовать во время миграции,
@@ -28,11 +28,11 @@ RU methods доступны только при трёх gates:
 ```text
 host feature enabled
 AND verified-fresh remote ru_pay == true
-AND (iPhone region == RU/RUS OR first system language starts with ru)
+AND (App Store Storefront == RU/RUS OR iPhone region == RU/RUS)
 ```
 
-В последней строке достаточно одного совпадения. App Store storefront, IP,
-timezone и формат валюты в eligibility не участвуют.
+В последней строке достаточно одного совпадения. Системный язык, клавиатура,
+IP, timezone и формат валюты в eligibility не участвуют.
 
 Remote decision имеет четыре состояния: `absent`, `enabled`, `disabled`,
 `invalid`. Parser читает все aliases; любой explicit `false` побеждает,
@@ -45,7 +45,7 @@ Host fallback без явного `ru_pay = true` не поддерживает�
 
 - `absent`, `disabled` и `invalid` всегда выключают feature;
 - platform-cache/unqualified `enabled` не показывает RU methods;
-- российский регион или русский язык без `ru_pay = true` оставляет только Apple.
+- российский Storefront/регион без `ru_pay = true` оставляет только Apple.
 
 Dashboard-generated fallback Adapty имеет
 `.providerCacheFallbackPossible` и не авторизует RU Billing, даже если его `ru_pay = true`.
@@ -55,10 +55,10 @@ Debug может process-local переопределить только remote 
 обычный initializer fail-closed к Adapty. Force modes не обходят
 host/device/catalog/backend/entitlement gates.
 
-`SystemRUBillingDeviceContextProvider` читает
-`Locale.current.region?.identifier` и `Locale.preferredLanguages.first`.
-`RUBillingGate` проверяется при построении способов оплаты и повторно перед
-созданием внешнего checkout.
+`SystemRUBillingDeviceContextProvider` читает только
+`Locale.current.region?.identifier`, а текущий Storefront приходит через
+`StorefrontRepositoryProtocol`. `RUBillingGate` проверяется при построении
+способов оплаты и повторно с перезагрузкой Storefront перед внешним checkout.
 
 ## Disabled composition
 
@@ -86,7 +86,7 @@ create checkout
 → only active unlocks premium
 ```
 
-`.opened` и `paid` без active entitlement не выдают доступ. Регион и язык
+`.opened` и `paid` без active entitlement не выдают доступ. Storefront и регион
 решают только, можно ли начать новый RU checkout; они не доказывают покупку и не
 используются для восстановления доступа.
 

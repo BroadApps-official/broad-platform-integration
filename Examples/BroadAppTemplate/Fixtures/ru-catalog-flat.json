@@ -1,0 +1,34 @@
+{
+  "products": [
+    {
+      "productId": "premium_month_ru",
+      "appStoreProductId": "com.company.app.premium.month",
+      "title": "Premium на месяц",
+      "kind": "subscription",
+      "period": "month",
+      "price": 499,
+      "currency": "RUB",
+      "paymentMethods": ["sbp", "card"]
+    },
+    {
+      "productId": "premium_year_ru",
+      "appStoreProductId": "com.company.app.premium.year",
+      "title": "Premium на год",
+      "kind": "subscription",
+      "period": "year",
+      "price": 2990,
+      "currency": "RUB",
+      "paymentMethods": ["sbp", "card"]
+    },
+    {
+      "productId": "tokens_100_ru",
+      "appStoreProductId": "com.company.app.tokens.100",
+      "title": "100 токенов",
+      "kind": "tokens",
+      "price": 199,
+      "currency": "RUB",
+      "credits": 100,
+      "paymentMethods": ["sbp", "card"]
+    }
+  ]
+}

@@ -151,7 +151,7 @@ requested remote
        ├─ current provider gate enabled → Special Offer UI
        └─ unavailable / disabled / platform cache → main
 
-Remote Config ru_pay → регион/язык iPhone → RU methods
+Remote Config ru_pay → Storefront/регион iPhone → RU methods
 
 Special Offer purchase / restore / RU return
   → новый authoritative entitlement refresh
@@ -373,17 +373,20 @@ RU billing — optional adapter chain, не автоматическая зам�
 
 ```text
 host enabled + verified-fresh remote ru_pay = true
-    + (iPhone region RU/RUS OR first system language starts with ru)
+    + (App Store Storefront RU/RUS OR iPhone region RU/RUS)
     → match exact RU catalog product
     → Apple / SBP / card methods
 ```
 
-Регион iPhone и первый системный язык — независимые признаки: одного совпадения
-достаточно. IP, timezone и App Store storefront не участвуют в eligibility.
+App Store Storefront и регион iPhone — независимые признаки: одного совпадения
+достаточно. Системный язык, IP, timezone и клавиатура не участвуют в eligibility.
+Отсутствующий, `false` или некорректный `ru_pay` всегда закрывает RU methods;
+автоматического `ru_pay = true` нет.
 External checkout считается только `.opened`, пока backend и новый общий
 entitlement refresh не подтвердили active.
 
-Если feature отключена, используйте disabled adapters и не добавляйте `.ruBilling` authority в engine. [RU Billing guide →](RUBilling.md).
+Если feature отключена, используйте disabled adapters и не добавляйте `.ruBilling` authority в engine.
+[RU Billing guide →](RUBilling.md) · [Backend product catalog →](BackendProductCatalog.md).
 
 Для production composition используется двухшаговый `RUBillingCompositionFactory`:
 
@@ -617,9 +620,10 @@ intent, verified transaction bridge и entitlement rules; standard
 - все sources inactive;
 - timeout и late active;
 - special offer `nil` без побочных обращений;
-- `ru_pay = true` + RU region при нерусском языке;
-- `ru_pay = true` + русский язык при non-RU region;
-- `ru_pay = false` при RU region и русском языке;
+- `ru_pay = true` + RU Storefront при non-RU регионе iPhone;
+- `ru_pay = true` + недоступный/non-RU Storefront при RU регионе iPhone;
+- `ru_pay = true` + русский язык при двух non-RU региональных сигналах — RU methods закрыты;
+- `ru_pay = false` при RU Storefront и RU регионе;
 - analytics без дублей и чувствительных полей.
 
 Для UI fixtures используйте [BroadAppTemplate](../README.md#example-и-ручные-сценарии). Test targets не добавляются.

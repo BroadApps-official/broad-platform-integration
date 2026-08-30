@@ -5,12 +5,18 @@ RU Billing — опциональная цепочка адаптеров для
 
 1. приложение само включило feature;
 2. host-controlled verified-fresh remote payload вернул `ru_pay = true`;
-3. регион iPhone равен `RU` **или** первый системный язык начинается с `ru`.
+3. App Store Storefront равен `RU/RUS` **или** регион iPhone равен `RU/RUS`.
 
-В третьем условии достаточно одного совпадения. Страна App Store storefront не
-участвует в разрешении RU-оплаты. Если `ru_pay` отсутствует, равен `false`,
-повреждён либо payload не имеет `.verifiedFreshRemote`, СБП и карта
-скрыты даже на российском iPhone.
+В третьем условии достаточно одного совпадения. Язык приложения, первый
+системный язык, клавиатура, IP и timezone не участвуют. Если `ru_pay`
+отсутствует, равен `false`, повреждён либо payload не имеет
+`.verifiedFreshRemote`, СБП и карта скрыты даже при российском Storefront или
+регионе iPhone. Приложение никогда не подставляет `true` автоматически.
+
+> [!IMPORTANT]
+> Это целевое правило платформы с 30 августа 2026 года. Конкретное приложение
+> могло ещё не перейти на него. Перед релизом зафиксируйте фактическую реализацию
+> вместе с тимлидом в `AppIntegrationPlan`.
 
 > `ru_pay` разрешает только показать и открыть RU-способ оплаты. Он не
 > подтверждает оплату и не открывает premium. После checkout платформа ждёт
@@ -41,7 +47,7 @@ kill switch; backend в любом случае остаётся финальн�
 Всё остальное делает платформа:
 
 ```text
-ru_pay + регион/язык iPhone → сопоставление каталога → экран оплаты → платёжная ссылка
+ru_pay + (Storefront RU или регион iPhone RU) → сопоставление каталога → экран оплаты → платёжная ссылка
 → постоянная pending-запись → возврат и проверка → обновление entitlement → настройки подписки
 ```
 
@@ -73,9 +79,9 @@ RU-подписка и RU-токены принадлежат серверном
 - email для чека может исчезнуть после удаления: это только настройка формы, а не ID
   пользователя и не доказательство покупки.
 
-Не используйте регион устройства, системный язык, device ID или email из чека
-для поиска уже совершённой покупки. Регион и язык нужны только для решения,
-показывать ли RU-способы оплаты сейчас. Без
+Не используйте Storefront, регион устройства, системный язык, device ID или email из чека
+для поиска уже совершённой покупки. Финансовое решение использует Storefront и
+регион, а язык отвечает только за локализацию. Без
 стабильного app account гарантированное восстановление RU-покупок невозможно.
 [Полный порядок →](AccountRecovery.md).
 
@@ -171,27 +177,26 @@ let subscription: any RUSubscriptionRepositoryProtocol =
 > проверить.
 
 <a id="device-context"></a>
-## Как проверяются регион и язык iPhone
+## Как проверяются Storefront и регион iPhone
 
-`SystemRUBillingDeviceContextProvider` повторяет правило production-приложения
-5115:
+`SystemRUBillingDeviceContextProvider` читает только регион iPhone:
 
 ```swift
 let context = RUBillingDeviceContext(
-    regionCode: Locale.current.region?.identifier,
-    primaryLanguageIdentifier: Locale.preferredLanguages.first
+    regionCode: Locale.current.region?.identifier
 )
 ```
 
-`context.isRussian` становится `true`, если регион равен `RU`/`RUS` **или**
-первый системный язык равен `ru`, `ru-RU` либо другому варианту с префиксом
-`ru`. App Store storefront можно по-прежнему читать как информационные данные,
-но он не включает и не выключает RU Billing.
+`context.isRussian` становится `true` только для `RU/RUS`. Текущий Storefront
+загружает `StorefrontRepositoryProtocol`. `RUBillingGate` разрешает региональную
+часть условия, когда российским является хотя бы один из этих двух сигналов.
+Русский язык при двух нероссийских сигналах ничего не включает.
 
 Проверка выполняется в двух местах:
 
 1. `ResolveCheckoutMethodsUseCase` — до показа пользователю СБП и карты;
-2. `RUCheckoutFlowCoordinator` — повторно перед созданием внешней оплаты.
+2. `RUCheckoutFlowCoordinator` — повторно загружает текущий Storefront перед
+   созданием внешней оплаты.
 
 Для воспроизводимого fixture-сценария можно передать свой
 `RUBillingDeviceContextProviderProtocol`; production composition по умолчанию
@@ -223,7 +228,7 @@ let checkoutMethods = ResolveCheckoutMethodsUseCase(
 
 `.absent`, `.disabled` и `.invalid` всегда закрывают RU Billing. `.enabled`
 разрешает показать RU methods только для `.verifiedFreshRemote`, если также
-совпал российский регион либо русский первый системный язык. Значение из
+совпал российский Storefront либо регион iPhone. Значение из
 `.providerCacheFallbackPossible`, `.platformCache` или legacy payload не даёт этого
 разрешения.
 
@@ -277,7 +282,7 @@ checkout видят одно решение. Force-on заменяет толь�
 обходит:
 
 - `isFeatureEnabled` в composition;
-- RU-регион/язык iPhone;
+- App Store Storefront/регион iPhone;
 - наличие и точное сопоставление backend catalog;
 - backend authorization и финальный entitlement refresh.
 
@@ -292,10 +297,10 @@ checkout видят одно решение. Force-on заменяет толь�
 
 | Причина | Что проверить |
 |---|---|
-| `available` | Adapty, device context и catalog разрешили RU methods |
+| `available` | Adapty, Storefront/регион iPhone и catalog разрешили RU methods |
 | `remote-flag-absent/disabled/invalid` | Payload текущего resolved paywall в Adapty |
 | `unqualified-remote-configuration` | Данные пришли из platform/legacy cache, а не provider payload |
-| `device-context-not-russian` | Регион и первый язык iPhone |
+| `device-context-not-russian` | Текущий Storefront и регион iPhone; язык не участвует |
 | `catalog-unavailable/product-not-matched/methods-unavailable` | Backend catalog и exact mapping |
 | `debug-forced-enabled/disabled` | Текущий process-local Debug-режим |
 
@@ -428,6 +433,10 @@ request/response. Если после миграции нужно проверя
 Если backend возвращает другой JSON, замените только нужные протоколы, например
 `RUCheckoutRequestEncoderProtocol` и `RUCheckoutResponseDecoderProtocol`. Менять Domain или UI не нужно.
 
+Для распространённого плоского каталога `{ "products": [...] }` платформа
+также предоставляет `FlatRUCatalogResponseDecoder` и короткую композицию
+`RUBillingWireAdapters.broadAppsFlatCatalog(supportedMethods:)`.
+
 Стандартный checkout-запрос добавляет `customerEmail` только когда пользователь сам запросил
 чек. UI может запомнить адрес по app-configurable ключу, но body запроса не хранится и не логируется.
 Другому backend достаточно заменить checkout encoder.
@@ -484,6 +493,48 @@ GET <catalog-path>?app_id=<application-id>&app_bundle=<bundle-id>
 `display_price` и `subscription_period` опциональны. Единица периода: `day`, `week`, `month`, `year`
 или своя непустая строка. Неизвестные способы оплаты игнорируются. Готовый premium checkout
 понимает только `sbp` и `card`.
+
+#### Текущий плоский каталог backend
+
+Приложения могут получать подписки и токены одним авторизованным запросом:
+
+```http
+GET <catalog-path>
+Authorization: Bearer <current-app-session>
+```
+
+```json
+{
+  "products": [
+    {
+      "productId": "premium_month",
+      "title": "Premium на месяц",
+      "kind": "subscription",
+      "period": "month",
+      "price": 499,
+      "currency": "RUB",
+      "credits": null
+    }
+  ]
+}
+```
+
+Подключение:
+
+```swift
+let wire = RUBillingWireAdapters.broadAppsFlatCatalog(
+    supportedMethods: [.sbp, .card]
+)
+```
+
+`supportedMethods` задаётся явно, потому что старый плоский ответ не всегда
+содержит способы оплаты. `price` считается суммой в основных единицах валюты.
+Если backend отдаёт копейки, другую envelope-модель или отдельные endpoints,
+нужен собственный decoder. Не угадывайте единицу цены.
+
+Decoder принимает camelCase и snake_case product IDs, сохраняет title, credits,
+порядок и каждое повторение. Он не сортирует, не ограничивает список двумя
+строками и не превращает массив в dictionary.
 
 #### Создание checkout
 
@@ -616,8 +667,8 @@ JSON. Она приходит из уже авторизованной комп�
 По умолчанию используется `ExactOnlyRUCatalogProductMappingPolicy`. Платформа никогда не
 угадывает продукт по цене или периоду и не отправляет придуманный server ID. Если у приложения
 есть собственная точная таблица «SKU → backend ID», передайте
-`AppOwnedRUCatalogProductMappingPolicy`. Свою политику по периоду тоже можно передать, но она
-полностью находится под ответственностью приложения и сама не включается.
+`AppOwnedRUCatalogProductMappingPolicy`. Fuzzy mapping по периоду или цене не
+является допустимым платформенным контрактом.
 
 Общий premium paywall показывает RU-оплату только для автоматически продлеваемых,
 непродлеваемых и non-consumable продуктов, которые дают доступ и точно сопоставлены со строкой
@@ -678,9 +729,10 @@ bearer-токен, сырой payload провайдера или личност
 Значения TTL и `expiresAt`, сравнённые с изменяемыми часами iPhone, служат только подсказкой для UI
 и разбора проблемы. Они не снимают блокировку. Сделать это может только финальный ответ backend.
 
-Прямо перед созданием checkout координатор повторно проверяет тот же `RUBillingGate` и свежий
-регион iPhone и первый системный язык. Значение App Store storefront или его
-кеша не даёт разрешение на оплату.
+Прямо перед созданием checkout координатор повторно проверяет тот же
+`RUBillingGate`, загружает текущий Storefront и читает регион iPhone. Российского
+значения любого из них достаточно для региональной части условия. Язык и старый
+кеш Storefront не дают разрешение на оплату.
 Координатор допускает только одну операцию одновременно и отклоняет новый запуск при существующей
 pending-записи. Поэтому несколько одновременных нажатий не создадут две backend-сессии и не
 перезапишут отслеживаемую попытку.

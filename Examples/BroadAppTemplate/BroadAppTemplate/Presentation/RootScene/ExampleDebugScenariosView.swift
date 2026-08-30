@@ -336,7 +336,8 @@ import SwiftUI
                     .foregroundStyle(AppTokens.Color.secondaryText)
 
                 Text(
-                    "Force Enabled не обходит host configuration, российский контекст iPhone, "
+                    "Force Enabled не обходит host configuration, российский Storefront "
+                        + "или регион iPhone, "
                         + "RU-каталог, backend authorization и entitlement-проверку."
                 )
                 .font(AppTokens.Font.caption)

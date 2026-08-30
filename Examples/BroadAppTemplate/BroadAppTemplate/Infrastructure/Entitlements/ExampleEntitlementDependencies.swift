@@ -63,12 +63,7 @@ struct ExampleEntitlementDependencies {
         subject: EntitlementSubject,
         clock: CacheClock
     ) -> EntitlementSourceRegistration {
-        let adaptyVerifier = makeAdaptyVerifier(
-            scenario: scenario,
-            subject: subject,
-            clock: clock
-        )
-        return AppleEntitlementSourceFactory(
+        AppleEntitlementSourceFactory(
             storeKitClient: ExampleStoreKitEntitlementsClient(
                 scenario: scenario,
                 clock: clock
@@ -77,26 +72,7 @@ struct ExampleEntitlementDependencies {
         ).makeRegistration(
             configuration: makeAppleConfiguration(
                 subject: subject
-            ),
-            additionalAuthoritativeVerifiers: [adaptyVerifier]
-        )
-    }
-
-    private static func makeAdaptyVerifier(
-        scenario: ExampleEntitlementScenario,
-        subject: EntitlementSubject,
-        clock: CacheClock
-    ) -> AdaptyAppleEntitlementVerifier {
-        AdaptyAppleEntitlementVerifier(
-            configuration: AdaptyAppleEntitlementConfiguration(
-                subject: subject,
-                accessLevelIdentifier: ExampleAppleEntitlementFixture.accessLevelIdentifier
-            ),
-            client: ExampleAdaptyEntitlementProfileClient(
-                scenario: scenario,
-                clock: clock
-            ),
-            clock: clock
+            )
         )
     }
 
@@ -124,7 +100,6 @@ struct ExampleEntitlementDependencies {
 }
 
 private enum ExampleAppleEntitlementFixture {
-    static let accessLevelIdentifier = "fixture-premium"
     static let appBundleIdentifier = "com.broadapps.platform.template"
     static let premiumProductID = "fixture.premium.subscription"
     private static let activeDuration: TimeInterval = 3600
@@ -139,55 +114,6 @@ private enum ExampleAppleEntitlementFixture {
     }
 }
 
-private struct ExampleAdaptyEntitlementProfileClient: AdaptyEntitlementProfileClientProtocol {
-    let scenario: ExampleEntitlementScenario
-    let clock: CacheClock
-
-    func loadProfile(
-        for subject: EntitlementSubject
-    ) async -> AdaptyEntitlementProfileResult {
-        guard subject == .anonymous else {
-            return .unresolved
-        }
-
-        switch scenario {
-        case .active:
-            return .serverValidated(profile(subject: subject, isActive: true))
-        case .inactive:
-            return .serverValidated(profile(subject: subject, isActive: false))
-        case .unknown, .storeKitFallback:
-            return .unqualified(profile(subject: subject, isActive: true))
-        case .timeout:
-            await ExampleEntitlementDelay.waitIgnoringCancellation(
-                milliseconds: ExampleAppleEntitlementFixture.timeoutDelay
-            )
-            return .serverValidated(profile(subject: subject, isActive: true))
-        }
-    }
-
-    private func profile(
-        subject: EntitlementSubject,
-        isActive: Bool
-    ) -> AdaptyEntitlementProfileSnapshot {
-        AdaptyEntitlementProfileSnapshot(
-            subject: subject,
-            accessLevels: [
-                ExampleAppleEntitlementFixture.accessLevelIdentifier: AdaptyEntitlementAccessLevelSnapshot(
-                    identifier: ExampleAppleEntitlementFixture.accessLevelIdentifier,
-                    isActive: isActive,
-                    expiresAt: isActive
-                        ? ExampleAppleEntitlementFixture.expirationDate(clock: clock)
-                        : nil,
-                    isLifetime: false,
-                    isInGracePeriod: false,
-                    startsAt: nil,
-                    isRefund: false
-                )
-            ]
-        )
-    }
-}
-
 private struct ExampleStoreKitEntitlementsClient: StoreKitEntitlementsClientProtocol {
     let scenario: ExampleEntitlementScenario
     let clock: CacheClock
@@ -195,11 +121,21 @@ private struct ExampleStoreKitEntitlementsClient: StoreKitEntitlementsClientProt
     func currentEntitlements(
         for productIDs: Set<String>
     ) async -> [StoreKitCurrentEntitlementRecord] {
-        guard
-            scenario == .storeKitFallback,
-            productIDs.contains(ExampleAppleEntitlementFixture.premiumProductID)
-        else {
+        guard productIDs.contains(ExampleAppleEntitlementFixture.premiumProductID) else {
             return []
+        }
+
+        switch scenario {
+        case .inactive:
+            return []
+        case .unknown:
+            return [.unverified]
+        case .timeout:
+            await ExampleEntitlementDelay.waitIgnoringCancellation(
+                milliseconds: ExampleAppleEntitlementFixture.timeoutDelay
+            )
+        case .active, .storeKitFallback:
+            break
         }
 
         return [

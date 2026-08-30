@@ -7,6 +7,28 @@
 
 ### Changed
 
+- RU Billing использует два прозрачных региональных сигнала: текущий App Store
+  Storefront `RU/RUS` или регион iPhone `RU/RUS`; язык, IP, timezone и
+  клавиатура больше не участвуют, а Storefront перечитывается перед checkout;
+- отсутствующий/`false`/некорректный `ru_pay` остаётся fail-closed и никогда не
+  превращается в автоматический `true`;
+- добавлены готовый decoder плоского RU-каталога, обезличенный fixture и
+  отдельная backend-инструкция; полный массив сохраняет порядок и дубли, а
+  сопоставление выполняется только по точному product ID;
+- template получил самостоятельные Storefront/region/language-only fixture
+  сценарии, чтобы проверять новую матрицу без настоящей оплаты;
+- базовый Adapty route закреплён как `public SDK key + placements`: access
+  level и дополнительный verifier больше не требуются для обычной загрузки
+  paywall, а advanced identity остаётся отдельной opt-in возможностью;
+- subscription, token и Special Offer получают полный provider array без
+  скрытого выбора двух продуктов, сортировки или обрезки;
+- Special Offer описан как второй paywall с единственным флагом
+  `special_offer` и циклическим визуальным таймером на 24 часа; schedule,
+  server clock и динамический таймер отложены до будущего product contract;
+- template entitlement fixtures используют StoreKit как стандартный Apple
+  source и больше не заставляют новый app копировать фиктивный Adapty verifier;
+- схема Adapty в README упрощена до четырёх понятных шагов и синхронизирована с
+  публичным сайтом;
 - главный README получил актуальную карту входа `Что это → Быстрый маршрут →
   Все flow → Перед QA → Что открыть → С чего начать`, а подробности ведут в
   единый сайт вместо создания второй расходящейся копии workflow;

@@ -103,6 +103,7 @@ struct ExampleMonetizationEnvironment {
             return ExampleCheckoutMethodsUseCase()
         }
         return makeRUPayFixtureMethodsUseCase(
+            arguments: arguments,
             debugOverrideStore: debugOverrideStore,
             logger: logger
         )
@@ -184,15 +185,21 @@ struct ExampleMonetizationEnvironment {
     }
 
     private static func makeRUPayFixtureMethodsUseCase(
+        arguments: [String],
         debugOverrideStore: RUBillingDebugOverrideStore,
         logger: any BroadLoggerProtocol
     )
         -> any ResolveCheckoutMethodsUseCaseProtocol {
-        ResolveCheckoutMethodsUseCase(
-            storefrontRepository: ExampleRUStorefrontRepository(),
+        let regionalScenario = ExampleRURegionalScenario.current(arguments: arguments)
+        return ResolveCheckoutMethodsUseCase(
+            storefrontRepository: ExampleRUStorefrontRepository(
+                scenario: regionalScenario
+            ),
             catalogRepository: ExampleRUCatalogRepository(),
             isFeatureEnabled: true,
-            deviceContextProvider: ExampleRussianDeviceContextProvider(),
+            deviceContextProvider: ExampleRUBillingDeviceContextProvider(
+                scenario: regionalScenario
+            ),
             debugOverrideStore: debugOverrideStore,
             logger: logger
         )

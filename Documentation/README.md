@@ -26,6 +26,7 @@ Markdown в repositories остаётся canonical source: его можно с
 | Не потерять покупки после переустановки | [Account Recovery](AccountRecovery.md) |
 | Обработать внезапное отключение сети | [Network Interruptions](NetworkInterruptions.md) |
 | Подключить полный СБП/карта flow | [RU Billing](RUBilling.md) |
+| Получить RU-продукты с backend | [Backend product catalog](BackendProductCatalog.md) |
 | Настроить adaptive paywall | [Paywall UI](PaywallUI.md) |
 | Настроить onboarding, ATT и Rate Us | [Onboarding & ATT](OnboardingAndATT.md) |
 | Подключить общие extensions | [BroadExtensions](Extensions.md) |

@@ -124,8 +124,8 @@ for required_pattern in \
     'BroadCore' \
     'BroadMonetization' \
     'BroadUIFlows' \
-    'provider-managed Adapty payload' \
-    'persistent cache `BroadMonetization` не может' \
+    'public Adapty SDK key и placement IDs' \
+    'общий pipeline платформы сохраняет весь ответ' \
     'SDK cache, Dashboard fallback и platform cache не авторизуют RU methods' \
     'bash Scripts/agent_gate\.sh' \
     'Tests/' \
@@ -148,6 +148,8 @@ done
 
 for documentation_contract in \
     'Documentation/ADR/0006-federated-public-repositories.md|Host app подключает \*\*любой нужный модуль\*\*' \
+    'Documentation/ADR/0007-simple-adapty-integration.md|public SDK key' \
+    'Documentation/ADR/0007-simple-adapty-integration.md|24:00:00 → 00:00:00 → 24:00:00' \
     'Documentation/FederatedRepositories.md|broad-platform-integration' \
     'Documentation/FederatedRepositories.md|broad-docs' \
     'Documentation/ModuleReleasePolicy.md|upToNextMajor' \
@@ -217,6 +219,11 @@ do
         record_failure "Documentation contract is missing: $documentation_file -> $documentation_pattern"
     fi
 done
+
+if rg -q -- 'ExampleAdaptyEntitlementProfileClient|additionalAuthoritativeVerifiers' \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Entitlements/ExampleEntitlementDependencies.swift"; then
+    record_failure "BroadAppTemplate basic entitlement composition must stay StoreKit-only."
+fi
 
 canonical_preflight_prompt="$(
     sed -n '/<!-- AGENT_PREFLIGHT_PROMPT:START -->/,/<!-- AGENT_PREFLIGHT_PROMPT:END -->/p' \
@@ -399,7 +406,7 @@ do
     fi
 done
 
-for remote_config_pattern in 'Dashboard fallback Adapty' 'Release: ru_pay только с verified freshness' 'Debug: follow / force-on / force-off'; do
+for remote_config_pattern in 'Adapty без лишних слоёв' 'Public SDK key' 'все 0…N products' 'Без verifier и REST'; do
     if ! rg -q -- "$remote_config_pattern" \
         "$platform_root/Documentation/Assets/README/remote-config-cache-flow-light.svg" \
         "$platform_root/Documentation/Assets/README/remote-config-cache-flow-dark.svg"; then

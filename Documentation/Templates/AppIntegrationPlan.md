@@ -100,6 +100,25 @@ transitive dependencies. Не запускайте resolve внутри непо
 обезличенному production-shape fixture. Локальная заглушка, кнопка или успешная
 компиляция не доказывают backend.
 
+### Evidence референса для RU Billing
+
+Не вставляйте секреты или полный production URL. Запишите только проверяемую
+структуру и расхождения с платформой.
+
+| Контракт | Reference evidence | Решение для текущего app | Статус |
+|---|---|---|---|
+| `GET /v1/tokens/products` или другой catalog path | Method/path/auth/envelope/fields |  |  |
+| `POST /v1/billing/cloudpayments/checkout` или аналог | Body + payment URL/status fields |  |  |
+| `GET /v1/policy/effective` или другой entitlement authority | Какие поля подтверждают Premium |  |  |
+| Backend balance/wallet | Как подтверждаются купленные токены |  |  |
+| `POST /v1/billing/cloudpayments/cancel` или аналог | Response и смысл renewal fields |  |  |
+| Расхождения/legacy fallback | Что найдено, но нельзя копировать |  |  |
+
+В 5108, 5109, 5115 и 232 эти четыре пути каталога, checkout, policy и cancel
+повторяются, но это только стартовая гипотеза. Подтвердите endpoint/schema/auth
+у владельца текущего backend. Инструкция агенту и список наводящих вопросов:
+`Examples/BroadAppTemplate/AGENTS.md`.
+
 ## 6. Монетизация
 
 | Решение | Выбранный вариант | Источник | Статус |
@@ -109,6 +128,7 @@ transitive dependencies. Не запускайте resolve внутри непо
 | Tokens | enabled / disabled + fulfillment endpoint |  |  |
 | Special Offer | enabled / disabled + placement/gate |  |  |
 | RU Billing | enabled / disabled + backend/legal |  |  |
+| RU product catalog | endpoint/schema/price units + exact mapping |  |  |
 | Recovery | Apple/backend + account token balance endpoint; processed purchase IDs остаются backend-internal |  |  |
 
 ### RU Billing: заполнить, если feature не `N/A`
@@ -118,12 +138,23 @@ transitive dependencies. Не запускайте resolve внутри непо
 | Host composition и backend/legal подключены? |  |  |
 | Какое production-значение `ru_pay`? | `true` / `false`; владелец флага |  |
 | Как доказывается freshness? | Endpoint/schema/TTL/offline policy; `.verifiedFreshRemote` только после network response |  |
+| Как проверяется российский пользователь? | App Store Storefront `RU/RUS` **или** регион iPhone `RU/RUS`; язык не участвует |  |
+| Текущий app уже использует это правило? | Сверить реализацию с актуальной платформой и подтвердить у team lead |  |
+| Как загружается каталог? | Endpoint, HTTP method, auth, envelope, error/offline policy |  |
+| Совпадают ли backend и Adapty/App Store IDs? | Exact equality или явная mapping table/decoder; не угадывать |  |
+| Какая единица `price`? | основные единицы валюты / minor units; не угадывать |  |
+| Как сопоставляются продукты? | точный backend ID ↔ App Store product ID; без поиска по цене/периоду |  |
+| Какие payment methods поддержаны? | `sbp` / `card`; подтвердить с backend/legal |  |
 | Где backend kill switch? | Endpoint/policy и владелец |  |
 | Debug override подключён? | `Как в Adapty` / force-on / force-off; только Debug |  |
 | Какой live smoke пройден? | Verified `true/false`; provider/platform cache rejection; без purchase |  |
+| Чем подтверждается результат после browser return? | Premium: policy/entitlement; tokens: backend balance; закрытие браузера не success |  |
 
 Release не может иметь app-default или force override для `ru_pay`.
 Fixture/Debug force-on не считается evidence freshness, backend или успешной оплаты.
+Отсутствующий/`false`/некорректный `ru_pay`, пустой каталог и два non-RU
+региональных сигнала должны оставлять только Apple. Миграция блокируется, если
+старый app включает RU Billing по языку или молча подставляет `ru_pay = true`.
 
 ## 7. Runtime slices after cutover
 

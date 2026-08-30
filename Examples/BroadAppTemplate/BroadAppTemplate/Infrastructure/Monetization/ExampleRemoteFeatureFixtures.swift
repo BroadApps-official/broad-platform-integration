@@ -260,21 +260,74 @@ actor ExampleSpecialOfferStateRepository: SpecialOfferStateRepositoryProtocol {
     }
 }
 
-struct ExampleRussianDeviceContextProvider: RUBillingDeviceContextProviderProtocol {
+enum ExampleRURegionalScenario: String, CaseIterable {
+    case storefrontAndDeviceRussian = "ru-region-both"
+    case storefrontRussian = "ru-region-storefront"
+    case deviceRussian = "ru-region-device"
+    case neitherRussian = "ru-region-neither"
+    case storefrontUnavailableDeviceRussian = "ru-region-storefront-unavailable-device-ru"
+    case storefrontUnavailableDeviceNonRussian = "ru-region-storefront-unavailable-device-non-ru"
+    case russianLanguageOnly = "ru-region-language-only"
+
+    static func current(arguments: [String]) -> ExampleRURegionalScenario {
+        let matches = allCases.filter { arguments.contains("-\($0.rawValue)") }
+        precondition(matches.count <= 1, "Use at most one RU regional fixture")
+        return matches.first ?? .storefrontAndDeviceRussian
+    }
+
+    var deviceRegionCode: String {
+        switch self {
+        case .storefrontAndDeviceRussian,
+             .deviceRussian,
+             .storefrontUnavailableDeviceRussian:
+            "RU"
+        case .storefrontRussian,
+             .neitherRussian,
+             .storefrontUnavailableDeviceNonRussian,
+             .russianLanguageOnly:
+            "US"
+        }
+    }
+
+    var primaryLanguageIdentifier: String {
+        self == .russianLanguageOnly ? "ru" : "en"
+    }
+
+    var storefront: Storefront? {
+        switch self {
+        case .storefrontAndDeviceRussian, .storefrontRussian:
+            Storefront(identifier: "example-ru-storefront", countryCode: "RU")
+        case .deviceRussian, .neitherRussian, .russianLanguageOnly:
+            Storefront(identifier: "example-us-storefront", countryCode: "US")
+        case .storefrontUnavailableDeviceRussian,
+             .storefrontUnavailableDeviceNonRussian:
+            nil
+        }
+    }
+}
+
+struct ExampleRUBillingDeviceContextProvider: RUBillingDeviceContextProviderProtocol {
+    let scenario: ExampleRURegionalScenario
+
     func currentContext() -> RUBillingDeviceContext {
         RUBillingDeviceContext(
-            regionCode: "RU",
-            primaryLanguageIdentifier: "ru"
+            regionCode: scenario.deviceRegionCode,
+            primaryLanguageIdentifier: scenario.primaryLanguageIdentifier
         )
     }
 }
 
 struct ExampleRUStorefrontRepository: StorefrontRepositoryProtocol {
+    let scenario: ExampleRURegionalScenario
+
     func currentStorefront() async -> StorefrontResolution {
-        .available(
-            Storefront(
-                identifier: "example-ru-storefront",
-                countryCode: "RU"
+        if let storefront = scenario.storefront {
+            return .available(storefront)
+        }
+        return .unavailable(
+            .example(
+                message: "Storefront fixture недоступен.",
+                code: "example.storefront.unavailable"
             )
         )
     }

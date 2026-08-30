@@ -32,6 +32,9 @@
   по platform template. Неизвестный экран, endpoint, backend hook или правило
   исходника получает `BLOCKED`; агент не придумывает его и не выдаёт fixture за
   production flow. Platform-owned AgentChecks не хранят этот app-specific план.
+- Для backend-каталога/RU Billing используй порядок и вопросы из
+  `Examples/BroadAppTemplate/AGENTS.md`: reference остаётся read-only, а первый
+  результат заканчивается `BACKEND CONTRACT REVIEW REQUIRED`, не Swift-кодом.
 - Для existing app сначала зафиксируй current state/gaps в Integration Plan;
   skeleton stage становится аудитом существующих границ. После паузы, нового
   чата или снятия `BLOCKED` перечитай Plan, последний checkpoint и diff, затем
@@ -81,7 +84,15 @@
   источник products или словарь, схлопывающий дубли SKU.
 - `ru_pay = false`, отсутствующий или некорректный флаг всегда закрывает RU
   Billing. Предыдущее разрешающее значение не восстанавливается из last-valid
-  cache.
+  cache. Никогда не подставляй `ru_pay = true` автоматически.
+- Региональное условие RU Billing: текущий App Store Storefront `RU/RUS` **или**
+  регион iPhone `RU/RUS`. Системный язык, клавиатура, IP и timezone ничего не
+  включают. Перед финальным checkout перечитай Storefront; старый cache не
+  авторизует оплату.
+- Backend-каталог отображается полностью и в исходном порядке, включая дубли.
+  Не фильтруй, не сортируй, не делай `prefix`, не превращай массив в dictionary
+  и не угадывай соответствие по цене/периоду. App-specific сокращение списка —
+  решение host UI после получения полного platform result.
 - В Release `ru_pay` может включить RU Billing только из payload с
   `.verifiedFreshRemote`; app-default/force override запрещён. Host template
   разблокирует process-local force-on/off только из собственного

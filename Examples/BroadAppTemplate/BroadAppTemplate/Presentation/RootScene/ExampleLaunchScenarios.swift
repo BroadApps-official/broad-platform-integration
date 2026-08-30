@@ -173,6 +173,36 @@ import UIKit
                         "-ru-pay-platform-cache",
                         "Взять RU Pay config из platform cache.",
                         "Даже сохранённый true не включает RU Billing; остаётся только Apple."
+                    ),
+                    .init(
+                        "-ru-region-storefront",
+                        "Storefront RU, регион iPhone не RU.",
+                        "RU Billing доступен по российскому Storefront."
+                    ),
+                    .init(
+                        "-ru-region-device",
+                        "Storefront не RU, регион iPhone RU.",
+                        "RU Billing доступен по российскому региону iPhone."
+                    ),
+                    .init(
+                        "-ru-region-neither",
+                        "Storefront и регион iPhone не RU.",
+                        "RU Billing закрыт; остаётся только Apple."
+                    ),
+                    .init(
+                        "-ru-region-storefront-unavailable-device-ru",
+                        "Storefront недоступен, регион iPhone RU.",
+                        "RU Billing доступен по региону iPhone."
+                    ),
+                    .init(
+                        "-ru-region-storefront-unavailable-device-non-ru",
+                        "Storefront недоступен, регион iPhone не RU.",
+                        "RU Billing закрыт; старый Storefront не используется как разрешение."
+                    ),
+                    .init(
+                        "-ru-region-language-only",
+                        "Русский язык при нероссийских Storefront и регионе.",
+                        "Язык не включает RU Billing; остаётся только Apple."
                     )
                 ]
             ),

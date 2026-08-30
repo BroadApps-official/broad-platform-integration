@@ -138,6 +138,19 @@ Reference repositories остаются read-only. Live scheme проверяе�
 activation/load/show. StoreKit purchase и restore запрещены company policy и
 fail-before-charge.
 
+Для RU-каталога платформа не зашивает production URL или backend token.
+Приложение передаёт свои HTTPS endpoints, timeout и авторизацию, а
+`URLSessionRUCatalogRepository` выполняет запрос. Готовый
+`FlatRUCatalogResponseDecoder` разбирает простой `{ "products": [...] }` ответ,
+сохраняя все строки, их порядок и дубли. Обезличенный ответ лежит в
+[`Fixtures/ru-catalog-flat.json`](Fixtures/ru-catalog-flat.json), а роли backend,
+app configuration и платформы разобраны в
+[`BackendProductCatalog.md`](../../Documentation/BackendProductCatalog.md).
+Если приложение делает агент Codex/Claude, перед Swift-кодом дайте ему прочитать
+[`AGENTS.md`](AGENTS.md): там есть порядок read-only аудита reference,
+подтверждённые общие ручки, наводящие вопросы и обязательная остановка
+`BACKEND CONTRACT REVIEW REQUIRED`.
+
 ## Полезные launch arguments
 
 Обычные fixture-экраны лучше открывать кнопками из каталога приложения: им не
@@ -179,6 +192,13 @@ fail-before-charge.
 | `-ru-pay-provider-disabled` | provider-like fixture явно возвращает `ru_pay = false`; остаётся только Apple |
 | `-ru-pay-adapty-fallback-rejected` | `ru_pay = true` из Adapty managed fallback остаётся закрытым без verified freshness |
 | `-ru-pay-platform-cache` | `ru_pay = true` из кеша `BroadMonetization` отклоняется; остаётся только Apple |
+| без `-ru-region-*` | Storefront и регион iPhone российские; при verified `ru_pay = true` RU methods открыты |
+| `-ru-region-storefront` | Storefront `RU`, регион iPhone non-RU; RU methods открыты |
+| `-ru-region-device` | Storefront non-RU, регион iPhone `RU`; RU methods открыты |
+| `-ru-region-storefront-unavailable-device-ru` | Storefront недоступен, регион iPhone `RU`; RU methods открыты |
+| `-ru-region-storefront-unavailable-device-non-ru` | Storefront недоступен и регион iPhone non-RU; остаётся Apple |
+| `-ru-region-language-only` | русский язык при двух non-RU региональных сигналах; остаётся Apple |
+| `-ru-region-neither` | Storefront и регион iPhone non-RU; остаётся Apple |
 | `-ru-payment-sheet` | технический СБП fixture: две обязательные галочки, чек и сохранённый email; без отдельных строк legal links |
 | `-ru-payment-sheet-apple` | Apple выбран; RU consent/receipt поля отсутствуют |
 | `-ru-subscription-management` | активная RU подписка, дата и действие отмены |
@@ -191,11 +211,11 @@ fail-before-charge.
 | `-purchase-failure` | safe purchase error |
 | `-restore-nothing` | restore without active access |
 | `-restore-failure` | safe restore error |
-| `-entitlement-active` | verified active |
-| `-entitlement-inactive` | all configured verifiers inactive |
-| `-entitlement-unknown` | unresolved без ложного premium |
-| `-entitlement-store-kit-fallback` | StoreKit active при unqualified Adapty cache |
-| `-entitlement-timeout` | late active игнорируется после deadline |
+| `-entitlement-active` | StoreKit verified active |
+| `-entitlement-inactive` | StoreKit не нашёл active entitlement |
+| `-entitlement-unknown` | StoreKit unverified → unresolved без ложного premium |
+| `-entitlement-store-kit-fallback` | compatibility alias для StoreKit verified active |
+| `-entitlement-timeout` | поздний StoreKit active игнорируется после deadline |
 | `-bootstrap-degraded` | background timeout, main доступен |
 | `-bootstrap-failed-once` | critical failure → manual retry |
 | `-bootstrap-seed-cache` | записать stale-cache fixture |
@@ -203,7 +223,7 @@ fail-before-charge.
 
 ### Проверка Special Offer и `ru_pay`
 
-Эти девять сценариев проверяют не нарисованный экран, а настоящий контракт
+Эти сценарии проверяют не нарисованный экран, а настоящий контракт
 `BroadMonetization`. Special Offer проходит через `ResolveSpecialOfferUseCase`,
 а RU methods — через `ResolveCheckoutMethodsUseCase` и `RUBillingGate`.
 

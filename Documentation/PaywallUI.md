@@ -216,9 +216,9 @@ CTA сначала вызывает `ResolveCheckoutMethodsUseCaseProtocol` дл
 
 RU billing не определяется самим UI. Sheet отображает только методы,
 разрешённые monetization use case после проверки `ru_pay = true` из
-`.verifiedFreshRemote` payload и контекста iPhone: RU-регион **или** русский первый
-системный язык. Собственный platform cache не может включить методы. IP, timezone
-и App Store storefront не участвуют. Для СБП/карты sheet собирает обязательные
+`.verifiedFreshRemote` payload и региональных сигналов: App Store Storefront
+`RU/RUS` **или** регион iPhone `RU/RUS`. Собственный platform cache не может
+включить методы. Системный язык, IP и timezone не участвуют. Для СБП/карты sheet собирает обязательные
 offer/data-processing и recurring-charge consent, а также опциональный receipt
 email; Apple эти поля скрывает. Русские legal links задаёт приложение через
 `BroadRUBillingPresentationConfiguration`.

@@ -33,7 +33,8 @@ Remote Config находится по другую сторону этой гр�
 - регистрация engine через `BroadMonetizationAssembly`;
 - единый `AppleEntitlementRepository` для нескольких Apple verifier-ов;
 - verified `StoreKitAppleEntitlementVerifier` и append-only каталог premium SKU;
-- `AdaptyAppleEntitlementVerifier`, который принимает только доказанно server-validated profile;
+- optional advanced `AdaptyAppleEntitlementVerifier`, который нужен только
+  host-у с отдельным доказанно server-validated profile;
 - subject-bound HTTP adapter `GET /api/users/me` со строгим BroadApps JSON decoder;
 - `PrimaryBackendEntitlementSourceFactory` для подключения `.primaryBackend` к engine;
 - subject-bound RU entitlement HTTP client и `RUBillingCompositionFactory`;
@@ -64,7 +65,7 @@ public enum EntitlementSource {
 
 | Источник | Что он представляет | Что не должно просачиваться наружу |
 |---|---|---|
-| `apple` | Проверенный Apple entitlement через Adapty access level или StoreKit adapter | `AdaptyProfile`, `Transaction`, raw SDK error |
+| `apple` | По умолчанию проверенный Apple entitlement через StoreKit adapter; optional authoritative backend adapter остаётся advanced extension | `AdaptyProfile`, `Transaction`, raw SDK error |
 | `primaryBackend` | Явный статус основного backend, включая server-side grants | HTTP response, bearer, полный user ID |
 | `ruBilling` | Подтверждённый статус RU-подписки | payment URL, email, backend payload |
 
@@ -129,7 +130,10 @@ Ownership выбирается приложением явно:
 `AdaptySDKEntitlementProfileClient` честно маркирует любой успешно прочитанный SDK profile как `.unqualified`. `AdaptyAppleEntitlementVerifier` такой результат отклоняет и возвращает `unresolved`. Он принимает `active`/`inactive` только от client-а, который для текущего вызова возвращает `.serverValidated(profile)` и гарантирует привязку к тому же `EntitlementSubject`.
 
 > [!WARNING]
-> Не добавляйте `AdaptyAppleEntitlementVerifier` с обычным `AdaptySDKEntitlementProfileClient` в production-массив verifier-ов: он предсказуемо будет `unresolved` и не позволит получить общий `inactive`. Factory по умолчанию включает только строгий StoreKit verifier. Qualified Adapty client можно добавить позже через собственный свежий backend/profile boundary.
+> В базовой интеграции вообще не создавайте `AdaptyAppleEntitlementVerifier`.
+> Factory по умолчанию включает строгий StoreKit verifier. Advanced Adapty
+> verifier нужен только если host уже имеет отдельный свежий server-validated
+> backend/profile boundary.
 
 При server-validated profile проверяется только настроенный access-level ID. `willRenew == false` не означает inactive, пока сам access level активен. Lifetime определяется только `isLifetime`; `nil expiresAt` не превращается в lifetime автоматически. Refund, несовпавший subject и противоречивые даты дают `unresolved`.
 
@@ -430,11 +434,11 @@ durable exactly-once fulfillment authority, а не entitlement snapshot.
 
 | Launch arguments | Ответы Apple verifier-ов | Ожидаемый route |
 |---|---|---|
-| `-app-flow-paywall-only -entitlement-active` | Adapty `active`, StoreKit `inactive` | `main` |
-| `-app-flow-paywall-only -entitlement-inactive` | Оба явно `inactive` | `initial-paywall` |
-| `-app-flow-paywall-only -entitlement-unknown` | Adapty unqualified cache → `unresolved`, StoreKit `inactive` | `main`, premium не выдан |
-| `-app-flow-paywall-only -entitlement-store-kit-fallback` | Adapty unqualified cache → `unresolved`, StoreKit `active` | `main` с подтверждённым premium |
-| `-app-flow-paywall-only -entitlement-timeout` | Adapty отдаёт некоперативный `active` через `1.5 s`, StoreKit `inactive`; deadline `250 ms` | `main` через `unknown`; поздний ответ ничего не меняет |
+| `-app-flow-paywall-only -entitlement-active` | StoreKit verified `active` | `main` |
+| `-app-flow-paywall-only -entitlement-inactive` | StoreKit явно `inactive` | `initial-paywall` |
+| `-app-flow-paywall-only -entitlement-unknown` | StoreKit unverified → `unresolved` | `main`, premium не выдан |
+| `-app-flow-paywall-only -entitlement-store-kit-fallback` | compatibility alias: StoreKit verified `active` | `main` с подтверждённым premium |
+| `-app-flow-paywall-only -entitlement-timeout` | StoreKit отдаёт некоперативный `active` через `1.5 s`; deadline `250 ms` | `main` через `unknown`; поздний ответ ничего не меняет |
 
 После установки собранного example на booted Simulator:
 

@@ -368,19 +368,19 @@ second paywall
 
 Confirmed purchase/restore первого paywall ведёт в main и обходит downsell.
 
-Претензия «блок идёт до парсинга subscriptions» обработана разделением capability:
+Базовый контракт намеренно короткий:
 
-- `special_offer` может быть разрешён текущим provider-managed Adapty payload,
-  включая SDK cache и Dashboard fallback;
-- `ru_pay` сохраняет более строгое финансовое правило и требует
-  `.verifiedFreshRemote`;
-- persistent cache `BroadMonetization` не может заново включить ни один
-  чувствительный gate;
-- gate читается из фактически resolved placement; `main` участвует только
+- host app передаёт public Adapty SDK key и placement IDs;
+- платформа сначала получает paywall и **все** его products;
+- gate читается из фактически загруженного placement; `main` участвует только
   при реальном fallback;
-- purchase использует raw product из того же registry и не перезагружает
-  paywall перед оплатой.
+- массив не фильтруется, не сортируется и не обрезается;
+- purchase использует product из того же ответа и не перезагружает paywall;
+- таймер — цикл `24:00:00 → 00:00:00 → 24:00:00`, без schedule, server clock
+  и скрытого срока действия.
 
+Verifier, отдельный REST transport и access level не требуются для базовой загрузки paywall.
+Две карточки приложение задаёт явно в своём UI; общий pipeline платформы сохраняет весь ответ.
 [Полное объяснение Special Offer на публичном сайте →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/special-offer)
 
 ### RU Billing
@@ -389,14 +389,14 @@ Confirmed purchase/restore первого paywall ведёт в main и обхо
 
 1. host сконфигурировал RU Billing;
 2. provider вернул verified-fresh `ru_pay = true`;
-3. region iPhone — `RU/RUS` **или** preferred language — Russian;
+3. App Store Storefront — `RU/RUS` **или** регион iPhone — `RU/RUS`;
 4. RU catalog не пуст;
 5. backend authorization/kill switch разрешает flow;
 6. entitlement не доказывает уже активный premium.
 
-SDK cache, Dashboard fallback и platform cache не авторизуют RU methods.
+SDK cache, Dashboard fallback и platform cache не авторизуют RU methods. Язык, IP, timezone и клавиатура ничего не включают; отсутствующий/`false`/некорректный `ru_pay` закрывает feature без автоматического `true`.
 
-[Полный RU contract →](Documentation/RUBilling.md)
+[Полный RU contract →](Documentation/RUBilling.md) · [Каталог продуктов с backend →](Documentation/BackendProductCatalog.md)
 
 ### Account recovery и Usedesk
 

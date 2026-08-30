@@ -209,8 +209,12 @@ Remote field — только одно из трёх условий:
 ```text
 host feature enabled
 AND verified-fresh remote payload has ru_pay == true
-AND (iPhone region == RU/RUS OR first system language starts with ru)
+AND (App Store Storefront == RU/RUS OR iPhone region == RU/RUS)
 ```
+
+Системный язык, клавиатура, IP и timezone не включают RU Billing. Отсутствующий,
+`false` или некорректный `ru_pay` всегда закрывает RU methods; автоматического
+значения `true` нет.
 
 Decision `.enabled` может авторизовать billing только при provenance
 `.verifiedFreshRemote`. Стандартный `AdaptyPaywallRepository` ставит
