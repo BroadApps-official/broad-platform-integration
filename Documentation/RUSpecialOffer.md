@@ -46,67 +46,32 @@ Apple purchase ИЛИ RU hosted checkout
   └─ inactive/failed → Premium не выдавать
 ```
 
-## Что доказано по reference 232
+## Что получает разработчик до начала работы
 
-Reference `232` исследован только для чтения 30 августа 2026 года. Текущая
-Release-сборка имеет App Store ID `6758451701`, а её product IDs записаны в
-lowercase, например `monthly_12.99_nottrial` и `100_tokens_9.99`.
+Разработчик не настраивает и не исследует платёжный кабинет. Ответственная
+команда передаёт готовый контракт текущего приложения:
 
-В платёжном кабинете найдены три близкие записи:
+| Входное значение | Что должно быть подтверждено |
+|---|---|
+| campaign source/key | система-источник, точный ключ и разрешающее значение |
+| RU coupon | exact case-sensitive product ID и период |
+| Apple-вариант | placement, exact product ID и период, если Apple разрешён |
+| тип покупки | one-time или recurring, срок Premium и cancellation semantics |
+| backend | catalog, checkout и status/policy methods, schema, auth dependency и price units |
+| способы оплаты | Apple, СБП и/или карта |
+| таймеры | eligibility и visual countdown как два отдельных решения |
+| UI | тексты, цены, скидка, изображения, legal links и analytics names |
 
-| Запись | Что совпало | Что не совпало | Вывод |
-|---|---|---|---|
-| `232 Claude` | App Store ID, полный регистрозависимый набор product ID, привязка coupon/downsell-экспериментов | старое display name | **Reference для текущего кода 232** |
-| `232 Claude AI New T-Bank` | lowercase product IDs | нет доказанной привязки к текущему App Store ID/эксперименту | похожая копия, не выбирать по имени |
-| `232 Claimva AI Chatbot (Т-Банк)` | текущее название приложения | token IDs записаны с другим регистром | другая копия конфигурации |
+Если обязательного значения нет или ответы противоречат друг другу,
+разработчик задаёт вопрос тимлиду и не угадывает production-контракт.
 
-Три признака должны совпасть одновременно: неизменяемый ID приложения, точные
-product IDs и фактическая привязка кампании. Display name недостаточно.
+Apple placement и RU backend catalog загружаются независимо. Если RU-каталог
+недоступен, валидный Apple-продукт может остаться. Если периоды Apple и RU не
+совпадают, несовместимый способ скрывается, чтобы экран не обещал один срок и
+не покупал другой.
 
-В кабинете связанные с `232 Claude` варианты «купон/дожим» на момент аудита
-были неактивны. При этом код 232 читает runtime-флаг `kupon` из Adapty. Статус
-эксперимента в RU-кабинете и Adapty-флаг могут быть разными системами. Поэтому
-**нельзя обещать production-показ**, пока владелец не назвал текущую campaign
-authority и rollout. Документация описывает рабочий кодовый маршрут, а не
-утверждает, что кампания сейчас включена или выключена.
-
-### Важное расхождение 232 перед следующим rollout
-
-У рабочей записи 232 включён режим «сделать все продукты разовыми», хотя
-локальный UI называет discount subscription рекуррентной и просит согласие на
-регулярное списание. Код создаёт checkout по CloudPayments-path, а служебное
-поле кабинета называет другой payment gateway.
-
-Это не причина менять общий package и не доказательство бага провайдера, но это
-**release blocker конкретного app**, пока backend owner, тимлид и legal не
-подтвердят:
-
-1. покупка разовая или автоматически продлеваемая;
-2. какой текст согласия должен видеть пользователь;
-3. кто продлевает entitlement и на какой срок;
-4. какой payment route фактически production;
-5. что означает cancellation для этой покупки.
-
-Платформа не копирует dashboard toggle, provider label или legal copy из 232.
-
-## Фактический маршрут 232
-
-В 232 используются два независимых источника:
-
-1. placement Adapty `kupon` даёт Apple-продукт;
-2. RU backend catalog отдаёт подписки, среди которых reference ищет строки с
-   `widgetTitle = kupon`.
-
-Оба запроса запускаются параллельно. Если RU-каталог недоступен, Apple-вариант
-может остаться доступным. Если период Apple-продукта отличается от периода
-выбранного RU-продукта, reference скрывает Apple-вариант, чтобы один экран не
-показывал одну цену, а не покупал другой срок.
-
-Reference 232 затем сортирует найденные coupon-строки по собственной
-приоритетной таблице. **Это app-specific legacy policy, а не правило
-платформы.** Новый app не должен угадывать «лучший» offer по году, месяцу, цене
-или позиции. Backend должен вернуть `kind = coupon`, либо host обязан явно
-передать точный coupon product ID. Если разрешено несколько предложений,
+Backend должен вернуть `kind = coupon`, либо host явно передаёт точный coupon
+product ID через подтверждённый decoder. Если разрешено несколько предложений,
 платформа сохраняет и показывает их все в порядке backend.
 
 ## Как продукт должен выглядеть в платформе
@@ -137,10 +102,9 @@ Reference 232 затем сортирует найденные coupon-строк
 `price` здесь — основные единицы валюты. Если backend отдаёт minor units или
 другой envelope, host предоставляет свой `RUCatalogResponseDecoderProtocol`.
 
-### Если backend отдаёт legacy `widgetTitle = kupon`
+### Если backend отдаёт legacy marker
 
-Так устроен reference 232, но это не универсальная схема. App-owned decoder
-должен явно преобразовать только подтверждённые backend-поля:
+App-owned decoder должен явно преобразовать только подтверждённые backend-поля:
 
 ```text
 product_id / productId  → catalogProductID
@@ -149,8 +113,8 @@ period                  → subscriptionPeriod
 price                   → Money в подтверждённой единице
 ```
 
-Не переносите production URL, authorization value или bundle ID из 232. Для
-нового приложения эти значения предоставляет его backend owner.
+Не переносите production URL, authorization value или product ID из другого
+приложения. Для текущего приложения эти значения передаёт его владелец.
 
 ## Четыре независимых разрешения
 
@@ -170,14 +134,14 @@ price                   → Money в подтверждённой единице
 Язык, клавиатура, IP и timezone не включают RU Billing. Отсутствующий,
 `false`, некорректный или несвежий `ru_pay` оставляет Apple-only.
 
-## Два таймера 232 — не смешивать
+## Два таймера — не смешивать
 
-Reference содержит два разных механизма:
+Flow может содержать два разных механизма:
 
 | Механизм | Что делает | Где хранится | Что происходит на нуле |
 |---|---|---|---|
-| 24-часовое eligibility-окно | решает, можно ли снова открыть offer между показами | `UserDefaults` reference app | предложение больше не показывается |
-| 10-минутный UI countdown | создаёт срочность на открытом экране | только state текущего экрана | экран закрывается, кроме незавершённой проверки оплаты |
+| eligibility-окно | решает, можно ли снова открыть offer между показами | app-owned persistent state | следующий показ блокируется до разрешённой даты |
+| UI countdown | создаёт срочность на открытом экране | state текущего экрана | поведение задаёт подтверждённая спецификация |
 
 Это **не** 24-часовой циклический визуальный таймер Adapty Special Offer.
 Платформа пока не назначает общий default RU-таймера. Для каждого app в
@@ -190,16 +154,15 @@ Reference содержит два разных механизма:
 - закрывает ли ноль экран;
 - что происходит, если пользователь вернулся из Safari после нуля.
 
-Если ответы не подтверждены product/team lead, timer policy получает `BLOCKED`,
-а не копируется из 232.
+Если ответы не подтверждены product/team lead, timer policy получает `BLOCKED`.
 
 ## Checkout и возврат из браузера
 
-Reference передаёт в checkout **точный** resolved RU product ID. Затем открывает
+Host передаёт в checkout **точный** resolved RU product ID. Затем открывает
 полученный HTTPS URL в Safari. Сам факт возврата в приложение ничего не
 подтверждает.
 
-После возврата 232 ограниченно повторяет:
+После возврата приложение ограниченно повторяет:
 
 1. синхронизацию backend subscription;
 2. загрузку effective policy текущего app account;
@@ -213,16 +176,11 @@ Reference передаёт в checkout **точный** resolved RU product ID. 
 
 ## Пошаговая инструкция разработчику
 
-1. Запишите App Store ID, Release bundle ID и полный список product ID из app.
-2. В кабинете найдите запись, где совпадают immutable app ID, product IDs с
-   учётом регистра и активная campaign binding. Не выбирайте по названию.
-3. Уточните у тимлида, какая система является campaign authority, активна ли
-   RU Special Offer-кампания и кто владеет rollout. Для 232 код читает Adapty
-   `kupon`, а аудит RU-кабинета увидел неактивные эксперименты.
-4. Сверьте recurring/one-time mode, actual payment route, entitlement duration,
-   cancellation и legal copy. Любое противоречие получает `BLOCKED`.
-5. Получите app-owned catalog endpoint, schema, authorization dependency и
-   единицу цены. Не копируйте их из reference.
+1. Получите подтверждённый набор входных значений из таблицы выше.
+2. Выпишите отсутствующие или противоречивые значения и дождитесь ответа тимлида.
+3. Зафиксируйте campaign authority, key, rollout и exact product IDs.
+4. Сверьте recurring/one-time mode, entitlement duration, cancellation и legal copy.
+5. Получите app-owned catalog endpoint, schema, authorization dependency и единицу цены.
 6. Настройте backend `kind = coupon` либо небольшой decoder legacy-поля
    `widgetTitle = kupon`.
 7. Сохраните весь coupon-массив, порядок и дубли. Если UI нужен один продукт,
@@ -243,10 +201,8 @@ Reference передаёт в checkout **точный** resolved RU product ID. 
 Перед Swift-изменениями агент обязан вернуть:
 
 ```text
-RU SPECIAL OFFER EVIDENCE
-- app identity: App Store ID + Release bundle ID
-- dashboard record: почему выбрана именно она
-- campaign: authority + owner + active/inactive/unknown
+RU SPECIAL OFFER GIVEN
+- campaign: authority + key + active/inactive/unknown
 - billing semantics: recurring/one-time + actual route + entitlement duration
 - catalog: method/path/auth dependency/schema/price units
 - coupon marker: kind=coupon или подтверждённое legacy-поле
@@ -268,10 +224,9 @@ PLAN
 RU SPECIAL OFFER CONTRACT REVIEW REQUIRED
 ```
 
-Агент не должен изменять reference app, кабинет, цены или experiment state;
-копировать URL/authorization; выбирать продукт сортировкой; считать browser
-return оплатой; включать RU Billing по языку; создавать отдельный entitlement
-engine для offer.
+Агент не должен открывать платёжный кабинет, копировать значения другого
+приложения, выбирать продукт сортировкой, считать browser return оплатой,
+включать RU Billing по языку или создавать отдельный entitlement engine.
 
 ## Что мы намеренно не добавили
 

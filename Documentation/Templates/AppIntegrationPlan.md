@@ -100,23 +100,22 @@ transitive dependencies. Не запускайте resolve внутри непо
 обезличенному production-shape fixture. Локальная заглушка, кнопка или успешная
 компиляция не доказывают backend.
 
-### Evidence референса для RU Billing
+### Подтверждённый backend-контракт RU Billing
 
-Не вставляйте секреты или полный production URL. Запишите только проверяемую
-структуру и расхождения с платформой.
+Не вставляйте секреты или полный production URL. Запишите только значения,
+которые переданы для текущего приложения.
 
-| Контракт | Reference evidence | Решение для текущего app | Статус |
+| Контракт | Переданное значение | Решение для текущего app | Статус |
 |---|---|---|---|
 | `GET /v1/tokens/products` или другой catalog path | Method/path/auth/envelope/fields |  |  |
 | `POST /v1/billing/cloudpayments/checkout` или аналог | Body + payment URL/status fields |  |  |
 | `GET /v1/policy/effective` или другой entitlement authority | Какие поля подтверждают Premium |  |  |
 | Backend balance/wallet | Как подтверждаются купленные токены |  |  |
 | `POST /v1/billing/cloudpayments/cancel` или аналог | Response и смысл renewal fields |  |  |
-| Расхождения/legacy fallback | Что найдено, но нельзя копировать |  |  |
+| Неизвестные значения | Вопрос тимлиду/backend owner; не угадывать |  |  |
 
-В 5108, 5109, 5115 и 232 эти четыре пути каталога, checkout, policy и cancel
-повторяются, но это только стартовая гипотеза. Подтвердите endpoint/schema/auth
-у владельца текущего backend. Инструкция агенту и список наводящих вопросов:
+Endpoint/schema/auth подтверждает владелец текущего backend. Инструкция агенту
+и список наводящих вопросов:
 `Examples/BroadAppTemplate/AGENTS.md`.
 
 ## 6. Монетизация
@@ -155,11 +154,10 @@ transitive dependencies. Не запускайте resolve внутри непо
 
 | Вопрос | Решение / evidence | Статус |
 |---|---|---|
-| Какая запись платёжного кабинета принадлежит app? | App Store ID + Release bundle ID + exact case-sensitive product IDs + campaign binding; одного названия недостаточно |  |
-| Какая система является campaign authority и кто владелец? | Adapty / backend experiment / другое + owner; статус другой системы не считать gate |  |
+| Какая система является campaign authority и какой key использовать? | Adapty / backend config / другое + exact key; разработчик получает готовое значение |  |
 | Активна ли campaign сейчас? | active / inactive / unknown из authoritative источника; unknown закрывает ветку |  |
-| Покупка recurring или one-time? | dashboard mode + backend contract + legal copy должны совпадать |  |
-| Какой payment route фактически production? | проверенная backend-конфигурация; display label кабинета не считать доказательством |  |
+| Покупка recurring или one-time? | подтверждённый backend contract + legal copy должны совпадать |  |
+| Какой payment route фактически production? | переданная backend-конфигурация текущего приложения |  |
 | Кто и на какой срок выдаёт/продлевает entitlement? | authority + duration + renewal/cancellation semantics |  |
 | Как campaign разрешает второй экран? | app-owned config/experiment key; не смешивать с `ru_pay` |  |
 | Откуда приходит RU coupon? | `kind = coupon` либо подтверждённое legacy-поле + app-owned decoder |  |
@@ -172,10 +170,10 @@ transitive dependencies. Не запускайте resolve внутри непо
 | Что подтверждает success? | authoritative policy/entitlement после browser return; не сам возврат |  |
 | Что происходит при pending/timeout? | повтор проверки без автоматического второго checkout |  |
 
-Reference 232 использует два разных таймера: persistent 24-часовое
-eligibility-окно и 10-минутный countdown текущего экрана. Это evidence одного
-приложения, а не default платформы. В 232 также найден legacy ranking coupon
-products; новый app обязан заменить его полным списком или explicit ID.
+Eligibility и visual countdown — два независимых решения. Их duration, start,
+persistence и zero behavior должен сообщить владелец задачи; платформа не
+назначает значения по умолчанию. Coupon products сохраняются полным списком
+или выбираются по explicit exact ID.
 
 [Полный контракт →](../RUSpecialOffer.md)
 

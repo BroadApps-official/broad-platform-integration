@@ -1,23 +1,23 @@
 # Инструкция агенту: backend-каталог и RU Billing
 
 Этот файл действует для `BroadAppTemplate` и для нового host app, созданного из
-него. Цель — сначала выяснить реальный backend-контракт, а затем подключить
-платформу без копирования секретов и legacy-костылей из reference.
+него. Цель — сначала получить подтверждённый backend-контракт, а затем
+подключить платформу без догадок и копирования значений другого приложения.
 
 ## Граница работы
 
-- Reference-приложения исследуются только для чтения. Не исправляй их и не
-  коммить в них файлы.
+- Не открывай и не изменяй платёжный кабинет: это не зона ответственности
+  агента, который пишет app-side код.
 - Не копируй production base URL, Bearer token, API key, email, checkout URL,
-  SKU или персональные данные из reference.
+  SKU или персональные данные из другого приложения.
 - Не выполняй настоящий purchase, restore, RU checkout или cancellation.
 - Не начинай Swift-изменения, пока backend-раздел
   `Documentation/AppIntegrationPlan.md` не заполнен и неизвестные значения не
   отмечены `BLOCKED`.
 
-## Сначала проведи evidence-аудит
+## Сначала собери входные данные
 
-В host app и выбранном reference найди и выпиши:
+В host app, `AppIntegrationPlan.md` и переданном API-контракте найди и выпиши:
 
 1. место, где собирается base URL;
 2. endpoint, method, headers и auth для каталога;
@@ -34,23 +34,14 @@
 builders, auth interceptor, DTO, composition root и место, где UI получает
 результат.
 
-## Подтверждённая стартовая гипотеза
+## Что должно быть подтверждено
 
-В свежих 5108, 5109, 5115 и 232 найден один набор путей:
+До кода должны быть известны catalog, checkout, status/policy и, если требуется,
+cancel methods текущего приложения. Если значения не записаны в плане, задай
+разработчику/team lead один прямой вопрос:
 
-```text
-GET  /v1/tokens/products
-POST /v1/billing/cloudpayments/checkout
-GET  /v1/policy/effective
-POST /v1/billing/cloudpayments/cancel
-```
-
-Это подсказка для поиска, но не разрешение молча использовать эти endpoints.
-Перед кодом задай разработчику/team lead один прямой вопрос:
-
-> Для этого приложения используются те же четыре ручки, Bearer-сессия и форма
-> `{ "products": [...] }`, что в актуальных 5108/5109/5115/232? Если нет — дайте
-> endpoint/schema или backend owner, у которого их уточнить.
+> Передайте для текущего приложения catalog, checkout, status/policy и cancel
+> methods, auth dependency, JSON schema, price units и точные product IDs.
 
 ## Наводящие вопросы, если ответа не хватает
 
@@ -90,7 +81,7 @@ POST /v1/billing/cloudpayments/cancel
 Первый результат агента — не код, а короткий отчёт:
 
 ```text
-REFERENCE EVIDENCE
+BACKEND CONTRACT GIVEN
 - catalog: method/path/auth/response shape
 - checkout: method/path/body/response
 - confirmation: subscription authority + token authority
@@ -115,13 +106,11 @@ BACKEND CONTRACT REVIEW REQUIRED
 ## Если нужен спешл оффер RU Billing
 
 Не считай его обычным Adapty Special Offer и не добавляй отдельный payment
-engine. Сначала верни разработчику этот evidence:
+engine. Сначала верни разработчику этот список входных данных:
 
 ```text
-RU SPECIAL OFFER EVIDENCE
-- app identity: App Store ID + Release bundle ID
-- dashboard record: совпавшие immutable ID, product IDs и campaign binding
-- campaign authority/state/owner: какая система решает + active/inactive/unknown
+RU SPECIAL OFFER GIVEN
+- campaign authority/key/state: какая система решает + exact key + active/inactive/unknown
 - recurring/one-time mode, actual payment route, entitlement duration and legal copy
 - RU catalog: schema, price units, coupon marker and exact IDs
 - Apple placement and exact product IDs
@@ -137,18 +126,16 @@ RU SPECIAL OFFER CONTRACT REVIEW REQUIRED
 
 Правила:
 
-- reference app и кабинет исследуй только для чтения;
-- не выбирай dashboard app по похожему display name;
+- не открывай платёжный кабинет и не копируй значения другого приложения;
 - `kind = coupon` — предпочтительный contract; legacy `widgetTitle = kupon`
   преобразует только небольшой app-owned decoder;
 - сохраняй весь coupon-массив; если UI нужен один offer, попроси explicit
   exact product ID;
-- не копируй ranking reference 232 по году/месяцу/цене;
-- если dashboard делает продукты разовыми, а UI обещает регулярные списания,
-  поставь `BLOCKED` и запроси backend/team lead/legal review;
+- не выбирай продукт по году, месяцу, цене или позиции;
+- если подтверждённый тип покупки и UI-текст противоречат друг другу, поставь
+  `BLOCKED` и запроси team lead review;
 - не смешивай campaign gate, strict `ru_pay` и regional gate;
-- не копируй 24-часовое eligibility-окно или 10-минутный экранный таймер без
-  подтверждения product/team lead;
+- не назначай eligibility или экранный countdown без подтверждения product/team lead;
 - возврат из Safari не является success: повторно проверь backend
   policy/entitlement;
 - статус эксперимента в одной системе не подменяет gate другой системы;

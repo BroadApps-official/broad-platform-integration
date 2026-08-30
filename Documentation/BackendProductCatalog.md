@@ -29,24 +29,22 @@ BroadUIFlows или собственный UI приложения
 package. Платформа даёт HTTP repository, модели, decoder, gate, сопоставление и
 checkout flow.
 
-## Проверенный общий контракт четырёх reference-приложений
+## Методы, которые получает разработчик
 
-Read-only аудит свежих 5108, 5109, 5115 и 232 подтвердил одинаковые пути в их
-новом billing-слое:
+До реализации team lead/backend owner передаёт методы текущего приложения:
 
-| HTTP | Путь | Назначение | Найдено |
-|---|---|---|---|
-| `GET` | `/v1/tokens/products` | подписки и пакеты токенов | 4 из 4 |
-| `POST` | `/v1/billing/cloudpayments/checkout` | создать ссылку на RU-оплату | 4 из 4 |
-| `GET` | `/v1/policy/effective` | подтвердить подписку/права после оплаты | 4 из 4 |
-| `POST` | `/v1/billing/cloudpayments/cancel` | отключить автопродление | 4 из 4 |
+| Операция | Пример пути | Назначение |
+|---|---|---|
+| catalog | `GET /v1/tokens/products` | подписки, coupon и пакеты токенов |
+| checkout | `POST /v1/billing/cloudpayments/checkout` | создать ссылку на RU-оплату |
+| status/policy | `GET /v1/policy/effective` | подтвердить подписку/права после оплаты |
+| cancel, если есть renewal | `POST /v1/billing/cloudpayments/cancel` | отключить автопродление |
 
-Это стартовая гипотеза для следующего приложения, а не universal API law.
-Агент обязан подтвердить у team lead/backend owner, что выбранный host app
-использует те же endpoint paths, auth и schema. Legacy/fallback endpoints,
-которые ещё встречаются в 232, не переносить в платформу автоматически.
+Пути в таблице — пример формы контракта. Агент не открывает платёжный кабинет и
+не подбирает endpoints по другому приложению: точные URL, auth и schema должны
+быть записаны в `AppIntegrationPlan.md`.
 
-### Обезличенный production-shape пример
+### Обезличенный API-shape пример
 
 ```http
 GET https://<app-backend>/v1/tokens/products
@@ -100,14 +98,14 @@ Content-Type: application/json
 Закрытие `paymentUrl` не доказывает success. Подписка подтверждается повторным
 `GET /v1/policy/effective`, а токены — изменившимся backend balance/wallet.
 
-В common response референсов отдельный `appStoreProductId` не гарантирован.
+В API отдельный `appStoreProductId` не гарантирован.
 До реализации зафиксируйте одно из двух: backend `productId` точно совпадает с
 Adapty/App Store ID либо существует явное server/app-owned соответствие. Нельзя
 выводить соответствие из цены, периода, названия или позиции строки.
 
-### Reference — это evidence, а не код для копирования
+### Пример — это не production configuration
 
-Не переносите из reference production domain, Bearer token, SKU и credentials.
+Не переносите из другого приложения production domain, Bearer token, SKU и credentials.
 Не повторяйте локальные `filter`, `sorted`, `compactMap`, dictionary/dedup,
 угадывание `kind` по имени SKU, language gate, permissive `ru_pay` fallback или
 optimistic Premium после возврата из браузера. Эти расхождения показывают,
