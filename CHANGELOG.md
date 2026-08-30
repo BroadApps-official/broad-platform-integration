@@ -7,11 +7,10 @@
 
 ### Changed
 
-- добавлен отдельный контракт «Спешл оффер RU Billing»: доказательное
-  сопоставление dashboard app, coupon-каталог без скрытого ranking, независимые
-  campaign/RU gates, раздельные eligibility/UI timers и обязательная
-  entitlement-проверка после browser return; reference 232 остаётся только
-  read-only evidence, его legacy-сортировка не становится правилом платформы;
+- добавлен отдельный контракт «Спешл оффер RU Billing»: разработчик получает
+  подтверждённые campaign/product/backend values, coupon-каталог не использует
+  скрытый ranking, campaign/RU gates и eligibility/UI timers разделены, а после
+  browser return обязательна новая entitlement-проверка;
 
 - RU Billing использует два прозрачных региональных сигнала: текущий App Store
   Storefront `RU/RUS` или регион iPhone `RU/RUS`; язык, IP, timezone и
