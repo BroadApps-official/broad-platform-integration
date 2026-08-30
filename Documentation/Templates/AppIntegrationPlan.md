@@ -128,6 +128,7 @@ transitive dependencies. Не запускайте resolve внутри непо
 | Tokens | enabled / disabled + fulfillment endpoint |  |  |
 | Special Offer | enabled / disabled + placement/gate |  |  |
 | RU Billing | enabled / disabled + backend/legal |  |  |
+| RU Special Offer | enabled / disabled + campaign/coupon/timers |  |  |
 | RU product catalog | endpoint/schema/price units + exact mapping |  |  |
 | Recovery | Apple/backend + account token balance endpoint; processed purchase IDs остаются backend-internal |  |  |
 
@@ -149,6 +150,34 @@ transitive dependencies. Не запускайте resolve внутри непо
 | Debug override подключён? | `Как в Adapty` / force-on / force-off; только Debug |  |
 | Какой live smoke пройден? | Verified `true/false`; provider/platform cache rejection; без purchase |  |
 | Чем подтверждается результат после browser return? | Premium: policy/entitlement; tokens: backend balance; закрытие браузера не success |  |
+
+### Спешл оффер RU Billing: заполнить, если feature не `N/A`
+
+| Вопрос | Решение / evidence | Статус |
+|---|---|---|
+| Какая запись платёжного кабинета принадлежит app? | App Store ID + Release bundle ID + exact case-sensitive product IDs + campaign binding; одного названия недостаточно |  |
+| Какая система является campaign authority и кто владелец? | Adapty / backend experiment / другое + owner; статус другой системы не считать gate |  |
+| Активна ли campaign сейчас? | active / inactive / unknown из authoritative источника; unknown закрывает ветку |  |
+| Покупка recurring или one-time? | dashboard mode + backend contract + legal copy должны совпадать |  |
+| Какой payment route фактически production? | проверенная backend-конфигурация; display label кабинета не считать доказательством |  |
+| Кто и на какой срок выдаёт/продлевает entitlement? | authority + duration + renewal/cancellation semantics |  |
+| Как campaign разрешает второй экран? | app-owned config/experiment key; не смешивать с `ru_pay` |  |
+| Откуда приходит RU coupon? | `kind = coupon` либо подтверждённое legacy-поле + app-owned decoder |  |
+| Как выбирается продукт? | весь coupon-массив либо explicit exact product ID; без sorting/ranking по цене или периоду |  |
+| Откуда приходит Apple-вариант? | placement + exact product ID + правило совместимости периода |  |
+| Каково eligibility-window? | отсутствует / duration + start + persistence + account scope |  |
+| Каков визуальный countdown? | отсутствует / duration + zero behavior + Safari-return behavior |  |
+| Какие gate разрешают RU method? | verified-fresh `ru_pay = true` + Storefront RU **или** регион iPhone RU + точный catalog product |  |
+| Что отправляется в checkout? | exact resolved RU product ID + обязательные поля текущего backend |  |
+| Что подтверждает success? | authoritative policy/entitlement после browser return; не сам возврат |  |
+| Что происходит при pending/timeout? | повтор проверки без автоматического второго checkout |  |
+
+Reference 232 использует два разных таймера: persistent 24-часовое
+eligibility-окно и 10-минутный countdown текущего экрана. Это evidence одного
+приложения, а не default платформы. В 232 также найден legacy ranking coupon
+products; новый app обязан заменить его полным списком или explicit ID.
+
+[Полный контракт →](../RUSpecialOffer.md)
 
 Release не может иметь app-default или force override для `ru_pay`.
 Fixture/Debug force-on не считается evidence freshness, backend или успешной оплаты.

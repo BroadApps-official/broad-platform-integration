@@ -23,6 +23,11 @@ RU Billing — опциональная цепочка адаптеров для
 > backend status и запускает новый authoritative entitlement refresh; только
 > итоговый `active` выдаёт доступ.
 
+Спешл оффер с Apple/СБП/картой использует тот же RU Billing transport и
+entitlement refresh, но имеет отдельные campaign и timer decisions. Не
+переносите их из Adapty Special Offer или одного reference app. Полная
+инструкция: [Спешл оффер RU Billing](RUSpecialOffer.md).
+
 ## Главное правило `ru_pay`
 
 `ru_pay` — это флаг Adapty, а не локальная настройка приложения.

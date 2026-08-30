@@ -25,6 +25,10 @@ Special Offer не заменяет initial paywall, не показываетс
 не открывается напрямую из main. Демонстрационная карточка каталога также
 запускает всю пару: сначала обычный paywall, затем offer после крестика.
 
+Эта страница описывает Adapty-only контракт. Offer с coupon-продуктом из RU
+backend, СБП/картой, отдельным eligibility-window и browser reconciliation
+описан в [«Спешл оффер RU Billing»](RUSpecialOffer.md).
+
 ## Что включает и выключает offer
 
 Для показа одновременно нужны три условия:

@@ -396,7 +396,7 @@ Verifier, отдельный REST transport и access level не требуют�
 
 SDK cache, Dashboard fallback и platform cache не авторизуют RU methods. Язык, IP, timezone и клавиатура ничего не включают; отсутствующий/`false`/некорректный `ru_pay` закрывает feature без автоматического `true`.
 
-[Полный RU contract →](Documentation/RUBilling.md) · [Каталог продуктов с backend →](Documentation/BackendProductCatalog.md)
+[Полный RU contract →](Documentation/RUBilling.md) · [Каталог продуктов с backend →](Documentation/BackendProductCatalog.md) · [Спешл оффер RU Billing →](Documentation/RUSpecialOffer.md)
 
 ### Account recovery и Usedesk
 

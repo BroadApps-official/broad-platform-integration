@@ -111,3 +111,49 @@ BACKEND CONTRACT REVIEW REQUIRED
 
 К реализации переходи после ответа разработчика. Детальный контракт:
 [`../../Documentation/BackendProductCatalog.md`](../../Documentation/BackendProductCatalog.md).
+
+## Если нужен спешл оффер RU Billing
+
+Не считай его обычным Adapty Special Offer и не добавляй отдельный payment
+engine. Сначала верни разработчику этот evidence:
+
+```text
+RU SPECIAL OFFER EVIDENCE
+- app identity: App Store ID + Release bundle ID
+- dashboard record: совпавшие immutable ID, product IDs и campaign binding
+- campaign authority/state/owner: какая система решает + active/inactive/unknown
+- recurring/one-time mode, actual payment route, entitlement duration and legal copy
+- RU catalog: schema, price units, coupon marker and exact IDs
+- Apple placement and exact product IDs
+- campaign gate отдельно от ru_pay gate
+- eligibility window отдельно от visual countdown
+- checkout request and authoritative confirmation after browser return
+
+QUESTIONS / BLOCKERS
+- только неизвестные значения, меняющие реализацию
+
+RU SPECIAL OFFER CONTRACT REVIEW REQUIRED
+```
+
+Правила:
+
+- reference app и кабинет исследуй только для чтения;
+- не выбирай dashboard app по похожему display name;
+- `kind = coupon` — предпочтительный contract; legacy `widgetTitle = kupon`
+  преобразует только небольшой app-owned decoder;
+- сохраняй весь coupon-массив; если UI нужен один offer, попроси explicit
+  exact product ID;
+- не копируй ranking reference 232 по году/месяцу/цене;
+- если dashboard делает продукты разовыми, а UI обещает регулярные списания,
+  поставь `BLOCKED` и запроси backend/team lead/legal review;
+- не смешивай campaign gate, strict `ru_pay` и regional gate;
+- не копируй 24-часовое eligibility-окно или 10-минутный экранный таймер без
+  подтверждения product/team lead;
+- возврат из Safari не является success: повторно проверь backend
+  policy/entitlement;
+- статус эксперимента в одной системе не подменяет gate другой системы;
+- при inactive/unknown authoritative campaign, несовпавшем ID или пустом
+  catalog ветка закрывается без настоящей оплаты.
+
+Полная инструкция:
+[`../../Documentation/RUSpecialOffer.md`](../../Documentation/RUSpecialOffer.md).

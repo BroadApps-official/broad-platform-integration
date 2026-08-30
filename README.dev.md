@@ -338,6 +338,8 @@ iPad не входит в scope платформы.
 [Монетизация →](Documentation/Monetization.md) ·
 [Special Offer →](Documentation/SpecialOffer.md)
 
+[Спешл оффер RU Billing →](Documentation/RUSpecialOffer.md)
+
 Для воспроизводимой ручной проверки используйте launch arguments
 `-special-offer-enabled`, `-special-offer-disabled`,
 `-special-offer-platform-cache`, `-special-offer-main-fallback`,
