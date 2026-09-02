@@ -3,8 +3,11 @@
 set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$platform_root/Scripts/lib/compatibility.sh"
 expected_category="NSPrivacyAccessedAPICategoryUserDefaults"
 expected_reasons="CA92.1,1C8F.1"
+core_version="$(compatibility_module_version BroadCore)"
+core_version_pattern="${core_version//./\\.}"
 
 validate_broad_core_manifest() {
     local candidate="$1"
@@ -31,14 +34,14 @@ validate_broad_core_manifest() {
 }
 
 if ! rg -q --multiline -- \
-    'broad-core-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"' \
+    "broad-core-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$core_version_pattern\"" \
     "$platform_root/Package.swift"; then
-    echo "Integration Package.swift must pin BroadCore 1.0.0 exactly."
+    echo "Integration Package.swift must pin BroadCore $core_version exactly."
     exit 1
 fi
 
 if (($# == 0)); then
-    echo "BroadCore 1.0.0 privacy contract is delegated to the released module gate."
+    echo "BroadCore $core_version privacy contract is delegated to the released module gate."
     exit 0
 fi
 

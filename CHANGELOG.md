@@ -3,10 +3,22 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
-## Unreleased
+## 1.1.0 — 2026-09-02
 
 ### Changed
 
+- compatibility catalog теперь фиксирует проверенный разноверсионный набор:
+  `BroadCore 1.1.0`, `BroadExtensions 1.0.1`, `BroadMonetization 1.1.0` и
+  `BroadUIFlows 1.0.1`;
+- version gate читает версии из `Compatibility/current.yml` и сопоставляет их
+  с Package.swift, XcodeGen spec, generated project и обоими lock-файлами;
+  отдельные contract scripts больше не дублируют захардкоженный `1.0.0`;
+- RU Special Offer и Experiments теперь ведут в отдельную инструкцию
+  аккаунт-менеджера; явно запрещено независимо назначать один тест одновременно
+  через Adapty и RU Billing без подтверждённого app-контракта;
+- README и индекс Documentation получили отдельный заметный маршрут для
+  аккаунт-менеджера: кабинет, продукт, спешл оффер и A/B-тест не смешиваются с
+  инструкцией по Swift-коду;
 - добавлен отдельный контракт «Спешл оффер RU Billing»: разработчик получает
   подтверждённые campaign/product/backend values, coupon-каталог не использует
   скрытый ranking, campaign/RU gates и eligibility/UI timers разделены, а после

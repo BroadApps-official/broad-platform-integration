@@ -3,6 +3,10 @@
 set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$platform_root/Scripts/lib/compatibility.sh"
+core_version="$(compatibility_module_version BroadCore)"
+monetization_version="$(compatibility_module_version BroadMonetization)"
+ui_flows_version="$(compatibility_module_version BroadUIFlows)"
 source_roots=(
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate"
 )
@@ -273,22 +277,22 @@ require_file_pattern \
 require_file_pattern \
     "Integration must consume the released BroadCore contract instead of a local copy:" \
     "$platform_root/Package.swift" \
-    'broad-core-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    "broad-core-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$core_version\""
 
 require_file_pattern \
     "Integration must consume the released BroadMonetization contract instead of a local copy:" \
     "$platform_root/Package.swift" \
-    'broad-monetization-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    "broad-monetization-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$monetization_version\""
 
 require_file_pattern \
     "Integration must consume the released BroadUIFlows contract instead of a local copy:" \
     "$platform_root/Package.swift" \
-    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    "broad-ui-flows-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$ui_flows_version\""
 
 require_file_pattern \
     "Released BroadUIFlows must carry its own module and UI contract evidence:" \
     "$platform_root/Compatibility/current.yml" \
-    '(?s)BroadUIFlows:.*version:[[:space:]]*"1\.0\.0".*module_gate:[[:space:]]*passed.*github_actions:[[:space:]]*passed.*release:[[:space:]]*"https://github\.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1\.0\.0"'
+    "(?s)BroadUIFlows:.*version:[[:space:]]*\"$ui_flows_version\".*module_gate:[[:space:]]*passed.*github_actions:[[:space:]]*passed.*release:[[:space:]]*\"https://github\\.com/BroadApps-official/broad-ui-flows-ios/releases/tag/$ui_flows_version\""
 
 if ((violation_count > 0)); then
     echo "Architecture checks failed: $violation_count rule group(s) found."

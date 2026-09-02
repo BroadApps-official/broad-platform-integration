@@ -66,7 +66,7 @@ Host app подключает release из `Compatibility/current.yml`, а не 
 ```swift
 .package(
     url: "https://github.com/BroadApps-official/broad-core-ios.git",
-    exact: "1.0.0"
+    exact: "1.1.0"
 )
 ```
 

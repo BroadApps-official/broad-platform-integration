@@ -313,7 +313,7 @@ Rate Us/review не является частью tracking consent. Он раз�
 
 `BroadCore` сам хранит небольшие typed state/cache snapshots через
 `UserDefaultsKeyValueStore`; это не чистый wrapper над вызовами host app. Поэтому
-package включает [BroadCore privacy manifest](https://github.com/BroadApps-official/broad-core-ios/blob/1.0.0/Sources/BroadCore/Resources/PrivacyInfo.xcprivacy) с:
+package включает [BroadCore privacy manifest](https://github.com/BroadApps-official/broad-core-ios/blob/1.1.0/Sources/BroadCore/Resources/PrivacyInfo.xcprivacy) с:
 
 - `NSPrivacyAccessedAPICategoryUserDefaults`;
 - approved reason `CA92.1` для app-only state/cache в `UserDefaults.standard`;

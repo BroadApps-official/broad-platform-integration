@@ -1,5 +1,5 @@
 schema: 1
-platform_set: "1.0.0"
+platform_set: "1.1.0"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
@@ -9,43 +9,43 @@ repositories:
   BroadMonetization: "https://github.com/BroadApps-official/broad-monetization-ios"
   BroadUIFlows: "https://github.com/BroadApps-official/broad-ui-flows-ios"
 modules:
-  BroadCore: "1.0.0"
-  BroadExtensions: "1.0.0"
-  BroadMonetization: "1.0.0"
-  BroadUIFlows: "1.0.0"
+  BroadCore: "1.1.0"
+  BroadExtensions: "1.0.1"
+  BroadMonetization: "1.1.0"
+  BroadUIFlows: "1.0.1"
 verification:
   status: passed
   command: "bash Scripts/agent_gate.sh"
-  checked_at: "2026-08-25"
+  checked_at: "2026-09-02"
 module_verification:
   BroadCore:
-    version: "1.0.0"
+    version: "1.1.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.0.0"
+    release: "https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.1.0"
     integration_gate: passed
-    checked_at: "2026-08-24"
+    checked_at: "2026-09-02"
   BroadExtensions:
-    version: "1.0.0"
+    version: "1.0.1"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.0"
+    release: "https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1"
     integration_gate: passed
-    checked_at: "2026-08-24"
+    checked_at: "2026-09-02"
   BroadMonetization:
-    version: "1.0.0"
+    version: "1.1.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.0.0"
+    release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.1.0"
     integration_gate: passed
-    checked_at: "2026-08-24"
+    checked_at: "2026-09-02"
   BroadUIFlows:
-    version: "1.0.0"
+    version: "1.0.1"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.0.0"
+    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.0.1"
     integration_gate: passed
-    checked_at: "2026-08-25"
+    checked_at: "2026-09-02"
 notes:
   - "Host applications connect only the repositories/products they need."
   - "This catalog is not a mandatory runtime umbrella dependency."

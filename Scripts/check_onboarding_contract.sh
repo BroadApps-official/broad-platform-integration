@@ -3,6 +3,9 @@
 set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$platform_root/Scripts/lib/compatibility.sh"
+ui_flows_version="$(compatibility_module_version BroadUIFlows)"
+ui_flows_version_pattern="${ui_flows_version//./\\.}"
 violation_count=0
 
 fixed_length_pattern='(pages\.count[[:space:]]*(==|!=|<=|>=|<|>)[[:space:]]*3\b|currentIndex[[:space:]]*(==|!=|<=|>=|<|>)[[:space:]]*2\b|pages[[:space:]]*\[[[:space:]]*2[[:space:]]*\]|0[[:space:]]*\.\.\.?[[:space:]]*2\b|0[[:space:]]*\.\.<[[:space:]]*3\b|ForEach[[:space:]]*\([[:space:]]*0[[:space:]]*\.\.<[[:space:]]*3\b)'
@@ -132,12 +135,12 @@ fi
 require_pattern \
     "Integration must pin the released BroadUIFlows onboarding contract:" \
     "$platform_root/Package.swift" \
-    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    "broad-ui-flows-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$ui_flows_version_pattern\""
 
 require_pattern \
     "BroadUIFlows release must have standalone module and CI evidence:" \
     "$platform_root/Compatibility/current.yml" \
-    '(?s)BroadUIFlows:[[:space:]]*\n[[:space:]]+version:[[:space:]]*"1\.0\.0".*module_gate:[[:space:]]*passed.*github_actions:[[:space:]]*passed'
+    "(?s)BroadUIFlows:[[:space:]]*\\n[[:space:]]+version:[[:space:]]*\"$ui_flows_version_pattern\".*module_gate:[[:space:]]*passed.*github_actions:[[:space:]]*passed"
 
 require_pattern \
     "BroadAppTemplate must expose one, two, four, long, custom, disabled and invalid onboarding fixtures:" \
@@ -164,4 +167,4 @@ if ((violation_count > 0)); then
     exit 1
 fi
 
-echo "Onboarding contract validation passed; production flow rules are owned by BroadUIFlows 1.0.0."
+echo "Onboarding contract validation passed; production flow rules are owned by BroadUIFlows $ui_flows_version."

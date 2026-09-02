@@ -3,6 +3,10 @@
 set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$platform_root/Scripts/lib/compatibility.sh"
+monetization_version="$(compatibility_module_version BroadMonetization)"
+ui_flows_version="$(compatibility_module_version BroadUIFlows)"
+ui_flows_version_pattern="${ui_flows_version//./\\.}"
 failure_count=0
 
 require_pattern() {
@@ -57,12 +61,12 @@ echo "Adapty integration contract matrix"
 require_pattern \
     "Integration pins the released BroadUIFlows product" \
     "$platform_root/Package.swift" \
-    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    "broad-ui-flows-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$ui_flows_version_pattern\""
 
 require_pattern \
     "Host connects BroadUIFlows directly" \
     "$platform_root/Examples/BroadAppTemplate/project.yml" \
-    'BroadUIFlows:(?s:.*?)url:[[:space:]]+https://github\.com/BroadApps-official/broad-ui-flows-ios\.git(?s:.*?)exactVersion:[[:space:]]+1\.0\.0(?s:.*?)package:[[:space:]]+BroadUIFlows(?s:.*?)product:[[:space:]]+BroadUIFlows'
+    "BroadUIFlows:(?s:.*?)url:[[:space:]]+https://github\\.com/BroadApps-official/broad-ui-flows-ios\\.git(?s:.*?)exactVersion:[[:space:]]+$ui_flows_version_pattern(?s:.*?)package:[[:space:]]+BroadUIFlows(?s:.*?)product:[[:space:]]+BroadUIFlows"
 
 require_pattern \
     "Host analytics still fan out only after deduplication" \
@@ -85,4 +89,4 @@ if ((failure_count > 0)); then
     exit 1
 fi
 
-echo "Adapty integration contracts are delegated to BroadMonetization 1.0.0 and BroadUIFlows 1.0.0 and passed."
+echo "Adapty integration contracts are delegated to BroadMonetization $monetization_version and BroadUIFlows $ui_flows_version and passed."

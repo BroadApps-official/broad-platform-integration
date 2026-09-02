@@ -3,6 +3,10 @@
 set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$platform_root/Scripts/lib/compatibility.sh"
+monetization_version="$(compatibility_module_version BroadMonetization)"
+ui_flows_version="$(compatibility_module_version BroadUIFlows)"
+ui_flows_version_pattern="${ui_flows_version//./\\.}"
 failure_count=0
 
 require_pattern() {
@@ -59,27 +63,27 @@ echo "Remote Config integration contract matrix"
 require_pattern \
     "Integration pins the released BroadMonetization contract" \
     "$platform_root/Package.swift" \
-    'broad-monetization-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    "broad-monetization-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$monetization_version\""
 
 require_pattern \
     "Host example connects BroadMonetization directly" \
     "$platform_root/Examples/BroadAppTemplate/project.yml" \
-    'BroadMonetization:(?s:.*?)url:[[:space:]]+https://github\.com/BroadApps-official/broad-monetization-ios\.git(?s:.*?)exactVersion:[[:space:]]+1\.0\.0(?s:.*?)package:[[:space:]]+BroadMonetization(?s:.*?)product:[[:space:]]+BroadMonetization'
+    "BroadMonetization:(?s:.*?)url:[[:space:]]+https://github\\.com/BroadApps-official/broad-monetization-ios\\.git(?s:.*?)exactVersion:[[:space:]]+$monetization_version(?s:.*?)package:[[:space:]]+BroadMonetization(?s:.*?)product:[[:space:]]+BroadMonetization"
 
 require_pattern \
     "Integration pins the released BroadUIFlows contract" \
     "$platform_root/Package.swift" \
-    'broad-ui-flows-ios\.git",[[:space:]]*exact:[[:space:]]*"1\.0\.0"'
+    "broad-ui-flows-ios\\.git\",[[:space:]]*exact:[[:space:]]*\"$ui_flows_version_pattern\""
 
 require_pattern \
     "Host example connects BroadUIFlows directly" \
     "$platform_root/Examples/BroadAppTemplate/project.yml" \
-    'BroadUIFlows:(?s:.*?)url:[[:space:]]+https://github\.com/BroadApps-official/broad-ui-flows-ios\.git(?s:.*?)exactVersion:[[:space:]]+1\.0\.0(?s:.*?)package:[[:space:]]+BroadUIFlows(?s:.*?)product:[[:space:]]+BroadUIFlows'
+    "BroadUIFlows:(?s:.*?)url:[[:space:]]+https://github\\.com/BroadApps-official/broad-ui-flows-ios\\.git(?s:.*?)exactVersion:[[:space:]]+$ui_flows_version_pattern(?s:.*?)package:[[:space:]]+BroadUIFlows(?s:.*?)product:[[:space:]]+BroadUIFlows"
 
 require_pattern \
     "BroadUIFlows Special Offer UI contract has release evidence" \
     "$platform_root/Compatibility/current.yml" \
-    'broad-ui-flows-ios/releases/tag/1\.0\.0'
+    "broad-ui-flows-ios/releases/tag/$ui_flows_version_pattern"
 
 require_pattern \
     "Host template unlocks RU Billing manual override only in DEBUG" \
@@ -99,4 +103,4 @@ fi
 
 bash "$platform_root/Scripts/check_special_offer_runtime_contract.sh"
 
-echo "Remote Config integration contract matrix passed; UI expiry rules are owned by BroadUIFlows 1.0.0."
+echo "Remote Config integration contract matrix passed; UI expiry rules are owned by BroadUIFlows $ui_flows_version."

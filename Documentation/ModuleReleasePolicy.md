@@ -44,15 +44,15 @@ Canonical schema лежит в `Compatibility/current.yml` integration repositor
 
 ```yaml
 schema: 1
-platform_set: "1.0.0"
+platform_set: "1.1.0"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
 modules:
-  BroadCore: "1.0.0"
-  BroadExtensions: "1.0.0"
-  BroadMonetization: "1.0.0"
-  BroadUIFlows: "1.0.0"
+  BroadCore: "1.1.0"
+  BroadExtensions: "1.0.1"
+  BroadMonetization: "1.1.0"
+  BroadUIFlows: "1.0.1"
 verification:
   status: passed
   command: "bash Scripts/agent_gate.sh"
@@ -62,6 +62,8 @@ verification:
 umbrella. Host app может взять один модуль из этой матрицы.
 `swift_language_mode` относится к production sources, а `swift_tools` — к
 формату Package.swift и способности SwiftPM toolchain прочитать manifest.
+Модули не обязаны иметь одинаковую версию: integration gate читает эту матрицу
+как единственный источник и проверяет каждый package block и lock pin отдельно.
 
 ## Emergency fix
 

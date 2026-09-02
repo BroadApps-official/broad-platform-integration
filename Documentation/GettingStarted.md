@@ -134,7 +134,7 @@ Access Token или app API key. Если Xcode показывает
 dependencies: [
     .package(
         url: "https://github.com/BroadApps-official/broad-core-ios.git",
-        from: "1.0.0"
+        from: "1.1.0"
     )
 ]
 ```

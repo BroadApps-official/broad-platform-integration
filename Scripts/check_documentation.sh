@@ -3,6 +3,8 @@
 set -euo pipefail
 
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$platform_root/Scripts/lib/compatibility.sh"
+core_version="$(compatibility_module_version BroadCore)"
 failure_count=0
 
 record_failure() {
@@ -188,7 +190,6 @@ for documentation_contract in \
     'Documentation/AgentPromptPack.md|AGENT_PREFLIGHT_PROMPT:START' \
     'Documentation/AgentPromptPack.md|Platform source: READY / BLOCKED' \
     'Documentation/AgentPromptPack.md|Support/legal: READY / BLOCKED / N/A' \
-    'Documentation/PlatformHandoff.md|exact: "1\.0\.0"' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
     'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
     'Documentation/SpecialOffer.md|raw `AdaptyPaywallProduct`' \
@@ -219,6 +220,10 @@ do
         record_failure "Documentation contract is missing: $documentation_file -> $documentation_pattern"
     fi
 done
+
+if ! rg -q -- "exact: \"$core_version\"" "$platform_root/Documentation/PlatformHandoff.md"; then
+    record_failure "Documentation contract is missing: Documentation/PlatformHandoff.md -> exact: \"$core_version\""
+fi
 
 if rg -q -- 'ExampleAdaptyEntitlementProfileClient|additionalAuthoritativeVerifiers' \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Entitlements/ExampleEntitlementDependencies.swift"; then
