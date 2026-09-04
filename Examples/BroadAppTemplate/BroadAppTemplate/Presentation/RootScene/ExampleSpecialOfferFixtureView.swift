@@ -132,6 +132,7 @@ struct ExampleSpecialOfferFixtureView: View {
     }
 
     private func completed(_ completion: BroadPaywallCompletion) {
+        viewModel.confirmedPurchaseOrRestore()
         onCompleted(completion)
         dismiss()
     }

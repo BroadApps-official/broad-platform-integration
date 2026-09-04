@@ -110,7 +110,7 @@ gates:
 
 - `ru_pay` берётся из реально resolved payload;
 - host feature gate остаётся обязательным;
-- RU region или русский первый системный язык остаётся обязательным;
+- RU Storefront или RU-регион iPhone остаётся обязательным;
 - mapping в RU catalog остаётся обязательным;
 - analytics сохраняет requested и resolved placements.
 

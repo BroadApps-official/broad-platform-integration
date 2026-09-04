@@ -307,15 +307,17 @@ iPad не входит в scope платформы.
 - UI принимает 0, 1 или любое количество продуктов в порядке Adapty.
 - Purchase и restore не открывают premium до новой подтверждённой проверки доступа.
 - Success, fail, cancel, offline и timeout — разные конечные состояния.
-- Special Offer существует только при конфигурации приложения и явном
-  `special_offer = true` из текущего ответа SDK Adapty. Ответ может прийти из
-  сети или внутреннего кеша Adapty; отдельный REST/repository не создаётся.
+- Special Offer существует только при строгом boolean `special_offer = true`
+  из Remote Config обычного paywall. Ответ может прийти из сети или внутреннего
+  кеша Adapty; platform cache флаг не авторизует.
 - Special Offer никогда не является первым paywall: сначала показывается
   обычный subscription paywall, resolver запускается только после его крестика
   без покупки, а подтверждённая purchase/restore ведёт в main без downsell.
-- Если самостоятельный placement `special_offer` загрузился, gate читается из
-  его payload. Gate резервного `main` используется только при фактическом
-  fallback на `main`.
+- После gate платформа загружает самостоятельный placement `special_offer` и
+  сохраняет все его продукты 1:1 в provider order.
+- Первый подходящий close запускает persisted-окно 24 часа. От точного конца
+  окна начинается cooldown 24 часа; на нуле UI закрывается. Выключение флага,
+  подтверждённая purchase или restore сбрасывают цикл.
 - `ru_pay` из того же ответа разрешает только показать RU-способы оплаты.
   В Release он всегда приходит из Adapty: network, внутренний SDK cache или
   официальный Dashboard-generated fallback. Локального production-default
@@ -343,7 +345,7 @@ iPad не входит в scope платформы.
 Для воспроизводимой ручной проверки используйте launch arguments
 `-special-offer-enabled`, `-special-offer-disabled`,
 `-special-offer-platform-cache`, `-special-offer-main-fallback`,
-`-special-offer-looping-timer`, `-ru-pay-provider-enabled`,
+`-ru-pay-provider-enabled`,
 `-ru-pay-provider-disabled`, `-ru-pay-adapty-fallback-rejected` и
 `-ru-pay-platform-cache` из `Examples/BroadAppTemplate/README.md`.
 

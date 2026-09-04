@@ -380,7 +380,7 @@ configurations. Короткий порядок действий описан в
 - [ ] late entitlement response не меняет route/cache;
 - [ ] anonymous и authorized cache scopes разделены;
 - [ ] logout очищает user-scoped host state;
-- [ ] RU eligibility требует verified-fresh `ru_pay = true` и RU region или русский первый системный язык;
+- [ ] RU eligibility требует verified-fresh `ru_pay = true` и RU Storefront или RU-регион iPhone;
 - [ ] ATT отсутствует в loader и вызывается после visible first slide;
 - [ ] review отсутствует внутри onboarding;
 - [ ] Console не содержит token, IDs, URL, payload и user messages;

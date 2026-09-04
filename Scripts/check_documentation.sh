@@ -151,7 +151,7 @@ done
 for documentation_contract in \
     'Documentation/ADR/0006-federated-public-repositories.md|Host app подключает \*\*любой нужный модуль\*\*' \
     'Documentation/ADR/0007-simple-adapty-integration.md|public SDK key' \
-    'Documentation/ADR/0007-simple-adapty-integration.md|24:00:00 → 00:00:00 → 24:00:00' \
+    'Documentation/ADR/0007-simple-adapty-integration.md|24 часа показа → 24 часа cooldown → новое окно' \
     'Documentation/FederatedRepositories.md|broad-platform-integration' \
     'Documentation/FederatedRepositories.md|broad-docs' \
     'Documentation/ModuleReleasePolicy.md|upToNextMajor' \
@@ -191,11 +191,11 @@ for documentation_contract in \
     'Documentation/AgentPromptPack.md|Platform source: READY / BLOCKED' \
     'Documentation/AgentPromptPack.md|Support/legal: READY / BLOCKED / N/A' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
-    'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
+    'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*нет' \
     'Documentation/SpecialOffer.md|raw `AdaptyPaywallProduct`' \
-    'Documentation/SpecialOffer.md|ru_pay.*\.verifiedFreshRemote' \
+    'Documentation/SpecialOffer.md|`ru_pay` остаётся независимым' \
     'Examples/BroadAppTemplate/README.md|-special-offer-platform-cache' \
-    'README.dev.md|-special-offer-looping-timer' \
+    'Documentation/SpecialOffer.md|визуального бесконечного loop нет' \
     'Documentation/RUBilling.md|Release \| Verified-fresh remote payload' \
     'Documentation/RUBilling.md|Adapty\.setFallback\(fileURL:' \
     'Documentation/RUBilling.md|\.forceEnabled' \

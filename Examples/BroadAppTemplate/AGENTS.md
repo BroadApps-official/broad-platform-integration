@@ -105,17 +105,16 @@ BACKEND CONTRACT REVIEW REQUIRED
 
 ## Если нужен спешл оффер RU Billing
 
-Не считай его обычным Adapty Special Offer и не добавляй отдельный payment
-engine. Сначала верни разработчику этот список входных данных:
+Не добавляй отдельный campaign engine: экран, строгий gate и цикл 24/24
+принадлежат обычному Adapty Special Offer. RU-ветка меняет только источник
+продукта. Сначала верни разработчику этот список входных данных:
 
 ```text
 RU SPECIAL OFFER GIVEN
-- campaign authority/key/state: какая система решает + exact key + active/inactive/unknown
-- recurring/one-time mode, actual payment route, entitlement duration and legal copy
-- RU catalog: schema, price units, coupon marker and exact IDs
-- Apple placement and exact product IDs
-- campaign gate отдельно от ru_pay gate
-- eligibility window отдельно от visual countdown
+- обычный paywall содержит strict bool special_offer = true
+- отдельный Adapty placement special_offer настроен
+- RU catalog: schema, price units, isSpecialOffer marker and exact IDs
+- recurring/one-time mode, payment route, entitlement duration and legal copy
 - checkout request and authoritative confirmation after browser return
 
 QUESTIONS / BLOCKERS
@@ -127,20 +126,21 @@ RU SPECIAL OFFER CONTRACT REVIEW REQUIRED
 Правила:
 
 - не открывай платёжный кабинет и не копируй значения другого приложения;
-- `kind = coupon` — предпочтительный contract; legacy `widgetTitle = kupon`
-  преобразует только небольшой app-owned decoder;
-- сохраняй весь coupon-массив; если UI нужен один offer, попроси explicit
-  exact product ID;
-- не выбирай продукт по году, месяцу, цене или позиции;
+- RU-продукт выбирай только по строгому backend-маркеру `isSpecialOffer`
+  (допустим согласованный snake_case alias); не выбирай по году, месяцу, цене,
+  названию или позиции;
+- обычный paywall исключает помеченную строку, а Special Offer не подставляет
+  обычный тариф, если помеченной строки нет;
 - если подтверждённый тип покупки и UI-текст противоречат друг другу, поставь
   `BLOCKED` и запроси team lead review;
-- не смешивай campaign gate, strict `ru_pay` и regional gate;
-- не назначай eligibility или экранный countdown без подтверждения product/team lead;
+- не смешивай `special_offer`, strict `ru_pay` и regional gate;
+- используй фиксированные окно 24 часа и cooldown 24 часа общей реализации;
 - возврат из Safari не является success: повторно проверь backend
   policy/entitlement;
-- статус эксперимента в одной системе не подменяет gate другой системы;
-- при inactive/unknown authoritative campaign, несовпавшем ID или пустом
-  catalog ветка закрывается без настоящей оплаты.
+- A/B-тесты RU Billing не поддержаны и находятся в разработке; не добавляй
+  инструкции по их настройке;
+- при неразрешённом gate, отсутствии помеченного продукта или пустом catalog
+  ветка закрывается без настоящей оплаты.
 
 Полная инструкция:
 [`../../Documentation/RUSpecialOffer.md`](../../Documentation/RUSpecialOffer.md).

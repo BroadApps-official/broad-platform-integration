@@ -145,7 +145,6 @@ private enum ExampleRemoteFeaturePayloadFactory {
         case .specialOfferEnabled,
              .specialOfferDisabled,
              .specialOfferMainFallback,
-             .specialOfferLoopingTimer,
              .ruPayProviderDisabled,
              .ruPayAdaptyFallbackRejected:
             .providerCacheFallbackPossible
@@ -159,15 +158,13 @@ private enum ExampleRemoteFeaturePayloadFactory {
         placementID: PlacementID
     ) -> SpecialOfferRemoteConfiguration? {
         switch scenario {
-        case .specialOfferEnabled where placementID == .specialOffer:
+        case .specialOfferEnabled where placementID == .main:
             configuration(isEnabled: true)
-        case .specialOfferDisabled where placementID == .specialOffer:
+        case .specialOfferDisabled where placementID == .main:
             configuration(isEnabled: false)
-        case .specialOfferPlatformCache where placementID == .specialOffer:
+        case .specialOfferPlatformCache where placementID == .main:
             configuration(isEnabled: true)
         case .specialOfferMainFallback where placementID == .main:
-            configuration(isEnabled: true)
-        case .specialOfferLoopingTimer where placementID == .specialOffer:
             configuration(isEnabled: true)
         default:
             nil
@@ -240,24 +237,6 @@ struct ExampleProductFixture {
             period: .unknown
         )
     ]
-}
-
-actor ExampleSpecialOfferStateRepository: SpecialOfferStateRepositoryProtocol {
-    private var states: [PlacementID: SpecialOfferState] = [:]
-
-    func state(
-        for configuration: SpecialOfferConfiguration
-    ) async -> SpecialOfferStateLoadOutcome {
-        .loaded(states[configuration.placementID] ?? .eligible)
-    }
-
-    func save(
-        _ state: SpecialOfferState,
-        for configuration: SpecialOfferConfiguration
-    ) async -> Bool {
-        states[configuration.placementID] = state
-        return true
-    }
 }
 
 enum ExampleRURegionalScenario: String, CaseIterable {
@@ -350,7 +329,8 @@ struct ExampleRUCatalogRepository: RUCatalogRepositoryProtocol {
                         ),
                         displayPrice: fixture.rubleDisplayPrice,
                         subscriptionPeriod: fixture.period,
-                        supportedMethods: [.sbp, .card]
+                        supportedMethods: [.sbp, .card],
+                        isSpecialOffer: fixture.productID == "example.premium.weekly"
                     )
                 },
                 fetchedAt: Date(timeIntervalSince1970: 1_800_000_000)

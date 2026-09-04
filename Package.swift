@@ -18,11 +18,11 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/BroadApps-official/broad-monetization-ios.git",
-            exact: "1.2.0"
+            exact: "1.3.1"
         ),
         .package(
             url: "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
-            exact: "1.0.1"
+            exact: "1.1.0"
         ),
         .package(
             url: "https://github.com/Swinject/Swinject.git",

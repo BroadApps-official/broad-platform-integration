@@ -186,8 +186,7 @@ app configuration и платформы разобраны в
 | `-special-offer-enabled` | provider-like fixture payload содержит `special_offer = true`: после закрытия обычного paywall кампания открывается |
 | `-special-offer-disabled` | явный `special_offer = false`: кампания остаётся закрытой |
 | `-special-offer-platform-cache` | кеш `BroadMonetization` содержит `true`, но кампания остаётся закрытой |
-| `-special-offer-main-fallback` | placement кампании недоступен; Remote Config резервного `main` открывает её и сохраняет исходный placement |
-| `-special-offer-looping-timer` | визуальный таймер 24:00:00 → 00:00:00 → 24:00:00 не закрывает offer |
+| `-special-offer-main-fallback` | отдельный offer placement использует разрешённый общий fallback, при этом gate остаётся в Remote Config `main` |
 | `-ru-pay-provider-enabled` | verified-fresh fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
 | `-ru-pay-provider-disabled` | provider-like fixture явно возвращает `ru_pay = false`; остаётся только Apple |
 | `-ru-pay-adapty-fallback-rejected` | `ru_pay = true` из Adapty managed fallback остаётся закрытым без verified freshness |
@@ -234,10 +233,11 @@ app configuration и платформы разобраны в
 Apple/СБП/карта, у сохранённой копии из кеша `BroadMonetization` останется только
 Apple.
 
-Продукты Special Offer получаются обычной цепочкой
-`getPaywall -> getPaywallProducts -> 1:1 mapping -> raw registry`. Только
-после этого resolver проверяет `special_offer`. Таймер циклический,
-не требует server time и не блокирует покупку при нуле.
+Сначала resolver читает строгий boolean `special_offer` из Remote Config
+обычного paywall и проверяет persisted-цикл 24 часа окна / 24 часа cooldown по
+доверенному времени. Затем продукты Special Offer получаются цепочкой
+`getPaywall -> getPaywallProducts -> 1:1 mapping -> raw registry` из отдельного
+placement. На нуле UI закрывается и начинается cooldown.
 
 В Debug-каталоге есть отдельная секция `RU Billing — только Debug`.
 Режим `Как в Adapty` использует strict provenance gate, `Включить` и

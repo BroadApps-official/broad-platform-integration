@@ -44,6 +44,12 @@ final class ExampleSpecialOfferFixtureViewModel: ObservableObject {
         hasLoaded = false
     }
 
+    func confirmedPurchaseOrRestore() {
+        Task { [resolver, configuration] in
+            _ = await resolver.resetCycle(configuration: configuration)
+        }
+    }
+
     @discardableResult
     func resolveIfNeeded() async -> Bool {
         guard !hasLoaded else {
@@ -160,7 +166,6 @@ private extension ExampleRemoteFeatureScenario {
         case .specialOfferDisabled: .specialOfferDisabled
         case .specialOfferPlatformCache: .specialOfferPlatformCache
         case .specialOfferMainFallback: .specialOfferMainFallback
-        case .specialOfferLoopingTimer: .specialOfferLoopingTimer
         case .ruPayProviderEnabled: .ruPayProviderEnabled
         case .ruPayProviderDisabled: .ruPayProviderDisabled
         case .ruPayAdaptyFallbackRejected: .ruPayAdaptyFallbackRejected

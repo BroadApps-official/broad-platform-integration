@@ -55,7 +55,8 @@ struct ExampleMonetizationEnvironment {
         trackPaywallEvent = services.trackPaywallEvent
         resolveSpecialOffer = Self.makeSpecialOfferResolver(
             scenario: remoteFeatureScenario,
-            services: services
+            services: services,
+            entitlementStatusProvider: entitlementEngine
         )
     }
 
@@ -119,14 +120,24 @@ struct ExampleMonetizationEnvironment {
 
     private static func makeSpecialOfferResolver(
         scenario: ExampleRemoteFeatureScenario?,
-        services: BroadMonetizationServices
+        services: BroadMonetizationServices,
+        entitlementStatusProvider: any EntitlementStatusProviderProtocol
     ) -> (any ResolveSpecialOfferUseCaseProtocol)? {
         guard let scenario, scenario.isSpecialOffer else {
             return nil
         }
+        let stateStore = UserDefaultsKeyValueStore(
+            suiteName: "com.broadapps.platform.template.fixtures",
+            namespace: "special-offer-cadence"
+        )
         return ResolveSpecialOfferUseCase(
             loadPaywallUseCase: services.loadPaywall,
-            presentationLifecycle: services.paywallPresentationLifecycle
+            stateRepository: PersistedSpecialOfferStateRepository(store: stateStore),
+            presentationLifecycle: services.paywallPresentationLifecycle,
+            // Fixture-only trusted value. Production creates this boundary from
+            // ServerTimeProviderProtocol after recording a backend Date header.
+            clock: SpecialOfferClock(reading: { .trusted(Date()) }),
+            entitlementStatusProvider: entitlementStatusProvider
         )
     }
 

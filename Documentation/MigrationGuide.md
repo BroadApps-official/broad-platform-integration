@@ -377,13 +377,14 @@ provider-managed payload разрешает gate, а raw products остаютс
 registry для exact purchase attribution. Platform cache может показать обычный
 paywall, но не включает кампанию.
 
-Resolver возвращает `.eligible + paywall`, когда текущий payload содержит
-`special_offer = true`. Передавайте только выданный
+Resolver читает строгий boolean `special_offer = true` из Remote Config
+обычного paywall, проверяет active entitlement и persisted-цикл 24/24, затем
+загружает отдельный placement `special_offer`. Передавайте только выданный
 `SpecialOfferResolution.presentationAuthorization` в
 `BroadPaywallConfiguration.specialOfferAuthorization`, а уже загруженный payload —
-в `PaywallViewModel(initialPayload:)`. Таймер циклический 24 часа и не требует
-server time, window/cooldown или persistence. При нуле он не скрывает offer и
-не блокирует покупку.
+в `PaywallViewModel(initialPayload:)`. Countdown заканчивается на нуле и
+закрывает экран; от точного конца окна начинается cooldown 24 часа. Flag off,
+подтверждённая purchase и restore сбрасывают цикл.
 
 ### RU billing
 
@@ -391,7 +392,7 @@ server time, window/cooldown или persistence. При нуле он не ск�
 
 Если готова:
 
-- eligibility требует verified-fresh `ru_pay = true` и RU-регион iPhone или русский первый системный язык;
+- eligibility требует verified-fresh `ru_pay = true` и RU Storefront или RU-регион iPhone;
 - absent/false/invalid/platform-cache `ru_pay` fail-closed;
 - catalog match typed/deterministic;
 - HTTPS endpoints и subject-bound auth;
@@ -477,7 +478,7 @@ Paywall provider lifecycle не переносите в analytics destination. V
 - [ ] stable app account/subject связывает token и RU ledger между установками;
 - [ ] offline/timeout дают конечный UI state; ambiguous financial result не запускается повторно до reconciliation;
 - [ ] all configured entitlement combinations проверены;
-- [ ] RU требует verified-fresh `ru_pay = true` и RU region или русский первый системный язык;
+- [ ] RU требует verified-fresh `ru_pay = true` и RU Storefront или RU-регион iPhone;
 - [ ] special offer отсутствует через `nil` там, где не нужен;
 - [ ] remote config keys/defaults задокументированы;
 - [ ] analytics typed, дедуплицированы и без PII;

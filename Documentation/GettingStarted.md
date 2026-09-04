@@ -706,15 +706,12 @@ let viewModel = PaywallViewModel(
 )
 ```
 
-При валидном `special_offer = true` result содержит `.eligible`, payload и
-authorization с визуальным таймером. Таймер идёт от `24:00:00` до
-`00:00:00`, затем снова начинает с `24:00:00`. Он не является
-expiration, не скрывает offer и не блокирует purchase.
-
-`windowDuration`, `cooldownDuration`, state repository и `SpecialOfferClock` в
-стандартной composition не нужны. Authorization непрозрачно связан с
-конкретным presentation, поэтому нельзя перенести remote metadata или timer
-на другой paywall payload. Полный recipe находится в
+При строгом boolean `special_offer = true` result содержит `.eligible`, payload
+и authorization только внутри фиксированного окна 24 часа. Persisted state
+repository и trusted `SpecialOfferClock` обязательны: от точного конца окна
+идёт cooldown 24 часа. На нуле экран закрывается. Authorization непрозрачно
+связан с конкретным presentation, поэтому нельзя перенести remote metadata или
+timer на другой paywall payload. Полный recipe находится в
 [Special Offer](SpecialOffer.md).
 
 ## 11. Проверьте интеграцию
@@ -740,8 +737,9 @@ expiration, не скрывает offer и не блокирует purchase.
 - [ ] offline/timeout показывают конечный Retry UI; ambiguous purchase/checkout не повторяется автоматически;
 - [ ] special offer `nil` не создаёт никакой работы;
 - [ ] presentable special offer передаёт `presentationAuthorization` того же payload;
-- [ ] визуальный Special Offer timer зациклен на 24 часа и не меняе eligibility;
-- [ ] RU CTA требует verified-fresh `ru_pay = true` и RU region или русский системный язык;
+- [ ] Special Offer countdown закрывает экран на нуле; окно и cooldown по 24 часа сохраняются между запусками;
+- [ ] flag off, confirmed purchase и restore сбрасывают Special Offer cycle;
+- [ ] RU CTA требует verified-fresh `ru_pay = true` и RU Storefront или регион iPhone;
 - [ ] Release читает `ru_pay` только из verified-fresh source; force-control и
   `allowsManualOverrides: true` находятся только под host `#if DEBUG`;
 - [ ] Adapty fallback не считается freshness proof для RU Billing;

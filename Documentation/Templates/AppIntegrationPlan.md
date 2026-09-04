@@ -154,26 +154,25 @@ Endpoint/schema/auth подтверждает владелец текущего 
 
 | Вопрос | Решение / evidence | Статус |
 |---|---|---|
-| Какая система является campaign authority и какой key использовать? | Adapty / backend config / другое + exact key; разработчик получает готовое значение |  |
-| Активна ли campaign сейчас? | active / inactive / unknown из authoritative источника; unknown закрывает ветку |  |
+| Какой gate разрешает второй экран? | strict boolean `special_offer = true` в Remote Config обычного paywall |  |
+| Какой отдельный placement содержит продукты? | `special_offer` либо точное имя от аккаунт-менеджера |  |
 | Покупка recurring или one-time? | подтверждённый backend contract + legal copy должны совпадать |  |
 | Какой payment route фактически production? | переданная backend-конфигурация текущего приложения |  |
 | Кто и на какой срок выдаёт/продлевает entitlement? | authority + duration + renewal/cancellation semantics |  |
-| Как campaign разрешает второй экран? | app-owned config/experiment key; не смешивать с `ru_pay` |  |
-| Откуда приходит RU coupon? | `kind = coupon` либо подтверждённое legacy-поле + app-owned decoder |  |
-| Как выбирается продукт? | весь coupon-массив либо explicit exact product ID; без sorting/ranking по цене или периоду |  |
+| Откуда приходит RU-продукт? | backend catalog со строгим `isSpecialOffer` marker |  |
+| Как выбирается продукт? | только marked row; без выбора по цене, названию, периоду или позиции |  |
 | Откуда приходит Apple-вариант? | placement + exact product ID + правило совместимости периода |  |
-| Каково eligibility-window? | отсутствует / duration + start + persistence + account scope |  |
-| Каков визуальный countdown? | отсутствует / duration + zero behavior + Safari-return behavior |  |
+| Как хранится cycle? | persisted window 24 часа + cooldown 24 часа по trusted clock |  |
+| Каков countdown? | до конца окна; на нуле экран закрывается и начинается cooldown |  |
 | Какие gate разрешают RU method? | verified-fresh `ru_pay = true` + Storefront RU **или** регион iPhone RU + точный catalog product |  |
 | Что отправляется в checkout? | exact resolved RU product ID + обязательные поля текущего backend |  |
 | Что подтверждает success? | authoritative policy/entitlement после browser return; не сам возврат |  |
 | Что происходит при pending/timeout? | повтор проверки без автоматического второго checkout |  |
 
-Eligibility и visual countdown — два независимых решения. Их duration, start,
-persistence и zero behavior должен сообщить владелец задачи; платформа не
-назначает значения по умолчанию. Coupon products сохраняются полным списком
-или выбираются по explicit exact ID.
+Окно, countdown и cooldown образуют один фиксированный контракт 24/24. RU
+Special Offer не добавляет поверх него app-owned eligibility. Backend products
+сохраняются полным списком; Special Offer использует только строки с точным
+backend-маркером.
 
 [Полный контракт →](../RUSpecialOffer.md)
 
