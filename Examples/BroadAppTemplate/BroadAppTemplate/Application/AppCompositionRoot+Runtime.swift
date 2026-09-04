@@ -8,6 +8,7 @@ struct CompositionRuntime {
     let composition: PlatformComposition
     let monetizationEnvironment: ExampleMonetizationEnvironment
     let specialOfferViewModel: ExampleSpecialOfferFixtureViewModel?
+    let supportLogRecorder: BroadSupportLogRecorder
     let logger: any BroadLoggerProtocol
     let cache: ExampleCacheDependencies
 }

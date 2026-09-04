@@ -88,7 +88,10 @@ logger.log(
 )
 ```
 
-`subsystem` принимает только `StaticString`, поэтому его нужно задать строковым литералом. Используйте постоянный bundle-style идентификатор приложения; runtime-значение пользователя, email, user ID или токен передать в этот API нельзя.
+`subsystem` принимает `String` и `StaticString`, поэтому можно передать
+`Bundle.main.bundleIdentifier` с безопасным fallback либо строковый литерал.
+Используйте постоянный bundle-style идентификатор приложения; runtime-значение
+пользователя, email, user ID или токен передавать в этот API нельзя.
 
 Если приложение передаёт собственный `CacheRepositoryProtocol`, `BroadCoreAssembly` не может пересобрать его и внедрить logger автоматически. В таком случае logger нужно передать repository при его создании, как в примере выше. Встроенный repository получает logger автоматически.
 

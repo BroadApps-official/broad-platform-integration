@@ -16,6 +16,7 @@ final class AppCompositionRoot {
     let catalogSpecialOfferViewModel: ExampleSpecialOfferFixtureViewModel
     let tokenPaywallViewModel: BroadTokenPaywallViewModel
     let tokenBalanceViewModel: ExampleTokenBalanceViewModel
+    let supportEmailRequest: () -> BroadSupportEmailRequest?
     #if DEBUG
         let debugSettingsViewModel: ExampleDebugSettingsViewModel
     #endif
@@ -24,6 +25,7 @@ final class AppCompositionRoot {
 
     init() {
         let runtime = Self.makeRuntime()
+        let supportLogRecorder = runtime.supportLogRecorder
         let tokenComposition = Self.makeTokenComposition(
             environment: runtime.monetizationEnvironment,
             logger: runtime.logger
@@ -44,6 +46,11 @@ final class AppCompositionRoot {
         )
         tokenPaywallViewModel = tokenComposition.paywallViewModel
         tokenBalanceViewModel = tokenComposition.balanceViewModel
+        supportEmailRequest = {
+            AppConfiguration.supportEmailRequest(
+                supportLogData: supportLogRecorder.makeSupportLogData()
+            )
+        }
         #if DEBUG
             debugSettingsViewModel = Self.makeDebugSettingsViewModel(
                 progressRepository: runtime.composition.progressRepository,
@@ -60,7 +67,13 @@ final class AppCompositionRoot {
 private extension AppCompositionRoot {
     static func makeRuntime() -> CompositionRuntime {
         let scenario = AppConfiguration.bootstrapScenario
-        let logger = OSLogBroadLogger(subsystem: AppConfiguration.loggingSubsystem)
+        let supportLogRecorder = BroadSupportLogRecorder()
+        let logger = CompositeBroadLogger(
+            loggers: [
+                OSLogBroadLogger(subsystem: AppConfiguration.loggingSubsystem),
+                supportLogRecorder
+            ]
+        )
         let cache = ExampleCacheDependencies(
             configuration: AppConfiguration.cacheFixture,
             logger: logger
@@ -95,6 +108,7 @@ private extension AppCompositionRoot {
             composition: composition,
             monetizationEnvironment: monetizationEnvironment,
             specialOfferViewModel: specialOfferViewModel,
+            supportLogRecorder: supportLogRecorder,
             logger: logger,
             cache: cache
         )

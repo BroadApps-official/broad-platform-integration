@@ -2,10 +2,10 @@
 
 ## Результат
 
-`PASS` — полный local gate и clean-clone module gates прошли 2 сентября
+`PASS` — полный local gate и clean-clone module gates прошли 4 сентября
 2026 года. Четыре public modules опубликованы как согласованный platform set
-`1.1.0`: `BroadCore 1.1.0`, `BroadExtensions 1.0.1`,
-`BroadMonetization 1.1.0` и `BroadUIFlows 1.0.1`. Host example подключает
+`1.2.0`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
+`BroadMonetization 1.2.0` и `BroadUIFlows 1.0.1`. Host example подключает
 нужные products напрямую, а integration repository фиксирует этот проверенный
 exact-набор без обязательного umbrella.
 
@@ -15,8 +15,13 @@ Scope результата — только `BroadAppsIOSPlatform` и `BroadAppT
 ## Что подтверждено
 
 - правила, архитектура, privacy, documentation links и README assets;
-- публичные `BroadCore 1.1.0`, `BroadExtensions 1.0.1`,
-  `BroadMonetization 1.1.0` и `BroadUIFlows 1.0.1`, каждый из clean clone;
+- публичные `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
+  `BroadMonetization 1.2.0` и `BroadUIFlows 1.0.1`, каждый из clean clone;
+- `BroadSupportLogRecorder` и `CompositeBroadLogger` дают шаблону
+  актуальный `support-log.txt` без fixture-строки в production flow;
+- campaign-driven Special Offer остаётся отдельным opt-in путём:
+  он использует server-synchronized time и цикл «сутки оффера →
+  тихие сутки», не меняя флаговый resolver;
 - единая compatibility matrix сверяет YAML, SwiftPM/XcodeGen declarations,
   оба lock-файла и release evidence для каждой версии отдельно;
 - SwiftFormat и SwiftLint без нарушений;

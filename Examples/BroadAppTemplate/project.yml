@@ -15,10 +15,10 @@ options:
 packages:
   BroadCore:
     url: https://github.com/BroadApps-official/broad-core-ios.git
-    exactVersion: 1.1.0
+    exactVersion: 1.2.0
   BroadMonetization:
     url: https://github.com/BroadApps-official/broad-monetization-ios.git
-    exactVersion: 1.1.0
+    exactVersion: 1.2.0
   BroadUIFlows:
     url: https://github.com/BroadApps-official/broad-ui-flows-ios.git
     exactVersion: 1.0.1

@@ -169,7 +169,9 @@ enum AppConfiguration {
     )
 
     @MainActor
-    static var supportEmailRequest: BroadSupportEmailRequest? {
+    static func supportEmailRequest(
+        supportLogData: Data
+    ) -> BroadSupportEmailRequest? {
         let bundle = Bundle.main
         let installedVersion = bundle.object(
             forInfoDictionaryKey: "CFBundleShortVersionString"
@@ -177,11 +179,6 @@ enum AppConfiguration {
         let buildNumber = bundle.object(
             forInfoDictionaryKey: "CFBundleVersion"
         ) as? String ?? "unknown"
-        let supportLog = """
-        [INPUT] Contact Us открыт пользователем
-        [FLOW] route=contact-us; composer=checked
-        [PASS] Очищенный fixture support log сформирован
-        """
         let configuration = BroadSupportEmailConfiguration(
             recipient: supportEmailRecipient,
             subject: "BroadAppTemplate Support",
@@ -198,7 +195,7 @@ enum AppConfiguration {
             adaptyProfileID: "fixture-profile",
             backendUserID: "fixture-user",
             subscriptionStatus: "not_subscribed",
-            supportLogData: Data(supportLog.utf8)
+            supportLogData: supportLogData
         )
         return BroadSupportEmailRequestBuilder.makeRequest(
             configuration: configuration
