@@ -14,6 +14,8 @@
 | `BroadLogCategory` | Отдельные каналы для подсистем платформы |
 | `OSLogBroadLogger` | Production-adapter поверх Unified Logging |
 | `NoOpBroadLogger` | Безопасный logger по умолчанию, который ничего не записывает |
+| `BroadSupportLogRecorder` | In-memory ring buffer тех же typed-строк; отдаёт `support-log.txt` для письма в поддержку |
+| `CompositeBroadLogger` | Fan-out на несколько logger-ов, чтобы одно событие уходило и в OSLog, и в recorder |
 
 Новые события не принимают произвольную строку, metadata-словарь или raw
 `Error`. Новое поле нельзя начать логировать случайно: сначала для него нужно
@@ -153,6 +155,37 @@ payload и причины из SDK туда не переносятся. Дет�
 Если приложение прикладывает отдельный файл диагностики к письму в поддержку,
 для него действуют те же ограничения. Формат письма и checklist очистки файла
 описаны в [Support Email](SupportEmail.md).
+
+## Как прикрепить лог к письму в поддержку
+
+Источник вложения — `BroadSupportLogRecorder` из BroadCore `1.2.0`. Он копит те
+же безопасные строки, что уходят в Console, в ограниченном in-memory буфере
+(по умолчанию 500 записей, старые вытесняются и считаются), без I/O. Composition
+root создаёт recorder один раз и объединяет его с OSLog через
+`CompositeBroadLogger`, а затем передаёт этот logger всем компонентам:
+
+```swift
+let supportLogRecorder = BroadSupportLogRecorder()
+let logger = CompositeBroadLogger(
+    loggers: [
+        OSLogBroadLogger(subsystem: loggingSubsystem),
+        supportLogRecorder
+    ]
+)
+
+// Перед открытием Contact Us:
+let request = BroadSupportEmailRequestBuilder.makeRequest(
+    configuration: BroadSupportEmailConfiguration(
+        // ...,
+        supportLogData: supportLogRecorder.makeSupportLogData()
+    )
+)
+```
+
+В буфер попадают только закрытые enum, `Bool` и счётчики, поэтому вложение не
+требует отдельной очистки: секреты, payload и PII туда не могут попасть по
+построению. Собственный файловый лог с произвольными строками для этого
+вложения не используется.
 
 ## Свой logger
 
