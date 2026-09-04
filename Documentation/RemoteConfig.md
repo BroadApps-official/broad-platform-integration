@@ -25,10 +25,11 @@ view (`true/false/nil`) и не различает absent/invalid, поэтом�
 
 ## Стандартные aliases
 
-Для обычных display-полей parser проверяет aliases слева направо и использует первое
-присутствующее значение. RU billing и special-offer gate — safety-исключения:
-parser проверяет **все** aliases, чтобы старый ключ не обошёл kill
-switch.
+Для обычных display-полей parser проверяет aliases слева направо и использует
+первое присутствующее значение. RU Billing остаётся отдельным safety-контрактом.
+Для Special Offer стандартный registry принимает только точный ключ
+`special_offer` и только Foundation boolean. Если backend использует другой
+ключ, host передаёт один точный custom key явно.
 
 | Typed field | Стандартные ключи | Допустимое значение |
 |---|---|---|
@@ -37,9 +38,9 @@ switch.
 | `accessPolicy` | `hardPaywall`, `hard_paywall`, `isHard`, `is_hard`, `hard` | bool или `hard`/`soft` |
 | `closeDelay` | `closeDelay`, `close_delay`, `close_delay_seconds` | конечное число секунд `>= 0` |
 | `uiVariantID` | `ui_variant`, `uiVariant` | непустая строка |
-| special-offer gate | `specialOffer`, `special_offer`, `specialoffer`, `coupon`, `cupon`, `kupon` | bool/number/boolean string |
-| legacy offer window | `specialOfferDurationHours`, `special_offer_duration_hours`, `couponDurationHours`, `coupon_duration_hours` | compatibility metadata; standard resolver игнорирует |
-| legacy offer cooldown | `specialOfferCooldownHours`, `special_offer_cooldown_hours`, `couponCooldownHours`, `coupon_cooldown_hours` | compatibility metadata; standard resolver игнорирует |
+| special-offer gate | `special_offer` | только boolean `true` / `false` |
+| legacy offer window | legacy metadata | игнорируется: окно фиксировано 24 часа |
+| legacy offer cooldown | legacy metadata | игнорируется: cooldown фиксирован 24 часа |
 | crossed price text | `specialOfferCrossedPriceText`, `special_offer_crossed_price_text`, `crossedPriceText`, `crossed_price_text` | непустая строка |
 | crossed numeric value | `specialOfferCrossedPriceValue`, `special_offer_crossed_price_value`, `crossedPriceValue`, `crossed_price_value` | decimal `> 0` |
 | price multiplier | `specialOfferCrossedPriceMultiplier`, `special_offer_crossed_price_multiplier`, `crossedPriceMultiplier`, `crossed_price_multiplier`, `old_price_multiplier` | decimal `> 0` |
@@ -70,9 +71,8 @@ Fallback не исправляет conflict/malformed. Для остальных
 duration не является gate и не может выключить валидное
 `special_offer = true`.
 
-Special-offer aliases используют ещё более простой fail-closed результат: любой
-`false` выключает campaign; malformed/conflict без полного набора valid `true` тоже
-даёт `isEnabled == false`; отсутствие gate не включает offer.
+Special-offer gate fail-closed: только boolean `true` включает offer. `false`,
+строка, число, malformed value и отсутствие поля дают `isEnabled == false`.
 
 ## Собственный registry
 
@@ -169,23 +169,24 @@ Host-level `SpecialOfferConfiguration?` — ещё более ранний gate:
 - non-`nil` — resolver может загрузить placement, но enabled gate и provenance,
   разрешающий Special Offer, всё равно обязательны.
 
-Если special-offer placement ушёл на fallback `.main`, offer допустим только
-когда реально загруженный payload `.main` содержит валидный enabled block.
+Gate всегда читается из фактически загруженного обычного paywall `main`. После
+его разрешения продукты загружаются из отдельного placement `special_offer`.
 Для Special Offer `.verifiedFreshRemote` и `.providerCacheFallbackPossible` разрешены;
 `.platformCache` и `.legacyUnqualified` его не разрешают.
 Для кампании используется обычный `AdaptyPaywallRepository`: собственный Adapty
 REST или отдельный repository не требуется.
 
-При `special_offer = true` resolver возвращает `.eligible` с готовым paywall.
-`windowDuration`, `cooldownDuration`, persisted state и trusted clock не участвуют
-в eligibility. Authorization всегда содержит визуальный цикл
-`24:00:00 -> 00:00:00 -> 24:00:00`, который не закрывает offer.
+При `special_offer = true` resolver проверяет active entitlement и persisted
+cadence по trusted clock. Первый подходящий close открывает фиксированное окно
+24 часа; от точного конца окна начинается cooldown 24 часа. Внутри окна
+resolver возвращает `.eligible` с готовым paywall.
 Готовый payload передаётся через `PaywallViewModel(initialPayload:)`, а
 `SpecialOfferResolution.presentationAuthorization` — через
 `BroadPaywallConfiguration.specialOfferAuthorization`. Optional badge/crossed
 text или value/multiplier/period скрываются по одному, если их нет. Countdown
 строится только из authorization, привязанной к тому же presentation,
-и не является remote campaign timer.
+На нуле countdown закрывает экран и переводит цикл в cooldown. Выключение
+флага, подтверждённая purchase или restore сбрасывают state.
 
 [Полный lifecycle special offer →](SpecialOffer.md)
 

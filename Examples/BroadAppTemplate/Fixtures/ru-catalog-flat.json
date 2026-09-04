@@ -8,6 +8,7 @@
       "period": "month",
       "price": 499,
       "currency": "RUB",
+      "isSpecialOffer": true,
       "paymentMethods": ["sbp", "card"]
     },
     {

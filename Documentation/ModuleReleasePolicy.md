@@ -44,15 +44,15 @@ Canonical schema лежит в `Compatibility/current.yml` integration repositor
 
 ```yaml
 schema: 1
-platform_set: "1.2.0"
+platform_set: "1.3.0"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
 modules:
   BroadCore: "1.2.0"
   BroadExtensions: "1.0.1"
-  BroadMonetization: "1.2.0"
-  BroadUIFlows: "1.0.1"
+  BroadMonetization: "1.3.1"
+  BroadUIFlows: "1.1.0"
 verification:
   status: passed
   command: "bash Scripts/agent_gate.sh"

@@ -1,6 +1,6 @@
 # QA handoff: BroadApps iOS Platform и BroadAppTemplate
 
-Дата: 2026-08-24. Этот пакет передаёт проверяемую платформу/template. Он не
+Дата: 2026-09-04. Этот пакет передаёт проверяемую платформу/template. Он не
 является отчётом какого-либо конкретного приложения.
 
 ## 1. Что готово
@@ -27,7 +27,7 @@
 | Основной flow | Onboarding → initial paywall policy → main |
 | Subscription paywall | Fixture subscriptions; premium только после entitlement |
 | Token paywall | Consumables, backend confirmation/retry/recovery, без premium |
-| Special offer | Subscription paywall → крестик без покупки → resolver → optional второй paywall; confirmed purchase/restore обходит offer; debug-state отдельно показывает route и presentation |
+| Special offer | Main paywall → close без покупки → strict gate → persisted 24h window → отдельный placement; на нуле UI закрывается и начинается 24h cooldown; purchase/restore сбрасывают cycle |
 | RU Billing | Release требует verified-fresh `ru_pay`; Debug tri-state проверяет UI/gates; настоящая оплата не запускается |
 | Loader и ошибки | Немедленный spinner, disabled double tap, error и Retry |
 | Аналитика | Общий recorder, видимый refresh и clear feedback |
@@ -44,7 +44,7 @@
 - onboarding 1/2/3/4/8 страниц, custom/disabled/invalid;
 - initial paywall once/every cold launch/disabled;
 - entitlement active/inactive/unknown/timeout/StoreKit fallback;
-- special offer absent/false/true/main fallback/platform cache/looping timer/no flow loop;
+- special offer absent/false/true/main fallback/platform cache, persisted window/cooldown и expiry без visual loop;
 - RU verified true/provider false, Adapty-fallback rejection, platform-cache rejection и Debug follow/force-on/force-off;
 - token credited/pending/retry/cancel/failure/offline/reconciliation/recovery;
 - все девять карточек на маленьком и большом iPhone Simulator.

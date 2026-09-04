@@ -113,6 +113,7 @@ final class AppFlowSceneViewModel: ObservableObject {
     ) {
         switch completion {
         case .purchased, .restored:
+            specialOfferViewModel?.confirmedPurchaseOrRestore()
             activeSpecialOfferViewModel = nil
             coordinator.subscriptionDidBecomeActive()
         }
@@ -140,6 +141,7 @@ final class AppFlowSceneViewModel: ObservableObject {
     ) {
         switch outcome {
         case .restored:
+            specialOfferViewModel?.confirmedPurchaseOrRestore()
             coordinator.subscriptionDidBecomeActive()
             notice = AppFlowNotice(
                 title: "Покупка восстановлена",

@@ -89,8 +89,8 @@ hard policy: disabled каталог не может запереть польз
 - `badge`, `crossedPrice/crossedValue`, `priceMultiplier` и `periodText` показываются только при наличии;
 - пропущенное поле скрывает только свой элемент;
 - countdown получает `SpecialOfferCountdownAuthorization` из verified resolution;
-- countdown зациклен `24:00:00 -> 00:00:00 -> 24:00:00`;
-- ноль не скрывает metadata, не снимает selection и не блокирует CTA;
+- countdown идёт до точного конца persisted-окна 24 часа;
+- на нуле экран закрывается и начинается фиксированный cooldown 24 часа;
 - числа локализуются, но не вычисляются из цены продукта.
 
 Remote metadata и timer разрешены только когда
@@ -98,9 +98,9 @@ Remote metadata и timer разрешены только когда
 совпадает с текущим payload. Это не даёт cached/другой презентации унаследовать
 чужой special-offer gate.
 
-Таймер обновляет только текст раз в секунду. Он не создаёт expiration task в
-`PaywallViewModel`; product selection, checkout methods и entitlement flow от него не
-зависят.
+Таймер обновляет текст раз в секунду и создаёт cancellable expiration task в
+`PaywallViewModel`. После expiry selection и purchase блокируются до закрытия,
+а следующий показ запрещён cadence state на время cooldown.
 
 `PaywallViewModel(initialPayload:)` позволяет передать payload, уже проверенный `ResolveSpecialOfferUseCase`, без повторного placement-запроса. Shown analytics и hard-close delay стартуют только при фактическом `onAppear`.
 

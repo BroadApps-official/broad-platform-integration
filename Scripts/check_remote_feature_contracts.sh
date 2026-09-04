@@ -57,6 +57,10 @@ forbid_pattern() {
 }
 
 example_environment_file="$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Monetization/ExampleMonetizationEnvironment.swift"
+example_fixtures_file="$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Monetization/ExampleRemoteFeatureFixtures.swift"
+example_configuration_file="$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Infrastructure/Configuration/AppConfiguration.swift"
+ru_catalog_fixture="$platform_root/Examples/BroadAppTemplate/Fixtures/ru-catalog-flat.json"
+countdown_probe="$platform_root/Scripts/ContractProbes/SpecialOfferCountdownProbe.swift"
 
 echo "Remote Config integration contract matrix"
 
@@ -89,6 +93,34 @@ require_pattern \
     "Host template unlocks RU Billing manual override only in DEBUG" \
     "$example_environment_file" \
     '#if[[:space:]]+DEBUG(?s:.*?)RUBillingDebugOverrideStore\(allowsManualOverrides:[[:space:]]*true\)(?s:.*?)#else(?s:.*?)RUBillingDebugOverrideStore\(\)(?s:.*?)#endif'
+
+require_pattern \
+    "Host example persists the canonical Special Offer cadence" \
+    "$example_environment_file" \
+    'PersistedSpecialOfferStateRepository\(store:[[:space:]]*stateStore\)(?s:.*?)clock:[[:space:]]*SpecialOfferClock(?s:.*?)entitlementStatusProvider:[[:space:]]*entitlementStatusProvider'
+
+require_pattern \
+    "Special Offer gate fixture belongs to the ordinary paywall" \
+    "$example_fixtures_file" \
+    'specialOfferEnabled[[:space:]]+where[[:space:]]+placementID[[:space:]]*==[[:space:]]*\.main'
+
+require_pattern \
+    "RU catalog fixture marks the exact Special Offer row" \
+    "$ru_catalog_fixture" \
+    '"isSpecialOffer"[[:space:]]*:[[:space:]]*true'
+
+require_pattern \
+    "Integration countdown probe stays expired at and after zero" \
+    "$countdown_probe" \
+    'check\(elapsed:[[:space:]]*86_400,[[:space:]]*expected:[[:space:]]*0\)(?s:.*?)check\(elapsed:[[:space:]]*86_401,[[:space:]]*expected:[[:space:]]*0\)(?s:.*?)does not loop'
+
+forbid_pattern \
+    "Host example contains no obsolete looping Special Offer fixture" \
+    'specialOfferLoopingTimer|special-offer-looping-timer' \
+    "$example_configuration_file" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate" \
+    "$platform_root/Examples/BroadAppTemplate/README.md" \
+    --glob '*.swift' --glob '*.md'
 
 forbid_pattern \
     "Integration contains no second client-side experiment randomizer" \

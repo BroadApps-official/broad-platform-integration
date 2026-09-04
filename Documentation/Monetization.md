@@ -415,10 +415,12 @@ Resolver вызывается только после крестика перв�
 Adapty REST/repository не нужен. При fallback решение принимает только реально
 загруженный `.main` payload. Display-поля остаются optional.
 
-`special_offer = true` — единственный campaign gate. Resolver не читает
-`windowDuration`, `cooldownDuration`, persisted state или clock. Presentable
-result всегда содержит opaque `presentationAuthorization`, привязанный к
-тому же `PaywallPresentationID`, и визуальный цикл 24 часа:
+Строгий boolean `special_offer = true` из Remote Config обычного paywall —
+единственный gate. Resolver проверяет active entitlement и persisted-цикл по
+trusted clock: окно 24 часа, затем cooldown 24 часа от точного конца окна.
+После разрешения загружается отдельный placement `special_offer` со всеми
+продуктами 1:1. Presentable result содержит opaque
+`presentationAuthorization`, привязанный к тому же `PaywallPresentationID`.
 
 ```swift
 guard let payload = resolution.paywall,
@@ -441,8 +443,9 @@ let viewModel = PaywallViewModel(
 `initialPayload` исключает повторный placement request. Только совпавшая authorization
 разрешает renderer-у прочитать offer metadata и запустить визуальный timer;
 перенос remote config на другой payload невозможен. Таймер идёт от
-`24:00:00` до `00:00:00`, затем сбрасывается на `24:00:00` и не скрывает
-offer. Общий renderer показывает optional badge, crossed text/value,
+`24:00:00` до `00:00:00`, после чего блокирует действие и закрывает экран.
+С этого момента cadence state запрещает новый показ на 24 часа. Общий renderer
+показывает optional badge, crossed text/value,
 multiplier и period только при наличии соответствующего значения.
 [Special Offer guide →](SpecialOffer.md).
 

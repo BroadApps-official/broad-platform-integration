@@ -2,126 +2,54 @@
 
 ## Результат
 
-`PASS` — полный local gate и clean-clone module gates прошли 4 сентября
-2026 года. Четыре public modules опубликованы как согласованный platform set
-`1.2.0`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
-`BroadMonetization 1.2.0` и `BroadUIFlows 1.0.1`. Host example подключает
-нужные products напрямую, а integration repository фиксирует этот проверенный
-exact-набор без обязательного umbrella.
+`PASS` — 4 сентября 2026 года полный `bash Scripts/agent_gate.sh` прошёл для
+platform set `1.3.0`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
+`BroadMonetization 1.3.1` и `BroadUIFlows 1.1.0`.
 
-Scope результата — только `BroadAppsIOSPlatform` и `BroadAppTemplate`. Он не
-переносится автоматически ни на одно приложение, созданное поверх платформы.
+Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. Настоящие
+purchase, restore и RU-платежи не запускались.
 
 ## Что подтверждено
 
-- правила, архитектура, privacy, documentation links и README assets;
-- публичные `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
-  `BroadMonetization 1.2.0` и `BroadUIFlows 1.0.1`, каждый из clean clone;
-- `BroadSupportLogRecorder` и `CompositeBroadLogger` дают шаблону
-  актуальный `support-log.txt` без fixture-строки в production flow;
-- campaign-driven Special Offer остаётся отдельным opt-in путём:
-  он использует server-synchronized time и цикл «сутки оффера →
-  тихие сутки», не меняя флаговый resolver;
-- единая compatibility matrix сверяет YAML, SwiftPM/XcodeGen declarations,
-  оба lock-файла и release evidence для каждой версии отдельно;
-- SwiftFormat и SwiftLint без нарушений;
-- Swift Package и iPhone example в Debug/Release Simulator;
-- Release generic iOS device compile без подписи;
-- две live Adapty configurations только компиляцией, без финансовых действий;
-- полная fixture-матрица AppFlow, entitlement, special offer и token flow;
-- карточка Special Offer проходит subscription paywall → close без покупки →
-  resolver → offer; confirmed completion первого paywall обходит offer; каждый
-  повторный вход получает новую presentation authorization, а события обоих
-  paywall попадают в общий process recorder;
-- README показывает приложенную пару design-reference экранов и явно отделяет
-  app-owned визуал от обязательной последовательности переходов;
-- Debug refresh аналитики показывает spinner, timestamp и явное empty state;
-- девять карточек каталога на маленьком и большом iPhone Simulator;
-- clean install, ATT после видимого onboarding, cold/relaunch и
-  background/foreground;
-- typed logs, scoped Debug Keychain cleanup, privacy manifest и отсутствие
-  Debug-каталога в Release;
-- token recovery возвращает полный backend balance авторизованного app account;
-  transaction/checkout IDs используются только для exactly-once fulfillment;
-- Usedesk contract хранит source token на backend, а account-scoped Keychain
-  использует только как cache/pending sync без device ID identity;
-- `stream_example_logs.sh` сразу показывает safe typed OSLog, корректно
-  различает переименованные iPhone Simulator, объясняет выбор UDID и спокойно
-  завершается по `Control-C`;
-- debug-состояние AppFlow различает стабильный route и presentation
-  `subscription-paywall` / `special-offer-resolver` / `special-offer`;
-- README и developer guide согласованы для работы с агентом и вручную:
-  `unresolved`/timeout разрешают обычный main без premium, а pending не
-  превращается в успех;
-- создание любого host app разделено на preflight, Integration Plan, skeleton,
-  vertical slices, functional, visual и acceptance stages; старый монолитный
-  build prompt удалён и запрещён documentation gate;
-- универсальный копируемый Integration Plan отделяет platform-owned contracts
-  от app-owned экранов, backend hooks и решений разработчика;
-- универсальный app integration contract, Project Delivery checklist,
-  functional-review checkpoint и QA handoff без привязки к номеру приложения.
-- в Release доступность RU Billing определяется только verified-fresh
-  `ru_pay = true`; SDK cache, Dashboard fallback и кеш `BroadMonetization` не
-  авторизуют RU methods, собственного app-default `true` нет;
-- ручное `ru_pay`-переопределение имеет три режима (`как в Adapty`, `включить`,
-  `выключить`), хранится только в процессе, а template UI и store
-  разблокируются только под `#if DEBUG`; default store fail-closed к
-  Adapty и не обходит host configuration, контекст устройства, RU-каталог,
-  backend authorization, backend kill switch или entitlement;
-- причина доступности RU Billing выводится в Console типизированным safe-log без
-  конфигурационного payload, идентификаторов пользователя и платёжных данных.
-
-Настоящие purchase, restore и RU-платежи не запускались.
+- strict boolean `special_offer = true` читается из Remote Config обычного
+  paywall; отсутствующее, ложное или не-bool значение fail-closed;
+- после gate загружается отдельный placement `special_offer`, все продукты
+  сохраняются 1:1 в provider order без filter/sort/dedup;
+- первый подходящий close запускает persisted-окно 24 часа, затем ровно от его
+  конца идёт cooldown 24 часа; countdown заканчивается на нуле и закрывает UI;
+- flag off, confirmed purchase и restore сбрасывают cycle; active entitlement
+  блокирует offer до загрузки второго paywall;
+- RU Special Offer выбирает только backend row с `isSpecialOffer`, исключает её
+  из обычного paywall и не подставляет обычный тариф;
+- A/B-тесты RU Billing не выдаются за готовую функцию и не имеют инструкции по
+  настройке;
+- `ru_pay` по-прежнему требует verified-fresh payload и RU Storefront либо
+  RU-регион iPhone; язык ничего не включает;
+- SwiftFormat, SwiftLint, architecture/privacy/docs checks, Package build,
+  BroadAppTemplate Debug/Release Simulator, generic iOS compile и две live
+  Adapty schemes прошли;
+- Module quality и Release workflows для `BroadMonetization 1.3.1` и
+  `BroadUIFlows 1.1.0` завершились успешно, GitHub Releases опубликованы.
 
 ## Отчёты
 
-- [`TemplateAcceptanceReport.md`](TemplateAcceptanceReport.md) — фактическая
-  functional acceptance;
-- [`MidpointAudit.md`](MidpointAudit.md) — аудит первой половины работ;
-- [`SecurityPrivacyReview.md`](SecurityPrivacyReview.md) — security/privacy;
-- [`SelfReview.md`](SelfReview.md) — финальный developer self-review;
-- [`QAHandoff.md`](QAHandoff.md) — пакет передачи QA;
-- [`ApplicationIntegrationContract.md`](ApplicationIntegrationContract.md) —
-  универсальная граница platform и любого host app.
-- [`AppCreationWorkflowAudit.md`](AppCreationWorkflowAudit.md) — midpoint и
-  финальный аудит поэтапного создания приложений.
+- [`TemplateAcceptanceReport.md`](TemplateAcceptanceReport.md)
+- [`SecurityPrivacyReview.md`](SecurityPrivacyReview.md)
+- [`QAHandoff.md`](QAHandoff.md)
+- [`ApplicationIntegrationContract.md`](ApplicationIntegrationContract.md)
 
 ## Границы результата
 
-- Обязательная матрица использует `Team = None`, iPhone Simulator и generic
-  unsigned compile; платный аккаунт и Signing Team не требуются.
-- Доступный компании ручной запуск на iPhone выполняется отдельно и не является
-  blocker-ом platform/template.
-- Каждый host app отдельно заполняет
-  [`Documentation/ProjectDelivery.md`](../Documentation/ProjectDelivery.md) по
-  своим Kaiten/design/backend/configuration данным.
-- Независимый cold-read корневого README новым человеком остаётся полезным
-  handoff, но не меняет технический platform `PASS`.
+- Проверка использует `Team = None`, iPhone Simulator и generic unsigned iOS.
+- Реальные StoreKit/RU операции и внешние кабинеты не изменяются.
+- Каждый host app отдельно подставляет public key, placements, product IDs,
+  backend и legal configuration текущего проекта.
 
-## Как получить свежий результат после своих изменений
-
-С автоматическим исправлением:
-
-```bash
-./Scripts/agent_review_and_fix.sh
-```
-
-Только проверить:
+## Как повторить
 
 ```bash
 bash Scripts/agent_gate.sh
 ```
 
-Успешный terminal output заканчивается строкой
+Успешный output заканчивается строкой
 `BroadApps iOS Platform agent gate passed.`
-
-<details>
-<summary><strong>Технический source snapshot последнего PASS</strong></summary>
-
-Формат локального отчёта описан в
-[`AutomationReports/README.md`](AutomationReports/README.md). Команда
-`agent_review_and_fix.sh` создаёт `AutomationReports/latest.md` локально; этот
-runtime-файл намеренно не хранится в Git и поэтому не является ссылкой,
-обязательной для clean clone.
-
-</details>

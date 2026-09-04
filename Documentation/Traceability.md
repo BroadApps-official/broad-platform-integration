@@ -15,7 +15,7 @@
 | Проверка premium после purchase/restore | Entitlement engine | [Entitlements](Entitlements.md) |
 | СБП, карта, чек, согласия и управление RU-подпиской | RU Billing adapters и UI | [RU Billing](RUBilling.md) |
 | Опциональный special offer | Special offer contracts | [Special Offer](SpecialOffer.md) |
-| Coupon-offer с Apple/СБП/картой | RU catalog coupon + app-owned campaign/timer policy | [Спешл оффер RU Billing](RUSpecialOffer.md) |
+| Special Offer с RU checkout | strict main gate + общий persisted cycle + backend `isSpecialOffer` product | [Спешл оффер RU Billing](RUSpecialOffer.md) |
 | Provider Remote Config против platform cache | Provenance capability + обязательная contract matrix | [Remote Config](RemoteConfig.md), [ADR-0005](ADR/0005-provider-managed-remote-feature-gates.md) |
 | Общая аналитика показов и покупок | Monetization analytics pipeline | [Analytics](Analytics.md) |
 | Восстановление после переустановки | Account recovery + полный backend balance; purchase ID только для duplicate-safe fulfillment | [Account Recovery](AccountRecovery.md) |

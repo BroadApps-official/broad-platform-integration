@@ -273,7 +273,6 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
     case specialOfferDisabled = "special-offer-disabled"
     case specialOfferPlatformCache = "special-offer-platform-cache"
     case specialOfferMainFallback = "special-offer-main-fallback"
-    case specialOfferLoopingTimer = "special-offer-looping-timer"
     case ruPayProviderEnabled = "ru-pay-provider-enabled"
     case ruPayProviderDisabled = "ru-pay-provider-disabled"
     case ruPayAdaptyFallbackRejected = "ru-pay-adapty-fallback-rejected"
@@ -288,8 +287,7 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
         case .specialOfferEnabled,
              .specialOfferDisabled,
              .specialOfferPlatformCache,
-             .specialOfferMainFallback,
-             .specialOfferLoopingTimer:
+             .specialOfferMainFallback:
             true
         case .ruPayProviderEnabled,
              .ruPayProviderDisabled,
@@ -313,8 +311,7 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
              .specialOfferEnabled,
              .specialOfferDisabled,
              .specialOfferPlatformCache,
-             .specialOfferMainFallback,
-             .specialOfferLoopingTimer:
+             .specialOfferMainFallback:
             false
         }
     }

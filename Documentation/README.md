@@ -27,7 +27,7 @@ Markdown в repositories остаётся canonical source: его можно с
 | Обработать внезапное отключение сети | [Network Interruptions](NetworkInterruptions.md) |
 | Подключить полный СБП/карта flow | [RU Billing](RUBilling.md) |
 | Добавить второе предложение с Apple/СБП/картой | [Спешл оффер RU Billing](RUSpecialOffer.md) |
-| Настроить кабинет, продукт и A/B-тест RU Billing | [Инструкция аккаунт-менеджеру](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/ru-billing-account-manager) |
+| Уточнить статус RU Billing и точный продукт Special Offer | [Инструкция аккаунт-менеджеру](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/ru-billing-account-manager) |
 | Получить RU-продукты с backend | [Backend product catalog](BackendProductCatalog.md) |
 | Настроить adaptive paywall | [Paywall UI](PaywallUI.md) |
 | Настроить onboarding, ATT и Rate Us | [Onboarding & ATT](OnboardingAndATT.md) |

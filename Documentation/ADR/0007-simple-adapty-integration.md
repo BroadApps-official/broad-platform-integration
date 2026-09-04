@@ -55,20 +55,17 @@ Adapty access-level adapter остаётся advanced extension point для hos
 
 Special Offer остаётся только вторым paywall после закрытия первого без
 confirmed purchase/restore. Единственный campaign gate — явный
-`special_offer = true` в фактически загруженном provider payload.
+`special_offer = true` в Remote Config обычного paywall.
 
-Таймер — визуальный циклический hardcode:
+Первый подходящий close запускает сохраняемое окно:
 
 ```text
-24:00:00 → 00:00:00 → 24:00:00
+24 часа показа → 24 часа cooldown → новое окно
 ```
 
-Он не хранит дату, не использует server/device clock, не закрывает offer на нуле
-и не участвует в purchase eligibility.
-
-Schedule, динамическая длительность, trusted clock и новые правила RU Billing
-отложены до отдельного подтверждённого product contract. В текущий релиз они не
-входят.
+State repository и trusted clock обязательны. Cooldown начинается ровно в
+момент окончания окна, даже если приложение не запущено. Countdown закрывает
+экран на нуле. Flag off, confirmed purchase и restore сбрасывают цикл.
 
 ### Token paywall
 
@@ -82,11 +79,11 @@ Token paywall загружает свой placement и показывает вс
 - разработчик не копирует identity/verifier boilerplate без реальной задачи;
 - внутренние safety boundaries покупок сохраняются;
 - platform defaults не подменяют Dashboard catalog;
-- будущие финансовые и временные правила не внедряются до их согласования.
+- временной контракт не подменяется экранным визуальным loop.
 
 ## Проверка решения
 
 - `BroadMonetization` module gate компилирует basic и advanced initializer;
-- Remote Config matrix подтверждает `special_offer` и 24-часовой visual loop;
+- Remote Config matrix подтверждает strict `special_offer` и persisted 24/24 cadence;
 - module/integration gates проверяют отсутствие filter/sort/dedup products;
 - `BroadAppTemplate` использует StoreKit-only Apple entitlement composition.

@@ -157,11 +157,6 @@ import UIKit
                         "Сымитировать fallback offer → main.",
                         "Offer не маскируется обычным main paywall."
                     ),
-                    .init(
-                        "-special-offer-looping-timer",
-                        "Показать визуальный цикл 24 часа.",
-                        "Счётчик идёт от 24:00:00 до 00:00:00, затем начинается снова и не закрывает offer."
-                    ),
                     .init("-ru-pay-provider-enabled", "Включить RU Pay из provider config.", "Paywall показывает разрешённые RU-методы."),
                     .init("-ru-pay-provider-disabled", "Выключить RU Pay из provider config.", "Явный false оставляет только Apple."),
                     .init(
