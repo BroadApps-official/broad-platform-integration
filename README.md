@@ -128,10 +128,10 @@ Host app больше не зависит от общего изменяемог
 | Repository | Роль | Подключается host app |
 |---|---|---:|
 | [`broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios) | `BroadExtensions` · [`1.0.1`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) | да, по надобности |
-| [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.1.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.1.0) | да, по надобности |
-| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`1.1.0`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.1.0) | да, по надобности |
+| [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.2.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.2.0) | да, по надобности |
+| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`1.2.0`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.2.0) | да, по надобности |
 | [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`1.0.1`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.0.1) | да, по надобности |
-| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`1.1.0`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/1.1.0) | нет, это catalog/evidence |
+| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`1.2.0`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/1.2.0) | нет, это catalog/evidence |
 | [`broad-docs`](https://github.com/BroadApps-official/broad-docs) | публичный сайт и cross-module guides | нет |
 
 > [!NOTE]
@@ -166,7 +166,7 @@ File → Add Package Dependencies…
 dependencies: [
     .package(
         url: "https://github.com/BroadApps-official/broad-core-ios.git",
-        from: "1.1.0"
+        from: "1.2.0"
     )
 ]
 ```
@@ -181,7 +181,7 @@ host project всё ещё ссылается на старый private URL
 Release-проект должен ссылаться на опубликованный SemVer tag из
 compatibility catalog, а не на branch или локальную checkout-папку.
 
-`from: "1.1.0"` разрешает совместимые версии до следующего major. Для точного
+`from: "1.2.0"` разрешает совместимые версии до следующего major. Для точного
 воспроизведения verified set или на время legacy migration выберите exact
 catalog version; фактический результат resolve фиксирует `Package.resolved`.
 
@@ -376,12 +376,12 @@ Confirmed purchase/restore первого paywall ведёт в main и обхо
   при реальном fallback;
 - массив не фильтруется, не сортируется и не обрезается;
 - purchase использует product из того же ответа и не перезагружает paywall;
-- таймер — цикл `24:00:00 → 00:00:00 → 24:00:00`, без schedule, server clock
-  и скрытого срока действия.
+- таймер — цикл `24:00:00 → 00:00:00 → 24:00:00`, без schedule, server clock и скрытого срока действия.
+
+`BroadMonetization 1.2.0` также даёт отдельный opt-in resolver «кампания по наличию»: собственный placement, свежий непустой payload и server-time cadence; `false` — kill switch.
 
 Verifier, отдельный REST transport и access level не требуются для базовой загрузки paywall.
-Две карточки приложение задаёт явно в своём UI; общий pipeline платформы сохраняет весь ответ.
-[Полное объяснение Special Offer на публичном сайте →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/special-offer)
+Две карточки задаёт host UI; общий pipeline платформы сохраняет весь ответ. [Полное объяснение →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/special-offer)
 
 ### RU Billing
 

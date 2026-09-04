@@ -1,9 +1,15 @@
-# Special Offer: второй paywall после закрытия первого
+# Special Offer: два совместимых режима второго paywall
 
 ## Коротко
 
-Special Offer — опциональный второй paywall. Его единственный campaign gate —
-`special_offer = true` в Remote Config текущего Adapty payload.
+Special Offer — опциональный второй paywall. Проект выбирает **один** resolver
+в composition root:
+
+1. стандартный приоритетный флаговый режим с `special_offer = true`;
+2. отдельный opt-in режим «кампания по наличию» из BroadMonetization `1.2.0`.
+
+Второй режим не меняет первый и не должен подключаться к уже работающему
+флаговому проекту без явного решения host app.
 
 ```text
 обычный subscription paywall
@@ -29,7 +35,9 @@ Special Offer не заменяет initial paywall, не показываетс
 backend, СБП/картой, отдельным eligibility-window и browser reconciliation
 описан в [«Спешл оффер RU Billing»](RUSpecialOffer.md).
 
-## Что включает и выключает offer
+## Стандартный приоритетный режим: флаговый resolver
+
+### Что включает и выключает offer
 
 Для показа одновременно нужны три условия:
 
@@ -112,7 +120,67 @@ Legacy-поля `windowDuration` и `cooldownDuration`, старые state repos
 apps, но стандартный resolver их не читает. Малформатное duration-поле больше не
 может перевести явный `special_offer = true` в false.
 
-Исполняемая проверка точек цикла:
+## Параллельный opt-in режим: кампания по наличию
+
+Этот путь использует `ResolveSpecialOfferCampaignUseCase`. Он подходит проекту,
+где сам опубликованный paywall собственного placement означает наличие
+кампании, а обязательного `special_offer = true` рядом с ним нет.
+
+Кампания доступна только когда одновременно выполнены условия:
+
+- активная подписка не подтверждена;
+- server time синхронизирован (политика по умолчанию — fail-closed);
+- provider вернул paywall именно запрошенного campaign placement, без fallback;
+- payload не восстановлен из platform cache и разрешает presentation;
+- `special_offer` не равен явному `false` — отсутствующий ключ нейтрален;
+- полный массив продуктов не пуст.
+
+Каталог остаётся provider-owned: все occurrence передаются 1:1 в исходном
+порядке, включая дубли SKU. Фильтрация, сортировка, `prefix`, словарь по product
+ID и выбор «нужных» продуктов запрещены так же, как в стандартном режиме.
+
+`SpecialOfferCadence` хранит сутки доступного оффера, затем сутки тишины.
+Границы вычисляются по `ServerTimeProviderProtocol`; часы устройства не
+используются без явной осознанной политики host app. Подтверждённая purchase или
+restore очищает окно, а активная подписка отсекается до paywall/cache/network.
+
+`SpecialOfferCampaignCoordinator` слушает обычные monetization events: после
+закрытия отслеживаемого subscription paywall без покупки публикует решение в
+`decisions`, не следует за campaign placement и гасит окно после purchase или
+restore.
+
+```swift
+let campaignConfiguration = SpecialOfferCampaignConfiguration(
+    placementID: .specialOffer
+)
+let campaignResolver = ResolveSpecialOfferCampaignUseCase(
+    configuration: campaignConfiguration,
+    loadPaywallUseCase: services.loadPaywall,
+    windowRepository: PersistedSpecialOfferWindowStore(store: keyValueStore),
+    presentationLifecycle: services.paywallPresentationLifecycle,
+    entitlementStatusProvider: entitlementEngine,
+    serverTime: serverClock
+)
+let campaignCoordinator = SpecialOfferCampaignCoordinator(
+    resolve: campaignResolver,
+    followedPlacementIDs: [.main]
+)
+await analyticsRelay.connect(campaignCoordinator)
+
+for await outcome in campaignCoordinator.decisions {
+    guard case let .campaign(campaign) = outcome else { continue }
+    present(
+        placementID: campaign.placementID,
+        remaining: campaign.remainingTimeInterval
+    )
+}
+```
+
+Resolver возвращает placement, а не повторно используемый payload: экран
+загружает этот placement сам и владеет своей presentation. Decision-
+presentation resolver завершает самостоятельно.
+
+Исполняемая проверка точек цикла стандартного режима:
 
 ```bash
 bash Scripts/check_special_offer_runtime_contract.sh

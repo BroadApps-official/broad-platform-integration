@@ -3,6 +3,33 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## 1.2.0 — 2026-09-04
+
+### Changed
+
+- compatibility catalog обновлён до проверенного набора `BroadCore 1.2.0`,
+  `BroadExtensions 1.0.1`, `BroadMonetization 1.2.0` и
+  `BroadUIFlows 1.0.1`; exact-пины синхронизированы в SwiftPM, XcodeGen,
+  generated project и обоих lock-файлах;
+- `BroadAppTemplate` использует `BroadSupportLogRecorder` вместе с
+  `CompositeBroadLogger`: действие Contact Us теперь прикладывает реальные
+  безопасные typed-события текущего процесса, а не fixture-строку;
+- документация из объединённого developer change про support log включена в
+  основной контракт платформы;
+- добавлен отдельный opt-in режим Special Offer «кампания по наличию» из
+  `BroadMonetization 1.2.0`: собственный placement, свежий provider payload,
+  непустой полный каталог и server-synchronized cadence «сутки оффера — сутки
+  тишины»; существующий флаговый resolver не изменён и остаётся определяющим
+  для проектов, использующих `special_offer = true`;
+- в обоих режимах Adapty products передаются 1:1 в исходном порядке без
+  фильтрации, сортировки, дедупликации или скрытого выбора SKU.
+
+### Why
+
+Каталог `1.1.0` позволял host-приложению обновить Core или Monetization раньше
+проверенного межмодульного набора. Platform set `1.2.0` фиксирует уже
+опубликованные module tags и воспроизводимое release evidence одной версией.
+
 ## 1.1.0 — 2026-09-02
 
 ### Changed

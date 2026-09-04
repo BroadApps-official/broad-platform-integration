@@ -42,6 +42,7 @@ struct BroadAppTemplateApp: App {
                 tokenBalanceViewModel: compositionRoot.tokenBalanceViewModel,
                 rootViewModel: compositionRoot.rootViewModel,
                 analyticsViewModel: compositionRoot.analyticsViewModel,
+                supportEmailRequest: compositionRoot.supportEmailRequest,
                 debugSettingsViewModel: compositionRoot.debugSettingsViewModel
             )
         #else
@@ -54,7 +55,8 @@ struct BroadAppTemplateApp: App {
                 tokenPaywallViewModel: compositionRoot.tokenPaywallViewModel,
                 tokenBalanceViewModel: compositionRoot.tokenBalanceViewModel,
                 rootViewModel: compositionRoot.rootViewModel,
-                analyticsViewModel: compositionRoot.analyticsViewModel
+                analyticsViewModel: compositionRoot.analyticsViewModel,
+                supportEmailRequest: compositionRoot.supportEmailRequest
             )
         #endif
     }

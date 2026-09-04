@@ -13,6 +13,7 @@ struct AppFlowRootView: View {
     private let tokenBalanceViewModel: ExampleTokenBalanceViewModel
     private let rootViewModel: RootViewModel
     private let analyticsViewModel: ExampleAnalyticsViewModel
+    private let supportEmailRequest: () -> BroadSupportEmailRequest?
     #if DEBUG
         private let debugSettingsViewModel: ExampleDebugSettingsViewModel
     #endif
@@ -28,6 +29,7 @@ struct AppFlowRootView: View {
             tokenBalanceViewModel: ExampleTokenBalanceViewModel,
             rootViewModel: RootViewModel,
             analyticsViewModel: ExampleAnalyticsViewModel,
+            supportEmailRequest: @escaping () -> BroadSupportEmailRequest?,
             debugSettingsViewModel: ExampleDebugSettingsViewModel
         ) {
             self.coordinator = coordinator
@@ -39,6 +41,7 @@ struct AppFlowRootView: View {
             self.tokenBalanceViewModel = tokenBalanceViewModel
             self.rootViewModel = rootViewModel
             self.analyticsViewModel = analyticsViewModel
+            self.supportEmailRequest = supportEmailRequest
             self.debugSettingsViewModel = debugSettingsViewModel
         }
     #else
@@ -51,7 +54,8 @@ struct AppFlowRootView: View {
             tokenPaywallViewModel: BroadTokenPaywallViewModel,
             tokenBalanceViewModel: ExampleTokenBalanceViewModel,
             rootViewModel: RootViewModel,
-            analyticsViewModel: ExampleAnalyticsViewModel
+            analyticsViewModel: ExampleAnalyticsViewModel,
+            supportEmailRequest: @escaping () -> BroadSupportEmailRequest?
         ) {
             self.coordinator = coordinator
             _sceneViewModel = StateObject(wrappedValue: sceneViewModel)
@@ -62,6 +66,7 @@ struct AppFlowRootView: View {
             self.tokenBalanceViewModel = tokenBalanceViewModel
             self.rootViewModel = rootViewModel
             self.analyticsViewModel = analyticsViewModel
+            self.supportEmailRequest = supportEmailRequest
         }
     #endif
 
@@ -160,6 +165,7 @@ struct AppFlowRootView: View {
                 tokenPaywallViewModel: tokenPaywallViewModel,
                 tokenBalanceViewModel: tokenBalanceViewModel,
                 analyticsViewModel: analyticsViewModel,
+                supportEmailRequest: supportEmailRequest,
                 debugSettingsViewModel: debugSettingsViewModel
             )
         #else
@@ -169,7 +175,8 @@ struct AppFlowRootView: View {
                 specialOfferViewModel: catalogSpecialOfferViewModel,
                 tokenPaywallViewModel: tokenPaywallViewModel,
                 tokenBalanceViewModel: tokenBalanceViewModel,
-                analyticsViewModel: analyticsViewModel
+                analyticsViewModel: analyticsViewModel,
+                supportEmailRequest: supportEmailRequest
             )
         #endif
     }

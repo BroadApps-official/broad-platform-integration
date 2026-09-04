@@ -75,10 +75,17 @@
   прозрачно использовал свой provider cache. `ru_pay` имеет
   независимую более строгую capability и требует `.verifiedFreshRemote`.
   Paywall из cache BroadMonetization не может включить ни один флаг.
-- Special Offer показывается только вторым paywall после крестика первого.
-  Единственный campaign gate — `special_offer = true`; таймер визуальный и
-  циклический `24:00:00 -> 00:00:00 -> 24:00:00`, не использует clock/state и не
-  блокирует offer на нуле.
+- Стандартный приоритетный Special Offer показывается только вторым paywall
+  после крестика первого. Его единственный campaign gate — `special_offer = true`;
+  таймер визуальный и циклический `24:00:00 -> 00:00:00 -> 24:00:00`, не
+  использует clock/state и не блокирует offer на нуле.
+- Campaign-driven Special Offer — отдельный opt-in resolver, а не изменение
+  стандартного пути. В нём campaign определяется собственным placement,
+  свежим provider payload и непустым полным каталогом; отсутствующий
+  `special_offer` нейтрален, явный `false` остаётся kill switch. Cadence
+  «сутки показа → сутки тишины» использует server-synchronized time и по
+  умолчанию fail-closed до синхронизации. Проект выбирает один resolver в
+  composition root; продукты не фильтруются ни в одном режиме.
 - Adapty products всегда идут через `getPaywall -> getPaywallProducts -> 1:1
   mapping -> raw registry`; не создавай отдельный REST-транспорт, второй
   источник products или словарь, схлопывающий дубли SKU.

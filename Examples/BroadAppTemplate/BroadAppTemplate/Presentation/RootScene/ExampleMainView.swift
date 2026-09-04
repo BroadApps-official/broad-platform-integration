@@ -10,6 +10,7 @@ struct ExampleMainView: View {
     @ObservedObject var tokenPaywallViewModel: BroadTokenPaywallViewModel
     @ObservedObject var tokenBalanceViewModel: ExampleTokenBalanceViewModel
     let analyticsViewModel: ExampleAnalyticsViewModel
+    let supportEmailRequest: () -> BroadSupportEmailRequest?
 
     @State private var selectedScenario: ExampleScenarioRoute?
 
@@ -24,6 +25,7 @@ struct ExampleMainView: View {
             tokenPaywallViewModel: BroadTokenPaywallViewModel,
             tokenBalanceViewModel: ExampleTokenBalanceViewModel,
             analyticsViewModel: ExampleAnalyticsViewModel,
+            supportEmailRequest: @escaping () -> BroadSupportEmailRequest?,
             debugSettingsViewModel: ExampleDebugSettingsViewModel
         ) {
             self.rootViewModel = rootViewModel
@@ -32,6 +34,7 @@ struct ExampleMainView: View {
             self.tokenPaywallViewModel = tokenPaywallViewModel
             self.tokenBalanceViewModel = tokenBalanceViewModel
             self.analyticsViewModel = analyticsViewModel
+            self.supportEmailRequest = supportEmailRequest
             _debugSettingsViewModel = StateObject(
                 wrappedValue: debugSettingsViewModel
             )
@@ -43,7 +46,8 @@ struct ExampleMainView: View {
             specialOfferViewModel: ExampleSpecialOfferFixtureViewModel,
             tokenPaywallViewModel: BroadTokenPaywallViewModel,
             tokenBalanceViewModel: ExampleTokenBalanceViewModel,
-            analyticsViewModel: ExampleAnalyticsViewModel
+            analyticsViewModel: ExampleAnalyticsViewModel,
+            supportEmailRequest: @escaping () -> BroadSupportEmailRequest?
         ) {
             self.rootViewModel = rootViewModel
             self.paywallViewModel = paywallViewModel
@@ -51,6 +55,7 @@ struct ExampleMainView: View {
             self.tokenPaywallViewModel = tokenPaywallViewModel
             self.tokenBalanceViewModel = tokenBalanceViewModel
             self.analyticsViewModel = analyticsViewModel
+            self.supportEmailRequest = supportEmailRequest
         }
     #endif
 
@@ -259,7 +264,7 @@ private extension ExampleMainView {
             )
         case .contactUs:
             ExampleContactUsView(
-                request: AppConfiguration.supportEmailRequest
+                request: supportEmailRequest()
             )
         case .debugStorage:
             #if DEBUG
