@@ -1,5 +1,10 @@
 # Adapty experiments
 
+Эта страница описывает обычный Adapty lifecycle. Для RU-оплаты с
+BroadMonetization 1.4.1 доступен [отдельный opt-in путь](RUBillingExperiments.md):
+коды текущего варианта отправляются в backend RU Billing через assign → shown,
+без второго randomizer. При закрытом RU-gate остаётся показ в Adapty.
+
 > **Не смешивайте два источника сегмента.** Обычный paywall A/B назначает
 > Adapty. Запись RU Billing Experiment создаётся только для приложения, которое
 > явно использует RU experiment API. Если один тест независимо завести в обеих

@@ -34,6 +34,7 @@ Markdown в repositories остаётся canonical source: его можно с
 | Подключить общие extensions | [BroadExtensions](Extensions.md) |
 | Настроить placements и remote config | [Remote Config](RemoteConfig.md) |
 | Проверить эксперименты | [Experiments](Experiments.md) |
+| Подключить RU Billing A/B | [RUBillingExperiments](RUBillingExperiments.md) |
 | Подключить аналитику | [Analytics](Analytics.md) |
 | Добавить единую форму письма в поддержку | [Support Email](SupportEmail.md) |
 | Добавить онлайн-чат Usedesk в Settings | [Usedesk](Usedesk.md) |

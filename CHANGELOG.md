@@ -3,6 +3,24 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## 1.4.0 — 2026-09-08
+
+### Changed
+
+- Platform set обновлён до BroadMonetization 1.4.1; BroadUIFlows 1.1.0,
+  BroadCore 1.2.0 и BroadExtensions 1.0.1 сохраняют прежние версии.
+- Точные старые подписи initializer сохранены, включая передачу конструктора
+  как функции. В сравнении public API с 1.3.1 нет удалённых объявлений.
+- RU Billing A/B доступен отдельным optional подключением: один tracker
+  текущего RU composition, подтверждённый assign → shown и явный выбор
+  backend-продуктов. Обновление без tracker сохраняет прежнюю отправку показов.
+- Добавлены manual/agent маршруты интеграции, граница freshness и cutover
+  существующего A/B без двойных callbacks. Отметка «не поддержано» заменена
+  ссылкой на каноническую инструкцию модуля.
+- До module tag существующий BroadAppTemplate собран с candidate source и
+  прежним BroadUIFlows для Simulator и unsigned iOS. Итоговый набор проверяется
+  полным agent gate с точными публичными versions и lock pins.
+
 ## 1.3.0 — 2026-09-04
 
 ### Changed
