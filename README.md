@@ -129,9 +129,9 @@ Host app больше не зависит от общего изменяемог
 |---|---|---:|
 | [`broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios) | `BroadExtensions` · [`1.0.1`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) | да, по надобности |
 | [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.2.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.2.0) | да, по надобности |
-| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`1.5.2`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.5.2) | да, по надобности |
+| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`1.5.3`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.5.3) | да, по надобности |
 | [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`1.1.0`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.1.0) | да, по надобности |
-| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`1.5.0`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/1.5.0) | нет, это catalog/evidence |
+| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`1.5.1`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/1.5.1) | нет, это catalog/evidence |
 | [`broad-docs`](https://github.com/BroadApps-official/broad-docs) | публичный сайт и cross-module guides | нет |
 
 > [!NOTE]

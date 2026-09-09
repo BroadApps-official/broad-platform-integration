@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-monetization-ios.git",
       "state" : {
-        "revision" : "961867da18045ee49c2eb05dfeb00b0fdc15e4d4",
-        "version" : "1.5.2"
+        "revision" : "4a2684b45df5a61f2adec5f80dea6d8784b62232",
+        "version" : "1.5.3"
       }
     },
     {

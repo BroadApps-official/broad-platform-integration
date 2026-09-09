@@ -3,6 +3,16 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## 1.5.1
+
+### Fixed
+
+- Pin BroadMonetization 1.5.3: successful empty Adapty products trigger the
+  configured fresh RU catalog when either the device region or Storefront is
+  Russian. Received prohibitions and dedicated placement exclusions remain.
+- Add the local `-ru-provider-empty-products` scenario and clarify the exact
+  empty-response rule in the platform and agent guides. Public API unchanged.
+
 ## 1.5.0
 
 - Dedicated `tokens` and `special_offer` placements preserve their own catalog;

@@ -12,7 +12,7 @@ enum ExampleRUProviderFallback {
             message: "Предыдущий запрос пейвола отменён новым. Попробуйте ещё раз.",
             code: "example.paywall.stale"
         )
-        guard arguments.contains("-ru-provider-unavailable") else {
+        guard arguments.contains("-ru-provider-unavailable") || arguments.contains("-ru-provider-empty-products") else {
             return LoadPaywallUseCase(repository: provider, analytics: analytics, staleLoadError: error)
         }
         let region = ExampleRURegionalScenario.current(arguments: arguments)
@@ -32,6 +32,19 @@ enum ExampleRUProviderFallback {
 
 extension ExamplePaywallRepository {
     func loadRUFallbackAttempt(for placementID: PlacementID) async -> RUFallbackPaywallAttempt {
+        if arguments.contains("-ru-provider-empty-products") {
+            return RUFallbackPaywallAttempt(
+                outcome: .loaded(PaywallPayload(
+                    presentationID: .generated(),
+                    paywallReference: .init(rawValue: "example-empty-provider"),
+                    origin: .init(requestedPlacementID: placementID, resolvedPlacementID: placementID, catalogSource: .adapty),
+                    products: [],
+                    remoteConfiguration: .init(isRUBillingEnabled: !arguments.contains("-ru-provider-response-false")),
+                    fetchedAt: .now
+                )),
+                availability: .available
+            )
+        }
         guard arguments.contains("-ru-provider-unavailable") else {
             return await RUFallbackPaywallAttempt(outcome: loadPaywall(for: placementID), availability: .available)
         }

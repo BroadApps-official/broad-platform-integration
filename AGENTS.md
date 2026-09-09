@@ -64,8 +64,8 @@
 - Для стандартной верстки используй `BroadOnboardingView`. Для уникальной
   верстки используй logic-only `BroadOnboardingFlowHost`; не скрывай готовый
   экран и не копируй ATT/lifecycle-логику в приложение.
-- Конкретные Adapty placement ID задаёт host app; у любого placement есть резерв
-  на логический `main`.
+- Конкретные Adapty placement ID задаёт host app; обычные подписочные placements
+  используют резерв `main`, а `tokens` и `special_offer` сохраняют свои продукты.
 - Не фильтруй и не переупорядочивай продукты Adapty. UI обязан безопасно
   показывать любое количество продуктов, включая 0, 1 и дубликаты SKU.
 - Нажатие на продукт paywall не должно давать затемнение, мерцание или
@@ -94,8 +94,9 @@
 - С 1.5.0 при недоступном Adapty/продуктах явно подключённый
   `LoadPaywallWithRUFallbackUseCase` идёт в свежий backend-каталог, если Storefront
   или регион iPhone RU/RUS. Нет ответа и ответ без поля различаются. Сохраняй
-  полученный запрет при ошибке getPaywallProducts. Старые сигнатуры/обычный loader
-  не меняются. См. Documentation/RUProviderFallback.md.
+  полученный запрет при ошибке getPaywallProducts. С 1.5.3 успешный ответ продуктов
+  `[]` тоже запускает резерв: достаточен один российский регион, не оба.
+  Старые сигнатуры сохраняются. См. Documentation/RUProviderFallback.md.
 - Региональное условие RU Billing: текущий App Store Storefront `RU/RUS` **или**
   регион iPhone `RU/RUS`. Системный язык, клавиатура, IP и timezone ничего не
   включают. Перед финальным checkout перечитай Storefront; старый cache не

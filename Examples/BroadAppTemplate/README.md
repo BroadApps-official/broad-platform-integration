@@ -281,6 +281,9 @@ variation, checkout method и safe diagnostic code.
 
 Для локального примера добавьте `-ru-provider-unavailable -onboarding-disabled`.
 После сбоя провайдера появятся серверные fixture-тарифы с СБП/картой без Apple.
+`-ru-provider-empty-products -onboarding-disabled` проверяет успешный ответ
+Adapty с `[]`: при RU-регионе телефона **или** Storefront сразу появится
+тот же серверный каталог. Оба российских региона не требуются.
 `-ru-provider-response-false` проверяет запрет, полученный до ошибки продуктов.
 `-ru-region-language-only` оставляет резерв закрытым; `-ru-region-storefront-unavailable-device-ru`
 разрешает его по региону телефона. Источники полностью локальные, реальных оплат нет.

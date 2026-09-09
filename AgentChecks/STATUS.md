@@ -3,8 +3,8 @@
 ## Результат
 
 `PASS` — 9 сентября 2026 года полный `bash Scripts/agent_gate.sh` прошёл для
-platform set `1.5.0`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
-`BroadMonetization 1.5.2` и `BroadUIFlows 1.1.0`.
+platform set `1.5.1`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
+`BroadMonetization 1.5.3` и `BroadUIFlows 1.1.0`.
 
 Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. Настоящие
 purchase, restore и RU-платежи не запускались.
@@ -38,6 +38,10 @@ purchase, restore и RU-платежи не запускались.
   затем может сработать серверный резерв; ненастроенный main не маскируется;
 - `tokens` и `special_offer` не заменяются основным paywall или обычными
   RU-подписками при сбое загрузки;
+- успешный ответ продуктов `[]` включает серверный резерв при RU/RUS-регионе
+  телефона или Storefront в той же попытке загрузки. Ошибка воспроизведена до
+  исправления; после него прошли 256 сочетаний пустых ответов, регионов и
+  плейсментов, включая запреты и исключения tokens/special_offer;
 - резервные продукты сохраняют серверные ID/условия, порядок и дубли, не дают
   Apple checkout; свежий каталог повторно проверяет точную выбранную строку;
 - JSON/cache не восстанавливает временное разрешение и A/B-назначение; отмена,
@@ -45,7 +49,7 @@ purchase, restore и RU-платежи не запускались.
 - SwiftFormat, SwiftLint, architecture/privacy/docs checks, Package build,
   BroadAppTemplate Debug/Release Simulator, generic iOS compile и две live
   Adapty schemes прошли;
-- Локальный `BroadMonetization 1.5.2` module gate и candidate template compile
+- Локальный `BroadMonetization 1.5.3` module gate и candidate template compile
   прошли до отправки tag. Версия `BroadUIFlows 1.1.0` не менялась.
 
 ## Отчёты
