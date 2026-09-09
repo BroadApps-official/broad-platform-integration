@@ -1,6 +1,17 @@
 # Remote config paywall
 
-Remote config приходит вместе с provider paywall и преобразуется в typed `RemotePaywallConfiguration`. UI не читает словарь и не знает aliases. App может использовать стандартный `RemoteConfigKeyRegistry.broadApps` или передать собственный registry в `RemotePaywallConfigurationParser`.
+С BroadMonetization 2.0.0 Remote Config приходит только из выбранного provider
+paywall плейсмента `main` и преобразуется в typed `RemotePaywallConfiguration`.
+Все ключи, включая `ru_pay`, `auto_revenue_view`, `special_offer`,
+`experiment_code` и `segment_code`, общие для всех экранов. Конфигурации других
+placements не читаются. Продукты, variation, purchase handles и аналитика
+показа остаются у фактически показанного placement.
+
+Заполните каждый используемый A/B-вариант и локаль `main` перед переходом
+с 1.x. UI не читает словарь и не знает aliases. App может использовать
+`RemoteConfigKeyRegistry.broadApps` или собственный registry parser.
+Custom repositories обязаны передавать config `main` и честный provenance
+с каждым payload, включая Special Offer.
 
 ## Модель
 
@@ -13,6 +24,7 @@ public struct RemotePaywallConfiguration {
     let closeDelay: TimeInterval?
     let uiVariantID: PaywallUIVariantID?
     let specialOffer: SpecialOfferRemoteConfiguration?
+    let ruExperiment: RUExperimentMetadata?
 }
 ```
 
@@ -39,6 +51,7 @@ view (`true/false/nil`) и не различает absent/invalid, поэтом�
 | `closeDelay` | `closeDelay`, `close_delay`, `close_delay_seconds` | конечное число секунд `>= 0` |
 | `uiVariantID` | `ui_variant`, `uiVariant` | непустая строка |
 | special-offer gate | `special_offer` | только boolean `true` / `false` |
+| RU experiment | `experiment_code` + `segment_code` | обе строки 1–64 символа без whitespace/control characters |
 | legacy offer window | legacy metadata | игнорируется: окно фиксировано 24 часа |
 | legacy offer cooldown | legacy metadata | игнорируется: cooldown фиксирован 24 часа |
 | crossed price text | `specialOfferCrossedPriceText`, `special_offer_crossed_price_text`, `crossedPriceText`, `crossed_price_text` | непустая строка |
@@ -74,6 +87,11 @@ duration не является gate и не может выключить вал
 Special-offer gate fail-closed: только boolean `true` включает offer. `false`,
 строка, число, malformed value и отсутствие поля дают `isEnabled == false`.
 
+В Dashboard для пяти общих ключей используйте bool для `ru_pay`,
+`auto_revenue_view`, `special_offer` и string для двух RU A/B-кодов.
+`auto_revenue_view` передаётся host app как настройка представления;
+готовая RU-форма всё равно требует обязательные согласия перед оплатой.
+
 ## Собственный registry
 
 Если существующий backend использует другие ключи, замените только aliases:
@@ -102,7 +120,9 @@ let parser = RemotePaywallConfigurationParser(keys: keys)
 
 ## Retention последнего валидного значения
 
-`LastValidRemoteConfigurationStore` работает отдельно для каждого логического placement.
+`LastValidRemoteConfigurationStore` как общий тип хранит значения по ключу
+placement. Adapty adapter 2.0.0 всегда передаёт в него `.main`: это общий config
+для экранов одной identity. Другие placements не наполняют этот store.
 
 Для display/navigation полей (`isAutomaticRevenueViewEnabled`, `accessPolicy`,
 `closeDelay`, `uiVariantID`) применяется merge:
@@ -114,15 +134,22 @@ fresh field absent/invalid → сохранить предыдущее valid val
 
 Это защищает доступный paywall от частичного remote payload. Важно:
 
-- значения одного placement не переходят в другой;
+- общий config `main` передаётся каждому экрану; config других placements не участвует;
 - store находится в памяти и не является бесконечным persistent cache;
 - `reset(placementID:)` очищает один placement;
 - `resetAll()` используется при смене app identity/configuration;
 - initial absence без previous value остаётся `nil`.
 
 Финансовый `ruBillingGateDecision` и campaign gate `specialOffer` — не обычные
-retained fields. Они всегда берутся из текущего parsed payload и никогда не
+retained fields. Они всегда берутся из текущего parsed payload `main` и никогда не
 наследуют старый `.enabled`: прошлый gate не может воскресить оплату/кампанию.
+
+RU A/B-коды тоже не сохраняются из прошлого ответа. Если `main` вообще не
+ответил, адаптер возвращает отсутствие конфигурации, даже если другой placement
+доступен. Если ответил без ключа, это `.absent`; ошибка продуктов не теряет
+этот запрет. Конкурентные загрузки разделяют один текущий запрос `main`,
+но следующая попытка обновляет его. Загрузка самого `main` повторно использует
+тот же paywall для продуктов. Запрос настроек не регистрирует показ.
 
 ## Какой cache может управлять feature flags
 
@@ -170,8 +197,10 @@ Host-level `SpecialOfferConfiguration?` — ещё более ранний gate:
 - non-`nil` — resolver может загрузить placement, но enabled gate и provenance,
   разрешающий Special Offer, всё равно обязательны.
 
-Gate всегда читается из фактически загруженного обычного paywall `main`. После
-его разрешения продукты загружаются из отдельного placement `special_offer`.
+Gate всегда читается из выбранного paywall `main`. После его разрешения
+продукты загружаются из отдельного placement `special_offer` с обновлённым main config.
+Более новый запрет отменяет первоначальное разрешение; authorization для UI
+содержит последние настройки `main`, полученные при загрузке оффера.
 Для Special Offer `.verifiedFreshRemote` и `.providerCacheFallbackPossible` разрешены;
 `.platformCache` и `.legacyUnqualified` его не разрешают.
 Для кампании используется обычный `AdaptyPaywallRepository`: собственный Adapty
@@ -180,7 +209,7 @@ REST или отдельный repository не требуется.
 При `special_offer = true` resolver проверяет active entitlement и persisted
 cadence по trusted clock. Первый подходящий close открывает фиксированное окно
 24 часа; от точного конца окна начинается cooldown 24 часа. Внутри окна
-resolver возвращает `.eligible` с готовым paywall.
+resolver возвращает `.active(window)` с готовым paywall.
 Готовый payload передаётся через `PaywallViewModel(initialPayload:)`, а
 `SpecialOfferResolution.presentationAuthorization` — через
 `BroadPaywallConfiguration.specialOfferAuthorization`. Optional badge/crossed
@@ -262,7 +291,8 @@ config не содержит второй cohort authority.
 - [ ] первый присутствующий alias имеет приоритет только для обычных display-групп;
 - [ ] valid bool strings работают без учёта регистра;
 - [ ] отрицательные/бесконечные/пустые значения не проходят;
-- [ ] partial ordinary payload сохраняет last valid value только своего placement;
+- [ ] partial main payload сохраняет только обычные display/navigation поля;
+- [ ] конфликтующие флаги остальных placements не меняют config из `main`;
 - [ ] reset удаляет retained value;
 - [ ] отсутствие всех offer keys даёт `specialOffer == nil`;
 - [ ] offer display key без gate даёт disabled, а не enabled;

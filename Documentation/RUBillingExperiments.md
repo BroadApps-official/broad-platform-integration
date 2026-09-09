@@ -28,7 +28,7 @@ Special Offer всегда требует отмеченную backend-стро�
 
 - Без optional tracker сетевых A/B-запросов нет, старые initializer действуют.
 - Отсутствующий `isDefault` означает false; прежний каталог остаётся пригодным.
-- `experiment_code` и `segment_code` принадлежат только текущему свежему payload,
+- `experiment_code` и `segment_code` принадлежат только текущему свежему Remote Config выбранного paywall `main`,
   а не last-valid или persisted cache.
 - RU Billing требует прежний проверенный `.verifiedFreshRemote` и RU-регион
   iPhone либо live Storefront. Стандартный provider-managed SDK callback не

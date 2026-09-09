@@ -71,13 +71,16 @@
 - Нажатие на продукт paywall не должно давать затемнение, мерцание или
   стандартный press-effect.
 - Special offer полностью опционален: отсутствие config не считается ошибкой.
+- С BroadMonetization 2.0.0 все Remote Config ключи берутся из выбранного
+  paywall `main`, а продукты/variation — из placement экрана. Конфигурации
+  остальных placements не читаются; предыдущий gate не заменяет новый запрет.
 - Текущий Adapty payload может включить `special_offer`, даже если SDK
   прозрачно использовал свой provider cache. `ru_pay` имеет
   независимую более строгую capability и требует `.verifiedFreshRemote`.
   Paywall из cache BroadMonetization не может включить ни один флаг.
 - Special Offer показывается только вторым paywall после закрытия обычного
   paywall без подтверждённой покупки или restore. Строгий булев
-  `special_offer = true` читается из Remote Config обычного paywall; отсутствие,
+  `special_offer = true` читается из Remote Config выбранного paywall плейсмента `main`; отсутствие,
   `false` и любое не-bool значение закрывают ветку.
 - После разрешения gate загружается отдельный placement `special_offer` со
   всеми продуктами в порядке Adapty. Первый подходящий close запускает

@@ -186,7 +186,7 @@ app configuration и платформы разобраны в
 | `-special-offer-enabled` | provider-like fixture payload содержит `special_offer = true`: после закрытия обычного paywall кампания открывается |
 | `-special-offer-disabled` | явный `special_offer = false`: кампания остаётся закрытой |
 | `-special-offer-platform-cache` | кеш `BroadMonetization` содержит `true`, но кампания остаётся закрытой |
-| `-special-offer-main-fallback` | отдельный offer placement использует разрешённый общий fallback, при этом gate остаётся в Remote Config `main` |
+| `-special-offer-main-fallback` | отдельный offer placement недоступен; подмена его продуктов через `main` отклоняется |
 | `-ru-pay-provider-enabled` | verified-fresh fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
 | `-ru-pay-provider-disabled` | provider-like fixture явно возвращает `ru_pay = false`; остаётся только Apple |
 | `-ru-pay-adapty-fallback-rejected` | `ru_pay = true` из Adapty managed fallback остаётся закрытым без verified freshness |
@@ -234,10 +234,14 @@ Apple/СБП/карта, у сохранённой копии из кеша `Bro
 Apple.
 
 Сначала resolver читает строгий boolean `special_offer` из Remote Config
-обычного paywall и проверяет persisted-цикл 24 часа окна / 24 часа cooldown по
+выбранного paywall `main` и проверяет persisted-цикл 24 часа окна / 24 часа cooldown по
 доверенному времени. Затем продукты Special Offer получаются цепочкой
 `getPaywall -> getPaywallProducts -> 1:1 mapping -> raw registry` из отдельного
 placement. На нуле UI закрывается и начинается cooldown.
+
+С 2.0.0 fixture repository передаёт одну конфигурацию `main` с каждым
+placement, включая offer payload. Это повторяет контракт production adapter:
+все ключи из `main`, продукты и variation из placement открываемого экрана.
 
 В Debug-каталоге есть отдельная секция `RU Billing — только Debug`.
 Режим `Как в Adapty` использует strict provenance gate, `Включить` и

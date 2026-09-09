@@ -129,9 +129,9 @@ Host app больше не зависит от общего изменяемог
 |---|---|---:|
 | [`broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios) | `BroadExtensions` · [`1.0.1`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) | да, по надобности |
 | [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.2.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.2.0) | да, по надобности |
-| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`1.5.4`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/1.5.4) | да, по надобности |
-| [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`1.1.0`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/1.1.0) | да, по надобности |
-| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`1.5.2`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/1.5.2) | нет, это catalog/evidence |
+| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`2.0.0`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/2.0.0) | да, по надобности |
+| [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`2.0.1`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/2.0.1) | да, по надобности |
+| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`2.0.0`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/2.0.0) | нет, это catalog/evidence |
 | [`broad-docs`](https://github.com/BroadApps-official/broad-docs) | публичный сайт и cross-module guides | нет |
 
 > [!NOTE]

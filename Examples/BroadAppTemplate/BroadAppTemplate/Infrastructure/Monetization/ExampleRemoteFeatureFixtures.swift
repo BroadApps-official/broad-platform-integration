@@ -58,7 +58,7 @@ private extension ExamplePaywallRepository {
             ),
             remoteConfiguration: ExampleRemoteFeaturePayloadFactory.configuration(
                 scenario: scenario,
-                placementID: placementID,
+                placementID: .main,
                 isHardPaywall: isHardPaywall,
                 usesLegacyPaymentFixture: arguments.contains("-paywall-payment-methods")
             ),
