@@ -3,6 +3,18 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## 1.5.2
+
+### Fixed
+
+- Pin BroadMonetization 1.5.4: the opt-in RU loader displays all default backend
+  subscriptions when Adapty is unavailable, empty, or has no exact ID matches.
+  Partial matches keep the provider payload; legacy catalogs without defaults
+  keep the complete subscription section.
+- The local template marks monthly/yearly subscriptions as defaults and adds
+  `-ru-provider-no-matches`. Platform and agent guides distinguish catalog
+  preservation, display selection and exact checkout identity.
+
 ## 1.5.1
 
 ### Fixed

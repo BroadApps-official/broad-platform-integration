@@ -3,8 +3,8 @@
 ## Результат
 
 `PASS` — 9 сентября 2026 года полный `bash Scripts/agent_gate.sh` прошёл для
-platform set `1.5.1`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
-`BroadMonetization 1.5.3` и `BroadUIFlows 1.1.0`.
+platform set `1.5.2`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
+`BroadMonetization 1.5.4` и `BroadUIFlows 1.1.0`.
 
 Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. Настоящие
 purchase, restore и RU-платежи не запускались.
@@ -44,13 +44,23 @@ purchase, restore и RU-платежи не запускались.
   плейсментов, включая запреты и исключения tokens/special_offer;
 - резервные продукты сохраняют серверные ID/условия, порядок и дубли, не дают
   Apple checkout; свежий каталог повторно проверяет точную выбранную строку;
+- при отсутствии всех точных ID, пустом ответе или недоступном Adapty резерв
+  показывает все обычные подписки с `isDefault=true`; без отметок сохраняет
+  полный раздел подписок. Частичные совпадения имеют приоритет над defaults;
+- отдельная регрессия воспроизвела выбор лишних строк до исправления. После
+  исправления проверены два defaults с одинаковым ID и разными ценами,
+  исходные индексы после пропуска строк, fresh checkout и отсутствие Apple;
+- локальный шаблон содержит `-ru-provider-no-matches`; месячный и годовой
+  тарифы помечены defaults, Special Offer не попадает в обычный резерв;
 - JSON/cache не восстанавливает временное разрешение и A/B-назначение; отмена,
   одновременные запросы и отказ backend проверены отдельными contract probes;
 - SwiftFormat, SwiftLint, architecture/privacy/docs checks, Package build,
   BroadAppTemplate Debug/Release Simulator, generic iOS compile и две live
   Adapty schemes прошли;
-- Локальный `BroadMonetization 1.5.3` module gate и candidate template compile
+- Локальный `BroadMonetization 1.5.4` module gate и candidate template compile
   прошли до отправки tag. Версия `BroadUIFlows 1.1.0` не менялась.
+- GitHub Module quality и Release прошли для `deb6222d2335eb90cc7f08557819e3192066820c`;
+  публичный выпуск 1.5.4 опубликован. Public API report не изменился.
 
 ## Отчёты
 

@@ -200,14 +200,20 @@ RU product связывается с Apple/Adapty product по точному
 не тот товар.
 
 ```text
-com.company.app.premium.month
-          │ exact equality
-          ▼
-premium_month_ru
+Adapty product ID:             com.company.app.premium.month
+backend appStoreProductID:     com.company.app.premium.month  ← точное совпадение
+backend catalogProductID:      premium_month_ru              ← ID для RU checkout
 ```
 
-Если точного соответствия нет, RU method для этого продукта недоступен и UI
-показывает безопасную ошибку/Apple-only состояние согласно app policy.
+Если нет ни одного точного соответствия, подключённый резервный загрузчик
+BroadMonetization 1.5.4 выбирает все обычные подписки с `isDefault=true`.
+Это же правило действует, когда продуктов Adapty нет. Если defaults не заданы,
+сохраняется полный раздел обычных подписок для совместимости со старым JSON.
+Порядок и дубли сохраняются; Special Offer не участвует в этом наборе.
+При частичных совпадениях defaults не добавляются. Карточки серверного резерва
+получают собственные ID/цены и только RU-оплату; отдельной Apple-карточке чужой
+тариф не присваивается. Регион и полученный запрет по-прежнему проверяются.
+Подключение: [RUProviderFallback](RUProviderFallback.md).
 
 ## Что связано с `ru_pay`, а что нет
 

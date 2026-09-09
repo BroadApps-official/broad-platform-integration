@@ -335,7 +335,8 @@ struct ExampleRUCatalogRepository: FreshRUCatalogRepositoryProtocol {
                         displayPrice: fixture.rubleDisplayPrice,
                         subscriptionPeriod: fixture.period,
                         supportedMethods: [.sbp, .card],
-                        isSpecialOffer: fixture.productID == "example.premium.weekly"
+                        isSpecialOffer: fixture.productID == "example.premium.weekly",
+                        isDefault: ["example.premium.monthly", "example.premium.yearly"].contains(fixture.productID)
                     )
                 },
                 fetchedAt: Date(timeIntervalSince1970: 1_800_000_000)

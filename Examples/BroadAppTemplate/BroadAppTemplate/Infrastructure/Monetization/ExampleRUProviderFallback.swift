@@ -12,7 +12,8 @@ enum ExampleRUProviderFallback {
             message: "Предыдущий запрос пейвола отменён новым. Попробуйте ещё раз.",
             code: "example.paywall.stale"
         )
-        guard arguments.contains("-ru-provider-unavailable") || arguments.contains("-ru-provider-empty-products") else {
+        guard ["-ru-provider-unavailable", "-ru-provider-empty-products", "-ru-provider-no-matches"].contains(where: arguments.contains)
+        else {
             return LoadPaywallUseCase(repository: provider, analytics: analytics, staleLoadError: error)
         }
         let region = ExampleRURegionalScenario.current(arguments: arguments)
@@ -32,14 +33,15 @@ enum ExampleRUProviderFallback {
 
 extension ExamplePaywallRepository {
     func loadRUFallbackAttempt(for placementID: PlacementID) async -> RUFallbackPaywallAttempt {
-        if arguments.contains("-ru-provider-empty-products") {
+        if arguments.contains("-ru-provider-empty-products") || arguments.contains("-ru-provider-no-matches") {
             return RUFallbackPaywallAttempt(
                 outcome: .loaded(PaywallPayload(
                     presentationID: .generated(),
                     paywallReference: .init(rawValue: "example-empty-provider"),
                     origin: .init(requestedPlacementID: placementID, resolvedPlacementID: placementID, catalogSource: .adapty),
-                    products: [],
+                    products: arguments.contains("-ru-provider-no-matches") ? [Self.unmatchedProduct] : [],
                     remoteConfiguration: .init(isRUBillingEnabled: !arguments.contains("-ru-provider-response-false")),
+                    remoteConfigurationProvenance: .verifiedFreshRemote,
                     fetchedAt: .now
                 )),
                 availability: .available
@@ -56,6 +58,16 @@ extension ExamplePaywallRepository {
                 code: "example.adapty.provider-unavailable"
             )),
             availability: .unavailable(receivedConfiguration: configuration)
+        )
+    }
+
+    /// Deliberately different from the local backend IDs; never sent to an SDK.
+    private static var unmatchedProduct: MonetizationProduct {
+        MonetizationProduct(
+            presentationID: .generated(), reference: .init(rawValue: "example-unmatched-handle"),
+            productID: .init(rawValue: "example.unmatched.subscription"), kind: .autoRenewableSubscription,
+            price: Money(amount: 9, currencyCode: "USD"), subscriptionPeriod: .init(unit: .month, count: 1),
+            catalogSource: .adapty
         )
     }
 }

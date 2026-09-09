@@ -18,7 +18,7 @@ packages:
     exactVersion: 1.2.0
   BroadMonetization:
     url: https://github.com/BroadApps-official/broad-monetization-ios.git
-    exactVersion: 1.5.3
+    exactVersion: 1.5.4
   BroadUIFlows:
     url: https://github.com/BroadApps-official/broad-ui-flows-ios.git
     exactVersion: 1.1.0

@@ -44,14 +44,14 @@ Canonical schema лежит в `Compatibility/current.yml` integration repositor
 
 ```yaml
 schema: 1
-platform_set: "1.5.1"
+platform_set: "1.5.2"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
 modules:
   BroadCore: "1.2.0"
   BroadExtensions: "1.0.1"
-  BroadMonetization: "1.5.3"
+  BroadMonetization: "1.5.4"
   BroadUIFlows: "1.1.0"
 verification:
   status: passed

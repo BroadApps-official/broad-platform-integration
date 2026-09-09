@@ -1,5 +1,5 @@
 {
-  "originHash" : "503a0014eca7d6e4a332f0d93a38150ee90cbeeda7aeab7b2a423cc45f757b5c",
+  "originHash" : "3fab56a5c2e0aa685f4461d14c99a6935554eaa486079cd7b20579333246a363",
   "pins" : [
     {
       "identity" : "adaptysdk-ios",
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-monetization-ios.git",
       "state" : {
-        "revision" : "4a2684b45df5a61f2adec5f80dea6d8784b62232",
-        "version" : "1.5.3"
+        "revision" : "deb6222d2335eb90cc7f08557819e3192066820c",
+        "version" : "1.5.4"
       }
     },
     {
