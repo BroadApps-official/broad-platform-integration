@@ -20,6 +20,7 @@
 		3287CE8C2DE5D31EC0163766 /* AppCompositionRoot+Runtime.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00228E8DCB28EE4A2058F45 /* AppCompositionRoot+Runtime.swift */; };
 		34BCFA057627EC4444B0A20E /* ExampleBootstrapScenario.swift in Sources */ = {isa = PBXBuildFile; fileRef = C09A790FC5BECE9AC122C1C0 /* ExampleBootstrapScenario.swift */; };
 		36CA49572299FC9F11A87889 /* ExampleTokenBalanceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3113175E40FB6377F9F178EA /* ExampleTokenBalanceViewModel.swift */; };
+		3753F37C265DCB10C8DA58C5 /* ExampleRUProviderFallback.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1650464DDC638AA8A2F4F1B /* ExampleRUProviderFallback.swift */; };
 		37E354E1CAF56B8391EF0160 /* BroadMonetization in Frameworks */ = {isa = PBXBuildFile; productRef = 9346EA10BD51FB5F8A5E81E2 /* BroadMonetization */; };
 		3C4CDC89275F31C17A5A7F2C /* AppTokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1C818852FDD05DF45AC5B0F /* AppTokens.swift */; };
 		3FAF43ED645228FF46818F0F /* ExampleCheckoutMethodsUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7CEC7858FB14F6B01924914 /* ExampleCheckoutMethodsUseCase.swift */; };
@@ -95,6 +96,7 @@
 		C481F59B832343DCA5D34960 /* ExampleMonetizationAnalyticsAssembly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleMonetizationAnalyticsAssembly.swift; sourceTree = "<group>"; };
 		C7CEC7858FB14F6B01924914 /* ExampleCheckoutMethodsUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleCheckoutMethodsUseCase.swift; sourceTree = "<group>"; };
 		C8D146F0DF640114F27609D2 /* ExampleLiveAdaptyConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLiveAdaptyConfiguration.swift; sourceTree = "<group>"; };
+		D1650464DDC638AA8A2F4F1B /* ExampleRUProviderFallback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRUProviderFallback.swift; sourceTree = "<group>"; };
 		DC01266C00493ECF8D51B635 /* AppCompositionRoot+Tokens.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppCompositionRoot+Tokens.swift"; sourceTree = "<group>"; };
 		DEB76A88D40D6F47F28616AE /* ExampleRemoteFeatureFixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRemoteFeatureFixtures.swift; sourceTree = "<group>"; };
 		F00228E8DCB28EE4A2058F45 /* AppCompositionRoot+Runtime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppCompositionRoot+Runtime.swift"; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				17795A9CD24E5D2C8B86B6FD /* ExampleMonetizationEnvironment.swift */,
 				DEB76A88D40D6F47F28616AE /* ExampleRemoteFeatureFixtures.swift */,
 				FA9709135BF3A9D0CFD7B6A1 /* ExampleRestoreRepository.swift */,
+				D1650464DDC638AA8A2F4F1B /* ExampleRUProviderFallback.swift */,
 				060A21470E9598E252B9E52C /* ExampleRUSubscriptionFixtures.swift */,
 				BD06EE31AC87357CE6339E89 /* ExampleTokenFixtures.swift */,
 			);
@@ -404,6 +407,7 @@
 				532BD22B5000A67741519639 /* ExampleOnboardingMediaView.swift in Sources */,
 				7AE11417F2CBCF5598E74E5C /* ExampleOnboardingScenario.swift in Sources */,
 				F90BB868F299417C3930230D /* ExampleRUPaymentSheetFixtureView.swift in Sources */,
+				3753F37C265DCB10C8DA58C5 /* ExampleRUProviderFallback.swift in Sources */,
 				564C42E06A1F039DC1316291 /* ExampleRUSubscriptionFixtures.swift in Sources */,
 				A01EE16BEB6BE1C854E8AE68 /* ExampleRecordingMonetizationAnalytics.swift in Sources */,
 				D913D2853FA1976152CCB421 /* ExampleRemoteFeatureFixtures.swift in Sources */,
@@ -837,7 +841,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-monetization-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.4.1;
+				version = 1.5.2;
 			};
 		};
 		766E427D766A9ACD0377ED09 /* XCRemoteSwiftPackageReference "Swinject" */ = {

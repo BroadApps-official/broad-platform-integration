@@ -164,7 +164,7 @@ Endpoint/schema/auth подтверждает владелец текущего 
 | Откуда приходит Apple-вариант? | placement + exact product ID + правило совместимости периода |  |
 | Как хранится cycle? | persisted window 24 часа + cooldown 24 часа по trusted clock |  |
 | Каков countdown? | до конца окна; на нуле экран закрывается и начинается cooldown |  |
-| Какие gate разрешают RU method? | verified-fresh `ru_pay = true` + Storefront RU **или** регион iPhone RU + точный catalog product |  |
+| Какие gate разрешают RU method? | (разрешающий флаг или резерв при недоступном провайдере) + (Storefront RU **или** регион iPhone RU) + точный catalog product |  |
 | Что отправляется в checkout? | exact resolved RU product ID + обязательные поля текущего backend |  |
 | Что подтверждает success? | authoritative policy/entitlement после browser return; не сам возврат |  |
 | Что происходит при pending/timeout? | повтор проверки без автоматического второго checkout |  |

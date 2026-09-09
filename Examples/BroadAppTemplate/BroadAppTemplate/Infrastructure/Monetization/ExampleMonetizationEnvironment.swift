@@ -149,14 +149,7 @@ struct ExampleMonetizationEnvironment {
         entitlementEngine: EntitlementEngine,
         operationGate: MonetizationOperationGate
     ) -> BroadMonetizationServices {
-        let loadPaywall = LoadPaywallUseCase(
-            repository: ExamplePaywallRepository(arguments: arguments),
-            analytics: analytics,
-            staleLoadError: .example(
-                message: "Предыдущий запрос пейвола отменён новым. Попробуйте ещё раз.",
-                code: "example.paywall.stale"
-            )
-        )
+        let loadPaywall = ExampleRUProviderFallback.makeLoader(arguments: arguments, analytics: analytics)
         return BroadMonetizationServices(
             activate: ActivateMonetizationUseCase(
                 repository: ExampleMonetizationRepository()

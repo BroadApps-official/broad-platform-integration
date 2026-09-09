@@ -147,8 +147,9 @@ premium, токены или успешный RU-платёж: финансов�
 authoritative entitlement source.
 
 Special Offer и RU Billing получают authority через разные typed
-capability. Special Offer допускает provider-managed payload, RU Billing — только
-доказанно свежий remote payload.
+capability. Special Offer допускает provider-managed payload. Обычный RU gate
+требует свежий remote payload; отдельный [резерв при сбое](RUProviderFallback.md)
+использует временное разрешение текущей попытки и не подменяет provenance.
 
 ## Special offer — намеренное исключение
 
@@ -205,43 +206,20 @@ Presentation не запускает собственный network timeout и �
 
 ## RU billing gate
 
-Remote field — только одно из трёх условий:
+Обычный путь: host opt-in AND verified-fresh `ru_pay=true` AND
+(Storefront RU/RUS OR регион iPhone RU/RUS).
 
-```text
-host feature enabled
-AND verified-fresh remote payload has ru_pay == true
-AND (App Store Storefront == RU/RUS OR iPhone region == RU/RUS)
-```
+Резерв 1.5.0: host явно подключил `LoadPaywallWithRUFallbackUseCase`, Adapty или
+его продукты недоступны, Storefront или регион iPhone RU/RUS → свежий backend.
+Успешный ответ с false/invalid/absent закрывает резерв. Если ответа нет вообще,
+это не равно отсутствующему полю. SDK-адаптер разбирает конфигурацию до загрузки
+продуктов и сохраняет полученный запрет при её ошибке.
 
-Системный язык, клавиатура, IP и timezone не включают RU Billing. Отсутствующий,
-`false` или некорректный `ru_pay` всегда закрывает RU methods; автоматического
-значения `true` нет.
-
-Decision `.enabled` может авторизовать billing только при provenance
-`.verifiedFreshRemote`. Стандартный `AdaptyPaywallRepository` ставит
-`.providerCacheFallbackPossible`, поэтому его положительный `ru_pay` не включает RU methods.
-
-`.absent`, `.disabled` и `.invalid` всегда fail-closed. Любой valid `false`
-безопасно работает как kill switch. `true` из provider cache, Dashboard fallback,
-`.platformCache` или legacy payload не включает RU methods.
-
-### Production и Debug
-
-```text
-Release -> verified-fresh remote payload -> ru_pay
-Debug   -> Как в Adapty (default) / Включить / Выключить
-```
-
-В Release нет app-default или локального override для `ru_pay`. Host template
-разблокирует `forceEnabled` / `forceDisabled` только под `#if DEBUG`;
-обычный store fail-closed к `.followAdapty`. Debug-режим живёт только в текущем
-процессе и не меняет Remote Config. Force-on заменяет только решение
-remote-флага; host opt-in, RU-контекст iPhone, catalog/backend, авторизация
-и entitlement-проверка остаются обязательными.
-
-Parser отвечает только за `ru_pay`. Регион и первый системный язык iPhone
-проверяет `RUBillingGate`: достаточно региона `RU/RUS` **или** языка с префиксом
-`ru`. [RU Billing →](RUBilling.md).
+Платформенный кеш не восстанавливает разрешение. `providerCacheFallbackPossible`
+не переименовывается в fresh. Резерв не создаёт Special Offer или A/B assignment,
+не пишет `ru_pay=true`. Русский язык не участвует в проверке региона.
+Debug override остаётся только для UI-проверок и не обходит backend/entitlement.
+[Подключение и границы резервного сценария](RUProviderFallback.md).
 
 ## UI variants и Adapty experiments
 

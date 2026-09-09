@@ -94,7 +94,7 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
   запускает resolver и только затем показывает offer/main; подтверждённая
   purchase/restore первого paywall обходит offer.
 - [ ] Один analytics pipeline видит события subscription и special-offer презентаций.
-- [ ] RU methods требуют verified-fresh разрешающий gate и app-owned backend.
+- [ ] RU methods требуют разрешающий gate или подключённый резерв при недоступном провайдере, регион и app-owned backend.
 - [ ] Release берёт `ru_pay` только из verified-fresh source; локальный force-on/off существует только в Debug.
 - [ ] Debug force-on не обходит RU device context, catalog, backend authorization и entitlement.
 - [ ] Adapty fallback не выдаётся за freshness proof RU Billing.
@@ -207,3 +207,11 @@ QA не должен угадывать, где включается сцена�
 неиспользуемые функции — `N/A`, а каждый `BLOCKED` либо снят, либо письменно
 принят ответственным за релиз. Platform gate остаётся обязательным после любого
 изменения `BroadAppsIOSPlatform`, но не заменяет этот checklist.
+
+## Резерв RU при недоступном Adapty — 1.5.0
+
+[Правило, подключение и проверки](RUProviderFallback.md): нет ответа Adapty или
+не загрузились его продукты + RU Storefront **или** регион iPhone → свежий backend,
+если разработчик явно подключил новый loader. Полученный false/invalid/absent
+резерв запрещает; запрет сохраняется даже после ошибки продуктов. Старые API
+остаются прежними. Кеш не превращается в свежий ответ; сервер подтверждает оплату.

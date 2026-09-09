@@ -196,10 +196,10 @@ for documentation_contract in \
     'Documentation/SpecialOffer.md|`ru_pay` остаётся независимым' \
     'Examples/BroadAppTemplate/README.md|-special-offer-platform-cache' \
     'Documentation/SpecialOffer.md|визуального бесконечного loop нет' \
-    'Documentation/RUBilling.md|Release \| Verified-fresh remote payload' \
+    'Documentation/RUBilling.md|Release, обычный путь \| Verified-fresh remote payload' \
     'Documentation/RUBilling.md|Adapty\.setFallback\(fileURL:' \
     'Documentation/RUBilling.md|\.forceEnabled' \
-    'Documentation/RemoteConfig.md|Release -> verified-fresh remote payload -> ru_pay' \
+    'Documentation/RemoteConfig.md|LoadPaywallWithRUFallbackUseCase' \
     'Documentation/Templates/AppIntegrationPlan.md|Как доказывается freshness' \
     'Examples/BroadAppTemplate/README.md|BROADAPPS_ADAPTY_FALLBACK_FILE_NAME' \
     'Documentation/Logging.md|ru-billing\.availability\.evaluated' \

@@ -44,7 +44,7 @@ bounded deterministic `adapty-opaque-unavailable-<SHA256>` и убирает `Mo
 Конкретный Adapty placement ID задаётся host-приложением в registry и не попадает
 в UI.
 
-`PaywallLoadRequest` всегда использует единый логический резерв `.main`:
+`PaywallLoadRequest` использует логический резерв `.main` для обычных подписочных placements. Отдельные `tokens` и `special_offer` исключены: их продукты не заменяются обычными подписками. Порядок обычного сценария:
 
 - запрошен не `main` — после исчерпания точного placement можно попробовать `main`;
 - запрошен `main` — повторного fallback нет;
@@ -160,11 +160,11 @@ Adapter не зависит от `EntitlementEngine`.
 
 ## Контекст iPhone и RU billing
 
-`RUBillingDeviceContext.isRussian` проверяет два независимых сигнала: регион
-iPhone `RU`/`RUS` и первый системный язык с префиксом `ru`. Одного совпадения
-достаточно, но оно разрешает RU Billing только вместе с `ru_pay = true` из
-`.verifiedFreshRemote` payload. `Storefront` остаётся информационной моделью App Store и не
-участвует в этом решении.
+`RUBillingDeviceContext.isRussian` проверяет регион iPhone RU/RUS.
+`RUBillingGate` объединяет его через OR с российским Storefront. Язык не участвует.
+Обычный gate требует свежий разрешающий флаг; при недоступном Adapty разработчик
+может явно подключить [резерв с backend-каталогом](RUProviderFallback.md).
+Полученный false/invalid/absent резерв не обходит; факт оплаты подтверждает сервер.
 
 RU billing намеренно не имеет одного большого `RUBillingRepositoryProtocol`.
 Внутри модуля реализация разделена на четыре узкие границы:

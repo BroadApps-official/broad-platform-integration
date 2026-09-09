@@ -184,7 +184,7 @@ RU-платёж или live Adapty SDK operation.
 | `uiVariantID` | Остаётся renderer metadata и не участвует в Adapty assignment | ✅ |
 | Assignment authority | В коде нет второго experiment/cohort randomizer | ✅ |
 | Identity composition | Load, show, purchase и restore получают один factory-owned identity provider | ✅ |
-| Remote feature gates | Provider payload разрешает Special Offer; RU требует verified freshness; raw product остаётся в registry | ✅ |
+| Remote feature gates | Provider payload разрешает Special Offer; обычный RU gate требует verified freshness; резерв при сбое подключается отдельно; raw product остаётся в registry | ✅ |
 
 `✅` здесь означает: контракт закреплён исходниками и обязательным regression
 guard. Это не утверждение о настройках конкретного проекта в Adapty dashboard.

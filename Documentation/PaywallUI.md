@@ -215,8 +215,8 @@ CTA сначала вызывает `ResolveCheckoutMethodsUseCaseProtocol` дл
 - `.failed` показывает только безопасный `AppError.userMessage`.
 
 RU billing не определяется самим UI. Sheet отображает только методы,
-разрешённые monetization use case после проверки `ru_pay = true` из
-`.verifiedFreshRemote` payload и региональных сигналов: App Store Storefront
+разрешённые monetization use case после проверки обычного RU gate либо
+[резервного сценария при недоступном Adapty](RUProviderFallback.md) и региональных сигналов: App Store Storefront
 `RU/RUS` **или** регион iPhone `RU/RUS`. Собственный platform cache не может
 включить методы. Системный язык, IP и timezone не участвуют. Для СБП/карты sheet собирает обязательные
 offer/data-processing и recurring-charge consent, а также опциональный receipt

@@ -8,9 +8,10 @@
    bearer, private keys, URL оплаты и пользовательские данные в Git не кладутся.
 2. Не логируйте raw `Error`, request/response body, SDK profile и arbitrary metadata.
 3. Не выдавайте premium по факту успешного checkout — только по authoritative entitlement `.active`.
-4. RU Billing требует `ru_pay = true` из `.verifiedFreshRemote` payload;
-   дополнительно достаточно RU-региона iPhone или русского первого системного
-   языка. Собственный cache платформы, IP и timezone не авторизуют RU methods.
+4. Обычный RU gate требует свежий разрешающий флаг; при недоступном Adapty
+   подключается отдельный [резерв](RUProviderFallback.md). В обоих случаях нужен
+   RU Storefront **или** RU-регион iPhone. Язык, cache, IP и timezone не включают RU.
+   Полученный false/invalid/absent резерв не обходит.
 5. Не кешируйте credentials в `UserDefaults`/`CacheRepositoryProtocol`.
 6. ATT вызывается только после видимого первого onboarding-слайда; Rate Us внутри onboarding запрещён.
 7. Apple purchase/restore/RU используют один app-wide gate и durable pending state.
@@ -380,7 +381,7 @@ configurations. Короткий порядок действий описан в
 - [ ] late entitlement response не меняет route/cache;
 - [ ] anonymous и authorized cache scopes разделены;
 - [ ] logout очищает user-scoped host state;
-- [ ] RU eligibility требует verified-fresh `ru_pay = true` и RU Storefront или RU-регион iPhone;
+- [ ] RU eligibility требует действующий RU gate (разрешающий флаг либо подключённый резерв при сбое провайдера) и RU Storefront или RU-регион iPhone;
 - [ ] ATT отсутствует в loader и вызывается после visible first slide;
 - [ ] review отсутствует внутри onboarding;
 - [ ] Console не содержит token, IDs, URL, payload и user messages;

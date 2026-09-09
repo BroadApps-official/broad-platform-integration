@@ -113,7 +113,7 @@ Kaiten. Дополнительные логические точки остаю�
 
 ## 3. Загрузка paywall и fallback `main`
 
-`PaywallLoadRequest(placementID:)` автоматически фиксирует `.main` как fallback. Порядок:
+Для обычных subscription placements `PaywallLoadRequest(placementID:)` использует `.main` как fallback. `tokens` и `special_offer` загружают только собственные продукты: ни `main`, ни резервный RU-каталог обычных подписок их не заменяет. Порядок для обычной подписки:
 
 ```text
 requested remote
@@ -372,7 +372,7 @@ Adapty profile можно добавить как Apple verifier только к
 RU billing — optional adapter chain, не автоматическая замена Apple:
 
 ```text
-host enabled + verified-fresh remote ru_pay = true
+host enabled + (verified-fresh remote ru_pay = true OR explicitly configured provider-outage fallback)
     + (App Store Storefront RU/RUS OR iPhone region RU/RUS)
     → match exact RU catalog product
     → Apple / SBP / card methods
@@ -380,8 +380,10 @@ host enabled + verified-fresh remote ru_pay = true
 
 App Store Storefront и регион iPhone — независимые признаки: одного совпадения
 достаточно. Системный язык, IP, timezone и клавиатура не участвуют в eligibility.
-Отсутствующий, `false` или некорректный `ru_pay` всегда закрывает RU methods;
-автоматического `ru_pay = true` нет.
+Полученный отсутствующий, `false` или некорректный `ru_pay` закрывает RU methods;
+автоматического `ru_pay = true` нет. Нет ответа Adapty — отдельный случай:
+[резерв 1.5.0](RUProviderFallback.md) получает серверный каталог. Его продукты
+оплачиваются только картой/СБП, без Apple.
 External checkout считается только `.opened`, пока backend и новый общий
 entitlement refresh не подтвердили active.
 

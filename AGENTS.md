@@ -88,9 +88,14 @@
 - Adapty products всегда идут через `getPaywall -> getPaywallProducts -> 1:1
   mapping -> raw registry`; не создавай отдельный REST-транспорт, второй
   источник products или словарь, схлопывающий дубли SKU.
-- `ru_pay = false`, отсутствующий или некорректный флаг всегда закрывает RU
+- Полученный `ru_pay = false`, отсутствующий или некорректный флаг закрывает RU
   Billing. Предыдущее разрешающее значение не восстанавливается из last-valid
   cache. Никогда не подставляй `ru_pay = true` автоматически.
+- С 1.5.0 при недоступном Adapty/продуктах явно подключённый
+  `LoadPaywallWithRUFallbackUseCase` идёт в свежий backend-каталог, если Storefront
+  или регион iPhone RU/RUS. Нет ответа и ответ без поля различаются. Сохраняй
+  полученный запрет при ошибке getPaywallProducts. Старые сигнатуры/обычный loader
+  не меняются. См. Documentation/RUProviderFallback.md.
 - Региональное условие RU Billing: текущий App Store Storefront `RU/RUS` **или**
   регион iPhone `RU/RUS`. Системный язык, клавиатура, IP и timezone ничего не
   включают. Перед финальным checkout перечитай Storefront; старый cache не
@@ -100,7 +105,8 @@
   и не угадывай соответствие по цене/периоду. App-specific сокращение списка —
   решение host UI после получения полного platform result.
 - В Release `ru_pay` может включить RU Billing только из payload с
-  `.verifiedFreshRemote`; app-default/force override запрещён. Host template
+  `.verifiedFreshRemote`; отдельный opt-in outage capability не является ru_pay
+  или fake fresh payload. App-default/force override запрещён. Host template
   разблокирует process-local force-on/off только из собственного
   `#if DEBUG`; store по умолчанию fail-closed и не обходит
   device/catalog/backend/entitlement gates.

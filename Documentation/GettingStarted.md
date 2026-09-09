@@ -566,16 +566,13 @@ let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 
 ### RU billing нужен
 
-Eligibility требует host opt-in, `ru_pay = true` из `.verifiedFreshRemote`
-payload и хотя бы один признак iPhone: регион `RU/RUS` **или** первый системный язык с префиксом `ru`. Remote
-decision различает absent/enabled/disabled/invalid: отсутствующий, false,
-malformed или conflicting флаг выключает RU. Platform-cache/legacy enabled не
-авторизует показ RU methods. App Store storefront в этой проверке не участвует.
-[Настройка RU billing](RUBilling.md).
-
-В Release не задавайте локальный default/override для `ru_pay`: его источником
-должен быть host-controlled verified-fresh transport. Debug-only tri-state переключатель нужен только для
-воспроизводимой проверки UI/gate и не обходит backend/entitlement.
+Проверьте регион Storefront **или** iPhone (RU/RUS). Язык не является регионом.
+Обычный сценарий требует подтверждённый свежий `ru_pay=true`; при недоступном
+Adapty или его продуктах подключите [серверный резерв](RUProviderFallback.md).
+Полученный false/invalid/absent запрещает резерв, отсутствие ответа отличается
+от отсутствующего поля. Старые методы фабрик остаются совместимыми; новый путь
+включается через `makeServicesWithRUFallback` или `makePaywallLoader`.
+Не сохраняйте разрешение на диск, не выдавайте SDK-кеш за свежий Remote Config.
 
 Production adapters собирайте через `RUBillingCompositionFactory`: сначала `makeEntitlementRegistration()` добавляется в общий engine, затем `makeServices(refreshEntitlement:operationGate:)` получает уже созданный engine и тот же financial operation gate, что Apple purchase/restore. Это разрывает цикл «RU source нужен engine → RU checkout нужен refresh engine» и не позволяет Apple/RU оплатам идти параллельно.
 

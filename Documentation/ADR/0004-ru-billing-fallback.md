@@ -1,5 +1,9 @@
 # ADR-0004: обязательный `ru_pay` и контекст iPhone для RU Billing
 
+> **Частично заменён 9 сентября 2026:** запрет любого host fallback больше не является
+> текущим правилом. [ADR-0006](0006-ru-provider-outage-fallback.md) добавляет отдельный
+> opt-in путь при недоступном Adapty. Ниже сохранён контекст прежнего решения.
+
 - Статус: принято; provenance capability уточнена ADR-0005
 - Дата: 2026-08-09
 - Обновлено: 2026-08-30
@@ -121,7 +125,7 @@ Provider fallback paywall и entitlement authority fallback — разные р�
 Положительные:
 
 - правило совпадает с production-поведением 5115;
-- русского региона или русского языка достаточно, но только вместе с `ru_pay`;
+- российского Storefront или региона iPhone достаточно для региональной части обычного gate;
 - absent/false/invalid/platform-cache remote config безопасно выключает RU;
 - disabled app не получает лишний unresolved entitlement source;
 - открытие Safari не считается premium.
@@ -163,11 +167,11 @@ entitlement.
 ## Проверка решения
 
 - `ru_pay = true` + RU region + любой язык → matched RU methods;
-- `ru_pay = true` + non-RU region + русский язык → matched RU methods;
+- `ru_pay = true` + non-RU Storefront + non-RU region + русский язык → только Apple;
 - `ru_pay = true` + non-RU region + нерусский язык → только Apple;
 - `ru_pay = false` + RU region + русский язык → только Apple;
 - absent/malformed/conflicting/platform-cache `ru_pay` → только Apple;
-- verified-fresh `ru_pay = true` + подходящий region/language → доступные RU methods;
+- verified-fresh `ru_pay = true` + подходящий Storefront/region → доступные RU methods;
 - повторная проверка перед checkout использует актуальный контекст iPhone;
 - RU backend disabled → source отсутствует в engine;
 - URL open failure очищает pending context;

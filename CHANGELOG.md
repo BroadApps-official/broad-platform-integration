@@ -3,6 +3,22 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## 1.5.0
+
+- Dedicated `tokens` and `special_offer` placements preserve their own catalog;
+  the updated loader never substitutes main or ordinary RU subscriptions.
+
+### Added
+
+- Explicit RU backend fallback for unavailable Adapty/products, using BroadMonetization 1.5.2.
+  The template's `-ru-provider-unavailable` fixture demonstrates backend catalog loading;
+  `-ru-provider-response-false` keeps a received prohibition even after product failure.
+- Updated platform, migration, agent and delivery instructions to distinguish no response
+  from an absent/invalid/false flag. Russian Storefront OR device region qualifies;
+  Russian language alone does not. Existing initialization paths remain unchanged.
+- ADR-0006 records the opt-in compatibility decision; backend payment authority,
+  fresh selected-row validation and pending reconciliation remain required.
+
 ## 1.4.0 — 2026-09-08
 
 ### Changed

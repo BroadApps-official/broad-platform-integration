@@ -266,3 +266,11 @@ plutil -p "$ENTITLEMENT_APP_DATA/Library/Preferences/com.broadapps.platform.temp
 ```
 
 Команда не должна найти запись timeout-namespace: source проиграл deadline и не получил право на cache write. Каждый fixture имеет namespace `entitlement-source-v1.<scenario>`, поэтому записи `active`, `inactive`, `unknown` и `store-kit-fallback` на эту проверку не влияют. Все `-entitlement-*` флаги и ожидаемые результаты описаны в [Entitlements](Entitlements.md#ручная-acceptance).
+
+## Резерв RU при недоступном Adapty — 1.5.0
+
+[Правило, подключение и проверки](RUProviderFallback.md): нет ответа Adapty или
+не загрузились его продукты + RU Storefront **или** регион iPhone → свежий backend,
+если разработчик явно подключил новый loader. Полученный false/invalid/absent
+резерв запрещает; запрет сохраняется даже после ошибки продуктов. Старые API
+остаются прежними. Кеш не превращается в свежий ответ; сервер подтверждает оплату.

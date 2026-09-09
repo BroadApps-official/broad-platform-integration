@@ -96,7 +96,8 @@ manifest поиском `BroadApps-official/BroadCore`. Результат до�
 - вызывает ATT из loader;
 - показывает Rate Us/review внутри onboarding;
 - выдаёт premium сразу после SDK purchase;
-- определяет RU только по языку/региону без обязательного `ru_pay = true`;
+- определяет RU по языку или не различает ответ с запретом и отсутствие ответа;
+- при недоступном Adapty не имеет подключённого серверного резерва, хотя он нужен приложению;
 - фильтрует или сортирует provider products;
 - меняет opacity/scale при product tap;
 - хранит keys/PII/raw errors.
@@ -392,7 +393,7 @@ Resolver читает строгий boolean `special_offer = true` из Remote 
 
 Если готова:
 
-- eligibility требует verified-fresh `ru_pay = true` и RU Storefront или RU-регион iPhone;
+- eligibility требует действующий RU gate (разрешающий флаг либо подключённый резерв при сбое провайдера) и RU Storefront или RU-регион iPhone;
 - absent/false/invalid/platform-cache `ru_pay` fail-closed;
 - catalog match typed/deterministic;
 - HTTPS endpoints и subject-bound auth;
@@ -478,7 +479,7 @@ Paywall provider lifecycle не переносите в analytics destination. V
 - [ ] stable app account/subject связывает token и RU ledger между установками;
 - [ ] offline/timeout дают конечный UI state; ambiguous financial result не запускается повторно до reconciliation;
 - [ ] all configured entitlement combinations проверены;
-- [ ] RU требует verified-fresh `ru_pay = true` и RU Storefront или RU-регион iPhone;
+- [ ] RU требует действующий RU gate (разрешающий флаг либо подключённый резерв при сбое провайдера) и RU Storefront или RU-регион iPhone;
 - [ ] special offer отсутствует через `nil` там, где не нужен;
 - [ ] remote config keys/defaults задокументированы;
 - [ ] analytics typed, дедуплицированы и без PII;

@@ -31,7 +31,7 @@
 | Проверка | Что она подтверждает |
 |---|---|
 | Contracts и architecture guardrails | Границы модулей и обязательные продуктовые правила не нарушены |
-| Remote Config feature-gate matrix | Provider payload включает Special Offer, RU требует verified freshness, platform cache выключает оба gate |
+| Remote Config feature-gate matrix | Provider payload включает Special Offer, обычный RU gate требует verified freshness; резерв при сбое подключается отдельно, platform cache выключает оба gate |
 | Adapty experiment matrix | Variation, presentation, `main` fallback, cache, rehydration и единый assignment authority не расходятся |
 | Privacy и documentation | Manifest валиден, README-assets и локальные ссылки существуют |
 | SwiftFormat и SwiftLint | Код соответствует единому стилю |
@@ -255,3 +255,11 @@ AgentChecks/AutomationReports/latest.md
 Codex читает `AGENTS.md` перед работой в репозитории. Поэтому ограничения не
 нужно каждый раз копировать вручную: они применяются и к этой автоматике, и к
 обычной работе Codex из корня платформы.
+
+## Резерв RU при недоступном Adapty — 1.5.0
+
+[Правило, подключение и проверки](RUProviderFallback.md): нет ответа Adapty или
+не загрузились его продукты + RU Storefront **или** регион iPhone → свежий backend,
+если разработчик явно подключил новый loader. Полученный false/invalid/absent
+резерв запрещает; запрет сохраняется даже после ошибки продуктов. Старые API
+остаются прежними. Кеш не превращается в свежий ответ; сервер подтверждает оплату.

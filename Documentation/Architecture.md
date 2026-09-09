@@ -83,13 +83,16 @@ Remote Config и финансовое право разделены архите
 ```text
 Adapty payload → products/variation → внутренний registry → purchase attribution
               → special_offer → разрешение показать второй paywall
-verified remote → ru_pay → разрешение показать RU methods
+verified remote → ru_pay → обычный RU gate
+Adapty/products unavailable + RU Storefront/region → opt-in fresh backend catalog
 
 purchase / restore / RU return → Entitlement Engine → только active открывает premium
 ```
 
 Текущий provider-managed payload (включая cache Adapty SDK) может
-управлять Special Offer, но RU Billing требует `.verifiedFreshRemote`.
+управлять Special Offer. Обычный RU gate требует `.verifiedFreshRemote`.
+[Резерв при недоступном Adapty](RUProviderFallback.md) подключается отдельно,
+сохраняет полученный запрет и не выдаёт кеш за свежий ответ.
 Persistent paywall cache платформы не может включить ни один флаг. Ни один Remote
 Config flag не становится источником entitlement.
 

@@ -106,6 +106,16 @@ import UIKit
                     .init("-paywall-two-products", "Вернуть два продукта.", "Оба продукта показаны в provider order."),
                     .init("-paywall-many-products", "Вернуть двенадцать продуктов.", "Весь список прокручивается без фильтрации."),
                     .init("-paywall-empty", "Вернуть пустой каталог.", "Показано безопасное empty state без CTA покупки."),
+                    .init(
+                        "-ru-provider-unavailable",
+                        "Adapty недоступен: загрузить RU fixture-каталог.",
+                        "RU-регион: серверные тарифы и СБП/карта."
+                    ),
+                    .init(
+                        "-ru-provider-response-false",
+                        "С резервным сценарием: получен запрет до сбоя продуктов.",
+                        "RU-каталог не загружается."
+                    ),
                     .init("-paywall-failure", "Сымитировать ошибку загрузки.", "Показаны safe error и кнопка повтора."),
                     .init("-paywall-hard", "Сделать paywall обязательным.", "Кнопка закрытия скрыта согласно hard policy."),
                     .init(

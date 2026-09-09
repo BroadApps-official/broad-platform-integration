@@ -216,7 +216,7 @@ premium_month_ru
 
 ```text
 host configured
-AND verified-fresh ru_pay = true
+AND (verified-fresh ru_pay = true OR explicitly configured provider-outage fallback)
 AND (Storefront RU/RUS OR iPhone region RU/RUS)
 AND non-empty exact catalog match
 AND backend authorization/kill switch
@@ -255,3 +255,11 @@ AND premium is not already active
 Целевое правило платформы зафиксировано **30 августа 2026 года**. Конкретное
 приложение могло ещё не обновиться; перед его изменением сравните фактический
 код с этой инструкцией и подтвердите rollout у team lead.
+
+## Резерв RU при недоступном Adapty — 1.5.0
+
+[Правило, подключение и проверки](RUProviderFallback.md): нет ответа Adapty или
+не загрузились его продукты + RU Storefront **или** регион iPhone → свежий backend,
+если разработчик явно подключил новый loader. Полученный false/invalid/absent
+резерв запрещает; запрет сохраняется даже после ошибки продуктов. Старые API
+остаются прежними. Кеш не превращается в свежий ответ; сервер подтверждает оплату.

@@ -2,7 +2,7 @@ import BroadCore
 import BroadMonetization
 import Foundation
 
-struct ExamplePaywallRepository: PaywallRepositoryProtocol {
+struct ExamplePaywallRepository: RUFallbackPaywallRepositoryProtocol {
     let arguments: [String]
 
     func loadPaywall(
@@ -312,7 +312,12 @@ struct ExampleRUStorefrontRepository: StorefrontRepositoryProtocol {
     }
 }
 
-struct ExampleRUCatalogRepository: RUCatalogRepositoryProtocol {
+struct ExampleRUCatalogRepository: FreshRUCatalogRepositoryProtocol {
+    /// Local, deterministic demonstration; production uses the authenticated HTTP repository.
+    func loadFreshCatalog() async -> RUCatalogLoadOutcome {
+        await loadCatalog()
+    }
+
     func loadCatalog() async -> RUCatalogLoadOutcome {
         .loaded(
             RUCatalogPayload(

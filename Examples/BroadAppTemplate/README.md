@@ -276,3 +276,12 @@ variation, checkout method и safe diagnostic code.
 [Полный analytics contract и ожидаемая последовательность →](../../Documentation/Analytics.md)
 
 Подробный quick start, ожидаемые результаты и команды `simctl`: [корневой README](../../README.md#example-и-ручные-сценарии).
+
+## RU-каталог при недоступном Adapty
+
+Для локального примера добавьте `-ru-provider-unavailable -onboarding-disabled`.
+После сбоя провайдера появятся серверные fixture-тарифы с СБП/картой без Apple.
+`-ru-provider-response-false` проверяет запрет, полученный до ошибки продуктов.
+`-ru-region-language-only` оставляет резерв закрытым; `-ru-region-storefront-unavailable-device-ru`
+разрешает его по региону телефона. Источники полностью локальные, реальных оплат нет.
+[Подключение production-композиции](../../Documentation/RUProviderFallback.md).

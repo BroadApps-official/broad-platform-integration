@@ -137,10 +137,22 @@ RU SPECIAL OFFER CONTRACT REVIEW REQUIRED
 - используй фиксированные окно 24 часа и cooldown 24 часа общей реализации;
 - возврат из Safari не является success: повторно проверь backend
   policy/entitlement;
-- A/B-тесты RU Billing не поддержаны и находятся в разработке; не добавляй
-  инструкции по их настройке;
+- A/B-тесты RU Billing подключаются явно через tracker (с 1.4.0);
+  используй Documentation/RUBillingExperiments.md. Резерв без ответа Adapty
+  не создаёт вымышленные experiment/segment и отчёты;
 - при неразрешённом gate, отсутствии помеченного продукта или пустом catalog
   ветка закрывается без настоящей оплаты.
 
 Полная инструкция:
 [`../../Documentation/RUSpecialOffer.md`](../../Documentation/RUSpecialOffer.md).
+
+## Adapty unavailable → backend RU catalog (1.5.0)
+
+Сохраняй существующие API и используй явно подключаемый
+`LoadPaywallWithRUFallbackUseCase` / `makeServicesWithRUFallback`.
+Нет ответа Adapty при RU Storefront или RU-регионе телефона разрешает запрос
+свежего каталога приложения. Полученный `ru_pay=false`, invalid или отсутствующее
+поле закрывает резерв. Не теряй запрет, если затем не загрузились StoreKit products.
+Не включай RU по языку, не подставляй true, не придумывай backend URLs/авторизацию.
+Пример `ExampleRUProviderFallback` — локальный; настоящий checkout по-прежнему
+требует согласованный backend-контракт и подтверждение доступа сервером.

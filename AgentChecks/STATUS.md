@@ -2,9 +2,9 @@
 
 ## Результат
 
-`PASS` — 8 сентября 2026 года полный `bash Scripts/agent_gate.sh` прошёл для
-platform set `1.4.0`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
-`BroadMonetization 1.4.1` и `BroadUIFlows 1.1.0`.
+`PASS` — 9 сентября 2026 года полный `bash Scripts/agent_gate.sh` прошёл для
+platform set `1.5.0`: `BroadCore 1.2.0`, `BroadExtensions 1.0.1`,
+`BroadMonetization 1.5.2` и `BroadUIFlows 1.1.0`.
 
 Scope результата — `BroadAppsIOSPlatform` и `BroadAppTemplate`. Настоящие
 purchase, restore и RU-платежи не запускались.
@@ -25,18 +25,28 @@ purchase, restore и RU-платежи не запускались.
   assign → shown, один запрос при 30 одновременных callbacks, retry только при
   новом открытии, остановка при смене пользователя; HTTP проверен на fixtures;
 - старые JSON и initializer действуют, включая точные типы ссылок на
-  конструкторы; в public API относительно 1.3.1 нет удалённых объявлений;
+  конструкторы; в public API относительно 1.4.1 нет удалённых объявлений;
 - selector сохраняет исходный каталог, порядок/дубли и границу Special Offer,
   использует exact ID → isDefault → полный раздел;
 - существующий template собран с candidate source до module tag и затем с
   точным публичным tag; подключение tracker в host app остаётся явным действием;
-- `ru_pay` по-прежнему требует verified-fresh payload и RU Storefront либо
-  RU-регион iPhone; язык ничего не включает;
+- обычный RU gate сохраняет verified-fresh правило; отдельно подключённый
+  резерв при недоступном Adapty/продуктах использует свежий backend-каталог,
+  если Storefront или регион iPhone RU/RUS; язык ничего не включает;
+- отсутствие ответа отличается от полученного false/invalid/absent; ошибка
+  продуктов не теряет полученный запрет. Optional placement обычной подписки сначала идёт в main,
+  затем может сработать серверный резерв; ненастроенный main не маскируется;
+- `tokens` и `special_offer` не заменяются основным paywall или обычными
+  RU-подписками при сбое загрузки;
+- резервные продукты сохраняют серверные ID/условия, порядок и дубли, не дают
+  Apple checkout; свежий каталог повторно проверяет точную выбранную строку;
+- JSON/cache не восстанавливает временное разрешение и A/B-назначение; отмена,
+  одновременные запросы и отказ backend проверены отдельными contract probes;
 - SwiftFormat, SwiftLint, architecture/privacy/docs checks, Package build,
   BroadAppTemplate Debug/Release Simulator, generic iOS compile и две live
   Adapty schemes прошли;
-- Release workflow `BroadMonetization 1.4.1` повторил полный module gate и
-  опубликовал GitHub Release. Версия `BroadUIFlows 1.1.0` не менялась.
+- Локальный `BroadMonetization 1.5.2` module gate и candidate template compile
+  прошли до отправки tag. Версия `BroadUIFlows 1.1.0` не менялась.
 
 ## Отчёты
 
