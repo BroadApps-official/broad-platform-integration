@@ -5,6 +5,11 @@ consumable-пакеты. Они визуально используют те ж�
 button, что subscription paywall, но не импортируют его checkout, restore или
 premium completion.
 
+Для RU-токенов с 3.0.0 есть отдельные `resolveTokenCheckoutMethods` и
+`startSelectedToken` с подтверждением через account policy. Они подключаются
+в собственном host UI; готовый экран ниже обслуживает Apple manager.
+[Подключение RU checkout и возврата](RUBilling.md).
+
 ## Обязательная композиция
 
 ```text
@@ -19,8 +24,9 @@ placement .tokens
   → onBalanceConfirmed(snapshot)
 ```
 
-Общий `LoadPaywallUseCase` сохраняет резерв любого placement на `.main`.
-Token ViewModel принимает такой fallback только когда requested context остался
+Стандартный Adapty adapter пробует token/tokens и не подменяет продукты `main`.
+Ниже описана защитная обработка legacy/custom payload в UI и fixture.
+Token ViewModel принимает такой payload только когда requested context остался
 `.tokens`, origin содержит typed fallback, а **все** продукты резервного
 каталога имеют `kind == .consumable`. Subscription/unknown-продукт из `main`
 отклоняет весь payload: обычный subscription paywall не может подменить token

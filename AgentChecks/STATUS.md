@@ -1,5 +1,32 @@
 # Последняя подтверждённая проверка платформы
 
+## Account-policy RU checkout — набор 3.0.0
+
+Проверяются BroadCore 1.2.0, BroadExtensions 1.0.1, BroadMonetization 3.0.0
+и BroadUIFlows 3.0.0. Команда полной приёмки: `bash Scripts/agent_gate.sh`,
+лог текущего прогона: `.build/account-final-gate.log`.
+
+- Локальный `module_gate.sh` обоих изменённых модулей — PASS, включая
+  public API reports, DocC, SwiftFormat/SwiftLint и unsigned iPhone examples.
+- До тегов собран integration candidate с исходниками модулей; Debug/Release
+  Simulator и Release generic iOS прошли. После тегов оба lockfile разрешены
+  в опубликованные 3.0.0, `Scripts/build.sh` прошёл всю матрицу повторно.
+- Account-policy probe проверяет тариф/период, исходный баланс, 8 попыток,
+  ошибку вместо stale success, смену сессии, сохранение context, pending
+  и объединение foreground/dismiss. HTTP probe проверяет GET policy/effective,
+  отсутствие cache, ошибки авторизации/сервера и старый snake_case wire.
+- Новый режим подтверждает состояние аккаунта, не конкретную транзакцию.
+  Неопределённый результат остаётся pending; Retry не создаёт новый checkout.
+- UIFlows согласует диапазон зависимости 3.x; собственные UI API не менялись.
+  Реальные покупки, restore и обращения к production backend не выполнялись.
+
+Ревизии модулей: Monetization `c55174b460853f88f8d6340e702d6eead0d49dc1`,
+UIFlows `b5718a6a348a10a7ed50f352361eda6f585e2f70`.
+[Monetization Module quality](https://github.com/BroadApps-official/broad-monetization-ios/actions/runs/34472909093),
+[UIFlows Module quality](https://github.com/BroadApps-official/broad-ui-flows-ios/actions/runs/34473499612).
+
+Ниже — исторические результаты набора 2.0.1; они не заменяют приёмку 3.0.0.
+
 ## Единый reviewer — 10 сентября 2026
 
 - Добавлены явные режимы platform/app, аудит по умолчанию и --fix.

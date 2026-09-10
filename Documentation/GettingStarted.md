@@ -655,6 +655,9 @@ struct RootScene: View {
                     switch await paymentReturn.applicationDidBecomeActive() {
                     case .active:
                         appFlowCoordinator.subscriptionDidBecomeActive()
+                    case let .tokensCredited(balance):
+                        // Применить свежий баланс в host; не выдавать premium.
+                        updateTokenBalance(balance)
                     case .pending:
                         // Остаться без premium и показать app-owned notice.
                         break

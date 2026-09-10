@@ -62,7 +62,12 @@ Presentation и свой дизайн сами по себе не являютс
    token fulfillment/recovery, pending после возврата и optional special offer.
    Сверь DTO с обезличенным JSON контрактом: snake_case и ID/URL должны
    декодироваться исполняемым примером, не только компилироваться. Отсутствующий
-   endpoint статуса не заменяй выдуманным; проверь доступный способ подтверждения.
+   endpoint статуса не заменяй выдуманным. С 3.0.0 допустим account-policy режим:
+   GET policy/effective после возврата/закрытия оплаты, до 8 попыток по 2 секунды;
+   подписка требует активности и тарифа/периода, токены — роста свежего баланса
+   от сохранённого значения до checkout. Проверь отсутствие cache fallback при
+   ошибке, subject/session binding, coalescing и pending/Retry без нового checkout.
+   Не считай account policy доказательством оплаты конкретной транзакции.
    Успешное открытие checkout URL не означает оплату. Чувствительные gates не
    восстанавливаются из last-valid cache.
 6. style: проверь выбранные SwiftFormat/SwiftLint правила и фактический app-код,

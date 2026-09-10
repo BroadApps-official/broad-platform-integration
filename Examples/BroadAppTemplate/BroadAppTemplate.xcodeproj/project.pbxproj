@@ -841,7 +841,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-monetization-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 2.0.1;
+				version = 3.0.0;
 			};
 		};
 		766E427D766A9ACD0377ED09 /* XCRemoteSwiftPackageReference "Swinject" */ = {
@@ -873,7 +873,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-ui-flows-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 2.0.1;
+				version = 3.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

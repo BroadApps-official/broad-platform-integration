@@ -3,7 +3,18 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
-## Unreleased — проверка платформы и приложения
+## 3.0.0
+
+- BroadMonetization 3.0.0 подтверждает RU checkout через свежий account policy
+  без payment-status endpoint: подписка по активности/тарифу, токены по росту
+  сохранённого исходного баланса; 8 попыток по 2 секунды и общий return coordinator.
+- UIFlows 3.0.0 согласует dependency range с новым публичным контрактом.
+  Core 1.2.0 и Extensions 1.0.1 сохраняются.
+- Документация, compile examples и reviewer описывают оба способа подтверждения,
+  pending/Retry и отдельный результат токенов. Это убирает дублирование polling
+  в host, сохраняя авторизацию и backend authority.
+
+### Проверка платформы и приложения
 
 - Один reviewer получил режимы platform/app: каждый module gate запускается
   в собственном repository, а host app собирается отдельно. Явные режимы

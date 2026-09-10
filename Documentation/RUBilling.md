@@ -1,5 +1,31 @@
 # RU Billing: российские способы оплаты
 
+## Backend без payment-status endpoint
+
+С BroadMonetization 3.0.0 поддержан account-policy режим: не указывайте
+`RUBillingEndpointConfiguration.paymentStatus`, направьте `entitlementStatus`
+на `GET /v1/policy/effective`. Factory выберет готовый checkout/entitlement
+wire adapter и polling до 8 попыток по 2 секунды. Для своего API-клиента есть
+`RUAccountPolicyRepositoryProtocol`; cancellation остаётся отдельным контрактом.
+
+После закрытия payment page и возврата приложения вызывайте общий
+`checkout.applicationReturn.applicationDidBecomeActive()`. Подписка требует
+активного backend-состояния и совпадения тарифа/периода; токены — роста баланса
+относительно сохранённого значения до оплаты. RU-токены идут через
+`catalog.resolveTokenCheckoutMethods` и `checkout.startSelectedToken`,
+возвращаются как `.tokensCredited(balance)` без выдачи premium.
+
+Ошибка запроса не подменяется старым состоянием. После лимита остаётся pending
+с повторной проверкой, без нового checkout. Pending блокирует новую финансовую
+операцию; только закрытие страницы/таймаут не доказывают отмену. Account policy
+подтверждает состояние аккаунта, не транзакцию: уже активный тот же тариф или
+пополнение из другого источника тоже могут выполнить условие.
+
+[Контракт, миграция и compile example](https://github.com/BroadApps-official/broad-monetization-ios/blob/main/Documentation/RUAccountPolicy.md).
+Описанный ниже режим с отдельным `paymentStatus` также поддерживается.
+
+## Каталог и gate
+
 RU Billing добавляет оплату картой и СБП через backend приложения.
 С 9 сентября 2026 года в BroadMonetization 1.5.0 есть два пути:
 
@@ -691,9 +717,9 @@ ID/цены; matcher проверяет исходный индекс и пол�
 исключены. Причина простая: `RefreshRUPaymentUseCase` подтверждает premium-доступ, но не начисляет
 токены и не активирует купоны.
 
-Типы каталога и read-only доступ к нему остаются публичными, поэтому приложение может построить
-отдельный типизированный flow начисления токенов. Внутренние создание premium-сессии и polling
-нельзя использовать как короткий путь для начисления токенов.
+С 3.0.0 для токенов есть отдельный маршрут `startSelectedToken` с account-policy
+подтверждением и сохранённым исходным балансом. Используйте его вместо premium
+checkout; типы каталога и read-only доступ к нему остаются публичными.
 
 `CachedRUCatalogRepository` хранит последний корректный каталог в течение настроенного stale-периода.
 Частичная сетевая ошибка не перезаписывает его. `RUBPriceFormatter` форматирует только настоящую
