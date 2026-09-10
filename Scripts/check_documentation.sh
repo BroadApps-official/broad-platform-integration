@@ -25,6 +25,12 @@ link_failures="$(
       ].select { |path| File.file?(path) }.uniq.sort
 
       failures = []
+      readme = File.join(root, "README.md")
+      readme_text = File.read(readme, encoding: "UTF-8")
+      readme_anchors = readme_text.scan(/^\#{1,6}\s+(.+)$/).flatten.map do |heading|
+        heading.downcase.gsub(/[^\p{L}\p{N}_ -]/, "").tr(" ", "-")
+      end
+      readme_anchors += readme_text.scan(/id="([^"]+)"/).flatten
       files.each do |source|
         text = File.read(source, encoding: "UTF-8")
         targets = text.scan(/\[[^\]]*\]\((?:<([^>]+)>|([^\s\)]+))/)
@@ -52,6 +58,12 @@ link_failures="$(
           unless File.exist?(resolved)
             failures << "#{source.delete_prefix(root + "/")}: missing target: #{target}"
           end
+          if resolved == readme && target.include?("#")
+            fragment = URI::DEFAULT_PARSER.unescape(target.split("#", 2).last)
+            unless readme_anchors.include?(fragment)
+              failures << "#{source.delete_prefix(root + "/")}: missing README section: #{target}"
+            end
+          end
         end
       end
 
@@ -74,78 +86,65 @@ if ! CLANG_MODULE_CACHE_PATH="$swift_module_cache" \
     /usr/bin/xcrun swift "$platform_root/Scripts/check_gif_frames.swift" "$platform_root/Documentation/Assets/README/full-flow.gif" "$platform_root/Documentation/Assets/README/adaptive-paywall.gif"; then
     record_failure "README GIF validation failed."
 fi
-
+# README is an entry point; operational contracts stay in their owner documents.
 readme_line_count="$(/usr/bin/wc -l < "$platform_root/README.md" | /usr/bin/tr -d ' ')"
-if ((readme_line_count < 400 || readme_line_count > 650)); then
-    record_failure "README must stay a 400-650 line landing page (actual: $readme_line_count)."
+if ((readme_line_count > 180)); then
+    record_failure "README must stay a concise entry point (maximum 180 lines; actual: $readme_line_count)."
 fi
 
 for required_pattern in \
-    '^## С чего начать$' \
+    'Самая актуальная документация — на сайте' \
     '^## Что подключать$' \
-    '^## Целевые public repositories$' \
-    '^### Идея новой архитектуры$' \
-    '^## Если приложение уже сделано на старой платформе$' \
-    '^## 🤖 Вариант A: сделать приложение через Codex или Claude$' \
-    '^## 🛠️ Вариант B: собрать приложение вручную$' \
-    '^### 🎁 Special Offer — только второй paywall$' \
-    '^## Документация: repository плюс сайт$' \
-    '^## Release и compatibility$' \
-    '^## ✅ Если вы изменили код платформы$' \
-    '^### Без unit tests$' \
-    '^## BroadAppTemplate$' \
-    '^## Карта документации$' \
-    '^## Словарь$' \
-    '^## Перед завершением задачи$' \
+    '^## Быстрое подключение$' \
+    '^## Нужна конкретная инструкция$' \
+    '^## Запустить общий пример$' \
+    '^## Проверить платформу или приложение$' \
+    '^## Что хранится в этом repository$' \
     'Host app подключает \*\*любой нужный модуль\*\*' \
     '`BroadPlatform` или другого umbrella package нет' \
     'Swift 5 language mode' \
-    'SwiftPM 6\.0 — это не одно и то же' \
-    '^### Как открыть сайт локально$' \
-    'pnpm install --frozen-lockfile' \
-    'pnpm run dev' \
-    'Сайт дублирует обязательные operational guides' \
-    'Documentation/LegacyREADMEContentAudit\.md' \
-    'flowchart LR' \
-    'Documentation/MigrationGuide\.md' \
-    'Documentation/LegacyAppMigrationAgent\.md' \
-    'не линковать old/new packages с одинаковым Swift module' \
-    'https://broadapps-ios-docs\.nkhsnv\.chatgpt\.site' \
-    'Documentation/FederatedRepositories\.md' \
-    'Documentation/ModuleReleasePolicy\.md' \
+    'SwiftPM 6\.0' \
     'Compatibility/current\.yml' \
-    'Documentation/AppCreationWorkflow\.md' \
-    'Documentation/AgentPromptPack\.md' \
-    'Documentation/Templates/AppIntegrationPlan\.md' \
-    'PLAN REVIEW REQUIRED' \
-    'SKELETON REVIEW REQUIRED' \
-    'SLICE REVIEW REQUIRED' \
-    'FUNCTIONAL REVIEW REQUIRED' \
-    'VISUAL REVIEW REQUIRED' \
+    'Package\.resolved' \
+    'Exact Version' \
     'BroadExtensions' \
     'BroadCore' \
     'BroadMonetization' \
     'BroadUIFlows' \
-    'public Adapty SDK key и placement IDs' \
-    'общий pipeline платформы сохраняет весь ответ' \
-    'SDK cache, Dashboard fallback и platform cache не авторизуют RU methods' \
+    'bash Scripts/install_build_tools\.sh' \
+    'bash Scripts/generate_example\.sh' \
     'bash Scripts/agent_gate\.sh' \
-    'Tests/' \
+    'bash Scripts/module_gate\.sh' \
+    'agent_review_and_fix\.sh platform' \
+    'agent_review_and_fix\.sh app' \
+    'Documentation/AgentReview\.md' \
     'XCTest' \
     'Swift Testing' \
+    'Documentation/Assets/README/hero-light\.svg' \
+    'Documentation/Assets/README/hero-dark\.svg' \
     'Documentation/Assets/README/platform-module-selection-light\.svg' \
-    'Documentation/Assets/README/platform-module-selection-dark\.svg' \
-    'Documentation/Assets/README/federated-repositories-light\.svg' \
-    'Documentation/Assets/README/federated-repositories-dark\.svg' \
-    'Documentation/Assets/README/documentation-pipeline-light\.svg' \
-    'Documentation/Assets/README/documentation-pipeline-dark\.svg' \
-    'Documentation/Assets/README/module-release-flow-light\.svg' \
-    'Documentation/Assets/README/module-release-flow-dark\.svg' \
-    'Documentation/Assets/README/cross-repo-change-light\.svg' \
-    'Documentation/Assets/README/cross-repo-change-dark\.svg'; do
+    'Documentation/Assets/README/platform-module-selection-dark\.svg'; do
     if ! rg -q -- "$required_pattern" "$platform_root/README.md"; then
         record_failure "README requirement is missing: $required_pattern"
     fi
+done
+
+for site_route in app-standard getting-started module-selection compatibility \
+    app-creation legacy-app-migration onboarding-att adapty-setup paywall-ui \
+    ru-billing ru-billing-ab-platform special-offer token-paywall \
+    runtime-reliability documentation release-process; do
+    if ! rg -Fq -- "https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/$site_route" "$platform_root/README.md"; then
+        record_failure "README must link to the current site guide: $site_route"
+    fi
+done
+
+for theme in light dark; do
+    for banner_text in 'Самая актуальная документация — на сайте' \
+        'broadapps-ios-docs.nkhsnv.chatgpt.site' 'ОТКРЫТЬ ДОКУМЕНТАЦИЮ'; do
+        if ! rg -Fq -- "$banner_text" "$platform_root/Documentation/Assets/README/hero-$theme.svg"; then
+            record_failure "README $theme banner is missing: $banner_text"
+        fi
+    done
 done
 
 for documentation_contract in \

@@ -266,7 +266,7 @@ Product row, CTA, restore, close, legal links и payment methods использ�
 переходом в content либо error/retry.
 
 Правило одинаково для подписок и расходуемых токенов. Визуальный пример обоих
-состояний находится в [главном README](../README.md#paywall-loader).
+состояний находится в [статье о paywall](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/paywall-ui).
 
 ## Sticky layout и адаптивность
 

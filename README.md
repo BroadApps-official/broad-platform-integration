@@ -1,650 +1,145 @@
 # BroadApps iOS Platform
 
 <p align="center">
-  <strong>Публичные Swift-модули для iPhone-приложений</strong><br>
-  Core · Monetization · UI Flows · Extensions
-</p>
-
-<p align="center">
-  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site" title="Открыть BroadApps iOS Docs">
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site" title="Открыть актуальную документацию BroadApps">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/hero-dark.svg">
-      <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/hero-light.svg">
-      <img alt="BroadApps iOS Platform — открыть публичную документацию" src="Documentation/Assets/README/hero-light.svg" width="100%">
+      <img alt="Самая актуальная документация — на сайте. broadapps-ios-docs.nkhsnv.chatgpt.site — открыть документацию" src="Documentation/Assets/README/hero-light.svg" width="100%">
     </picture>
   </a>
 </p>
 
+<h2 align="center">Самая актуальная документация — на сайте</h2>
 <p align="center">
-  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site"><img alt="Open Docs Website" src="https://img.shields.io/badge/OPEN_DOCS_WEBSITE-2563EB?style=for-the-badge&amp;logo=safari&amp;logoColor=white"></a>
-  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/search"><img alt="Search Documentation" src="https://img.shields.io/badge/SEARCH_DOCUMENTATION-0F172A?style=for-the-badge&amp;logo=algolia&amp;logoColor=white"></a>
-  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started"><img alt="Getting Started" src="https://img.shields.io/badge/GETTING_STARTED-10B981?style=for-the-badge&amp;logo=readthedocs&amp;logoColor=white"></a>
+  <strong><a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site">broadapps-ios-docs.nkhsnv.chatgpt.site →</a></strong><br>
+  Подключение · правила приложения · примеры · проверка агентом<br><br>
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-standard"><strong>Применить стандарт</strong></a> ·
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started"><strong>Первое подключение</strong></a> ·
+  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/search"><strong>Найти ответ</strong></a>
 </p>
 
-> [!TIP]
-> **🌐 Посмотрите публичный сайт:** на нём есть выбор модулей, compatibility,
-> migration guides и поиск по всей документации.
-
-<p align="center">
-  <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-это">💡 Что это</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#быстрый-маршрут">⚡ Быстрый маршрут</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#все-flow">🗺️ Все flow</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#перед-qa">🚦 Перед QA</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-открыть">📂 Что открыть</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#с-чего-начать">🚀 С чего начать</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#с-codex-claude">🤖 С Codex / Claude</a> · <a href="https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#без-агента">🛠️ Без агента</a> · <a href="CHANGELOG.md">Changelog</a>
-</p>
-
-> [!IMPORTANT]
-> Host app подключает **любой нужный модуль**. Обязательного
-> `BroadPlatform` или другого umbrella package нет.
-
-BroadApps iOS Platform даёт проверяемую основу для запуска,
-состояний, onboarding, paywall, Adapty, StoreKit, entitlement, RU Billing,
-покупок и готовых SwiftUI-flow. Тексты, assets, real IDs, keys, URLs,
-backend-ручки и product decisions остаются в конкретном приложении.
-
----
-
-## С чего начать
-
-| Если вам нужно | Откройте |
-|---|---|
-| Понять платформу, owners и какой product подключать | [«Что это»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-это) и раздел [«Что подключать»](#что-подключать) ниже |
-| Выбрать кратчайший путь для своей задачи | [«Быстрый маршрут»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#быстрый-маршрут) |
-| Увидеть карту onboarding, paywall, Special Offer, tokens, RU Billing и support | [«Все flow»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#все-flow) |
-| Создать приложение с Codex/Claude или вручную | [«С чего начать»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#с-чего-начать) |
-| Понять, какой workspace, package или example открыть | [«Что открыть»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#что-открыть) |
-| Подключить первый модуль к host app | [Getting Started на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started) |
-| Xcode просит GitHub password или доступ к Keychain | [Public package access](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/public-package-access) |
-| Найти правило по Special Offer, entitlement, cache или release | [текстовый, GitHub- и алфавитный поиск](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs) |
-| Перенести существующее приложение со старой платформы | [Legacy migration](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration) |
-| Проверить совместимые версии | [Compatibility catalog](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility) |
-| Подготовить приложение к QA | [«Перед QA»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#перед-qa) |
-| Изменить API конкретного модуля | README и DocC в repository этого модуля |
-
-> [!TIP]
-> Начиная с platform set `1.0.0`, Core, Extensions, Monetization и UIFlows
-> выпускаются отдельно. Integration repository хранит проверенный набор
-> версий, но host app не подключает его как dependency.
-
-### Swift 5 и SwiftPM 6.0 — это не одно и то же
-
-- production sources собираются в **Swift 5 language mode**;
-- host example явно использует `SWIFT_VERSION = 5.0`;
-- `// swift-tools-version: 6.0` в `Package.swift` — версия формата manifest и
-  SwiftPM toolchain, а не перевод исходников на Swift 6 language mode;
-- для package resolve нужен toolchain, понимающий SwiftPM 6.0, но app target
-  остаётся в Swift 5 mode.
-
-Точные значения для проверенного набора хранятся в
-[`Compatibility/current.yml`](Compatibility/current.yml): отдельно
-`swift_language_mode` и `swift_tools`.
-
----
+Здесь — необходимая информация для работы с integration repository:
+модули, проверенные версии, запуск примера и команды проверки.
+Подробные инструкции и актуальные правила читайте на сайте;
+API конкретного выпуска сверяйте с README и DocC соответствующего тега модуля.
 
 ## Что подключать
 
+Host app подключает **любой нужный модуль** напрямую через Swift Package Manager.
+Обязательного `BroadPlatform` или другого umbrella package нет.
+Этот repository хранит проверенный набор версий, общий пример и проверки;
+**добавлять `broad-platform-integration` в зависимости приложения не нужно**.
+
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/platform-module-selection-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/platform-module-selection-light.svg">
-  <img alt="Host app выбирает любой нужный модуль" src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
+  <img alt="Приложение выбирает нужные products. UIFlows использует Monetization и Core; Extensions подключается независимо." src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
 </picture>
 
-### Идея новой архитектуры
+Проверенный набор **[3.0.0](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/3.0.0)**:
 
-Host app больше не зависит от общего изменяемого «комбайна». Код принадлежит
-маленьким module repositories: каждый module можно ревьюить и выпускать
-отдельно, а integration repository доказывает, что конкретные версии работают
-вместе. Documentation repository добавляет поиск по cross-module guides, но не
-забирает API docs у владельца модуля.
-
-| Раньше | Теперь | Почему лучше |
+| Product / repository | Для чего | Версия |
 |---|---|---|
-| Одна большая область изменений | Core, Extensions, Monetization и UIFlows разделены | Review можно ограничить изменяемым module repository |
-| Release затрагивает всю платформу | У каждого module свой SemVer | Backward-compatible fix можно выпустить в owner module; dependent gates всё равно повторяются |
-| Host получает весь umbrella | Host выбирает нужные products напрямую | Меньше dependencies и скрытых side effects |
-| Совместимость приходилось угадывать | Integration фиксирует exact known-good set | Есть воспроизводимый пример и clean-runner evidence |
-| Документацию трудно найти | README направляет, сайт ищет, DocC описывает tag | Нет одной огромной инструкции и второй копии API |
+| [BroadExtensions](https://github.com/BroadApps-official/broad-extensions-ios) | Цвета, шрифты, клавиатура, swipe-back | [1.0.1](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) |
+| [BroadCore](https://github.com/BroadApps-official/broad-core-ios) | Запуск, состояния, кеш, retry, логирование | [1.2.0](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.2.0) |
+| [BroadMonetization](https://github.com/BroadApps-official/broad-monetization-ios) | Adapty, покупка, доступ, RU-оплата, токены | [3.0.0](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/3.0.0) |
+| [BroadUIFlows](https://github.com/BroadApps-official/broad-ui-flows-ios) | Готовые onboarding, AppFlow и paywall | [3.0.0](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/3.0.0) |
 
-Главная идея: **module repository владеет кодом и release, host app — своими
-решениями, integration — совместимостью, сайт — навигацией и поиском**.
+Источник версий — [Compatibility/current.yml](Compatibility/current.yml).
+UIFlows подтягивает Monetization и Core, Monetization — Core.
+Если приложение напрямую импортирует нижележащий модуль, добавьте его product в target.
+[Выбор модулей](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/module-selection) ·
+[Совместимость и обновление](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility).
 
-| Задача host app | Подключить | Что придёт транзитивно |
-|---|---|---|
-| Hex Color, fonts, keyboard dismiss, swipe-back | `BroadExtensions` | ничего |
-| Bootstrap, cache, state, retry, logging, ATT boundary | `BroadCore` | Swinject |
-| Свой UI поверх purchase/entitlement | `BroadMonetization` | Core, Adapty, Swinject |
-| Готовые onboarding, AppFlow и paywall | `BroadUIFlows` | Monetization, Core, Adapty, Swinject |
-| Extensions плюс любой flow | нужный product + `BroadExtensions` | по graph выше |
+## Быстрое подключение
 
-Если app импортирует public API нижележащего модуля напрямую,
-этот product тоже указывается в app target.
+1. В Xcode откройте `File → Add Package Dependencies…` и добавьте URL нужного модуля, например `https://github.com/BroadApps-official/broad-core-ios.git`.
+2. Для воспроизведения проверенного набора выберите **Exact Version** из таблицы и нужный product для app target. Сохраните `Package.resolved` в Git.
+3. Настройте **iOS 17+, iPhone, Swift 5 language mode**. Для manifest с `swift-tools-version: 6.0` нужны инструменты SwiftPM 6.0; это не перевод исходников на Swift 6.
+4. Соберите приложение в iPhone Simulator с **Team = None**.
 
-[Полная матрица выбора модуля →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/module-selection)
+Публичные модули скачиваются по HTTPS без GitHub account, password, token или API key.
+Если Xcode просит пароль, проверьте старый URL `BroadApps-official/BroadCore`:
+[диагностика подключения](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/public-package-access).
 
-## Целевые public repositories
+Дизайн, тексты, ключи SDK, placements, backend и авторизация принадлежат приложению.
+[Готовый BroadStart и пошаговое подключение](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started).
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/federated-repositories-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/federated-repositories-light.svg">
-  <img alt="Публичная федерация repositories" src="Documentation/Assets/README/federated-repositories-light.svg" width="100%">
-</picture>
+## Нужна конкретная инструкция
 
-| Repository | Роль | Подключается host app |
-|---|---|---:|
-| [`broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios) | `BroadExtensions` · [`1.0.1`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) | да, по надобности |
-| [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.2.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.2.0) | да, по надобности |
-| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`3.0.0`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/3.0.0) | да, по надобности |
-| [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`3.0.0`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/3.0.0) | да, по надобности |
-| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`3.0.0`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/3.0.0) | нет, это catalog/evidence |
-| [`broad-docs`](https://github.com/BroadApps-official/broad-docs) | публичный сайт и cross-module guides | нет |
-
-> [!NOTE]
-> Этот repository является integration-контуром: он фиксирует проверенные
-> exact versions, собирает целостный example и не является обязательной
-> dependency host-приложения. Актуальный набор лежит в
-> [`Compatibility/current.yml`](Compatibility/current.yml).
-
-[Архитектурное решение и почему мы так делаем →](Documentation/ADR/0006-federated-public-repositories.md)
-
----
-
-## Быстрый старт
-
-### 1. Выберите product
-
-Начните с таблицы выше. Не добавляйте Monetization или UIFlows «на будущее»:
-это увеличивает graph, SDK scope и область review.
-
-### 2. Добавьте repository в Xcode
-
-```text
-File → Add Package Dependencies…
-```
-
-Выберите URL repository модуля и version из compatibility catalog.
-Добавьте product нужному iPhone target.
-
-Если host — Swift Package:
-
-```swift
-dependencies: [
-    .package(
-        url: "https://github.com/BroadApps-official/broad-core-ios.git",
-        from: "1.2.0"
-    )
-]
-```
-
-Public module repositories читаются по HTTPS **без GitHub account, password,
-token или API key**. Окно `git-credential-osxkeychain` обычно означает, что
-host project всё ещё ссылается на старый private URL
-`BroadApps-official/BroadCore` или использует сохранённое Git-перенаправление.
-Не добавляйте секрет в app: отмените запрос и замените package reference на
-нужный `broad-*-ios` URL. [Диагностика и clean-machine проверка →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/public-package-access)
-
-Release-проект должен ссылаться на опубликованный SemVer tag из
-compatibility catalog, а не на branch или локальную checkout-папку.
-
-`from: "1.2.0"` разрешает совместимые версии до следующего major. Для точного
-воспроизведения verified set или на время legacy migration выберите exact
-catalog version; фактический результат resolve фиксирует `Package.resolved`.
-
-### 3. Оставьте app-owned данные в app
-
-| В host app | В shared module |
+| Задача | Статья на сайте |
 |---|---|
-| real API keys и public SDK keys | typed configuration contracts |
-| provider placement IDs | logical placements и fallback policy |
-| bundle ID, SKU catalog, legal URLs | provider-neutral models |
-| strings, assets, design tokens | reusable state/flow |
-| backend paths, auth и DTO adapters | repository/use case boundaries |
-| feature switches и product decisions | safe default/fail-closed behavior |
+| Применить общие компоненты и проверить приложение | [Стандарт приложения](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-standard) |
+| Создать приложение вручную или с агентом | [Создание приложения](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation) |
+| Перенести существующее приложение | [Переход со старого BroadCore](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration) |
+| Настроить onboarding и ATT | [Первые экраны и разрешение Apple](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/onboarding-att) |
+| Настроить placements, ключи, token/tokens и fallback | [Настройка Adapty](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/adapty-setup) |
+| Подключить paywall, loader и защиту от повторного нажатия | [Paywall и состояния экрана](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/paywall-ui) |
+| Подключить RU-оплату и подтверждение через account policy | [RU Billing](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/ru-billing) |
+| Настроить A/B-тесты через Adapty | [RU Billing: эксперименты](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/ru-billing-ab-platform) |
+| Подключить отдельные предложения | [Special Offer](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/special-offer) · [Токены](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/token-paywall) |
+| Обработать ошибку, pending и восстановление аккаунта | [Запуск, ошибки и восстановление](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/runtime-reliability) |
+| Исправить документацию или выпустить модуль | [Документация](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/documentation) · [Выпуск версии](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/release-process) |
 
-Secrets, bearer tokens, payment URLs, receipts/JWS и user data не попадают
-ни в public repository, ни в README, ни в fixture-логи.
+## Запустить общий пример
 
-<a id="app-configuration"></a>
-### 4. Соберите composition root
-
-Composition root — единственное место, где host app:
-
-1. читает app-owned configuration;
-2. создаёт adapters, repositories и use cases;
-3. регистрирует assemblies только подключённых модулей;
-4. передаёт ViewModel в View через `init`.
-
-Порядок, если все три assemblies нужны:
-
-```swift
-let assembler = Assembler([
-    BroadCoreAssembly(/* app-owned dependencies */),
-    BroadMonetizationAssembly(/* engine and services */),
-    BroadUIFlowsAssembly()
-])
-```
-
-View не вызывает `resolver.resolve(...)`, не создаёт repository и не общается
-с Adapty/StoreKit/backend напрямую.
-
-### 5. Соберите iPhone app
+`BroadAppTemplate` показывает совместную работу модулей: onboarding, paywall,
+Special Offer, токены, RU flow и состояния ошибок. Это технический пример
+с локальными сценариями, а не готовый дизайн приложения или настоящий платёж.
+Три слайда в `BroadAppTemplate` — только демонстрационный пример; число страниц задаёт приложение.
 
 ```bash
-xcodebuild \
-  -project MyApp.xcodeproj \
-  -scheme MyApp \
-  -sdk iphonesimulator \
-  -configuration Debug \
-  CODE_SIGNING_ALLOWED=NO \
-  build
+git clone https://github.com/BroadApps-official/broad-platform-integration.git
+cd broad-platform-integration
+bash Scripts/install_build_tools.sh
+bash Scripts/generate_example.sh
+open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 ```
 
-Platform scope:
+Выберите схему **BroadAppTemplate** и iPhone Simulator.
+[Сценарии и параметры запуска](Examples/BroadAppTemplate/README.md) ·
+[Как устроен пример и что проверять](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-standard#запустите-общий-пример).
 
-- iOS 17+;
-- iPhone-only, `TARGETED_DEVICE_FAMILY = 1`;
-- iPad, Mac, Mac Catalyst и visionOS не входят в обязательную матрицу;
-- Signing Team не нужен для Simulator/generic unsigned compile.
+## Проверить платформу или приложение
 
-[Полный Getting Started →](Documentation/GettingStarted.md)
-
----
-
-## Если приложение уже сделано на старой платформе
-
-Не создавайте новое приложение и не переписывайте рабочий flow целиком.
-Сначала снимите baseline и классифицируйте package graph. Затем переключайте
-одну cutover group: это либо независимый boundary, либо минимальная atomic
-group из нескольких конфликтующих references. Runtime behavior после cutover
-всё равно переносится по одному вертикальному срезу.
-
-```mermaid
-flowchart LR
-    A["Работающий legacy app"] --> B["Baseline + package graph"]
-    B --> C["Cutover topology + legacy owners"]
-    C --> D["Одна atomic cutover group"]
-    D --> E["Final graph: один owner на target"]
-    E --> F["Runtime slices по одному + review"]
-    F --> G{"READY groups остались?"}
-    G -->|"Да"| D
-    G -->|"Нет"| H["Legacy cleanup → QA"]
-```
-
-| Подход | Когда выбирать | Отдельная инструкция |
-|---|---|---|
-| Вручную | Разработчик сам анализирует graph, меняет package references и проверяет каждый flow | [Ручная миграция старого приложения](Documentation/MigrationGuide.md) |
-| Через ИИ | Нужен агент, который сам проведёт audit/plan/switch/slice/cleanup, но будет останавливаться на review | [Конкретная staged-инструкция для Codex/Claude](Documentation/LegacyAppMigrationAgent.md) |
-
-Общие правила: не линковать old/new packages с одинаковым Swift module, не
-переносить app-owned configuration в public package, брать версии из
-`Compatibility/current.yml` и удалять legacy source только после поиска usages,
-сборок и developer review.
-
-[Открыть legacy migration на сайте →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration)
-
----
-
-<a id="agent-setup"></a>
-## 🤖 Вариант A: сделать приложение через Codex или Claude
-
-Этот раздел — общий staged workflow для нового приложения/нового feature. Для
-перехода уже работающего legacy app используйте отдельную AI-инструкцию выше.
-
-Агент не должен получать один монолитный prompt «сделай всё». Работа идёт
-по проверяемым stages:
-
-```text
-0 PREFLIGHT → 1 PLAN → 2 SKELETON → 3 ONE SLICE
-            → 4 FUNCTIONAL → 5 VISUAL → 6 ACCEPTANCE
-```
-
-| Документ | Единственная роль |
-|---|---|
-| [Agent Preflight](Documentation/AgentPreflight.md) | Canonical правила и единственный Stage 0 prompt |
-| [Integration Plan](Documentation/Templates/AppIntegrationPlan.md) | Screens, API, ownership и `BLOCKED` до кода |
-| [App Creation Workflow](Documentation/AppCreationWorkflow.md) | Порядок stages, stop rules и checkpoints |
-| [Agent Prompt Pack](Documentation/AgentPromptPack.md) | Дословное зеркало Stage 0 плюс prompts stages 1–6 и resume |
-
-Обязательные checkpoints:
-
-- `PLAN REVIEW REQUIRED`;
-- `SKELETON REVIEW REQUIRED`;
-- `SLICE REVIEW REQUIRED`;
-- `FUNCTIONAL REVIEW REQUIRED`;
-- `VISUAL REVIEW REQUIRED`;
-- `READY FOR QA`.
-
-Reference-проекты можно изучать, но нельзя менять, копировать из них
-credentials или переносить их архитектуру без аудита.
-
-<a id="manual-setup"></a>
-## 🛠️ Вариант B: собрать приложение вручную
-
-Требования те же, меняется только исполнитель:
-
-1. заполнить Integration Plan;
-2. создать skeleton с одним composition root;
-3. делать один vertical slice за раз;
-4. проверять loading/content/empty/error/retry и duplicate actions;
-5. собирать Debug и Release для iPhone;
-6. пройти functional, visual и acceptance review;
-7. подготовить [Project Delivery](Documentation/ProjectDelivery.md) для QA.
-
-[Памятка разработчика по слоям, UI и handoff →](README.dev.md)
-
----
-
-## Критические runtime-правила
-
-### Onboarding, ATT и Rate Us
-
-- количество слайдов равно `OnboardingConfiguration.pages.count`;
-- Три слайда в `BroadAppTemplate` — только демонстрационный пример, а не лимит;
-- ATT не вызывается на loader, в bootstrap или `init`;
-- ATT разрешён только после фактического появления первого слайда;
-- Rate Us разрешён в app, но не внутри onboarding;
-- `.disabled` отключает flow без ATT.
-
-[Полный contract →](Documentation/OnboardingAndATT.md)
-
-### Paywall, purchase и entitlement
-
-- paywall принимает 0, 1 или любое число products;
-- products не фильтруются, не сортируются и не объединяются;
-- product card не мерцает, не затемняется и не уменьшается при тапе;
-- purchase/restore response сам не открывает premium;
-- premium даёт только новая подтверждённая entitlement-проверка;
-- timeout/offline/invalid/unverified оставляют статус `unresolved`;
-- pending не превращается в success или fail по timeout.
-
-[Монетизация →](Documentation/Monetization.md) ·
-[Доступ →](Documentation/Entitlements.md) ·
-[Обрыв сети →](Documentation/NetworkInterruptions.md)
-
-### 🎁 Special Offer — только второй paywall
-
-```text
-subscription paywall
-        ↓ крестик без purchase
-Special Offer resolver
-        ↓ strict special_offer = true из Remote Config текущего placement
-фиксированное окно 24 часа → second paywall
-        ↓ конец окна
-фиксированный cooldown 24 часа
-```
-
-Confirmed purchase/restore первого paywall ведёт в main и обходит downsell.
-
-Базовый контракт намеренно короткий:
-
-- host app передаёт public Adapty SDK key и placement IDs;
-- платформа сначала получает paywall и **все** его products;
-- gate читается из обычного gatePlacementID с fallback на `main`, продукты второго экрана — из отдельного placement `special_offer`;
-- массив не фильтруется, не сортируется и не обрезается;
-- purchase использует product из того же ответа и не перезагружает paywall;
-- первый подходящий close запускает окно 24 часа; затем идёт cooldown 24 часа от точного конца окна;
-- выключение флага, подтверждённая purchase или restore сбрасывают цикл.
-
-Verifier, отдельный REST transport и access level не требуются для базовой загрузки paywall.
-Две карточки задаёт host UI; общий pipeline платформы сохраняет весь ответ. [Полное объяснение →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/special-offer)
-
-### RU Billing
-
-Показ RU methods требует все условия:
-
-1. host сконфигурировал RU Billing;
-2. provider вернул verified-fresh `ru_pay = true`;
-3. App Store Storefront — `RU/RUS` **или** регион iPhone — `RU/RUS`;
-4. RU catalog не пуст;
-5. backend authorization/kill switch разрешает flow;
-6. entitlement не доказывает уже активный premium.
-
-SDK cache, Dashboard fallback и platform cache не авторизуют RU methods. Язык, IP, timezone и клавиатура ничего не включают; отсутствующий/`false`/некорректный `ru_pay` закрывает feature без автоматического `true`.
-
-[Полный RU contract →](Documentation/RUBilling.md) · [Каталог продуктов с backend →](Documentation/BackendProductCatalog.md) · [Спешл оффер RU Billing →](Documentation/RUSpecialOffer.md) · [RU Billing A/B: кодом и с агентом →](Documentation/RUBillingExperiments.md) · [Аккаунт-менеджеру: кабинет и A/B-тест →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/ru-billing-account-manager)
-
-### Account recovery и Usedesk
-
-```text
-login → backend current app account → full token balance snapshot
-purchase evidence → unique operation ID → exactly-once fulfillment
-```
-
-Transaction/checkout ID нужен для duplicate-safe начисления, а не как вход обычного
-balance recovery.
-
-```text
-backend current app account = source Usedesk chat token
-account-scoped Keychain      = local cache + pending sync
-device ID                    = не identity пользователя/чата
-```
-
-[Восстановление →](Documentation/AccountRecovery.md) ·
-[Usedesk →](Documentation/Usedesk.md)
-
----
-
-## Документация: repository плюс сайт
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/documentation-pipeline-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/documentation-pipeline-light.svg">
-  <img alt="Публичный pipeline Markdown, DocC, поиска и Edit this page" src="Documentation/Assets/README/documentation-pipeline-light.svg" width="100%">
-</picture>
-
-Документы не переносятся в закрытую CMS и не исчезают из Git. У каждого
-формата своя задача:
-
-| Где читать | Когда использовать | Что там canonical |
-|---|---|---|
-| Этот README | Первое знакомство, выбор product, быстрый запуск и обязательные platform rules | Короткая карта текущего integration repository |
-| [Публичный сайт](https://broadapps-ios-docs.nkhsnv.chatgpt.site) | Главный справочник: visual guides, cross-module сценарии и поиск по всем repositories | Страницы и public search snapshot из `broad-docs` |
-| README и DocC модуля | Реализация или review конкретного Core/Extensions/Monetization/UIFlows tag | Public API и usage именно этого module release |
-| `Compatibility/current.yml` | Выбор набора версий перед подключением или release | Exact versions и evidence integration gate |
-
-Сайт дублирует обязательные operational guides и visual references как главный
-человекочитаемый справочник. Module README повторяет свой behavior рядом с
-кодом, а DocC остаётся точным symbol-level источником конкретного tag.
-Integration-specific инструкции остаются в `Documentation/` и входят в поиск.
-
-### Как открыть сайт локально
-
-Нужны Node.js `22.13+` и pnpm `10.15.1`. Сайт живёт в отдельном public
-repository:
+В Terminal из корня integration repository:
 
 ```bash
-git clone https://github.com/BroadApps-official/broad-docs.git
-cd broad-docs
-pnpm install --frozen-lockfile
-pnpm run dev
+# Проверить окружение, затем платформу и четыре модуля
+bash Scripts/agent_review_and_fix.sh platform --doctor
+bash Scripts/agent_review_and_fix.sh platform
+
+# Проверить конкретное приложение
+bash Scripts/agent_review_and_fix.sh app "/path/to/MyApp" --scheme MyApp
 ```
 
-Откройте адрес `Local`, который напечатает команда; по умолчанию это
-`http://localhost:3000`. Перед pull request выполните:
+Явные режимы выполняют аудит; `--fix` разрешает исправления.
+Отчёт — проблема, файл, причина и необходимое исправление.
+Открытый Codex/Claude использует [инструкцию reviewer](Documentation/AgentReview.md)
+без рекурсивного запуска этого wrapper.
 
-```bash
-pnpm run check
-```
-
-Команда проверяет content contract, lint и production build. Unit tests и test
-targets здесь намеренно не добавляются. Для маленькой правки можно открыть
-нужную страницу сайта и нажать `Edit this page`; ссылка ведёт прямо в
-canonical Markdown на GitHub. Полные правила лежат в
-[`broad-docs/CONTRIBUTING.md`](https://github.com/BroadApps-official/broad-docs/blob/main/CONTRIBUTING.md).
-
-Всё публично и редактируемо. Авторизация не нужна для чтения сайта.
-
----
-
-## Release и compatibility
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/module-release-flow-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/module-release-flow-light.svg">
-  <img alt="Release одного модуля и обновление compatibility catalog" src="Documentation/Assets/README/module-release-flow-light.svg" width="100%">
-</picture>
-
-Единица release — один module repository. Каждый имеет свой `CHANGELOG.md`
-и SemVer tags.
-
-| Изменение | Version bump |
-|---|---|
-| Backward-compatible fix | patch |
-| Backward-compatible public API | minor |
-| Breaking public API или behavior | major |
-
-Module dependencies задают `upToNextMajor` от минимальной проверенной
-версии. Integration repository фиксирует exact versions для reproducible acceptance.
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Documentation/Assets/README/cross-repo-change-dark.svg">
-  <source media="(prefers-color-scheme: light)" srcset="Documentation/Assets/README/cross-repo-change-light.svg">
-  <img alt="Cross-repository change идёт от owner API к consumers, integration и docs" src="Documentation/Assets/README/cross-repo-change-light.svg" width="100%">
-</picture>
-
-Cross-repository change идёт снизу вверх:
-
-1. owner public API;
-2. standalone module gate;
-3. SemVer tag owner repository;
-4. dependent module ranges и gates;
-5. exact integration candidate;
-6. full integration gate;
-7. compatibility catalog и docs.
-
-Changelog каждого release объясняет **что** изменилось и **почему**.
-
-[Политика release →](Documentation/ModuleReleasePolicy.md)
-
----
-
-<a id="automation"></a>
-## ✅ Если вы изменили код платформы
-
-### Обычная проверка в открытом агенте
+После изменения integration repository выполните обязательную проверку:
 
 ```bash
 bash Scripts/agent_gate.sh
 ```
 
-Gate проверяет:
+Она проверяет контракты, стиль, документацию и сборки Debug/Release
+для iPhone Simulator и generic iOS без подписи. Для изменения отдельного
+модуля используется его `bash Scripts/module_gate.sh`.
+Юнит-тесты, XCTest, Swift Testing и новые test targets не добавляются.
+Настоящие покупки и restore не выполняются; PASS платформы не заменяет QA приложения.
 
-- package/repository structure, federation, architecture и product boundaries;
-- onboarding, Remote Config, Special Offer и experiment contracts;
-- privacy manifest, logging и secrets;
-- SwiftFormat и SwiftLint;
-- Swift Package build;
-- iPhone Simulator Debug/Release;
-- generic iOS compile без signing;
-- executable fixture/probe-сценарии;
-- docs, links, SVG/GIF/assets;
-- две live Adapty configurations только компиляцией.
+## Что хранится в этом repository
 
-Успех заканчивается строкой:
-
-```text
-BroadApps iOS Platform agent gate passed.
-```
-
-### Единая проверка из Terminal
-
-```bash
-./Scripts/agent_review_and_fix.sh platform --doctor
-./Scripts/agent_review_and_fix.sh platform
-./Scripts/agent_review_and_fix.sh app "/path/to/MyApp" --scheme MyApp
-```
-
-Внутри открытого Codex/Claude выполняйте prompt/gates без рекурсивного wrapper.
-`platform` проверяет модули и integration; `app` — приложение. `--fix` разрешает исправления; без аргументов или с `run` сохраняется исправление платформы.
-
-[Команды и отчёт →](Documentation/AgentReview.md) · [Автоматизация →](Documentation/AgentAutomation.md)
-
-### Без unit tests
-
-По решению владельца не добавляются:
-
-- `Tests/`;
-- SwiftPM test targets;
-- Xcode unit/UI test targets;
-- XCTest;
-- Swift Testing.
-
-Вместо них обязательны static contracts, warnings-as-errors builds,
-generic iOS compile, executable probes, iPhone sandboxes и integration example. Gate не
-просто «не запускает» tests, а отклоняет их появление.
-
-### Что gate не делает
-
-- не выполняет настоящие purchase, restore и RU-платежи;
-- не публикует app в App Store;
-- не подписывает `.ipa`;
-- не заменяет QA конкретного host app;
-- не переносит platform PASS автоматически на app.
-
----
-
-## BroadAppTemplate
-
-`Examples/BroadAppTemplate` — технический example подключения, а не product design.
-Он показывает:
-
-- bootstrap и AppFlow;
-- onboarding 1/2/3/4/8 pages и custom UI;
-- adaptive paywall для 0/1/2/много products;
-- purchase/restore/entitlement fixtures;
-- Special Offer и RU Billing matrices;
-- token flow, analytics и safe typed logs;
-- Debug и Release configurations.
-
-```bash
-./Scripts/generate_example.sh
-open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
-```
-
-Запускайте только безопасные fixture/load/show-сценарии. Реальные
-финансовые операции в platform gate не входят.
-
-[Инструкция example →](Examples/BroadAppTemplate/README.md) ·
-[Ручная acceptance →](Documentation/TemplateAcceptance.md)
-
----
-
-## Карта документации
-
-| Задача | Точка входа |
+| Путь | Назначение |
 |---|---|
-| Подключить module | [Getting Started](Documentation/GettingStarted.md) · [Архитектура](Documentation/Architecture.md) · [Памятка разработчика](README.dev.md) |
-| Создать новый app/feature | [Agent Preflight](Documentation/AgentPreflight.md) · [Workflow](Documentation/AppCreationWorkflow.md) · [Prompt Pack](Documentation/AgentPromptPack.md) · [Integration Plan](Documentation/Templates/AppIntegrationPlan.md) |
-| Мигрировать старый app вручную | [Manual migration](Documentation/MigrationGuide.md) |
-| Мигрировать старый app через ИИ | [AI migration instruction](Documentation/LegacyAppMigrationAgent.md) |
-| Найти runtime/monetization правило | [Поиск по публичной базе](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search) · локальная папка `Documentation/` |
-| Проверить или выпустить platform change | [Agent Automation](Documentation/AgentAutomation.md) · [Platform Handoff](Documentation/PlatformHandoff.md) · [Release Policy](Documentation/ModuleReleasePolicy.md) |
-| Сверить готовность | [Traceability](Documentation/Traceability.md) · [Compatibility catalog](Compatibility/current.yml) · [Changelog](CHANGELOG.md) |
+| [Compatibility/current.yml](Compatibility/current.yml) | Точные совместимые версии и свидетельства проверки |
+| [Examples/BroadAppTemplate](Examples/BroadAppTemplate) | Общий iPhone-пример |
+| [Scripts](Scripts) | Сборки, контракты и запуск reviewer |
+| [AgentChecks](AgentChecks) | Правила проверки платформы и приложения |
+| [Documentation](Documentation/README.md) | Инженерные инструкции и шаблоны планов |
+| [README.dev.md](README.dev.md) | Памятка по слоям и стилю кода |
 
-[Поиск по всей публичной базе →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/search)
-
----
-
-## Словарь
-
-| Термин | Значение |
-|---|---|
-| Host app | Конкретное iPhone-приложение, которое выбирает модули |
-| Product | Library, которую app target добавляет через SwiftPM |
-| Composition root | Одно место сборки configuration и dependencies |
-| Placement | Логическое место показа paywall |
-| Entitlement | Подтверждённое право на premium |
-| Provider cache | Кеш внутри внешнего SDK, не созданный платформой |
-| Platform cache | Persistent provider-neutral копия без чувствительных gates |
-| Pending | Операция началась, но её итог ещё не доказан |
-| Gate | Детерминированная проверка контрактов и сборок |
-| Compatibility catalog | Exact набор версий, прошедший integration acceptance |
-
----
-
-## Перед завершением задачи
-
-- Если меняли только host app, соберите его Debug/Release и пройдите app-owned QA.
-- Если меняли module repository, запустите его standalone `module_gate.sh`.
-- Если меняли cross-module contract, обновите consumers снизу вверх.
-- Если меняли integration repository, запустите `bash Scripts/agent_gate.sh`.
-- Compatibility catalog получает `passed` только после clean-clone acceptance.
-- Changelog объясняет, что сделано и почему.
-
-Текущий план: [Federated Repositories](Documentation/FederatedRepositories.md) · [аудит полного README](Documentation/LegacyREADMEContentAudit.md).
-Последний подтверждённый local result: [AgentChecks/STATUS.md](AgentChecks/STATUS.md).
+[Изменения](CHANGELOG.md) · [Последняя проверка](AgentChecks/STATUS.md) ·
+[Исходники сайта](https://github.com/BroadApps-official/broad-docs) ·
+[Актуальная документация →](https://broadapps-ios-docs.nkhsnv.chatgpt.site)

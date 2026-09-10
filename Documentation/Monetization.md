@@ -631,4 +631,4 @@ intent, verified transaction bridge и entitlement rules; standard
 - `ru_pay = false` при RU Storefront и RU регионе;
 - analytics без дублей и чувствительных полей.
 
-Для UI fixtures используйте [BroadAppTemplate](../README.md#example-и-ручные-сценарии). Test targets не добавляются.
+Для UI fixtures используйте [BroadAppTemplate](../Examples/BroadAppTemplate/README.md). Test targets не добавляются.

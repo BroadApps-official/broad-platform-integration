@@ -760,4 +760,4 @@ bash Scripts/stream_example_logs.sh
 несколько iPhone Simulator, helper покажет их UDID и формат повторной команды.
 Полный словарь тегов и безопасных полей: [Logging](Logging.md).
 
-Для переноса существующего приложения используйте [Migration Guide](MigrationGuide.md). Карта всех документов находится в [README](../README.md#карта-документации).
+Для переноса существующего приложения используйте [Migration Guide](MigrationGuide.md). Все инструкции доступны в [каталоге сайта](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs).

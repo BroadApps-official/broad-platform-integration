@@ -48,7 +48,7 @@
 | Composition root | Одно место, где создаются и соединяются зависимости приложения |
 
 Расширенный словарь находится в
-[главном README](README.md#словарь).
+[словаре на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/glossary).
 
 ## Какой модуль подключает host app
 
@@ -88,7 +88,7 @@ example и cross-module gate. Полная карта: [Federated Repositories](
 > поведение конкретного приложения держите в `AppConfiguration`, повторяемое
 > оформление — в `AppTokens`, а служебную деталь одного файла — в локальном
 > `private enum Constants`. Полная карта и примеры находятся в
-> [шаге 5 основного README](README.md#app-configuration).
+> [инструкции по подключению](Documentation/GettingStarted.md).
 
 Короткая цепочка вызова выглядит так:
 
@@ -379,7 +379,7 @@ iPad не входит в scope платформы.
 ## Проверка с агентом
 
 Основной сценарий работы через Codex/Claude описан в
-[варианте A главного README](README.md#-вариант-a-сделать-приложение-через-codex-или-claude).
+[статье «Создание приложения»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#работа-с-агентом).
 Не отправляйте агенту один запрос «сделай всё приложение». Используйте
 [`AgentPromptPack.md`](Documentation/AgentPromptPack.md) по одному этапу и
 проверяйте `PLAN`, `SKELETON`, `SLICE`, `FUNCTIONAL` и `VISUAL REVIEW REQUIRED`

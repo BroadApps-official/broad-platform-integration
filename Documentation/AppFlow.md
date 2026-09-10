@@ -35,7 +35,7 @@ initialPaywall
 не вызывает `initialPaywallDismissed()`. Этот метод вызывается после
 отрицательного resolution либо после закрытия Special Offer. Так policy не
 считает ветку завершённой раньше времени. Полный контракт и reference экранов:
-[Special Offer](SpecialOffer.md) · [README](../README.md#special-offer-sequence).
+[Special Offer](SpecialOffer.md) · [сценарий на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/special-offer).
 
 ## Конфигурация
 

@@ -48,7 +48,7 @@ Markdown в repositories остаётся canonical source: его можно с
 | Ваш путь | Читать сначала | Когда считать завершённым |
 |---|---|---|
 | Codex/Claude создаёт новое приложение | [Agent Preflight](AgentPreflight.md), [Workflow](AppCreationWorkflow.md) и [Prompt Pack](AgentPromptPack.md) | Подтверждены все review-точки, затем functional + visual audit и self-review разработчика |
-| Разработчик собирает приложение вручную | [Вариант B](../README.md#manual-setup), [Workflow](AppCreationWorkflow.md) и [шаблон плана](Templates/AppIntegrationPlan.md) | План проверен; Debug/Release, безопасные flow и screenshot-to-source сверка прошли |
+| Разработчик собирает приложение вручную | [Ручная разработка на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#работа-вручную), [Workflow](AppCreationWorkflow.md) и [шаблон плана](Templates/AppIntegrationPlan.md) | План проверен; Debug/Release, безопасные flow и screenshot-to-source сверка прошли |
 | Нужно принять интерактивный пример | [Приёмка template](TemplateAcceptance.md) | Каждая строка матрицы проверена на маленьком и большом iPhone |
 | Нужно передать конкретное приложение QA | [Project Delivery](ProjectDelivery.md) | Собраны functional, visual, Simulator, configuration и security evidence; self-review завершён |
 | Изменён код самой платформы | [`AGENTS.md`](../AGENTS.md) и [Agent Automation](AgentAutomation.md) | Последняя строка `bash Scripts/agent_gate.sh` сообщает PASS |

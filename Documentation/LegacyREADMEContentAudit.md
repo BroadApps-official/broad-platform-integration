@@ -1,4 +1,34 @@
-# Аудит полного README перед федерацией repositories
+# Аудит содержания README
+
+## Сверка README и сайта — 10 сентября 2026
+
+Источник сверки: README integration commit
+`200687f03d42dd97e143364e01bdcf033ec0f9d6` (650 строк), сайт из `broad-docs/content`
+и совместимый набор 3.0.0. README сокращён до входной инструкции; исходные
+инженерные документы и сценарии сохранены рядом с кодом.
+
+| Тема прежнего README | Где читать на сайте | Результат сверки |
+|---|---|---|
+| Выбор модулей, зависимости, repositories | [Выбор модулей](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/module-selection), [архитектура](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/architecture) | Уже раскрыто; в README оставлены краткая таблица и корректная схема выбора |
+| Установка, Swift 5 / SwiftPM 6, app-owned configuration | [Первое подключение](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/getting-started), [архитектура](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/architecture) | Уже есть; сохранены essentials для первого запуска |
+| Ручная разработка, агент, plan/checkpoints и QA | [Создание приложения](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation) | Уже есть; ссылки на исчезнувшие разделы заменены действующими |
+| Legacy migration | [Переход со старого BroadCore](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration) | Уже есть; ручной и AI workflows остаются в Documentation |
+| Onboarding, ATT, paywall и Special Offer | [Стандарт приложения](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-standard) и связанные статьи | Уже есть; повторные правила удалены из README |
+| Placement config, main fallback и token/tokens | [Adapty](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/adapty-setup) | Сайт соответствует 2.0.1+; не возвращаем старое правило только main |
+| RU gates, outage fallback, account-policy confirmation | [RU Billing](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/ru-billing) | Сайт полнее прежнего README: учитывает 3.0.0 и необязательный payment-status endpoint |
+| Account recovery, pending и Usedesk | [Надёжность](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/runtime-reliability), [токены](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/token-paywall), [Usedesk](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/usedesk) | Уже есть; account identity и ограничения не потеряны |
+| Запуск BroadAppTemplate, module/integration gate и границы PASS | [Стандарт приложения](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-standard) | Добавлены команды запуска, выбор схемы и отличие от BroadStart и app QA |
+| Release и compatibility | [Выпуск](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/release-process), [версии](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility) | Уже есть; схема выпуска уточнена: candidate до тега, exact acceptance после |
+| Работа с сайтом, источники и локальная публикация | [Документация](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/documentation) | Команды уже есть; уточнены роли короткого README, сайта и versioned API, исправлен старый пример версий |
+| Словарь | [Словарь](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/glossary) | Уже есть; убрана повторная таблица из README |
+
+Баннер сообщает, что самая актуальная документация для применения платформы
+находится на сайте. API конкретного выпуска по-прежнему принадлежит тегу модуля.
+Проверка README теперь требует краткость, essentials, баннер и прямые ссылки
+на статьи; продуктовые контракты продолжают проверяться в owner-документах.
+
+Ниже — исторический аудит до разделения repositories. Версии и размеры в нём
+описывают тот snapshot, а не текущую платформу.
 
 ## Source snapshot
 

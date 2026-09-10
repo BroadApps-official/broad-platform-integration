@@ -17,7 +17,7 @@ app-owned данные и backend-контракты, но не архитект
 обязательна Figma. Пустое поле или недоступная ссылка Figma не превращают проект
 в `no-code`: нужно запросить доступ или экспорт у ПМ.
 Внешний вид RU-оплаты сверяйте с
-[описанием полного RU Billing flow](../../README.md#visual-reference).
+[описанием полного RU Billing flow](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/ru-billing).
 
 Usedesk намеренно не встроен в example target: готовый UI этого SDK
 устанавливается через CocoaPods и нужен не каждому приложению. В рабочем
@@ -280,7 +280,7 @@ variation, checkout method и safe diagnostic code.
 
 [Полный analytics contract и ожидаемая последовательность →](../../Documentation/Analytics.md)
 
-Подробный quick start, ожидаемые результаты и команды `simctl`: [корневой README](../../README.md#example-и-ручные-сценарии).
+Сценарии и ожидаемые результаты: [приёмка BroadAppTemplate](../../Documentation/TemplateAcceptance.md).
 
 ## RU-каталог при недоступном Adapty
 

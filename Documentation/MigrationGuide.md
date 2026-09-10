@@ -491,4 +491,4 @@ Paywall provider lifecycle не переносите в analytics destination. V
 
 Test targets для platform migration не добавляются; риск закрывается строгими checks, полной сборкой и воспроизводимыми ручными сценариями.
 
-[Вернуться к архитектуре и выбору способа миграции →](../README.md#если-приложение-уже-сделано-на-старой-платформе)
+[Архитектура и выбор способа миграции →](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/legacy-app-migration)
