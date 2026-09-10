@@ -5,10 +5,14 @@
 
 ## Scope
 
-- Работай только внутри `BroadAppsIOSPlatform`.
+- При обычной задаче в этом checkout работай внутри `BroadAppsIOSPlatform`.
+  Единый reviewer получает явный контекст: `platform` разрешает проверку
+  integration и четырёх canonical module repositories; `app` выбирает ровно
+  один host repository. Читай правила каждого владельца.
 - По решению руководства Codex automation запускается с полным доступом к Mac,
   чтобы Xcode видел CoreSimulatorService. Полный доступ не разрешает менять
-  файлы за пределами `BroadAppsIOSPlatform`.
+  файлы вне repositories выбранного запуска. `review_only` запрещает правки;
+  `review_and_fix` разрешает минимальные правки только выбранных исходников.
 - Не изменяй reference-проекты `5013`, `5109Codex`, `Claude232` и `Шаблон`.
 - Не создавай `Tests`, test targets и код на XCTest/Swift Testing.
 - Платформа и example — только для iPhone. Не добавляй iPad, Mac, Mac Catalyst
@@ -184,6 +188,11 @@
    создаст рекурсивный запуск.
 
 ## Финальный ответ агента
+
+Для единого reviewer итог задаёт `AgentChecks/ReviewReport.schema.json`:
+PASS / ISSUES / BLOCKED и шесть областей с доказательствами. Wrapper формирует
+Markdown в `.build/AgentReview/<mode>/latest.md`. Успешная сборка не отменяет
+замечания агента. Ниже — формат обычного интерактивного ответа, вне wrapper.
 
 Пиши по-русски и простыми словами. Обязательно добавь разделы:
 

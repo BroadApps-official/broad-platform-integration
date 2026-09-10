@@ -1,0 +1,95 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "summary",
+    "checks",
+    "findings",
+    "next_step"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "ISSUES",
+        "BLOCKED"
+      ]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "area",
+          "status",
+          "evidence"
+        ],
+        "properties": {
+          "area": {
+            "type": "string",
+            "enum": [
+              "reuse",
+              "placements",
+              "async_ui",
+              "onboarding",
+              "payments",
+              "style"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "ISSUES",
+              "BLOCKED",
+              "N/A"
+            ]
+          },
+          "evidence": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "problem",
+          "file",
+          "reason",
+          "correction",
+          "fixed"
+        ],
+        "properties": {
+          "problem": {
+            "type": "string"
+          },
+          "file": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "correction": {
+            "type": "string"
+          },
+          "fixed": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "next_step": {
+      "type": "string"
+    }
+  }
+}

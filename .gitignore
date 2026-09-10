@@ -1,6 +1,5 @@
 .DS_Store
 .build/
-AgentChecks/AutomationReports/latest.md
 AgentChecks/AutomationReports/latest.pending.md
 .swiftpm/
 DerivedData/

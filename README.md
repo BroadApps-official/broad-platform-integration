@@ -524,8 +524,7 @@ bash Scripts/agent_gate.sh
 
 Gate проверяет:
 
-- package/repository structure;
-- federation, architecture и product boundaries;
+- package/repository structure, federation, architecture и product boundaries;
 - onboarding, Remote Config, Special Offer и experiment contracts;
 - privacy manifest, logging и secrets;
 - SwiftFormat и SwiftLint;
@@ -542,17 +541,18 @@ Gate проверяет:
 BroadApps iOS Platform agent gate passed.
 ```
 
-### Автоматический review-and-fix из Terminal
+### Единая проверка из Terminal
 
 ```bash
-./Scripts/agent_review_and_fix.sh --doctor
-./Scripts/agent_review_and_fix.sh
+./Scripts/agent_review_and_fix.sh platform --doctor
+./Scripts/agent_review_and_fix.sh platform
+./Scripts/agent_review_and_fix.sh app "/path/to/MyApp" --scheme MyApp
 ```
 
-Внутри уже открытого Codex/Claude запускайте `agent_gate.sh`, а не
-`agent_review_and_fix.sh`, чтобы один агент не запускал другого.
+Внутри открытого Codex/Claude выполняйте prompt/gates без рекурсивного wrapper.
+`platform` проверяет модули и integration; `app` — приложение. `--fix` разрешает исправления; без аргументов или с `run` сохраняется исправление платформы.
 
-[Полная инструкция →](Documentation/AgentAutomation.md)
+[Команды и отчёт →](Documentation/AgentReview.md) · [Автоматизация →](Documentation/AgentAutomation.md)
 
 ### Без unit tests
 

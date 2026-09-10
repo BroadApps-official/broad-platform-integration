@@ -5,6 +5,12 @@ set -euo pipefail
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 failure_count=0
 
+# Validate the entrypoint without recursively starting an agent or running payments.
+bash -n "$platform_root/Scripts/agent_review_and_fix.sh"
+/usr/bin/ruby -c "$platform_root/Scripts/agent_review.rb"
+/usr/bin/ruby -rjson -e 'JSON.parse(File.read(ARGV.fetch(0)))' \
+    "$platform_root/AgentChecks/ReviewReport.schema.json"
+
 record_failure() {
     local title="$1"
     local details="$2"
