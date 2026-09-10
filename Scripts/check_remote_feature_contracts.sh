@@ -105,9 +105,9 @@ require_pattern \
     'specialOfferEnabled[[:space:]]+where[[:space:]]+placementID[[:space:]]*==[[:space:]]*\.main'
 
 require_pattern \
-    "Every fixture placement carries the common main configuration" \
+    "Every fixture uses its placement configuration with main fallback" \
     "$example_fixtures_file" \
-    'remoteConfiguration:[[:space:]]*ExampleRemoteFeaturePayloadFactory\.configuration\([[:space:]]*scenario:[[:space:]]*scenario,[[:space:]]*placementID:[[:space:]]*\.main'
+    'remoteConfiguration:[[:space:]]*ExampleRemoteFeaturePayloadFactory\.configuration\([[:space:]]*scenario:[[:space:]]*scenario,[[:space:]]*placementID:[[:space:]]*placementID(?s:.*?)\?\?[[:space:]]*specialOffer\(scenario:[[:space:]]*scenario,[[:space:]]*placementID:[[:space:]]*\.main\)'
 
 require_pattern \
     "RU catalog fixture marks the exact Special Offer row" \

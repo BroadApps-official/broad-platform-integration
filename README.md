@@ -129,9 +129,9 @@ Host app больше не зависит от общего изменяемог
 |---|---|---:|
 | [`broad-extensions-ios`](https://github.com/BroadApps-official/broad-extensions-ios) | `BroadExtensions` · [`1.0.1`](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) | да, по надобности |
 | [`broad-core-ios`](https://github.com/BroadApps-official/broad-core-ios) | `BroadCore` · [`1.2.0`](https://github.com/BroadApps-official/broad-core-ios/releases/tag/1.2.0) | да, по надобности |
-| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`2.0.0`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/2.0.0) | да, по надобности |
+| [`broad-monetization-ios`](https://github.com/BroadApps-official/broad-monetization-ios) | `BroadMonetization` · [`2.0.1`](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/2.0.1) | да, по надобности |
 | [`broad-ui-flows-ios`](https://github.com/BroadApps-official/broad-ui-flows-ios) | `BroadUIFlows` · [`2.0.1`](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/2.0.1) | да, по надобности |
-| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`2.0.0`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/2.0.0) | нет, это catalog/evidence |
+| [`broad-platform-integration`](https://github.com/BroadApps-official/broad-platform-integration) | exact versions, example, cross-module gate · [`2.0.1`](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/2.0.1) | нет, это catalog/evidence |
 | [`broad-docs`](https://github.com/BroadApps-official/broad-docs) | публичный сайт и cross-module guides | нет |
 
 > [!NOTE]
@@ -362,7 +362,7 @@ credentials или переносить их архитектуру без ау�
 subscription paywall
         ↓ крестик без purchase
 Special Offer resolver
-        ↓ strict special_offer = true из Remote Config main
+        ↓ strict special_offer = true из Remote Config текущего placement
 фиксированное окно 24 часа → second paywall
         ↓ конец окна
 фиксированный cooldown 24 часа
@@ -374,7 +374,7 @@ Confirmed purchase/restore первого paywall ведёт в main и обхо
 
 - host app передаёт public Adapty SDK key и placement IDs;
 - платформа сначала получает paywall и **все** его products;
-- gate читается из обычного `main`, продукты второго экрана — из отдельного placement `special_offer`;
+- gate читается из обычного gatePlacementID с fallback на `main`, продукты второго экрана — из отдельного placement `special_offer`;
 - массив не фильтруется, не сортируется и не обрезается;
 - purchase использует product из того же ответа и не перезагружает paywall;
 - первый подходящий close запускает окно 24 часа; затем идёт cooldown 24 часа от точного конца окна;

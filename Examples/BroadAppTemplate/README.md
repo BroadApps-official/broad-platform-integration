@@ -239,9 +239,10 @@ Apple.
 `getPaywall -> getPaywallProducts -> 1:1 mapping -> raw registry` из отдельного
 placement. На нуле UI закрывается и начинается cooldown.
 
-С 2.0.0 fixture repository передаёт одну конфигурацию `main` с каждым
-placement, включая offer payload. Это повторяет контракт production adapter:
-все ключи из `main`, продукты и variation из placement открываемого экрана.
+С 2.0.1 fixture repository передаёт конфигурацию текущего placement,
+используя main для отсутствующего Special Offer gate. Production adapter
+так же читает ключи своего paywall с fallback отсутствующих полей на main;
+продукты и variation принадлежат placement открываемого экрана.
 
 В Debug-каталоге есть отдельная секция `RU Billing — только Debug`.
 Режим `Как в Adapty` использует strict provenance gate, `Включить` и

@@ -58,7 +58,7 @@ private extension ExamplePaywallRepository {
             ),
             remoteConfiguration: ExampleRemoteFeaturePayloadFactory.configuration(
                 scenario: scenario,
-                placementID: .main,
+                placementID: placementID,
                 isHardPaywall: isHardPaywall,
                 usesLegacyPaymentFixture: arguments.contains("-paywall-payment-methods")
             ),
@@ -130,7 +130,7 @@ private enum ExampleRemoteFeaturePayloadFactory {
             specialOffer: specialOffer(
                 scenario: scenario,
                 placementID: placementID
-            )
+            ) ?? specialOffer(scenario: scenario, placementID: .main)
         )
     }
 

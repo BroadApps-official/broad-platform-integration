@@ -6,9 +6,9 @@ cooldown» работают так же, как в общей статье
 [«Спешл оффер (от Adapty)»](SpecialOffer.md); RU-часть меняет лишь источник
 продукта.
 
-С версии 2.0.0 `special_offer`, `ru_pay`, `auto_revenue_view` и RU A/B-коды
-читаются только из выбранного paywall `main`. Настройки отдельного offer
-placement не перекрывают их; продукты RU по-прежнему выбираются на backend.
+С версии 2.0.1 `special_offer`, `ru_pay`, `auto_revenue_view` и RU A/B-коды
+читаются из paywall текущего placement с fallback отсутствующих ключей на main.
+Продукты RU по-прежнему выбираются на backend.
 
 Базовые вещи должны быть уже подключены: обычный RU Billing по статье
 [«RU Billing»](RUBilling.md) и обычный Special Offer от Adapty.

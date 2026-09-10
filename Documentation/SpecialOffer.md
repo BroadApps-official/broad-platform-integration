@@ -11,7 +11,7 @@ paywall без покупки или restore. Продукты берутся и
 ## Что должно быть настроено в Adapty
 
 1. Placement с продуктами оффера.
-2. В Remote Config выбранного paywall плейсмента `main` — булев флаг `special_offer`. `true`
+2. В Remote Config выбранного paywall текущего placement с fallback на main — булев флаг `special_offer`. `true`
    разрешает показ; любое другое значение или отсутствие поля — нет.
 
 Точные имена placement и флага, а также product ID уточняйте у аккаунт-менеджера.
@@ -22,7 +22,7 @@ paywall без покупки или restore. Продукты берутся и
 обычный paywall
   ├─ purchase / restore подтвердили Premium → главный экран
   └─ пользователь закрыл экран без покупки
-       └─ special_offer == true в текущем Remote Config main?
+       └─ special_offer == true в Remote Config текущего placement с fallback на main?
             ├─ нет / нет поля → главный экран
             └─ да → окно показа или cooldown?
                      ├─ идёт cooldown → главный экран

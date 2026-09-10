@@ -1,17 +1,26 @@
 # Remote config paywall
 
-С BroadMonetization 2.0.0 Remote Config приходит только из выбранного provider
-paywall плейсмента `main` и преобразуется в typed `RemotePaywallConfiguration`.
-Все ключи, включая `ru_pay`, `auto_revenue_view`, `special_offer`,
-`experiment_code` и `segment_code`, общие для всех экранов. Конфигурации других
-placements не читаются. Продукты, variation, purchase handles и аналитика
-показа остаются у фактически показанного placement.
+С BroadMonetization 2.0.1 Remote Config читается из выбранного provider paywall
+текущего placement и преобразуется в typed `RemotePaywallConfiguration`.
+Например, экран настроек использует paywall `settings`. Только отсутствующие
+ключи берутся из текущего ответа `main`. Явные false, null и malformed значения
+не заменяются fallback. Продукты, variation, purchase handles и аналитика
+принадлежат фактически показанному paywall.
 
-Заполните каждый используемый A/B-вариант и локаль `main` перед переходом
-с 1.x. UI не читает словарь и не знает aliases. App может использовать
-`RemoteConfigKeyRegistry.broadApps` или собственный registry parser.
-Custom repositories обязаны передавать config `main` и честный provenance
-с каждым payload, включая Special Offer.
+Правило действует для всех ключей, включая `ru_pay`, `auto_revenue_view`,
+`special_offer` и UI metadata. Aliases одного ключа проверяются вместе.
+`experiment_code` / `segment_code` — одна пара: если текущий placement содержит
+хотя бы один из кодов, оба должны быть валидными в нём; смешивание вариантов
+запрещено. Если пары нет, используется пара из `main`.
+
+Custom repositories соблюдают тот же приоритет и честный provenance.
+UI не читает словарь и не знает aliases. Приложение может использовать
+`RemoteConfigKeyRegistry.broadApps` или собственный registry.
+
+Token placement пробует настроенный Adapty ID, затем известный вариант
+`token` / `tokens` при отсутствии paywall. Настроенный регистр проверяется
+первым, далее — известные варианты в нижнем регистре. Custom ID не угадываются;
+оба написания запрещают подмену подписочным main и RU-каталогом.
 
 ## Модель
 
@@ -120,9 +129,9 @@ let parser = RemotePaywallConfigurationParser(keys: keys)
 
 ## Retention последнего валидного значения
 
-`LastValidRemoteConfigurationStore` как общий тип хранит значения по ключу
-placement. Adapty adapter 2.0.0 всегда передаёт в него `.main`: это общий config
-для экранов одной identity. Другие placements не наполняют этот store.
+`LastValidRemoteConfigurationStore` хранит значения по текущему placement.
+Сначала адаптер разрешает приоритет текущего ответа и fallback на main,
+затем сохраняет обычные UI-поля отдельно для каждого placement.
 
 Для display/navigation полей (`isAutomaticRevenueViewEnabled`, `accessPolicy`,
 `closeDelay`, `uiVariantID`) применяется merge:
@@ -134,22 +143,22 @@ fresh field absent/invalid → сохранить предыдущее valid val
 
 Это защищает доступный paywall от частичного remote payload. Важно:
 
-- общий config `main` передаётся каждому экрану; config других placements не участвует;
+- каждый экран имеет свой config; main заполняет только отсутствующие ключи;
 - store находится в памяти и не является бесконечным persistent cache;
 - `reset(placementID:)` очищает один placement;
 - `resetAll()` используется при смене app identity/configuration;
 - initial absence без previous value остаётся `nil`.
 
 Финансовый `ruBillingGateDecision` и campaign gate `specialOffer` — не обычные
-retained fields. Они всегда берутся из текущего parsed payload `main` и никогда не
+retained fields. Они всегда берутся из текущей разрешённой конфигурации и никогда не
 наследуют старый `.enabled`: прошлый gate не может воскресить оплату/кампанию.
 
-RU A/B-коды тоже не сохраняются из прошлого ответа. Если `main` вообще не
-ответил, адаптер возвращает отсутствие конфигурации, даже если другой placement
-доступен. Если ответил без ключа, это `.absent`; ошибка продуктов не теряет
-этот запрет. Конкурентные загрузки разделяют один текущий запрос `main`,
-но следующая попытка обновляет его. Загрузка самого `main` повторно использует
-тот же paywall для продуктов. Запрос настроек не регистрирует показ.
+RU A/B-коды тоже не сохраняются из прошлого ответа. Если main недоступен,
+конфигурация текущего placement остаётся доступной. Ключ, отсутствующий в обоих
+текущих ответах, остаётся отсутствующим; ошибка продуктов не теряет запрет.
+Конкурентные загрузки разделяют текущий запрос main, но следующая попытка
+обновляет его. Сам main повторно использует тот же paywall для продуктов.
+Запрос настроек не регистрирует показ.
 
 ## Какой cache может управлять feature flags
 
@@ -197,10 +206,12 @@ Host-level `SpecialOfferConfiguration?` — ещё более ранний gate:
 - non-`nil` — resolver может загрузить placement, но enabled gate и provenance,
   разрешающий Special Offer, всё равно обязательны.
 
-Gate всегда читается из выбранного paywall `main`. После его разрешения
-продукты загружаются из отдельного placement `special_offer` с обновлённым main config.
-Более новый запрет отменяет первоначальное разрешение; authorization для UI
-содержит последние настройки `main`, полученные при загрузке оффера.
+Первый gate читается из выбранного paywall `gatePlacementID` (по умолчанию
+main), с fallback отсутствующих ключей на main. Для вызова после settings
+передайте `gatePlacementID: .settings`. После разрешения загружаются продукты
+отдельного placement special_offer с его собственной конфигурацией и fallback
+на main. Запрет оффера отменяет первоначальное разрешение; authorization
+содержит конфигурацию оффера, используемую UI.
 Для Special Offer `.verifiedFreshRemote` и `.providerCacheFallbackPossible` разрешены;
 `.platformCache` и `.legacyUnqualified` его не разрешают.
 Для кампании используется обычный `AdaptyPaywallRepository`: собственный Adapty
@@ -291,8 +302,8 @@ config не содержит второй cohort authority.
 - [ ] первый присутствующий alias имеет приоритет только для обычных display-групп;
 - [ ] valid bool strings работают без учёта регистра;
 - [ ] отрицательные/бесконечные/пустые значения не проходят;
-- [ ] partial main payload сохраняет только обычные display/navigation поля;
-- [ ] конфликтующие флаги остальных placements не меняют config из `main`;
+- [ ] partial placement payload сохраняет только обычные display/navigation поля;
+- [ ] ключи текущего placement имеют приоритет над main; отсутствующие используют fallback;
 - [ ] reset удаляет retained value;
 - [ ] отсутствие всех offer keys даёт `specialOffer == nil`;
 - [ ] offer display key без gate даёт disabled, а не enabled;
