@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "tokens": {
+    "mode": "demo",
+    "details": "ExampleTokenFulfillmentRepository: баланс 120 и обработанные покупки хранятся в памяти."
+  },
+  "accountRecovery": {
+    "mode": "unconfigured",
+    "details": "Live Adapty использует устойчивый анонимный ID; серверное восстановление аккаунта не подключено."
+  },
+  "iCloudIdentity": {
+    "mode": "undecided",
+    "details": "В ExamplePersistentAdaptyIdentityProvider синхронизация выключена; приложение должно явно выбрать свою политику."
+  }
+}

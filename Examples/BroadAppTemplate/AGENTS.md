@@ -1,8 +1,36 @@
-# Инструкция агенту: backend-каталог и RU Billing
+# Инструкция агенту: аккаунт, backend-каталог и RU Billing
 
 Этот файл действует для `BroadAppTemplate` и для нового host app, созданного из
 него. Цель — сначала получить подтверждённый backend-контракт, а затем
 подключить платформу без догадок и копирования значений другого приложения.
+
+## Обязательная декларация функций аккаунта
+
+До реализации определите по задаче и `Documentation/AppIntegrationPlan.md`,
+использует ли приложение расходуемые токены/баланс, серверный аккаунт и перенос
+ID через iCloud. Заполните `Configuration/AccountIntegration.json`:
+
+- `tokens`: `demo`, `backend` или `notUsed`;
+- `accountRecovery`: `unconfigured`, `backend` или `notUsed`;
+- `iCloudIdentity`: `undecided`, `enabled` или `disabled`.
+
+Если баланса и токенов нет по требованиям, ставьте `tokens.mode = notUsed` и
+запишите причину в `details`; не требуйте несуществующий token endpoint.
+Отсутствие токенов не определяет наличие аккаунта: личные данные, RU-покупки и
+другие серверные права проверяются отдельно. Для приложения без серверного
+аккаунта допустимы `accountRecovery = notUsed` и `iCloudIdentity = disabled`;
+восстановление Apple-подписки остаётся отдельным сценарием.
+
+Не помечайте существующую fixture-функцию как `notUsed` ради тишины в сборке.
+`backend` требует ссылки в `details` на фактический адаптер и проверку в плане;
+`enabled`/`disabled` должны совпадать с Swift-настройкой. JSON описывает принятое
+решение и сам не меняет UI, backend или Keychain. При неизвестных требованиях
+оставьте предупреждение и запишите `BLOCKED` для соответствующей функции.
+
+Сборка Xcode и platform gate запускают `Scripts/check_account_integration.rb`.
+Не удаляйте build phase, декларацию или сообщения ради зелёного отчёта.
+Не ослабляйте `SWIFT_TREAT_WARNINGS_AS_ERRORS`: предупреждения выдаёт отдельный
+build phase. Подробности: `Documentation/AccountRecovery.md` платформы.
 
 ## Граница работы
 

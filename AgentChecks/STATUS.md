@@ -1,5 +1,23 @@
 # Последняя подтверждённая проверка платформы
 
+## Account integration warnings — набор 4.1.1, 11 сентября 2026
+
+Версии модулей сохранены: Core 2.1.0, Monetization/UIFlows 4.0.0,
+Extensions 1.0.1. Baseline и итоговый `bash Scripts/agent_gate.sh` — PASS;
+логи `.build/account-warning-baseline.log` и `.build/account-warning-final.log`.
+
+- Xcode Debug/Release Simulator, unsigned generic iOS и обе live Adapty
+  configurations выводят три предупреждения для незавершённого примера.
+- Повторная Debug-сборка без изменений снова выводит BA_ACCOUNT_001/002/003:
+  `.build/account-warning-incremental.log`. Swift warnings-as-errors сохранён.
+- Проверены 11 CLI-сценариев: default demo; приложение без токенов/аккаунта;
+  отсутствие токенов с независимым предупреждением об аккаунте; заявленный
+  backend; два противоречия; неизвестный mode; пустая причина; отсутствующее
+  поле; повреждённый JSON; отсутствующий файл.
+- `notUsed` с объяснением принимается без требования backend для отсутствующей
+  функции. JSON фиксирует решение и не проверяет сервер или Swift wiring.
+- Настоящие backend, iCloud, purchase и restore не вызывались.
+
 ## Keychain account identity — набор 4.1.0, 11 сентября 2026
 
 Набор: **BroadCore 2.1.0, BroadExtensions 1.0.1, BroadMonetization 4.0.0,

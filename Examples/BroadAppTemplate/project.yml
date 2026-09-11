@@ -43,6 +43,13 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: BroadAppTemplate
+    preBuildScripts:
+      - name: Account integration readiness
+        script: /usr/bin/ruby "$SRCROOT/Scripts/check_account_integration.rb" "$SRCROOT/Configuration/AccountIntegration.json"
+        basedOnDependencyAnalysis: false
+        inputFiles:
+          - $(SRCROOT)/Scripts/check_account_integration.rb
+          - $(SRCROOT)/Configuration/AccountIntegration.json
     dependencies:
       - package: BroadCore
         product: BroadCore

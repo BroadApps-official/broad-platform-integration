@@ -130,6 +130,9 @@ Endpoint/schema/auth подтверждает владелец текущего 
 | RU Special Offer | enabled / disabled + campaign/coupon/timers |  |  |
 | RU product catalog | endpoint/schema/price units + exact mapping |  |  |
 | Recovery | Apple/backend + account token balance endpoint; processed purchase IDs остаются backend-internal |  |  |
+| Tokens declaration | `AccountIntegration.json`: `demo` / `backend` / `notUsed`; причина отсутствия или адаптер и проверка |  |  |
+| Account recovery declaration | `unconfigured` / `backend` / `notUsed`; личные данные и RU-покупки проверяются отдельно от токенов |  |  |
+| iCloud identity declaration | `undecided` / `enabled` / `disabled`; решение должно совпадать со Swift-конфигурацией |  |  |
 
 ### RU Billing: заполнить, если feature не `N/A`
 
