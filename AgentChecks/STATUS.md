@@ -1,5 +1,32 @@
 # Последняя подтверждённая проверка платформы
 
+## Keychain account identity — набор 4.1.0, 11 сентября 2026
+
+Набор: **BroadCore 2.1.0, BroadExtensions 1.0.1, BroadMonetization 4.0.0,
+BroadUIFlows 4.0.0**. Команда приёмки: `bash Scripts/agent_gate.sh`;
+лог — `.build/keychain-4.1-final-gate.log`.
+
+- BroadCore #6 объединён после исправления конфликтов при генерации ID.
+  Окончательная iCloud identity выбирается до публикации локальной записи.
+  Неудачное чтение конфликта и локальная запись оставляют восстановление
+  повторяемым; два экземпляра store не получают промежуточный новый ID.
+- Исполняемые contract probes проверяют эти случаи с подставным хранилищем.
+  Полный module gate проходит девять этапов, включая public API и DocC.
+  [Module quality исправления](https://github.com/BroadApps-official/broad-core-ios/actions/runs/34622171214).
+- До тега собран кандидат с локальным Core: Debug/Release Simulator,
+  обе live Adapty configurations и Release generic iOS без подписи.
+- В live-примере один store обслуживает persistent Adapty identity и проверки
+  перед активацией/загрузкой paywall. Keychain failure не превращается в nil
+  identity для создания нового анонимного SDK-профиля.
+- Синхронизация iCloud в шаблоне выключена до согласования backend identity.
+  Серверная авторизация, баланс, расходы и бонусы остаются app-owned контрактом;
+  token fixture в памяти не выдаётся за серверное хранение.
+- Настоящие Keychain/iCloud, покупка, restore и backend-операции не выполнялись.
+  Успешные сборки не подтверждают фактический перенос между устройствами.
+
+Core 2.1.0: `78c6c091d29d057c842092d2d1f0ccc557bef14d`.
+[Подключение и границы восстановления](../Documentation/AccountRecovery.md).
+
 ## Token recovery и host logging — набор 4.0.0, 11 сентября 2026
 
 Набор: **BroadCore 2.0.0, BroadExtensions 1.0.1, BroadMonetization 4.0.0,

@@ -14,7 +14,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/BroadApps-official/broad-core-ios.git",
-            exact: "2.0.0"
+            exact: "2.1.0"
         ),
         .package(
             url: "https://github.com/BroadApps-official/broad-monetization-ios.git",

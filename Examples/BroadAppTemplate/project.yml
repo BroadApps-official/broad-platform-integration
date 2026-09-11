@@ -15,7 +15,7 @@ options:
 packages:
   BroadCore:
     url: https://github.com/BroadApps-official/broad-core-ios.git
-    exactVersion: 2.0.0
+    exactVersion: 2.1.0
   BroadMonetization:
     url: https://github.com/BroadApps-official/broad-monetization-ios.git
     exactVersion: 4.0.0
