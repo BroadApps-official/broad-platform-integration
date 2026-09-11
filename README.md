@@ -35,7 +35,7 @@ Host app подключает **любой нужный модуль** напр�
   <img alt="Приложение выбирает нужные products. UIFlows использует Monetization и Core; Extensions подключается независимо." src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
 </picture>
 
-Проверенный набор **[4.1.0](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/4.1.0)**:
+Проверенный набор **[4.1.1](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/4.1.1)**:
 
 | Product / repository | Для чего | Версия |
 |---|---|---|
@@ -48,6 +48,11 @@ Host app подключает **любой нужный модуль** напр�
 В наборе 4.1.0 live-пример сохраняет Adapty customer ID в Keychain и останавливает
 SDK при ошибке чтения. Серверная авторизация и восстановление баланса остаются
 контрактом приложения: [AccountRecovery](Documentation/AccountRecovery.md).
+С 4.1.1 Xcode и platform gate предупреждают о демонстрационном балансе и
+невыбранной политике восстановления. В
+[`AccountIntegration.json`](Examples/BroadAppTemplate/Configuration/AccountIntegration.json)
+разработчик или агент может явно отметить отсутствие токенов (`notUsed`);
+для отсутствующей функции backend не требуется. [Как заполнить декларацию](Documentation/AccountRecovery.md#предупреждения-при-сборке-шаблона).
 [Обновление с набора 3.0.0](Documentation/UpdatingTo4.md): ограничения пакетов
 меняются вместе; собственные exhaustive switches учитывают `.host` и `.rejected`.
 UIFlows подтягивает Monetization и Core, Monetization — Core.

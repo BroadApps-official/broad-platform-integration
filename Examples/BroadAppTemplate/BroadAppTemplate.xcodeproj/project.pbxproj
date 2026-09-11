@@ -317,6 +317,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6EFC2BD8537D2432784EF88E /* Build configuration list for PBXNativeTarget "BroadAppTemplate" */;
 			buildPhases = (
+				AEDA9A502139AF83C8FD76C4 /* Account integration readiness */,
 				9886E845FB23CF131D729982 /* Sources */,
 				991B6BEA365825784613A6BC /* Frameworks */,
 			);
@@ -376,6 +377,30 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AEDA9A502139AF83C8FD76C4 /* Account integration readiness */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Scripts/check_account_integration.rb",
+				"$(SRCROOT)/Configuration/AccountIntegration.json",
+			);
+			name = "Account integration readiness";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/bin/ruby \"$SRCROOT/Scripts/check_account_integration.rb\" \"$SRCROOT/Configuration/AccountIntegration.json\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		9886E845FB23CF131D729982 /* Sources */ = {

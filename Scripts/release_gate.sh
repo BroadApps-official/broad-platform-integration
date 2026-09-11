@@ -18,6 +18,11 @@ fi
 gate_source_snapshot="$(bash "$platform_root/Scripts/source_snapshot_digest.sh")"
 console_info "Снимок исходников: ${gate_source_snapshot:0:12}…"
 
+# Keep readiness warnings visible even when successful build logs are collapsed.
+/usr/bin/ruby \
+    "$platform_root/Examples/BroadAppTemplate/Scripts/check_account_integration.rb" \
+    "$platform_root/Examples/BroadAppTemplate/Configuration/AccountIntegration.json"
+
 console_run_logged_step \
     "$((step_offset + 1))" "$step_total" \
     "Правила, архитектура, privacy и документация" \
