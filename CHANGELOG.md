@@ -3,7 +3,20 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
-## Unreleased
+## 4.0.0
+
+- Проверенный набор: BroadCore 2.0.0, BroadMonetization 4.0.0,
+  BroadUIFlows 4.0.0, BroadExtensions 1.0.1.
+- Host logging принимает заранее объявленные коды и имена, символические
+  значения, флаги и счётчики. В `BroadLogEvent` добавлен `.host`.
+- Token fulfillment различает окончательный `.rejected` и recoverable
+  `.failed`/`.unavailable`/`.pending`. Retry сохраняет evidence и attempt ID
+  и восстанавливает начисление без второй покупки.
+- Диапазоны зависимостей согласованы, чтобы приложение могло подключить
+  весь набор. Новые cases публичных enum требуют major versions.
+  Порядок обновления и локальной проверки: [UpdatingTo4](Documentation/UpdatingTo4.md).
+
+### Документация
 
 - Integration README сокращён до модулей, версий, запуска примера и проверок.
   Крупный баннер в обеих темах ведёт к самой актуальной документации на сайте.

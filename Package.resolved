@@ -1,5 +1,5 @@
 {
-  "originHash" : "8fc256d66f70decb9645f6d96aae6ae14d944d016e535dc34d8ba2af4794f234",
+  "originHash" : "d20ec744ce3301a1ddb3b9808246cad25bcd24ad5e04f51339821f7b2ae17cb2",
   "pins" : [
     {
       "identity" : "adaptysdk-ios",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-core-ios.git",
       "state" : {
-        "revision" : "913eee1fe0108ee94763ae93495fbc4e0e3f235b",
-        "version" : "1.2.0"
+        "revision" : "97c274e7f78654fca7c6be489af315f8e3941c4c",
+        "version" : "2.0.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-monetization-ios.git",
       "state" : {
-        "revision" : "c55174b460853f88f8d6340e702d6eead0d49dc1",
-        "version" : "3.0.0"
+        "revision" : "bad749f7f0cb772021793cd121ec4c6a50ba14ac",
+        "version" : "4.0.0"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
       "state" : {
-        "revision" : "b5718a6a348a10a7ed50f352361eda6f585e2f70",
-        "version" : "3.0.0"
+        "revision" : "030dbfd7b22f4b919c5e25b204a80de999d42b57",
+        "version" : "4.0.0"
       }
     },
     {
