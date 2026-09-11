@@ -1,5 +1,38 @@
 # Последняя подтверждённая проверка платформы
 
+## Token recovery и host logging — набор 4.0.0, 11 сентября 2026
+
+Набор: **BroadCore 2.0.0, BroadExtensions 1.0.1, BroadMonetization 4.0.0,
+BroadUIFlows 4.0.0**. Команда приёмки: `bash Scripts/agent_gate.sh`;
+лог полного прогона — `.build/release-4-final-gate.log`.
+
+- Полные module gates проверяют типизированный host logging, public API,
+  DocC и standalone Debug/Release iPhone examples.
+- Token fulfillment probe подтверждает recovery после `.failed` с обоими
+  retry hints, `.pending` и `.unavailable`: evidence и attempt ID сохраняются,
+  повтор не вызывает вторую покупку. Проверены `.rejected`, `.alreadyCredited`
+  и ошибка очистки persistent store.
+- Core compile-negative probe отклоняет runtime String для event code,
+  имени поля и текстового значения; разрешены StaticString, Bool и Int.
+- До тегов проверена совместная candidate-сборка: Debug/Release Simulator
+  и Release generic iOS без подписи. Для публичных тегов выполняются полный
+  integration gate и отдельное чистое разрешение пакетов без Git credentials.
+- UIFlows public API report совпадает; изменены только диапазоны зависимостей,
+  Gallery configuration и документация. Extensions 1.0.1 переиспользуется.
+- Настоящие purchase, restore и production backend операции не выполнялись.
+
+| Модуль | Ревизия тега | GitHub Release workflow |
+|---|---|---|
+| Core 2.0.0 | `97c274e7f78654fca7c6be489af315f8e3941c4c` | [Run 34592879610](https://github.com/BroadApps-official/broad-core-ios/actions/runs/34592879610) |
+| Monetization 4.0.0 | `bad749f7f0cb772021793cd121ec4c6a50ba14ac` | [Run 34592900333](https://github.com/BroadApps-official/broad-monetization-ios/actions/runs/34592900333) |
+| UIFlows 4.0.0 | `030dbfd7b22f4b919c5e25b204a80de999d42b57` | [Run 34592915880](https://github.com/BroadApps-official/broad-ui-flows-ios/actions/runs/34592915880) |
+
+Инструкция команде: [обновление на набор 4.0.0](../Documentation/UpdatingTo4.md).
+Состояние последнего опубликованного набора — в
+[Compatibility/current.yml](../Compatibility/current.yml).
+
+Ниже — исторические результаты предыдущих наборов.
+
 ## Account-policy RU checkout — набор 3.0.0
 
 Проверяются BroadCore 1.2.0, BroadExtensions 1.0.1, BroadMonetization 3.0.0
