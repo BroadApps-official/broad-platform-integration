@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0797DDF76EC6177E5E448619 /* ExamplePersistentAdaptyIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293D5B1B226B083C9994F5D0 /* ExamplePersistentAdaptyIdentityProvider.swift */; };
 		0A787C5040A0F19289FC65D2 /* AppCompositionRoot+Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC01266C00493ECF8D51B635 /* AppCompositionRoot+Tokens.swift */; };
 		0B5EE15128E44F2DCEC0F213 /* DebugKeychainCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810D99B643B65934553892DE /* DebugKeychainCleaner.swift */; };
 		0B61AB392E367CA07AE3D947 /* ExampleMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0409C5D2EE1382A900A320F2 /* ExampleMainView.swift */; };
@@ -68,6 +69,7 @@
 		1CC1621332F4C3B9AA338D59 /* ExampleDebugStorageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleDebugStorageViewModel.swift; sourceTree = "<group>"; };
 		20BB088154A6ADED47B909C4 /* ExampleSpecialOfferFixtureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleSpecialOfferFixtureView.swift; sourceTree = "<group>"; };
 		24557321B5736BC1766E0C6B /* ExampleLiveAdaptyServicesFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleLiveAdaptyServicesFactory.swift; sourceTree = "<group>"; };
+		293D5B1B226B083C9994F5D0 /* ExamplePersistentAdaptyIdentityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExamplePersistentAdaptyIdentityProvider.swift; sourceTree = "<group>"; };
 		295C03C6E505714DDEF4B5A8 /* ExampleRUPaymentSheetFixtureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleRUPaymentSheetFixtureView.swift; sourceTree = "<group>"; };
 		3113175E40FB6377F9F178EA /* ExampleTokenBalanceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTokenBalanceViewModel.swift; sourceTree = "<group>"; };
 		394ADF80EF0BE0E024EF50D4 /* AppFlowSceneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppFlowSceneViewModel.swift; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 				C7CEC7858FB14F6B01924914 /* ExampleCheckoutMethodsUseCase.swift */,
 				24557321B5736BC1766E0C6B /* ExampleLiveAdaptyServicesFactory.swift */,
 				17795A9CD24E5D2C8B86B6FD /* ExampleMonetizationEnvironment.swift */,
+				293D5B1B226B083C9994F5D0 /* ExamplePersistentAdaptyIdentityProvider.swift */,
 				DEB76A88D40D6F47F28616AE /* ExampleRemoteFeatureFixtures.swift */,
 				FA9709135BF3A9D0CFD7B6A1 /* ExampleRestoreRepository.swift */,
 				D1650464DDC638AA8A2F4F1B /* ExampleRUProviderFallback.swift */,
@@ -406,6 +409,7 @@
 				DDA95ED4A32456DFDC046D14 /* ExampleMonetizationEnvironment.swift in Sources */,
 				532BD22B5000A67741519639 /* ExampleOnboardingMediaView.swift in Sources */,
 				7AE11417F2CBCF5598E74E5C /* ExampleOnboardingScenario.swift in Sources */,
+				0797DDF76EC6177E5E448619 /* ExamplePersistentAdaptyIdentityProvider.swift in Sources */,
 				F90BB868F299417C3930230D /* ExampleRUPaymentSheetFixtureView.swift in Sources */,
 				3753F37C265DCB10C8DA58C5 /* ExampleRUProviderFallback.swift in Sources */,
 				564C42E06A1F039DC1316291 /* ExampleRUSubscriptionFixtures.swift in Sources */,
@@ -857,7 +861,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-core-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 2.0.0;
+				version = 2.1.0;
 			};
 		};
 		AF9F3A76F6D9744E7AC59292 /* XCRemoteSwiftPackageReference "broad-extensions-ios" */ = {

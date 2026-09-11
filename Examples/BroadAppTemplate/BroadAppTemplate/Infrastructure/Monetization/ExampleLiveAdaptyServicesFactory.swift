@@ -44,7 +44,7 @@ enum ExampleLiveAdaptyServicesFactory {
     private static func makeProvider(
         configuration: ExampleLiveAdaptyConfiguration
     ) -> LiveAdaptyProvider {
-        let identityProvider = ExampleAnonymousAdaptyIdentityProvider()
+        let identityProvider = ExamplePersistentAdaptyIdentityProvider.makeDefault()
         let messages = AdaptyMonetizationMessages(
             activationUnavailable: "Не удалось запустить Live Adapty-режим.",
             paywallUnavailable: "Live Adapty-пейвол недоступен.",
@@ -62,19 +62,25 @@ enum ExampleLiveAdaptyServicesFactory {
         )
         return LiveAdaptyProvider(
             activate: ActivateMonetizationUseCase(
-                repository: AdaptyMonetizationRepository(
+                repository: ExampleIdentityActivationRepository(
+                    accountIdentifiers: identityProvider.accountIdentifiers,
+                    repository: AdaptyMonetizationRepository(
+                        configuration: configuration.platform,
+                        identityProvider: identityProvider,
+                        context: context,
+                        messages: messages
+                    )
+                )
+            ),
+            paywallRepository: ExampleAccountIdentityPaywallRepository(
+                accountIdentifiers: identityProvider.accountIdentifiers,
+                repository: AdaptyPaywallRepository(
                     configuration: configuration.platform,
                     identityProvider: identityProvider,
+                    placementRegistry: configuration.placements,
                     context: context,
                     messages: messages
                 )
-            ),
-            paywallRepository: AdaptyPaywallRepository(
-                configuration: configuration.platform,
-                identityProvider: identityProvider,
-                placementRegistry: configuration.placements,
-                context: context,
-                messages: messages
             ),
             lifecycle: factory.paywallPresentationLifecycle
         )
@@ -157,14 +163,6 @@ private struct LiveAdaptyProvider {
     let activate: any ActivateMonetizationUseCaseProtocol
     let paywallRepository: any PaywallRepositoryProtocol
     let lifecycle: any PaywallPresentationLifecycleProtocol
-}
-
-private struct ExampleAnonymousAdaptyIdentityProvider: AdaptyIdentityProviderProtocol {
-    func identity(
-        for _: EntitlementSubject
-    ) async -> AdaptyCustomerIdentity? {
-        nil
-    }
 }
 
 private struct RestrictedPurchaseRepository: PurchaseRepositoryProtocol {
