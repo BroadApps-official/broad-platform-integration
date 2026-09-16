@@ -98,6 +98,9 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 - [ ] Release берёт `ru_pay` только из verified-fresh source; локальный force-on/off существует только в Debug.
 - [ ] Debug force-on не обходит RU device context, catalog, backend authorization и entitlement.
 - [ ] Adapty fallback не выдаётся за freshness proof RU Billing.
+- [ ] В RU account-policy брошенный checkout имеет явные Retry/Cancel:
+      `checkoutTerminationClient` подключён, автоотмены нет, и только
+      `.terminated` снимает блокировку purchase/restore.
 - [ ] Contact Us имеет composer и fallback.
 - [ ] Backend/SDK кнопки сразу показывают spinner и блокируют double tap.
 - [ ] Empty/error/offline/retry состояния видимы пользователю.
