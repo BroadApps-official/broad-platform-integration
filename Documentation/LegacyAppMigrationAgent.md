@@ -227,7 +227,7 @@ View → ViewModel → use case → repository/adapter → SDK/backend
 Он сохраняет app-owned UI/configuration и проверяет loading/content/empty/error,
 retry/offline, cancellation и duplicate actions. Для monetization нельзя
 фильтровать provider products, выдавать premium по одному purchase response или
-разрешать RU Billing без требуемого fresh evidence.
+разрешать RU Billing без explicit `ru_pay=true` из current provider payload.
 
 Финальный ответ stage:
 

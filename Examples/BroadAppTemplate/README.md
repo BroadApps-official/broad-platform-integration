@@ -195,11 +195,10 @@ app configuration и платформы разобраны в
 | `-special-offer-disabled` | явный `special_offer = false`: кампания остаётся закрытой |
 | `-special-offer-platform-cache` | кеш `BroadMonetization` содержит `true`, но кампания остаётся закрытой |
 | `-special-offer-main-fallback` | отдельный offer placement недоступен; подмена его продуктов через `main` отклоняется |
-| `-ru-pay-provider-enabled` | verified-fresh fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
+| `-ru-pay-provider-enabled` | provider-managed fixture payload содержит `ru_pay = true`, а российский контекст iPhone показывает Apple/СБП/карту |
 | `-ru-pay-provider-disabled` | provider-like fixture явно возвращает `ru_pay = false`; остаётся только Apple |
-| `-ru-pay-adapty-fallback-rejected` | `ru_pay = true` из Adapty managed fallback остаётся закрытым без verified freshness |
 | `-ru-pay-platform-cache` | `ru_pay = true` из кеша `BroadMonetization` отклоняется; остаётся только Apple |
-| без `-ru-region-*` | Storefront и регион iPhone российские; при verified `ru_pay = true` RU methods открыты |
+| без `-ru-region-*` | Storefront и регион iPhone российские; при provider `ru_pay = true` RU methods открыты |
 | `-ru-region-storefront` | Storefront `RU`, регион iPhone non-RU; RU methods открыты |
 | `-ru-region-device` | Storefront non-RU, регион iPhone `RU`; RU methods открыты |
 | `-ru-region-storefront-unavailable-device-ru` | Storefront недоступен, регион iPhone `RU`; RU methods открыты |

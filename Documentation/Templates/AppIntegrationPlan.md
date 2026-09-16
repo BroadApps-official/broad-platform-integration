@@ -141,7 +141,7 @@ Endpoint/schema/auth подтверждает владелец текущего 
 |---|---|---|
 | Host composition и backend/legal подключены? |  |  |
 | Какое production-значение `ru_pay`? | `true` / `false`; владелец флага |  |
-| Как доказывается freshness? | Endpoint/schema/TTL/offline policy; `.verifiedFreshRemote` только после network response |  |
+| Какова offline policy Adapty? | Managed cache/Dashboard fallback сохраняет explicit `ru_pay`; persistent platform cache нет |  |
 | Как проверяется российский пользователь? | App Store Storefront `RU/RUS` **или** регион iPhone `RU/RUS`; язык не участвует |  |
 | Текущий app уже использует это правило? | Сверить реализацию с актуальной платформой и подтвердить у team lead |  |
 | Как загружается каталог? | Endpoint, HTTP method, auth, envelope, error/offline policy |  |
@@ -182,7 +182,7 @@ backend-маркером.
 [Полный контракт →](../RUSpecialOffer.md)
 
 Release не может иметь app-default или force override для `ru_pay`.
-Fixture/Debug force-on не считается evidence freshness, backend или успешной оплаты.
+Fixture/Debug force-on не считается evidence provider config, backend или успешной оплаты.
 Отсутствующий/`false`/некорректный `ru_pay`, пустой каталог и два non-RU
 региональных сигнала должны оставлять только Apple. Миграция блокируется, если
 старый app включает RU Billing по языку или молча подставляет `ru_pay = true`.

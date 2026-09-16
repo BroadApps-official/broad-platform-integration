@@ -56,8 +56,8 @@ Presentation и свой дизайн сами по себе не являютс
    при disabled onboarding ATT не вызывается, Rate Us вынесен за onboarding.
    Свой UI использует общий lifecycle, без второго запроса ATT.
 5. payments: purchase/restore/RU используют один operation gate и подтверждённый
-   entitlement. RU требует разрешающий контракт, RU storefront ИЛИ регион
-   телефона и backend authority; SDK cache не равен verified freshness.
+   entitlement. RU требует current-provider `ru_pay=true`, RU storefront ИЛИ регион
+   телефона и backend authority; persistent platform cache не авторизует RU.
    Отдельно проверь явно подключённый backend fallback при сбое Adapty,
    token fulfillment/recovery, pending после возврата и optional special offer.
    Сверь DTO с обезличенным JSON контрактом: snake_case и ID/URL должны

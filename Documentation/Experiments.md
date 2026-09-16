@@ -63,8 +63,9 @@ host так же запрашивает каждый placement независи�
 ## Remote Config не создаёт второй эксперимент
 
 `special_offer` и `ru_pay` парсятся из того же paywall payload, который уже
-содержит назначенную Adapty variation. Special Offer может использовать
-`.providerCacheFallbackPossible`, а RU Billing дополнительно требует `.verifiedFreshRemote`.
+содержит назначенную Adapty variation. Оба explicit gate могут
+использовать `.providerCacheFallbackPossible`; platform cache и legacy payload их
+не авторизуют.
 Эти флаги управляют отображением функций, но не
 назначают cohort. Стандартный Adapty payload сохраняет
 `.providerCacheFallbackPossible`; raw paywall/products остаются во внутреннем
@@ -184,7 +185,7 @@ RU-платёж или live Adapty SDK operation.
 | `uiVariantID` | Остаётся renderer metadata и не участвует в Adapty assignment | ✅ |
 | Assignment authority | В коде нет второго experiment/cohort randomizer | ✅ |
 | Identity composition | Load, show, purchase и restore получают один factory-owned identity provider | ✅ |
-| Remote feature gates | Provider payload разрешает Special Offer; обычный RU gate требует verified freshness; резерв при сбое подключается отдельно; raw product остаётся в registry | ✅ |
+| Remote feature gates | Provider payload разрешает explicit Special Offer и RU gate; platform cache нет; резерв при сбое подключается отдельно; raw product остаётся в registry | ✅ |
 
 `✅` здесь означает: контракт закреплён исходниками и обязательным regression
 guard. Это не утверждение о настройках конкретного проекта в Adapty dashboard.

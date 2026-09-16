@@ -140,16 +140,14 @@ private enum ExampleRemoteFeaturePayloadFactory {
         switch scenario {
         case .specialOfferPlatformCache, .ruPayPlatformCache:
             .platformCache
-        case .ruPayProviderEnabled:
-            .verifiedFreshRemote
         case .specialOfferEnabled,
              .specialOfferDisabled,
              .specialOfferMainFallback,
-             .ruPayProviderDisabled,
-             .ruPayAdaptyFallbackRejected:
+             .ruPayProviderEnabled,
+             .ruPayProviderDisabled:
             .providerCacheFallbackPossible
         case nil:
-            .verifiedFreshRemote
+            .providerCacheFallbackPossible
         }
     }
 

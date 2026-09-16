@@ -190,16 +190,17 @@ for documentation_contract in \
     'Documentation/AgentPromptPack.md|Platform source: READY / BLOCKED' \
     'Documentation/AgentPromptPack.md|Support/legal: READY / BLOCKED / N/A' \
     'Documentation/SpecialOffer.md|Gate не стоит перед `getPaywallProducts`' \
-    'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*нет' \
+    'Documentation/SpecialOffer.md|\.providerCacheFallbackPossible.*да.*да' \
     'Documentation/SpecialOffer.md|raw `AdaptyPaywallProduct`' \
-    'Documentation/SpecialOffer.md|`ru_pay` остаётся независимым' \
+    'Documentation/SpecialOffer.md|независимыми explicit gates' \
     'Examples/BroadAppTemplate/README.md|-special-offer-platform-cache' \
     'Documentation/SpecialOffer.md|визуального бесконечного loop нет' \
-    'Documentation/RUBilling.md|Release, обычный путь \| Verified-fresh remote payload' \
+    'Documentation/RUBilling.md|Release, обычный путь \| Current Adapty provider payload' \
+    'Documentation/ADR/0008-adapty-provider-authority-for-ru-billing.md|providerCacheFallbackPossible' \
     'Documentation/RUBilling.md|Adapty\.setFallback\(fileURL:' \
     'Documentation/RUBilling.md|\.forceEnabled' \
     'Documentation/RemoteConfig.md|LoadPaywallWithRUFallbackUseCase' \
-    'Documentation/Templates/AppIntegrationPlan.md|Как доказывается freshness' \
+    'Documentation/Templates/AppIntegrationPlan.md|Какова offline policy Adapty' \
     'Documentation/Templates/AppIntegrationPlan.md|Как снимается pending брошенного checkout' \
     'AgentChecks/AUTOMATION_PROMPT.md|checkoutTerminationClient' \
     'Examples/BroadAppTemplate/AGENTS.md|pendingCheckoutTermination' \

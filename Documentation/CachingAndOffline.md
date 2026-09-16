@@ -16,15 +16,15 @@ typed offline/timeout результатом. Cache не разрешает ав
 
 | Источник | Кто им управляет | Обычный paywall | `special_offer` | `ru_pay` |
 |---|---|---:|---:|---:|
-| Adapty provider cache | Adapty SDK внутри текущего запроса | да | да | нет |
+| Adapty provider cache | Adapty SDK внутри текущего запроса | да | да | да |
 | Platform cache | `VersionedPaywallCache` BroadMonetization | да | нет | нет |
 
 Adapty не раскрывает через public SDK, пришёл ли текущий payload из сети или его
 managed cache, поэтому provenance называется `.providerCacheFallbackPossible`.
 Это текущий ответ provider-а. Platform cache — сохранённая самим приложением
 копия: при чтении `LoadPaywallUseCase` обязательно понижает её provenance до
-`.platformCache` и удаляет обе capability. RU Billing отдельно требует
-`.verifiedFreshRemote`, которого provider cache не даёт.
+`.platformCache` и удаляет обе capability. Provider cache может сохранить
+explicit `ru_pay=true`, потому что Adapty SDK не раскрывает фактический origin.
 
 Прошлые `special_offer = true` и `ru_pay = true` никогда не переносятся в новый
 absent/false/invalid payload. При offline platform cache помогает отрисовать

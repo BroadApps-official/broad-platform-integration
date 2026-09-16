@@ -136,9 +136,9 @@ requested remote
 
 `PaywallPayload.remoteConfigurationProvenance` фиксирует `.verifiedFreshRemote`,
 `.providerCacheFallbackPossible`, `.platformCache` или `.legacyUnqualified`.
-Текущий Adapty/provider payload может авторизовать Special Offer. RU Billing
-имеет отдельную capability и требует `.verifiedFreshRemote`; payload из
-собственного cache платформы не разрешает ни одну функцию.
+Текущий Adapty/provider payload может авторизовать explicit Special Offer и RU
+Billing gates. Payload из собственного cache платформы не разрешает ни одну
+функцию.
 
 Стандартный Adapty-путь остаётся одной непрерывной цепочкой. Special Offer
 никогда не подменяет первый subscription paywall:
@@ -372,7 +372,7 @@ Adapty profile можно добавить как Apple verifier только к
 RU billing — optional adapter chain, не автоматическая замена Apple:
 
 ```text
-host enabled + (verified-fresh remote ru_pay = true OR explicitly configured provider-outage fallback)
+host enabled + (current Adapty provider ru_pay = true OR explicitly configured provider-outage fallback)
     + (App Store Storefront RU/RUS OR iPhone region RU/RUS)
     → match exact RU catalog product
     → Apple / SBP / card methods

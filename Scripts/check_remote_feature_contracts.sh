@@ -119,6 +119,19 @@ require_pattern \
     "$countdown_probe" \
     'check\(elapsed:[[:space:]]*86_400,[[:space:]]*expected:[[:space:]]*0\)(?s:.*?)check\(elapsed:[[:space:]]*86_401,[[:space:]]*expected:[[:space:]]*0\)(?s:.*?)does not loop'
 
+require_pattern \
+    "Provider-managed payload authorizes explicit RU Billing gate" \
+    "$countdown_probe" \
+    'providerPayloadConfiguration\.authorizesRUBillingPresentation'
+
+forbid_pattern \
+    "Host example contains no obsolete Adapty fallback rejection fixture" \
+    'ruPayAdaptyFallbackRejected|ru-pay-adapty-fallback-rejected' \
+    "$example_configuration_file" \
+    "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate" \
+    "$platform_root/Examples/BroadAppTemplate/README.md" \
+    --glob '*.swift' --glob '*.md'
+
 forbid_pattern \
     "Host example contains no obsolete looping Special Offer fixture" \
     'specialOfferLoopingTimer|special-offer-looping-timer' \

@@ -28,7 +28,7 @@
 | Subscription paywall | Fixture subscriptions; premium только после entitlement |
 | Token paywall | Consumables, backend confirmation/retry/recovery, без premium |
 | Special offer | Main paywall → close без покупки → strict gate → persisted 24h window → отдельный placement; на нуле UI закрывается и начинается 24h cooldown; purchase/restore сбрасывают cycle |
-| RU Billing | Release требует verified-fresh `ru_pay`; Debug tri-state проверяет UI/gates; настоящая оплата не запускается |
+| RU Billing | Release требует current-provider `ru_pay`; Debug tri-state проверяет UI/gates; настоящая оплата не запускается |
 | Loader и ошибки | Немедленный spinner, disabled double tap, error и Retry |
 | Аналитика | Общий recorder, видимый refresh и clear feedback |
 | Contact Us | Composer, если доступен, либо Copy/Close fallback |
@@ -45,7 +45,7 @@
 - initial paywall once/every cold launch/disabled;
 - entitlement active/inactive/unknown/timeout/StoreKit fallback;
 - special offer absent/false/true/main fallback/platform cache, persisted window/cooldown и expiry без visual loop;
-- RU verified true/provider false, Adapty-fallback rejection, platform-cache rejection и Debug follow/force-on/force-off;
+- RU provider true/false, Adapty managed fallback acceptance, platform-cache rejection и Debug follow/force-on/force-off;
 - token credited/pending/retry/cancel/failure/offline/reconciliation/recovery;
 - все девять карточек на маленьком и большом iPhone Simulator.
 
@@ -95,7 +95,7 @@ configuration проверяется compile/load contract без финансо
 4. Оставить `Team = None`; не запрашивать платный аккаунт или provisioning.
 5. Для своего приложения заполнить
    [`Documentation/ProjectDelivery.md`](../Documentation/ProjectDelivery.md).
-6. Для RU Billing подтвердить host-controlled source
-   `.verifiedFreshRemote`; Dashboard fallback не считать freshness proof.
+6. Для RU Billing подтвердить explicit `ru_pay=true` в current Adapty provider
+   payload; persistent cache BroadMonetization не считать provider authority.
 7. Передавать credentials и тестовые аккаунты только разрешённым защищённым
    каналом, отдельно от Git.

@@ -222,7 +222,7 @@ BroadMonetization 1.5.4 выбирает все обычные подписки 
 
 ```text
 host configured
-AND (verified-fresh ru_pay = true OR explicitly configured provider-outage fallback)
+AND (current Adapty provider ru_pay = true OR explicitly configured provider-outage fallback)
 AND (Storefront RU/RUS OR iPhone region RU/RUS)
 AND non-empty exact catalog match
 AND backend authorization/kill switch

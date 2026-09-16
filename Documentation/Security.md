@@ -8,7 +8,7 @@
    bearer, private keys, URL оплаты и пользовательские данные в Git не кладутся.
 2. Не логируйте raw `Error`, request/response body, SDK profile и arbitrary metadata.
 3. Не выдавайте premium по факту успешного checkout — только по authoritative entitlement `.active`.
-4. Обычный RU gate требует свежий разрешающий флаг; при недоступном Adapty
+4. Обычный RU gate требует explicit `ru_pay=true` из current Adapty provider payload; при недоступном Adapty
    подключается отдельный [резерв](RUProviderFallback.md). В обоих случаях нужен
    RU Storefront **или** RU-регион iPhone. Язык, cache, IP и timezone не включают RU.
    Полученный false/invalid/absent резерв не обходит.
@@ -146,8 +146,8 @@ Backend с другой схемой реализует свой encoder/decoder
 checkout completed ≠ premium active
 ```
 
-`special_offer = true` и `ru_pay = true` тоже не равны premium. Первый разрешает
-второй paywall из provider payload; второй ещё и требует verified freshness.
+`special_offer = true` и `ru_pay = true` тоже не равны premium. Оба разрешают
+свои UI-ветки только из provider payload и не подтверждают финансовый результат.
 Purchase/restore/RU return в любом случае обязаны завершиться новой
 authoritative entitlement-проверкой.
 

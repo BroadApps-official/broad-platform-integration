@@ -35,13 +35,13 @@ Host app подключает **любой нужный модуль** напр�
   <img alt="Приложение выбирает нужные products. UIFlows использует Monetization и Core; Extensions подключается независимо." src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
 </picture>
 
-Проверенный набор **[4.1.1](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/4.1.1)**:
+Проверенный набор **[4.1.2](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/4.1.2)**:
 
 | Product / repository | Для чего | Версия |
 |---|---|---|
 | [BroadExtensions](https://github.com/BroadApps-official/broad-extensions-ios) | Цвета, шрифты, клавиатура, swipe-back | [1.0.1](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) |
 | [BroadCore](https://github.com/BroadApps-official/broad-core-ios) | Запуск, состояния, кеш, retry, логирование, Keychain ID | [2.1.0](https://github.com/BroadApps-official/broad-core-ios/releases/tag/2.1.0) |
-| [BroadMonetization](https://github.com/BroadApps-official/broad-monetization-ios) | Adapty, покупка, доступ, RU-оплата, токены | [4.0.0](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/4.0.0) |
+| [BroadMonetization](https://github.com/BroadApps-official/broad-monetization-ios) | Adapty, покупка, доступ, RU-оплата, токены | [4.1.0](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/4.1.0) |
 | [BroadUIFlows](https://github.com/BroadApps-official/broad-ui-flows-ios) | Готовые onboarding, AppFlow и paywall | [4.0.0](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/4.0.0) |
 
 Источник версий — [Compatibility/current.yml](Compatibility/current.yml).
@@ -53,6 +53,9 @@ SDK при ошибке чтения. Серверная авторизация 
 [`AccountIntegration.json`](Examples/BroadAppTemplate/Configuration/AccountIntegration.json)
 разработчик или агент может явно отметить отсутствие токенов (`notUsed`);
 для отсутствующей функции backend не требуется. [Как заполнить декларацию](Documentation/AccountRecovery.md#предупреждения-при-сборке-шаблона).
+С 4.1.2 обычный Adapty payload с explicit `ru_pay=true` открывает RU Billing;
+managed cache/fallback SDK считается provider payload, а persistent cache
+BroadMonetization остаётся fail-closed.
 [Обновление с набора 3.0.0](Documentation/UpdatingTo4.md): ограничения пакетов
 меняются вместе; собственные exhaustive switches учитывают `.host` и `.rejected`.
 UIFlows подтягивает Monetization и Core, Monetization — Core.

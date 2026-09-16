@@ -349,8 +349,8 @@ entitlement refresh, server token reconciliation и RU subscription status до�
 - invalid поле не превращается в `false/0` автоматически;
 - RU parser проверяет все aliases: любой false → `.disabled`, malformed/conflict
   без false → `.invalid`, ни одного alias → `.absent`;
-- `.providerCacheFallbackPossible` от стандартного Adapty repository не
-  авторизует `ru_pay`; RU methods требуют `.verifiedFreshRemote`;
+- `.providerCacheFallbackPossible` от стандартного Adapty repository
+  авторизует только explicit `ru_pay=true`; platform cache и legacy payload нет;
 - special offer не наследует previous gate;
 - unknown UI variant использует app default;
 - remote hard policy не может сделать empty/error экран без выхода.
