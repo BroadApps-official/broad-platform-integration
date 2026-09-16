@@ -1,5 +1,20 @@
 # Последняя подтверждённая проверка платформы
 
+## Adapty RU Billing authority — набор 4.1.2, 16 сентября 2026
+
+Набор: **BroadCore 2.1.0, BroadExtensions 1.0.1, BroadMonetization 4.1.0,
+BroadUIFlows 4.0.0**. Команда приёмки: `bash Scripts/agent_gate.sh`.
+
+- Стандартный Adapty payload с `ru_pay=true` разрешает RU Billing.
+  Adapty managed cache/Dashboard fallback и network response имеют одну
+  provider authority, потому что SDK не раскрывает источник payload.
+- Persistent cache BroadMonetization не восстанавливает RU gate.
+  `false`, absent и malformed по-прежнему закрывают ветку.
+- Регион, backend catalog/authorization, pending reconciliation и authoritative
+  entitlement проверяются независимо; Remote Config не выдаёт premium.
+- BroadMonetization 4.1.0: `18cb4e2fca5283c37ee94d6e406b0011216b3aa2`.
+  Настоящие purchase, restore и RU checkout не выполнялись.
+
 ## Account integration warnings — набор 4.1.1, 11 сентября 2026
 
 Версии модулей сохранены: Core 2.1.0, Monetization/UIFlows 4.0.0,

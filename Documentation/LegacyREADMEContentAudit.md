@@ -91,7 +91,8 @@ design не превращаются в новый platform contract.
   registry` без filter/sort/dedup;
 - `special_offer` проверяется после полного parsing и может использовать
   current provider-managed payload;
-- `ru_pay` остаётся fail-closed и требует `.verifiedFreshRemote`.
+- `ru_pay` остаётся fail-closed и требует current provider payload; persistent
+  platform cache не авторизует gate.
 
 ### UI
 
@@ -120,7 +121,7 @@ design не превращаются в новый platform contract.
 | Repository `BroadCore/vers_niiaz` является точкой установки | Канонический catalog/workflow — `broad-platform-integration`; module code — отдельные `broad-*-ios` repositories |
 | Один root README владеет всеми API | Owner module README/DocC владеет API, сайт является главным cross-repository справочником |
 | Один порядок migration «снизу вверх» | Агент выводит cutover topology и выбирает independent boundaries либо atomic cutover group |
-| Provider cache одинаково ограничивает все flags | Special Offer и `ru_pay` имеют разные capability/provenance rules |
+| Provider cache одинаково ограничивает все flags | Special Offer и `ru_pay` имеют независимые explicit gates, но одну provider authority |
 
 ## Что намеренно не размножено
 

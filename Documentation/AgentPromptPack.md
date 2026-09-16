@@ -158,9 +158,9 @@ BLOCKED с владельцем. Остановись и жди подтверж
    Special Offer только после close первого paywall и purchase/restore bypass.
    Если подключён Usedesk, проверь backend source, account-scoped Keychain
    cache/pending sync и запрет device ID как chat identity.
-   Для RU Billing проверь: Release читает `ru_pay` только из verified-fresh source;
+   Для RU Billing проверь: Release читает `ru_pay` только из Adapty provider payload;
    Debug force-on/off не попал в Release; backend kill switch/entitlement не
-   обходятся; Adapty fallback не считается freshness proof.
+   обходятся; managed cache/fallback Adapty принят только с explicit `ru_pay=true`.
 4. Проверь Contact Us fallback и независимые Debug storage actions.
 5. Собери Debug/Release и пройди безопасные fixtures на iPhone Simulator.
 6. Не выполняй настоящие purchase, restore или RU checkout.

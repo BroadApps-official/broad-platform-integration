@@ -1,8 +1,9 @@
 # ADR-0004: обязательный `ru_pay` и контекст iPhone для RU Billing
 
-> **Частично заменён 9 сентября 2026:** запрет любого host fallback больше не является
-> текущим правилом. [ADR-0006](0006-ru-provider-outage-fallback.md) добавляет отдельный
-> opt-in путь при недоступном Adapty. Ниже сохранён контекст прежнего решения.
+> **Частично заменён:** [ADR-0006](0006-ru-provider-outage-fallback.md) добавил
+> opt-in путь при недоступном Adapty, а
+> [ADR-0008](0008-adapty-provider-authority-for-ru-billing.md) заменил требование
+> `.verifiedFreshRemote` для обычного Adapty-пути. Ниже сохранён исторический контекст.
 
 - Статус: принято; provenance capability уточнена ADR-0005
 - Дата: 2026-08-09
@@ -12,8 +13,8 @@
 > Обязательный `ru_pay = true`, правило «Storefront **или** регион iPhone», backend-authoritative
 > entitlement и запрет выдавать premium после одного возврата из Safari остаются
 > в силе. [ADR-0005](0005-provider-managed-remote-feature-gates.md)
-> разделяет Special Offer и RU capability; RU сохраняет требование
-> `.verifiedFreshRemote`.
+> разделяет Special Offer и RU capability. Актуальная provenance-матрица — в
+> [ADR-0008](0008-adapty-provider-authority-for-ru-billing.md).
 
 ## Контекст
 

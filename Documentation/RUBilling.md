@@ -29,7 +29,7 @@ wire adapter и polling до 8 попыток по 2 секунды. Для св
 RU Billing добавляет оплату картой и СБП через backend приложения.
 С 9 сентября 2026 года в BroadMonetization 1.5.0 есть два пути:
 
-1. Обычный: настроенная RU-композиция, подтверждённый свежий `ru_pay=true` и
+1. Обычный: настроенная RU-композиция, current-provider `ru_pay=true` и
    российский Storefront **или** регион iPhone.
 2. Резервный, подключается явно: Adapty не ответил либо не загрузились продукты,
    российский Storefront **или** регион iPhone → свежий каталог backend.
@@ -59,9 +59,9 @@ entitlement refresh, но имеет отдельные campaign и timer decisi
 
 | Режим | Источник `ru_pay` | Назначение |
 |---|---|---|
-| Release, обычный путь | Verified-fresh remote payload | Production |
+| Release, обычный путь | Current Adapty provider payload | Production |
 | Release, подключён резерв при сбое | Отдельное временное разрешение, не значение ru_pay | Свежий каталог backend при RU Storefront/регионе |
-| Debug · `Как в Adapty` | Тот же strict provenance gate | Интеграционная проверка |
+| Debug · `Как в Adapty` | Тот же provider-authority gate | Интеграционная проверка |
 | Debug · `Включить` / `Выключить` | Process-local override | Проверка UI и gate-веток |
 
 Новый проект без RU Billing начинает с `false`. Если feature уже
@@ -259,12 +259,11 @@ let checkoutMethods = ResolveCheckoutMethodsUseCase(
 
 Полученные `.absent`, `.disabled` и `.invalid` закрывают RU Billing.
 Отсутствие ответа обрабатывает отдельный loader из [резервного сценария](RUProviderFallback.md). `.enabled`
-разрешает показать RU methods только для `.verifiedFreshRemote`, если также
-совпал российский Storefront либо регион iPhone. Значение из
-`.providerCacheFallbackPossible`, `.platformCache` или legacy payload не даёт этого
-разрешения.
+разрешает показать RU methods для `.verifiedFreshRemote` и
+`.providerCacheFallbackPossible`, если также совпал российский Storefront либо
+регион iPhone. `.platformCache` и legacy payload не дают этого разрешения.
 
-## Offline fallback Adapty не авторизует RU Billing
+## Offline fallback Adapty сохраняет explicit gate
 
 Fallback JSON из Adapty Dashboard можно добавить в app bundle для обычного
 paywall и Special Offer:
@@ -286,15 +285,15 @@ let configuration = AdaptyPlatformConfiguration(
 ```
 
 Платформа вызывает `Adapty.setFallback(fileURL:)` до первой activation.
-Файл остаётся Adapty-owned payload, но его provenance
-`.providerCacheFallbackPossible` не доказывает свежесть `ru_pay`.
+Файл остаётся Adapty-owned payload. Его provenance
+`.providerCacheFallbackPossible` может авторизовать RU Billing только при
+explicit `ru_pay=true`; absent, false и malformed остаются fail-closed.
 [Официальная инструкция Adapty по fallback paywalls](https://adapty.io/docs/ios-use-fallback-paywalls).
 
-Fixture `-ru-pay-adapty-fallback-rejected` проверяет эту fail-closed
-границу. Host, которому нужен RU Billing в Release, обязан собрать
-`LoadPaywallUseCase` с host-controlled `PaywallRepositoryProtocol`, который доказывает
-network origin и ставит `.verifiedFreshRemote`; стандартная Adapty factory такую
-инъекцию не даёт.
+Fixture `-ru-pay-provider-enabled` проверяет стандартный Adapty contract:
+provider-managed payload с `ru_pay=true` открывает RU methods, а
+`-ru-pay-provider-disabled` и `-ru-pay-platform-cache` сохраняют fail-closed
+границы.
 
 ## Debug-переключатель
 

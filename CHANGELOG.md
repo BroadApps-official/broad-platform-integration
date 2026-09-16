@@ -3,6 +3,18 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## 4.1.2
+
+- BroadMonetization обновлён до 4.1.0. Обычный Adapty payload с
+  explicit `ru_pay=true` теперь открывает СБП/карту, включая managed
+  cache и Dashboard fallback, которые Adapty SDK не различает в public API.
+- `ru_pay=false`, absent/invalid, legacy payload и persistent cache
+  BroadMonetization остаются fail-closed. Region, catalog, backend authorization,
+  pending reconciliation и entitlement gates не ослаблены.
+- BroadAppTemplate, acceptance matrix, agent rules, architecture, Remote Config,
+  RU Billing и experiment guides согласованы с новым provider-authority
+  контрактом. Устаревший fixture отклонения Adapty fallback удалён.
+
 ## 4.1.1
 
 - App reviewer и инструкция нового приложения теперь требуют проверить

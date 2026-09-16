@@ -80,10 +80,10 @@
   не заменяются fallback. Продукты/variation сохраняют свой placement.
 - Token placement пробует настроенное имя и известный token/tokens alias;
   оба написания исключены из подписочного fallback.
-- Текущий Adapty payload может включить `special_offer`, даже если SDK
-  прозрачно использовал свой provider cache. `ru_pay` имеет
-  независимую более строгую capability и требует `.verifiedFreshRemote`.
-  Paywall из cache BroadMonetization не может включить ни один флаг.
+- Текущий Adapty payload может включить `special_offer` и explicit
+  `ru_pay=true`, даже если SDK прозрачно использовал provider cache
+  или Dashboard fallback. Paywall из persistent cache BroadMonetization не
+  может включить ни один флаг.
 - Special Offer показывается только вторым paywall после закрытия обычного
   paywall без подтверждённой покупки или restore. Строгий булев
   `special_offer = true` читается из Remote Config paywall gatePlacementID с fallback на `main`; отсутствие в обоих источниках,
@@ -119,14 +119,16 @@
   defaults сохраняется полный раздел подписок для старых каталогов. Не меняй
   исходный payload, порядок, дубли и индексы строк для checkout. Defaults не
   добавляются к частичным совпадениям и не подменяют отдельную Apple-карточку.
-- В Release `ru_pay` может включить RU Billing только из payload с
-  `.verifiedFreshRemote`; отдельный opt-in outage capability не является ru_pay
-  или fake fresh payload. App-default/force override запрещён. Host template
+- В Release `ru_pay` может включить RU Billing из текущего provider
+  payload с `.verifiedFreshRemote` или `.providerCacheFallbackPossible`.
+  Отдельный opt-in outage capability не является ru_pay или fake provider
+  payload. App-default/force override запрещён. Host template
   разблокирует process-local force-on/off только из собственного
   `#if DEBUG`; store по умолчанию fail-closed и не обходит
   device/catalog/backend/entitlement gates.
-- Dashboard-generated Adapty fallback может показать обычный paywall и
-  Special Offer, но не доказывает свежесть `ru_pay` и не включает RU Billing.
+- Dashboard-generated Adapty fallback является provider payload: explicit
+  `special_offer=true` и `ru_pay=true` могут включить свои UI-ветки. Это
+  не обходит backend kill switch, entitlement и финальный checkout gate.
 - Purchase/restore не открывают premium до подтверждения entitlement.
 - После переустановки subscription ownership восстанавливается через
   StoreKit/backend, а полный token balance и RU purchases загружаются для

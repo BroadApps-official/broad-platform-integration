@@ -41,7 +41,7 @@ extension ExamplePaywallRepository {
                     origin: .init(requestedPlacementID: placementID, resolvedPlacementID: placementID, catalogSource: .adapty),
                     products: arguments.contains("-ru-provider-no-matches") ? [Self.unmatchedProduct] : [],
                     remoteConfiguration: .init(isRUBillingEnabled: !arguments.contains("-ru-provider-response-false")),
-                    remoteConfigurationProvenance: .verifiedFreshRemote,
+                    remoteConfigurationProvenance: .providerCacheFallbackPossible,
                     fetchedAt: .now
                 )),
                 availability: .available

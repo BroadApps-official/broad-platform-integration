@@ -175,11 +175,6 @@ import UIKit
                     .init("-ru-pay-provider-enabled", "Включить RU Pay из provider config.", "Paywall показывает разрешённые RU-методы."),
                     .init("-ru-pay-provider-disabled", "Выключить RU Pay из provider config.", "Явный false оставляет только Apple."),
                     .init(
-                        "-ru-pay-adapty-fallback-rejected",
-                        "Проверить ru_pay = true без доказанной свежести.",
-                        "Adapty managed fallback не разрешает RU-методы; остаётся только Apple."
-                    ),
-                    .init(
                         "-ru-pay-platform-cache",
                         "Взять RU Pay config из platform cache.",
                         "Даже сохранённый true не включает RU Billing; остаётся только Apple."

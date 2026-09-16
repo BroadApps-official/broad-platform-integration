@@ -346,7 +346,7 @@ iPad не входит в scope платформы.
 `-special-offer-enabled`, `-special-offer-disabled`,
 `-special-offer-platform-cache`, `-special-offer-main-fallback`,
 `-ru-pay-provider-enabled`,
-`-ru-pay-provider-disabled`, `-ru-pay-adapty-fallback-rejected` и
+`-ru-pay-provider-disabled` и
 `-ru-pay-platform-cache` из `Examples/BroadAppTemplate/README.md`.
 
 </details>

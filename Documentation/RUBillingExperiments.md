@@ -30,9 +30,9 @@ Special Offer всегда требует отмеченную backend-стро�
 - Отсутствующий `isDefault` означает false; прежний каталог остаётся пригодным.
 - `experiment_code` и `segment_code` принадлежат только текущему свежему Remote Config выбранного paywall `main`,
   а не last-valid или persisted cache.
-- RU Billing требует прежний проверенный `.verifiedFreshRemote` и RU-регион
-  iPhone либо live Storefront. Стандартный provider-managed SDK callback не
-  доказывает свежесть и не открывает RU Billing одним подключением tracker.
+- RU Billing требует explicit `ru_pay=true` из current provider payload и
+  RU-регион iPhone либо live Storefront. Tracker сам gate не включает и не
+  заменяет backend authorization.
 - Assign и shown используют ту же session-bound авторизацию, что checkout.
   Ошибка assign не создаёт shown с неподтверждённым кодом, UI не блокируется.
 - Отчёт не открывает Premium, не запускает оплату, не повторяет её и не меняет
@@ -42,7 +42,7 @@ Special Offer всегда требует отмеченную backend-стро�
 
 Сначала соберите его с новой версией без tracker. Затем отдельным изменением
 подключите его и проверьте реальные host-граничные условия: RU off/on,
-доказательство свежести, корректные/отсутствующие коды, exact ID/defaults,
+  provider provenance, корректные/отсутствующие коды, exact ID/defaults,
 fallback placement, assign mismatch/failure, повторное открытие и logout.
 Используйте fixture HTTP и compile-only SDK; не выдавайте это за проверку
 конверсии реального backend. При миграции соблюдайте

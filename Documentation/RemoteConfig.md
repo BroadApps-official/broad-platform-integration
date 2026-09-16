@@ -165,27 +165,27 @@ RU A/B-коды тоже не сохраняются из прошлого от�
 | Provenance payload | Обычный paywall | `special_offer` capability | `ru_pay` capability |
 |---|---:|---:|---:|
 | `.verifiedFreshRemote` | да | да | да |
-| `.providerCacheFallbackPossible` | да | да | нет |
+| `.providerCacheFallbackPossible` | да | да | да |
 | `.platformCache` | да | нет | нет |
 | `.legacyUnqualified` | да | нет | нет |
 
 `providerCacheFallbackPossible` — текущий результат стандартного Adapty SDK. Он
-достаточен для визуального Special Offer, но не доказывает network freshness
-для RU Billing. `platformCache` — сохранённая платформой копия всего paywall;
-она годится только для безопасного offline UI.
+может нести оба explicit gate, потому что SDK не раскрывает приложению network,
+managed-cache или Dashboard-fallback origin. `platformCache` — сохранённая
+платформой копия всего paywall; она годится только для безопасного offline UI.
 
 Dashboard-generated fallback-файл Adapty регистрируется через
 `Adapty.setFallback(fileURL:)` до активации SDK. Он сохраняет products, variation и
-Remote Config для paywall/Special Offer, но не может авторизовать RU Billing.
+Remote Config и может авторизовать explicit `special_offer=true` и `ru_pay=true`.
 
 Эти флаги разрешают только показать функцию. Они не подтверждают подписку,
 premium, токены или успешный RU-платёж: финансовый результат всегда проверяет
 authoritative entitlement source.
 
-Special Offer и RU Billing получают authority через разные typed
-capability. Special Offer допускает provider-managed payload. Обычный RU gate
-требует свежий remote payload; отдельный [резерв при сбое](RUProviderFallback.md)
-использует временное разрешение текущей попытки и не подменяет provenance.
+Special Offer и RU Billing получают authority через разные typed capability.
+Оба допускают provider-managed payload, но каждый требует собственного strict
+boolean. Отдельный [резерв при сбое](RUProviderFallback.md) использует временное
+разрешение текущей попытки и не подменяет provenance.
 
 ## Special offer — намеренное исключение
 
@@ -246,7 +246,7 @@ Presentation не запускает собственный network timeout и �
 
 ## RU billing gate
 
-Обычный путь: host opt-in AND verified-fresh `ru_pay=true` AND
+Обычный путь: host opt-in AND current Adapty provider `ru_pay=true` AND
 (Storefront RU/RUS OR регион iPhone RU/RUS).
 
 Резерв 1.5.0: host явно подключил `LoadPaywallWithRUFallbackUseCase`, Adapty или
@@ -255,9 +255,9 @@ Presentation не запускает собственный network timeout и �
 это не равно отсутствующему полю. SDK-адаптер разбирает конфигурацию до загрузки
 продуктов и сохраняет полученный запрет при её ошибке.
 
-Платформенный кеш не восстанавливает разрешение. `providerCacheFallbackPossible`
-не переименовывается в fresh. Резерв не создаёт Special Offer или A/B assignment,
-не пишет `ru_pay=true`. Русский язык не участвует в проверке региона.
+Платформенный кеш не восстанавливает разрешение. Резерв не создаёт Special Offer
+или A/B assignment и не пишет `ru_pay=true`. Русский язык не участвует в
+проверке региона.
 Debug override остаётся только для UI-проверок и не обходит backend/entitlement.
 [Подключение и границы резервного сценария](RUProviderFallback.md).
 
@@ -312,11 +312,11 @@ config не содержит второй cohort authority.
 - [ ] удаление offer gate не восстанавливает прошлую кампанию;
 - [ ] fallback `.main` без valid enabled offer gate не включает special offer;
 - [ ] absent RU gate при default policy не показывает RU methods;
-- [ ] все RU aliases true + `.verifiedFreshRemote` → RU gate enabled;
+- [ ] все RU aliases true + current provider provenance → RU gate enabled;
 - [ ] любой false alias → disabled, даже рядом с true/malformed;
 - [ ] true + malformed без false → invalid и fail-closed;
-- [ ] Dashboard fallback зарегистрирован до Adapty activation, но не авторизует RU;
-- [ ] provider-cache/unqualified/platform-cache `.enabled` не авторизует RU;
-- [ ] Debug force-on/off работает только в Debug, а Release сохраняет strict provenance gate;
+- [ ] Dashboard fallback зарегистрирован до Adapty activation и сохраняет explicit gate;
+- [ ] platform-cache/unqualified `.enabled` не авторизует RU;
+- [ ] Debug force-on/off работает только в Debug, а Release сохраняет provider-authority gate;
 - [ ] backend отклоняет checkout при закрытой feature даже после Debug force-on;
 - [ ] unknown UI variant переходит на app default без crash.

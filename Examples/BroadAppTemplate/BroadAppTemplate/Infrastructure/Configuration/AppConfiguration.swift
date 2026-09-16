@@ -275,7 +275,6 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
     case specialOfferMainFallback = "special-offer-main-fallback"
     case ruPayProviderEnabled = "ru-pay-provider-enabled"
     case ruPayProviderDisabled = "ru-pay-provider-disabled"
-    case ruPayAdaptyFallbackRejected = "ru-pay-adapty-fallback-rejected"
     case ruPayPlatformCache = "ru-pay-platform-cache"
 
     var launchArgument: String {
@@ -291,7 +290,6 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
             true
         case .ruPayProviderEnabled,
              .ruPayProviderDisabled,
-             .ruPayAdaptyFallbackRejected,
              .ruPayPlatformCache:
             false
         }
@@ -304,7 +302,6 @@ enum ExampleRemoteFeatureScenario: String, CaseIterable, Sendable {
     var isRUPayEnabled: Bool {
         switch self {
         case .ruPayProviderEnabled,
-             .ruPayAdaptyFallbackRejected,
              .ruPayPlatformCache:
             true
         case .ruPayProviderDisabled,

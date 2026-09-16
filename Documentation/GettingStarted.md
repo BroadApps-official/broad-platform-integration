@@ -567,12 +567,12 @@ let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 ### RU billing нужен
 
 Проверьте регион Storefront **или** iPhone (RU/RUS). Язык не является регионом.
-Обычный сценарий требует подтверждённый свежий `ru_pay=true`; при недоступном
+Обычный сценарий требует current-provider `ru_pay=true`; при недоступном
 Adapty или его продуктах подключите [серверный резерв](RUProviderFallback.md).
 Полученный false/invalid/absent запрещает резерв, отсутствие ответа отличается
 от отсутствующего поля. Старые методы фабрик остаются совместимыми; новый путь
 включается через `makeServicesWithRUFallback` или `makePaywallLoader`.
-Не сохраняйте разрешение на диск, не выдавайте SDK-кеш за свежий Remote Config.
+Persistent cache BroadMonetization не должен восстанавливать разрешение.
 
 Production adapters собирайте через `RUBillingCompositionFactory`: сначала `makeEntitlementRegistration()` добавляется в общий engine, затем `makeServices(refreshEntitlement:operationGate:)` получает уже созданный engine и тот же financial operation gate, что Apple purchase/restore. Это разрывает цикл «RU source нужен engine → RU checkout нужен refresh engine» и не позволяет Apple/RU оплатам идти параллельно.
 
@@ -739,10 +739,10 @@ timer на другой paywall payload. Полный recipe находится 
 - [ ] presentable special offer передаёт `presentationAuthorization` того же payload;
 - [ ] Special Offer countdown закрывает экран на нуле; окно и cooldown по 24 часа сохраняются между запусками;
 - [ ] flag off, confirmed purchase и restore сбрасывают Special Offer cycle;
-- [ ] RU CTA требует verified-fresh `ru_pay = true` и RU Storefront или регион iPhone;
-- [ ] Release читает `ru_pay` только из verified-fresh source; force-control и
+- [ ] RU CTA требует current-provider `ru_pay = true` и RU Storefront или регион iPhone;
+- [ ] Release читает `ru_pay` из Adapty provider payload; force-control и
   `allowsManualOverrides: true` находятся только под host `#if DEBUG`;
-- [ ] Adapty fallback не считается freshness proof для RU Billing;
+- [ ] Adapty managed cache/fallback принимается только с explicit `ru_pay=true`;
 - [ ] backend kill switch и authoritative entitlement не зависят от Debug override;
 - [ ] real credentials и PII отсутствуют в source/cache/logs/analytics;
 - [ ] Debug Status объясняет результат без Console, а safe runtime-поток

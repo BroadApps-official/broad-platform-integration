@@ -168,7 +168,6 @@ private extension ExampleRemoteFeatureScenario {
         case .specialOfferMainFallback: .specialOfferMainFallback
         case .ruPayProviderEnabled: .ruPayProviderEnabled
         case .ruPayProviderDisabled: .ruPayProviderDisabled
-        case .ruPayAdaptyFallbackRejected: .ruPayAdaptyFallbackRejected
         case .ruPayPlatformCache: .ruPayPlatformCache
         }
     }

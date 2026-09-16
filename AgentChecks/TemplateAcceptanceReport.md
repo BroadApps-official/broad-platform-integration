@@ -37,15 +37,16 @@
 
 | Сценарий | Доказательство | Результат |
 |---|---|---|
-| Release без manual override | Default store остаётся locked без verified-fresh `ru_pay`; template разблокирует UI/store только под `#if DEBUG`; Release Simulator и generic iOS собраны | PASS |
+| Release без manual override | Default store следует current-provider `ru_pay`; template разблокирует manual override только под `#if DEBUG`; Release Simulator и generic iOS собраны | PASS |
 | Provider `true/false/absent/invalid` | `Scripts/check_remote_feature_contracts.sh` проверяет каждую fail-closed ветку | PASS |
-| Dashboard fallback registration | Typed JSON file URL и `Adapty.setFallback(fileURL:)` до `Adapty.activate`; RU authority не выдаётся | PASS |
+| Dashboard fallback registration | Typed JSON file URL и `Adapty.setFallback(fileURL:)` до `Adapty.activate`; explicit `ru_pay=true` сохраняет RU authority | PASS |
 | Debug consistency | Method resolver и final checkout gate получают один process-local store | PASS |
 | Безопасная диагностика | Typed availability reason + method count; raw Remote Config/product/path не печатаются | PASS |
-| Verified-fresh RU transport | Зависит от host-controlled transport конкретного app | APP-OWNED |
+| Platform-cache rejection | Persisted BroadMonetization payload не авторизует RU methods | PASS |
 
-`-ru-pay-adapty-fallback-rejected` доказывает, что provider-managed
-fallback не подменяет verified freshness и оставляет RU methods закрытыми.
+`-ru-pay-provider-enabled` использует `.providerCacheFallbackPossible` и
+доказывает стандартный Adapty path; `-ru-pay-platform-cache` сохраняет
+fail-closed границу платформенного кеша.
 
 ## AppFlow
 

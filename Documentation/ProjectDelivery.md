@@ -54,8 +54,8 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 | Tokens | нужны / не нужны | Entry point + backend fulfillment contract |
 | Special offer | нужен / не нужен | Placement + current Remote Config contract |
 | RU Billing | нужен / не нужен | Backend + legal + remote gate |
-| `ru_pay` | `true` / `false`; владелец флага | Product decision + verified-fresh transport |
-| RU freshness | Endpoint/schema/TTL/offline policy / `N/A` | Host repository sets `.verifiedFreshRemote` only for proven network origin |
+| `ru_pay` | `true` / `false`; владелец флага | Product decision в Adapty provider payload |
+| Adapty offline policy | Managed cache/Dashboard fallback может сохранить `true` | Product owner принимает provider-cache authority |
 | RU emergency off | Backend kill switch + `ru_pay = false` procedure | Backend/product owner |
 | Contact Us | support email + standard/ukassa form | `SupportEmail.md` + app configuration |
 | Account recovery | Apple / tokens / RU ownership sources | Authenticated balance endpoint; purchase IDs только для exactly-once fulfillment |
@@ -95,9 +95,9 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
   purchase/restore первого paywall обходит offer.
 - [ ] Один analytics pipeline видит события subscription и special-offer презентаций.
 - [ ] RU methods требуют разрешающий gate или подключённый резерв при недоступном провайдере, регион и app-owned backend.
-- [ ] Release берёт `ru_pay` только из verified-fresh source; локальный force-on/off существует только в Debug.
+- [ ] Release берёт `ru_pay` только из current Adapty provider payload; локальный force-on/off существует только в Debug.
 - [ ] Debug force-on не обходит RU device context, catalog, backend authorization и entitlement.
-- [ ] Adapty fallback не выдаётся за freshness proof RU Billing.
+- [ ] Managed cache/Dashboard fallback Adapty может сохранить explicit `ru_pay=true`; persistent platform cache нет.
 - [ ] В RU account-policy брошенный checkout имеет явные Retry/Cancel:
       `checkoutTerminationClient` подключён, автоотмены нет, и только
       `.terminated` снимает блокировку purchase/restore.

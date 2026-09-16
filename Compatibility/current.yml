@@ -1,5 +1,5 @@
 schema: 1
-platform_set: "4.1.1"
+platform_set: "4.1.2"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
@@ -11,12 +11,12 @@ repositories:
 modules:
   BroadCore: "2.1.0"
   BroadExtensions: "1.0.1"
-  BroadMonetization: "4.0.0"
+  BroadMonetization: "4.1.0"
   BroadUIFlows: "4.0.0"
 verification:
   status: passed
   command: "bash Scripts/agent_gate.sh"
-  checked_at: "2026-09-11"
+  checked_at: "2026-09-16"
 module_verification:
   BroadCore:
     version: "2.1.0"
@@ -33,12 +33,12 @@ module_verification:
     integration_gate: passed
     checked_at: "2026-09-04"
   BroadMonetization:
-    version: "4.0.0"
+    version: "4.1.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/4.0.0"
+    release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/4.1.0"
     integration_gate: passed
-    checked_at: "2026-09-11"
+    checked_at: "2026-09-16"
   BroadUIFlows:
     version: "4.0.0"
     module_gate: passed

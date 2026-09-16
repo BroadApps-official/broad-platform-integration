@@ -62,12 +62,12 @@ Legacy-поля длительности не меняют фиксирован�
 | Provenance payload | Special Offer | `ru_pay` |
 |---|---:|---:|
 | `.verifiedFreshRemote` | да | да, при остальных RU-условиях |
-| `.providerCacheFallbackPossible` | да | нет |
+| `.providerCacheFallbackPossible` | да | да, при остальных RU-условиях |
 | `.platformCache` | нет | нет |
 
 `.providerCacheFallbackPossible` допускает текущий ответ самого SDK Adapty, но
-не старый cache BroadMonetization. `ru_pay` остаётся независимым и требует
-`.verifiedFreshRemote`.
+не старый cache BroadMonetization. `special_offer` и `ru_pay` остаются
+независимыми explicit gates; положительное значение одного не включает другой.
 
 ## Что на экране
 
