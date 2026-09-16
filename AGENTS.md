@@ -136,6 +136,13 @@
 - Offline/timeout не превращаются в inactive/success. Неопределённый финансовый
   результат остаётся pending до reconciliation; появление сети не запускает
   purchase, token charge, RU checkout или cancellation автоматически.
+- Для RU account-policy агент обязан проверить app-side завершение брошенного
+  checkout: подключён `checkoutTerminationClient`, UI предлагает явную отмену
+  после `.pending`, а `pendingCheckoutTermination` вызывается только после
+  подтверждения пользователя. `.pending`/`.unavailable` сохраняют блокировку;
+  только server-confirmed `.terminated` разрешает следующую purchase/restore.
+  Если такого backend-контракта или API в подключённой версии нет, ставь
+  `BLOCKED`; не очищай pending локально и не запускай отмену при foreground.
 - Usedesk подключается только когда он нужен конкретному приложению. Готовый GUI
   устанавливается через CocoaPods в app target и открывается только действием
   `Настройки → Онлайн-чат`, не в loader/bootstrap. Для обычного чата

@@ -57,6 +57,8 @@ build phase. Подробности: `Documentation/AccountRecovery.md` плат
 8. источник подтверждения token balance;
 9. endpoint отмены и смысл `canceled`, `alreadyCanceled`, `willRenew`;
 10. offline/timeout/empty policy и backend kill switch.
+11. для account-policy — backend-контракт завершения брошенного checkout,
+    который подтверждает terminal outcome и исключает позднее списание.
 
 Ищи не только название service. Проверяй фактические `URLRequest`/endpoint
 builders, auth interceptor, DTO, composition root и место, где UI получает
@@ -65,7 +67,8 @@ builders, auth interceptor, DTO, composition root и место, где UI по�
 ## Что должно быть подтверждено
 
 До кода должны быть известны catalog, checkout, status/policy и, если требуется,
-cancel methods текущего приложения. Если значения не записаны в плане, задай
+cancel methods текущего приложения. Для account-policy отдельно обязателен
+контракт завершения брошенного checkout. Если значения не записаны в плане, задай
 разработчику/team lead один прямой вопрос:
 
 > Передайте для текущего приложения catalog, checkout, status/policy и cancel
@@ -83,6 +86,8 @@ cancel methods текущего приложения. Если значения 
 - Email обязателен для checkout и откуда host app его получает?
 - Какой endpoint является authority для Premium после возврата из браузера?
 - Где читать подтверждённый token balance?
+- Как backend завершает брошенный checkout и доказывает, что позднее списание
+  невозможно?
 - Как UI ведёт себя при пустом каталоге, 401, timeout и частично битом JSON?
 - Текущий app уже переведён на правило `Storefront RU OR iPhone region RU`?
 
@@ -104,6 +109,12 @@ cancel methods текущего приложения. Если значения 
   сохраняются. Не подставляй defaults в отдельную несовпавшую Apple-карточку.
 - Возврат/закрытие browser sheet не означает оплату. Premium открывается после
   подтверждения entitlement/policy; токены — после подтверждения balance.
+- В account-policy после `.pending` UI даёт Retry и явную отмену. Подключи
+  `checkoutTerminationClient`; вызывай `pendingCheckoutTermination` только
+  после подтверждения пользователя. `.pending`/`.unavailable` не снимают
+  блокировку, `.terminated` разрешает следующую purchase/restore. Не очищай
+  pending локально и не отменяй автоматически при закрытии страницы/foreground.
+  Если backend или версия платформы этого не поддерживает, результат — `BLOCKED`.
 - `ru_pay` отсутствует/false/invalid — RU Billing закрыт. Не подставляй true.
 - Региональный gate: App Store Storefront `RU/RUS` **или** регион iPhone
   `RU/RUS`; язык, клавиатура, IP и timezone не участвуют.
@@ -118,7 +129,7 @@ BACKEND CONTRACT GIVEN
 - catalog: method/path/auth/response shape
 - checkout: method/path/body/response
 - confirmation: subscription authority + token authority
-- cancellation: method/path/response
+- cancellation: subscription cancellation + pending-checkout termination
 - differences from current platform contract
 
 QUESTIONS / BLOCKERS

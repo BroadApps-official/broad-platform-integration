@@ -112,6 +112,7 @@ transitive dependencies. Не запускайте resolve внутри непо
 | `GET /v1/policy/effective` или другой entitlement authority | Какие поля подтверждают Premium |  |  |
 | Backend balance/wallet | Как подтверждаются купленные токены |  |  |
 | `POST /v1/billing/cloudpayments/cancel` или аналог | Response и смысл renewal fields |  |  |
+| Завершение брошенного checkout в account-policy | Method/path/auth + terminal response, исключающий позднее списание |  |  |
 | Неизвестные значения | Вопрос тимлиду/backend owner; не угадывать |  |  |
 
 Endpoint/schema/auth подтверждает владелец текущего backend. Инструкция агенту
@@ -152,6 +153,7 @@ Endpoint/schema/auth подтверждает владелец текущего 
 | Debug override подключён? | `Как в Adapty` / force-on / force-off; только Debug |  |
 | Какой live smoke пройден? | Verified `true/false`; provider/platform cache rejection; без purchase |  |
 | Чем подтверждается результат после browser return? | Premium: policy/entitlement; tokens: backend balance; закрытие браузера не success |  |
+| Как снимается pending брошенного checkout? | `checkoutTerminationClient` + явная отмена в UI; только `.terminated` разрешает новую purchase/restore |  |
 
 ### Спешл оффер RU Billing: заполнить, если feature не `N/A`
 

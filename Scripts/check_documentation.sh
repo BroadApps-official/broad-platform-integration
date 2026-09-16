@@ -200,6 +200,10 @@ for documentation_contract in \
     'Documentation/RUBilling.md|\.forceEnabled' \
     'Documentation/RemoteConfig.md|LoadPaywallWithRUFallbackUseCase' \
     'Documentation/Templates/AppIntegrationPlan.md|Как доказывается freshness' \
+    'Documentation/Templates/AppIntegrationPlan.md|Как снимается pending брошенного checkout' \
+    'AgentChecks/AUTOMATION_PROMPT.md|checkoutTerminationClient' \
+    'Examples/BroadAppTemplate/AGENTS.md|pendingCheckoutTermination' \
+    'Documentation/ProjectDelivery.md|`\.terminated` снимает блокировку purchase/restore' \
     'Examples/BroadAppTemplate/README.md|BROADAPPS_ADAPTY_FALLBACK_FILE_NAME' \
     'Documentation/Logging.md|ru-billing\.availability\.evaluated' \
     'Documentation/AccountRecovery.md|GET /me/token-balance' \
