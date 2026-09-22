@@ -1,5 +1,7 @@
 # BroadAppTemplate
 
+Этот пример явно подключает `BroadRUBilling` и `BroadRUBillingUI` и показывает RU-сценарии на fixtures. Для приложения только с App Store используйте [BroadAppleOnlyTemplate](../BroadAppleOnlyTemplate/README.md). Базовые пакеты больше не содержат RU-оплату. [Миграция](../../Documentation/OptionalRUBilling.md).
+
 `BroadAppTemplate` — запускаемый пример инженерной основы нового приложения. Он
 показывает разработчику правильную структуру, рабочий composition root,
 маршрутизацию и fixture-состояния. Новое приложение строится поверх тех же

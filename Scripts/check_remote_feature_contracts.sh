@@ -120,9 +120,9 @@ require_pattern \
     'check\(elapsed:[[:space:]]*86_400,[[:space:]]*expected:[[:space:]]*0\)(?s:.*?)check\(elapsed:[[:space:]]*86_401,[[:space:]]*expected:[[:space:]]*0\)(?s:.*?)does not loop'
 
 require_pattern \
-    "Provider-managed payload authorizes explicit RU Billing gate" \
+    "Provider-managed payload authorizes provider-extension authority" \
     "$countdown_probe" \
-    'providerPayloadConfiguration\.authorizesRUBillingPresentation'
+    'providerPayloadConfiguration\.authorizesProviderFeatures'
 
 forbid_pattern \
     "Host example contains no obsolete Adapty fallback rejection fixture" \

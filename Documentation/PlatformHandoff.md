@@ -9,8 +9,8 @@
 Из корня платформы:
 
 ```bash
-./Scripts/agent_review_and_fix.sh --doctor
-./Scripts/agent_review_and_fix.sh
+./Scripts/agent_review_and_fix.sh platform --doctor
+./Scripts/agent_review_and_fix.sh platform --fix
 ```
 
 Первая команда проверяет окружение. Вторая запускает Codex с готовыми правилами,
@@ -20,7 +20,7 @@
 Результат сохраняется в:
 
 ```text
-AgentChecks/AutomationReports/latest.md
+.build/AgentReview/platform/latest.md
 ```
 
 ## Вариант 2 — проверить вручную
@@ -45,6 +45,7 @@ bash Scripts/agent_gate.sh
 - Swift Package, iPhone Simulator example в Debug/Release и generic iOS compile
   без подписи;
 - компиляцию двух рабочих live Adapty configurations без финансовых операций.
+- отдельную App Store-сборку без RU-пакета, его символов и ресурсов в Debug/Release.
 
 Это локальный platform/example scope. Для runtime-проверки запущенного example
 используйте `bash Scripts/stream_example_logs.sh`; UI/Debug Status остаётся
@@ -66,7 +67,7 @@ Host app подключает release из `Compatibility/current.yml`, а не 
 ```swift
 .package(
     url: "https://github.com/BroadApps-official/broad-core-ios.git",
-    exact: "2.1.0"
+    exact: "3.0.0"
 )
 ```
 

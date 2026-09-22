@@ -1,4 +1,6 @@
 import BroadMonetization
+import BroadRUBilling
+import BroadRUBillingUI
 import BroadUIFlows
 import SwiftUI
 
@@ -124,8 +126,9 @@ struct ExampleCatalogPaywallView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        BroadPaywallView(
+        BroadRUPaywallView(
             viewModel: viewModel,
+            configuration: AppConfiguration.ruBillingPresentation,
             theme: AppTokens.paywallTheme,
             productFormatter: BroadPaywallProductFormatter(
                 locale: Locale(identifier: "ru_RU"),

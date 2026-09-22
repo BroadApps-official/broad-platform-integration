@@ -1,9 +1,13 @@
 import BroadMonetization
+import BroadRUBilling
+import BroadRUBillingUI
 import BroadUIFlows
 import Foundation
 import UIKit
 
 enum AppConfiguration {
+    static let ruBillingPresentation = BroadRUBillingPresentationConfiguration()
+
     struct CacheFixture {
         let suiteName: String
         let namespace: String
@@ -111,7 +115,6 @@ enum AppConfiguration {
                 url: privacyPolicyURL
             )
         ],
-        ruBilling: BroadRUBillingPresentationConfiguration(),
         specialOfferCopy: .russian
     )
     static let privacyPolicyURL = legalURL(path: "privacy")
@@ -251,7 +254,7 @@ enum AppConfiguration {
             title: "Предсказуемый запуск приложения",
             subtitle: "Обязательные операции ограничены по времени, а дополнительные продолжаются в фоне.",
             coreDescription: "Запуск, кеш, повтор, логирование и общие контракты.",
-            monetizationDescription: "Adapty, StoreKit, RU billing и проверка доступа.",
+            monetizationDescription: "Adapty, StoreKit, токены и проверка доступа.",
             uiFlowsDescription: "Онбординг, загрузка, пейвол и общие состояния интерфейса.",
             connectedDetail: "Подключено",
             adaptyLinkedDetail: "Adapty подключён",

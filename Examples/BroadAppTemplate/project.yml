@@ -15,16 +15,19 @@ options:
 packages:
   BroadCore:
     url: https://github.com/BroadApps-official/broad-core-ios.git
-    exactVersion: 2.1.0
+    exactVersion: 3.0.0
   BroadMonetization:
     url: https://github.com/BroadApps-official/broad-monetization-ios.git
-    exactVersion: 4.1.0
+    exactVersion: 5.0.0
   BroadUIFlows:
     url: https://github.com/BroadApps-official/broad-ui-flows-ios.git
-    exactVersion: 4.0.0
+    exactVersion: 5.0.0
   BroadExtensions:
     url: https://github.com/BroadApps-official/broad-extensions-ios.git
     exactVersion: 1.0.1
+  BroadRUBilling:
+    url: https://github.com/BroadApps-official/broad-ru-billing-ios.git
+    exactVersion: 1.0.0
   Swinject:
     url: https://github.com/Swinject/Swinject.git
     exactVersion: 2.10.0
@@ -59,6 +62,10 @@ targets:
         product: BroadUIFlows
       - package: BroadExtensions
         product: BroadExtensions
+      - package: BroadRUBilling
+        product: BroadRUBilling
+      - package: BroadRUBilling
+        product: BroadRUBillingUI
       - package: Swinject
         product: Swinject
     configFiles:

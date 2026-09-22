@@ -1,5 +1,40 @@
 # Последняя подтверждённая проверка платформы
 
+## Optional RU Billing — набор 5.0.0, 22 сентября 2026
+
+**PASS.** Модули опубликованы. Полный candidate gate и последующий обычный
+`bash Scripts/agent_gate.sh` прошли на наборе из каталога совместимости.
+
+Общая проверка включает Debug/Release Simulator, unsigned generic iOS, две
+compile-only Adapty configurations и отдельную Apple-only Debug/Release сборку.
+
+RU-логика и SwiftUI-экраны вынесены в отдельный публичный repository
+[broad-ru-billing-ios](https://github.com/BroadApps-official/broad-ru-billing-ios).
+Базовые Core/Monetization/UIFlows не импортируют RU-модуль. Приложение выбирает
+`BroadRUBilling` и `BroadRUBillingUI` явно; remote flag не заменяет эту границу сборки.
+
+| Модуль | Версия | Проверка GitHub |
+|---|---|---|
+| BroadCore | 3.0.0 | [PASS](https://github.com/BroadApps-official/broad-core-ios/actions/runs/35746067830) |
+| BroadMonetization | 5.0.0 | [PASS](https://github.com/BroadApps-official/broad-monetization-ios/actions/runs/35747629017) |
+| BroadUIFlows | 5.0.0 | [PASS](https://github.com/BroadApps-official/broad-ui-flows-ios/actions/runs/35750056615) |
+| BroadRUBilling + BroadRUBillingUI | 1.0.0 | [PASS](https://github.com/BroadApps-official/broad-ru-billing-ios/actions/runs/35753582596) |
+| BroadExtensions | 1.0.1 | Без изменений; включён в общую сборку |
+
+Standalone module gates всех изменённых модулей прошли локально. RU probes
+проверяют прежние wire identifiers и pending-записи, bounded waiting, account/epoch,
+retry, повторные возвраты, выбор каталога, remote-config authority и аналитику.
+Галерея RU-модуля запущена в iPhone Simulator на fixtures.
+
+`check_optional_billing.sh` — PASS на опубликованных пакетах: Apple-only Debug
+Simulator и Release generic iOS без подписи, без RU package в resolved graph,
+без RU symbols/strings в Mach-O и без RU artifacts в bundle.
+
+Сохранены `special_offer`, bounded account-policy waiting и серверное подтверждение
+Premium/токенов. Реальные purchase, restore, cancellation и backend payment
+не выполнялись. Предупреждения AccountIntegration.json в техническом шаблоне
+показывают app-owned настройки, которые заполняются при создании приложения.
+
 ## Adapty RU Billing authority — набор 4.1.2, 16 сентября 2026
 
 Набор: **BroadCore 2.1.0, BroadExtensions 1.0.1, BroadMonetization 4.1.0,

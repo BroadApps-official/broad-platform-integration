@@ -10,7 +10,7 @@
 <path d="M265.0 294L272.0 300L265.0 306" fill="none" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="54.0" y="205" width="204.0" height="190" rx="18" fill="#FFFFFF" stroke="#CBD5E1"/>
 <rect x="72.0" y="225" width="42" height="8" rx="4" fill="#3B82F6"/>
-<text x="72.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="750">4 MODULE REPOS</text>
+<text x="72.0" y="281" fill="#0F172A" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="17" font-weight="750">5 MODULE REPOS</text>
 <text x="72.0" y="317" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">source + DocC</text>
 <text x="72.0" y="340" fill="#64748B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13">+ sandbox</text>
 <text x="72.0" y="371" fill="#3B82F6" font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="10" font-weight="700">01</text>

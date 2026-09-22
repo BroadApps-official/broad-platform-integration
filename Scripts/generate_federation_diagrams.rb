@@ -32,7 +32,7 @@ specs = {
     title: "Публичная федерация repositories",
     subtitle: "Модули владеют кодом, integration — совместимостью, сайт — актуальными инструкциями",
     nodes: [
-      ["4 MODULE REPOS", "source + DocC + sandbox", :core],
+      ["5 MODULE REPOS", "source + DocC + sandbox", :core],
       ["MODULE RELEASES", "independent SemVer", :monetization],
       ["INTEGRATION", "exact versions + example", :host],
       ["COMPATIBILITY", "machine-readable catalog", :flows],
@@ -109,7 +109,7 @@ specs.each do |name, spec|
       svg = <<~SVG
         <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
           <title id="title">Host app выбирает любой нужный модуль</title>
-          <desc id="desc">Четыре независимых варианта подключения. UIFlows зависит от Monetization и Core; Monetization зависит от Core. Extensions подключается отдельно.</desc>
+          <desc id="desc">Базовые модули и отдельный opt-in RU Billing. UIFlows зависит от Monetization и Core; Monetization зависит от Core. Extensions подключается отдельно.</desc>
           <rect width="1200" height="500" rx="28" fill="#{theme[:bg]}"/>
           <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
             <text x="54" y="66" fill="#{theme[:text]}" font-size="34" font-weight="750">Один app. Только нужные модули.</text>
@@ -128,7 +128,7 @@ specs.each do |name, spec|
         SVG
       end
       svg += <<~SVG
-            <text x="54" y="454" fill="#{theme[:muted]}" font-size="18">Integration repository: совместимые версии + общий пример + проверки.</text>
+            <text x="54" y="454" fill="#{theme[:muted]}" font-size="18">RU Billing / RU UI — отдельный opt-in пакет. Integration — версии и проверки.</text>
           </g>
         </svg>
       SVG

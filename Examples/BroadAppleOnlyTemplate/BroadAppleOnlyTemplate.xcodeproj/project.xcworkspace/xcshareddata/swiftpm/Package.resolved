@@ -1,5 +1,5 @@
 {
-  "originHash" : "9adf44efa01e85f974bbac6a985f5d5091f66ec20a8946217140f83c9f35ce99",
+  "originHash" : "6a70bcd49d9ac8c02fa561730bffcba9706cb3a8ecfa09437cad19410805fecc",
   "pins" : [
     {
       "identity" : "adaptysdk-ios",
@@ -20,30 +20,12 @@
       }
     },
     {
-      "identity" : "broad-extensions-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/BroadApps-official/broad-extensions-ios.git",
-      "state" : {
-        "revision" : "51a2172ce87980bf99a9cf2badadf45675a3664b",
-        "version" : "1.0.1"
-      }
-    },
-    {
       "identity" : "broad-monetization-ios",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-monetization-ios.git",
       "state" : {
         "revision" : "3f808b66b88338380ec47cda017dc307e6ec4ddd",
         "version" : "5.0.0"
-      }
-    },
-    {
-      "identity" : "broad-ru-billing-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/BroadApps-official/broad-ru-billing-ios.git",
-      "state" : {
-        "revision" : "ad441f8bf36844516b5ac7d1a76ae2df76ce89bc",
-        "version" : "1.0.0"
       }
     },
     {

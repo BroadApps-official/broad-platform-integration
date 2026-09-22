@@ -1,6 +1,7 @@
 included:
   - Sources
   - Examples/BroadAppTemplate/BroadAppTemplate
+  - Examples/BroadAppleOnlyTemplate/Sources
 
 excluded:
   - .build

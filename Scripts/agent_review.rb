@@ -21,7 +21,7 @@ class BroadReview
     parser = OptionParser.new do |opts|
       opts.banner = 'Usage: agent_review_and_fix.sh platform|app PATH [options]'
       opts.on('--fix', 'Разрешить минимальные исправления; иначе только аудит') { @fix = true }
-      opts.on('--modules-root PATH', 'Папка с четырьмя module repositories') { |v| @modules_root = v }
+      opts.on('--modules-root PATH', 'Папка с module repositories') { |v| @modules_root = v }
       opts.on('--project PATH', '.xcodeproj или .xcworkspace относительно app PATH') { |v| @project = v }
       opts.on('--scheme NAME', 'Схема приложения для независимой сборки') { |v| @scheme = v }
       opts.on('--doctor', 'Проверить входы и инструменты без агента') { @doctor = true }
@@ -51,7 +51,7 @@ class BroadReview
       raise "Нет module_gate.sh в #{folder}." unless File.file?(File.join(root, 'Scripts/module_gate.sh'))
       root
     end
-    raise 'Модули должны находиться в отдельных папках.' unless (roots + [@platform]).uniq.size == 5
+    raise 'Модули должны находиться в отдельных папках.' unless (roots + [@platform]).uniq.size == roots.size + 1
     roots + [@platform]
   end
 

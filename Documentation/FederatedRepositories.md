@@ -11,6 +11,7 @@ Host App
  ├─ broad-extensions-ios      (optional, standalone)
  ├─ broad-core-ios            (optional, foundation)
  ├─ broad-monetization-ios    (brings compatible BroadCore)
+ ├─ broad-ru-billing-ios      (optional RU logic + optional RU UI)
  └─ broad-ui-flows-ios        (brings compatible Monetization + Core)
 
 broad-platform-integration
@@ -49,6 +50,8 @@ Host app не обязано подключать integration repository или 
 | Bootstrap/cache/logging | `BroadCore` | Swinject |
 | Свой UI поверх монетизации | `BroadMonetization` | compatible `BroadCore`, Adapty, Swinject |
 | Готовые onboarding/paywall/AppFlow | `BroadUIFlows` | compatible Monetization, Core, Adapty, Swinject |
+| RU checkout со своим UI | `BroadRUBilling` | Monetization, Core |
+| RU checkout с готовым UI | `BroadRUBillingUI` | RU logic, UIFlows, Monetization, Core |
 | Extensions плюс любой flow | нужный модуль + `BroadExtensions` | по graph выше |
 
 Если app импортирует public API нижележащего модуля напрямую, этот product
@@ -94,8 +97,8 @@ Host app не обязано подключать integration repository или 
 
 ## Definition of Done
 
-- шесть целевых repositories публичны;
-- четыре module packages собираются из clean clone;
+- семь целевых repositories публичны;
+- пять module packages собираются из clean clone;
 - каждый модуль имеет README, license, changelog, DocC, module gate и iPhone sandbox;
 - integration repository фиксирует и проверяет точную комбинацию;
 - документация осталась в repositories и дополнительно опубликована на сайте;

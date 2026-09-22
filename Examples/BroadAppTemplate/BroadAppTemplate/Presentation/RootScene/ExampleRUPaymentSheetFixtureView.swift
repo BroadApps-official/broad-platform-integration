@@ -1,4 +1,6 @@
 import BroadMonetization
+import BroadRUBilling
+import BroadRUBillingUI
 import BroadUIFlows
 import SwiftUI
 
@@ -20,7 +22,7 @@ struct ExampleRUPaymentSheetFixtureView: View {
                     receiptEmail: "developer@broadapps.ru"
                 ),
             copy: .russian,
-            ruConfiguration: AppConfiguration.paywallConfiguration.ruBilling,
+            ruConfiguration: AppConfiguration.ruBillingPresentation,
             theme: AppTokens.paywallTheme,
             onSubmit: { method, _ in
                 notice = ExampleRUPaymentNotice(
@@ -67,7 +69,7 @@ private extension CheckoutMethod {
         case .apple: "Apple"
         case .sbp: "СБП"
         case .card: "Банковская карта"
-        @unknown default: rawValue
+        default: "Недоступный способ оплаты"
         }
     }
 }

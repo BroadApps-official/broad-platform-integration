@@ -1,8 +1,10 @@
 import BroadCore
 import BroadMonetization
+import BroadRUBilling
+import BroadRUBillingUI
 import Foundation
 
-struct ExamplePaywallRepository: RUFallbackPaywallRepositoryProtocol {
+struct ExamplePaywallRepository: ProviderPaywallAttemptRepositoryProtocol {
     let arguments: [String]
 
     func loadPaywall(

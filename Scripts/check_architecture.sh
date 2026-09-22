@@ -222,12 +222,12 @@ require_file_pattern \
 require_file_pattern \
     "Special Offer catalog must close a subscription paywall before resolving the offer:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/RootScene/ExampleSpecialOfferFixtureView.swift" \
-    '(?s)ExampleSpecialOfferCatalogFlowView.*case[[:space:]]+[.]?subscriptionPaywall.*BroadPaywallView.*onClose:[[:space:]]*subscriptionPaywallClosed.*case[[:space:]]+[.]?resolvingOffer.*resolutionProgress.*case[[:space:]]+[.]?specialOffer.*ExampleSpecialOfferFixtureView\(.*resetForCatalogPresentation\(\).*func[[:space:]]+subscriptionPaywallClosed\(\).*resolveIfNeeded\(\)'
+    '(?s)ExampleSpecialOfferCatalogFlowView.*case[[:space:]]+[.]?subscriptionPaywall.*BroadRUPaywallView.*onClose:[[:space:]]*subscriptionPaywallClosed.*case[[:space:]]+[.]?resolvingOffer.*resolutionProgress.*case[[:space:]]+[.]?specialOffer.*ExampleSpecialOfferFixtureView\(.*resetForCatalogPresentation\(\).*func[[:space:]]+subscriptionPaywallClosed\(\).*resolveIfNeeded\(\)'
 
 require_file_pattern \
     "Confirmed completion of the catalog subscription paywall must bypass Special Offer:" \
     "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate/Presentation/RootScene/ExampleSpecialOfferFixtureView.swift" \
-    '(?s)case[[:space:]]+[.]?subscriptionPaywall:.*BroadPaywallView\(.*onClose:[[:space:]]*subscriptionPaywallClosed,[[:space:]]*onCompleted:[[:space:]]*\{[[:space:]]*_[[:space:]]+in[[:space:]]+dismiss\(\)[[:space:]]*\}'
+    '(?s)case[[:space:]]+[.]?subscriptionPaywall:.*BroadRUPaywallView\(.*onClose:[[:space:]]*subscriptionPaywallClosed,[[:space:]]*onCompleted:[[:space:]]*\{[[:space:]]*_[[:space:]]+in[[:space:]]+dismiss\(\)[[:space:]]*\}'
 
 require_file_pattern \
     "Initial AppFlow must resolve Special Offer only after the first paywall closes:" \

@@ -1,5 +1,5 @@
 schema: 1
-platform_set: "4.1.2"
+platform_set: "5.0.0"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
@@ -8,46 +8,57 @@ repositories:
   BroadExtensions: "https://github.com/BroadApps-official/broad-extensions-ios"
   BroadMonetization: "https://github.com/BroadApps-official/broad-monetization-ios"
   BroadUIFlows: "https://github.com/BroadApps-official/broad-ui-flows-ios"
+  BroadRUBilling: "https://github.com/BroadApps-official/broad-ru-billing-ios"
 modules:
-  BroadCore: "2.1.0"
+  BroadCore: "3.0.0"
   BroadExtensions: "1.0.1"
-  BroadMonetization: "4.1.0"
-  BroadUIFlows: "4.0.0"
+  BroadMonetization: "5.0.0"
+  BroadUIFlows: "5.0.0"
+  BroadRUBilling: "1.0.0"
 verification:
   status: passed
   command: "bash Scripts/agent_gate.sh"
-  checked_at: "2026-09-16"
+  checked_at: "2026-09-22"
 module_verification:
   BroadCore:
-    version: "2.1.0"
+    version: "3.0.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-core-ios/releases/tag/2.1.0"
+    release: "https://github.com/BroadApps-official/broad-core-ios/releases/tag/3.0.0"
     integration_gate: passed
-    checked_at: "2026-09-11"
+    checked_at: "2026-09-22"
   BroadExtensions:
     version: "1.0.1"
     module_gate: passed
     github_actions: passed
     release: "https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1"
     integration_gate: passed
-    checked_at: "2026-09-04"
+    checked_at: "2026-09-22"
   BroadMonetization:
-    version: "4.1.0"
+    version: "5.0.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/4.1.0"
+    release: "https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/5.0.0"
     integration_gate: passed
-    checked_at: "2026-09-16"
+    checked_at: "2026-09-22"
   BroadUIFlows:
-    version: "4.0.0"
+    version: "5.0.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/4.0.0"
+    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/5.0.0"
     integration_gate: passed
-    checked_at: "2026-09-11"
+    checked_at: "2026-09-22"
+  BroadRUBilling:
+    version: "1.0.0"
+    module_gate: passed
+    github_actions: passed
+    release: "https://github.com/BroadApps-official/broad-ru-billing-ios/releases/tag/1.0.0"
+    integration_gate: passed
+    checked_at: "2026-09-22"
 notes:
   - "Host applications connect only the repositories/products they need."
+  - "BroadRUBilling and BroadRUBillingUI are optional products of the same repository."
+  - "Base packages do not depend on RU billing; Apple-only Debug/Release artifacts are checked."
   - "This catalog is not a mandatory runtime umbrella dependency."
-  - "Production sources compile in Swift 5 language mode; swift_tools is the package manifest/toolchain version."
+  - "Production sources compile in Swift 5 language mode; swift_tools is the manifest/toolchain version."
   - "Tests, test targets, XCTest and Swift Testing are intentionally absent."

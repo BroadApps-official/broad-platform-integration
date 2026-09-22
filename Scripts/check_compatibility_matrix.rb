@@ -23,9 +23,11 @@ modules = {
   "BroadCore" => "broad-core-ios",
   "BroadExtensions" => "broad-extensions-ios",
   "BroadMonetization" => "broad-monetization-ios",
-  "BroadUIFlows" => "broad-ui-flows-ios"
+  "BroadUIFlows" => "broad-ui-flows-ios",
+  "BroadRUBilling" => "broad-ru-billing-ios"
 }.freeze
 
+candidate = ENV["BROAD_PLATFORM_VERIFY_CANDIDATE"] == "1"
 failures = []
 record = ->(message) { failures << message }
 semver = /\A\d+\.\d+\.\d+\z/
@@ -39,7 +41,7 @@ record.call("swift_language_mode must equal 5") unless catalog["swift_language_m
 record.call("swift_tools must equal 6.0") unless catalog["swift_tools"].to_s == "6.0"
 
 verification = catalog.fetch("verification", {})
-record.call("verification.status must be passed") unless verification["status"] == "passed"
+record.call("verification.status must be passed") unless verification["status"] == "passed" || (candidate && verification["status"] == "pending")
 record.call("verification.command is invalid") unless verification["command"] == "bash Scripts/agent_gate.sh"
 record.call("verification.checked_at is invalid") unless verification["checked_at"].to_s.match?(date)
 
@@ -72,7 +74,7 @@ modules.each do |name, identity|
   evidence = module_verification.fetch(name, {})
   record.call("#{name} evidence version does not match modules") unless evidence["version"].to_s == version
   %w[module_gate github_actions integration_gate].each do |field|
-    record.call("#{name} #{field} must be passed") unless evidence[field] == "passed"
+    record.call("#{name} #{field} must be passed") unless evidence[field] == "passed" || (candidate && field == "integration_gate" && evidence[field] == "pending")
   end
   record.call("#{name} release URL is invalid") unless evidence["release"] == expected_release
   record.call("#{name} checked_at is invalid") unless evidence["checked_at"].to_s.match?(date)
@@ -80,7 +82,7 @@ end
 
 package_swift = File.read(File.join(root, "Package.swift"))
 manifest_versions = package_swift.scan(
-  %r{url:\s*"https://github\.com/BroadApps-official/(broad-(?:core|extensions|monetization|ui-flows)-ios)\.git",\s*exact:\s*"([^"]+)"}m
+  %r{url:\s*"https://github\.com/BroadApps-official/(broad-(?:core|extensions|monetization|ui-flows|ru-billing)-ios)\.git",\s*exact:\s*"([^"]+)"}m
 ).to_h
 modules.each_value do |identity|
   record.call("Package.swift #{identity} pin is invalid") unless manifest_versions[identity] == versions[identity]
@@ -100,7 +102,7 @@ end
 
 pbxproj = File.read(pbxproj_path)
 pbxproj_versions = pbxproj.scan(
-  %r{repositoryURL = "https://github\.com/BroadApps-official/(broad-(?:core|extensions|monetization|ui-flows)-ios)\.git";\s*requirement = \{\s*kind = exactVersion;\s*version = ([^;]+);}m
+  %r{repositoryURL = "https://github\.com/BroadApps-official/(broad-(?:core|extensions|monetization|ui-flows|ru-billing)-ios)\.git";\s*requirement = \{\s*kind = exactVersion;\s*version = ([^;]+);}m
 ).to_h
 modules.each_value do |identity|
   record.call("project.pbxproj #{identity} pin is invalid") unless pbxproj_versions[identity] == versions[identity]
@@ -115,6 +117,21 @@ resolved_paths.each do |path|
     record.call("#{path.delete_prefix("#{root}/")} #{identity} pin is invalid") unless resolved_versions[identity] == versions[identity]
   end
 end
+
+apple_root = File.join(root, "Examples/BroadAppleOnlyTemplate")
+apple_project = YAML.safe_load(File.read(File.join(apple_root, "project.yml")))
+apple_packages = apple_project.fetch("packages", {})
+apple_resolved_path = File.join(apple_root, "BroadAppleOnlyTemplate.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved")
+apple_pins = JSON.parse(File.read(apple_resolved_path)).fetch("pins").to_h do |pin|
+  [pin.fetch("identity"), pin.dig("state", "version").to_s]
+end
+%w[BroadCore BroadMonetization BroadUIFlows].each do |name|
+  identity = modules.fetch(name)
+  expected = versions.fetch(identity)
+  record.call("Apple-only project #{name} version differs from catalog") unless apple_packages.dig(name, "exactVersion").to_s == expected
+  record.call("Apple-only resolved #{name} version differs from catalog") unless apple_pins[identity] == expected
+end
+record.call("Apple-only graph includes RU billing") if apple_packages.key?("BroadRUBilling") || apple_pins.key?("broad-ru-billing-ios")
 
 unless failures.empty?
   failures.each { |failure| warn failure }

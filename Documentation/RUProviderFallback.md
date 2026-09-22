@@ -44,8 +44,9 @@ IP, клавиатура и часовой пояс не являются рег
 
 ## Подключение
 
-В готовой Adapty-композиции вызовите `makeServicesWithRUFallback` вместо
-`makeServices`, передав дополнительный `ruBillingFallback: ruFactory`.
+Подключите `BroadRUBilling` из отдельного пакета. В готовой Adapty-композиции
+вызовите `makeServices`, передав `paywallLoaderFactory: ruFactory`.
+Парсер конфигурации должен содержать `providers: [RUBillingRemoteConfigurationParser()]`.
 `ruFactory` — уже настроенный `RUBillingCompositionFactory` этого приложения:
 тот же backend-контракт, пользователь, авторизация, регион и общий operation gate.
 Остальные аргументы и UIFlows остаются прежними.

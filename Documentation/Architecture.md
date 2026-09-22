@@ -73,7 +73,9 @@ Bootstrap Engine — это `actor`, который выполняет шаги 
 ## BroadMonetization
 
 `BroadMonetization` содержит placements, Adapty paywalls/products, remote config,
-purchase/restore, Entitlement Engine, Apple/backend/RU billing и analytics.
+purchase/restore, Entitlement Engine, Apple/backend и общую analytics.
+RU billing принадлежит отдельному `BroadRUBilling`; RU UI — `BroadRUBillingUI`.
+Базовые модули не импортируют эти products. См. [подключение RU](OptionalRUBilling.md).
 
 Только этот модуль может подключать Adapty. Модели Adapty и StoreKit не выходят из
 Infrastructure-слоя в Domain или UI.
@@ -100,7 +102,8 @@ Config flag не становится источником entitlement.
 
 Слои разделены так:
 
-- Domain хранит чистые модели, три источника (`apple`, `primaryBackend`, `ruBilling`),
+- Domain хранит чистые модели и расширяемые источники (`apple`, `primaryBackend`;
+  `ruBilling` добавляет RU-модуль),
   freshness-policy, `AppleEntitlementVerifierProtocol`, только расширяемый каталог premium SKU
   и правила агрегации;
 - Application-actor `EntitlementEngine` параллельно проверяет источники в рамках общего
@@ -183,8 +186,9 @@ purchase, token charge, RU checkout или cancellation. Сначала прил
 - loader;
 - onboarding;
 - адаптивный paywall;
-- loading/error/retry-состояния;
-- RU payment sheet и экран управления RU-подпиской.
+- loading/error/retry-состояния.
+
+RU payment sheet и управление RU-подпиской доступны в отдельном `BroadRUBillingUI`.
 
 View получает готовые зависимости через `init`. View не ищет сервисы в DI-контейнере и не
 создаёт repository или use case.

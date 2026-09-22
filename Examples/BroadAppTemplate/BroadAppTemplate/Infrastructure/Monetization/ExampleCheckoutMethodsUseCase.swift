@@ -1,4 +1,6 @@
 import BroadMonetization
+import BroadRUBilling
+import BroadRUBillingUI
 
 /// UI-only fixture for the payment-method sheet. It deliberately does not make
 /// RU checkout operational: choosing an RU method still reaches the disabled

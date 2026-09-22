@@ -65,7 +65,7 @@ done
 require_pattern     "Release policy must explain what changed and why"     "Documentation/ModuleReleasePolicy.md"     'объясняет \*\*что\*\* изменилось и \*\*почему\*\*'
 require_pattern     "README must explain anonymous public package access"     "README.md"     'без GitHub account, password,[[:space:]]*token или API key'
 
-for module_name in BroadCore BroadExtensions BroadMonetization BroadUIFlows; do
+for module_name in BroadCore BroadExtensions BroadMonetization BroadUIFlows BroadRUBilling BroadRUBillingUI; do
     if rg -q --multiline --         "\\.library\\(name: \"$module_name\"|\\.target\\([[:space:]]*name: \"$module_name\""         "$platform_root/Package.swift"; then
         record_failure "Integration Package.swift still publishes a duplicated local $module_name target."
     fi

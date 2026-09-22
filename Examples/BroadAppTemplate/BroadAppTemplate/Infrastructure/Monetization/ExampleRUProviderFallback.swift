@@ -1,8 +1,10 @@
 import BroadCore
 import BroadMonetization
+import BroadRUBilling
+import BroadRUBillingUI
 
 /// Local fixture only. Production uses ruFactory.makePaywallLoader or
-/// adaptyFactory.makeServicesWithRUFallback with the application's backend.
+/// adaptyFactory.makeServices(paywallLoaderFactory:) with the application's backend.
 enum ExampleRUProviderFallback {
     static func makeLoader(
         arguments: [String], analytics: any MonetizationAnalyticsProtocol
@@ -32,9 +34,9 @@ enum ExampleRUProviderFallback {
 }
 
 extension ExamplePaywallRepository {
-    func loadRUFallbackAttempt(for placementID: PlacementID) async -> RUFallbackPaywallAttempt {
+    func loadProviderAttempt(for placementID: PlacementID) async -> ProviderPaywallAttempt {
         if arguments.contains("-ru-provider-empty-products") || arguments.contains("-ru-provider-no-matches") {
-            return RUFallbackPaywallAttempt(
+            return ProviderPaywallAttempt(
                 outcome: .loaded(PaywallPayload(
                     presentationID: .generated(),
                     paywallReference: .init(rawValue: "example-empty-provider"),
@@ -48,11 +50,11 @@ extension ExamplePaywallRepository {
             )
         }
         guard arguments.contains("-ru-provider-unavailable") else {
-            return await RUFallbackPaywallAttempt(outcome: loadPaywall(for: placementID), availability: .available)
+            return await ProviderPaywallAttempt(outcome: loadPaywall(for: placementID), availability: .available)
         }
         let configuration: RemotePaywallConfiguration? = arguments.contains("-ru-provider-response-false")
             ? RemotePaywallConfiguration(isRUBillingEnabled: false) : nil
-        return RUFallbackPaywallAttempt(
+        return ProviderPaywallAttempt(
             outcome: .unavailable(.example(
                 message: "В этом примере Adapty недоступен. Повторите загрузку.",
                 code: "example.adapty.provider-unavailable"

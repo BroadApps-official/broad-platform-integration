@@ -127,9 +127,17 @@ private extension ExampleSpecialOfferFixtureViewModel {
         state: SpecialOfferState,
         paywall: PaywallPayload?
     ) {
+        guard let logScenario = scenario.logValue else {
+            logger.log(.host(BroadLogHostEvent(
+                code: "ru-billing.fixture.resolved",
+                category: .experiments,
+                fields: [BroadLogHostField("has_paywall", paywall != nil)]
+            )))
+            return
+        }
         logger.log(
             .remoteFeatureFixtureResolved(
-                scenario: scenario.logValue,
+                scenario: logScenario,
                 resolution: state.logResolution(hasPaywall: paywall != nil),
                 requestedPlacement: Self.logPlacement(
                     paywall?.origin.requestedPlacementID
@@ -160,15 +168,15 @@ private extension ExampleSpecialOfferFixtureViewModel {
 }
 
 private extension ExampleRemoteFeatureScenario {
-    var logValue: BroadLogRemoteFeatureFixtureScenario {
+    var logValue: BroadLogRemoteFeatureFixtureScenario? {
         switch self {
         case .specialOfferEnabled: .specialOfferEnabled
         case .specialOfferDisabled: .specialOfferDisabled
         case .specialOfferPlatformCache: .specialOfferPlatformCache
         case .specialOfferMainFallback: .specialOfferMainFallback
-        case .ruPayProviderEnabled: .ruPayProviderEnabled
-        case .ruPayProviderDisabled: .ruPayProviderDisabled
-        case .ruPayPlatformCache: .ruPayPlatformCache
+        case .ruPayProviderEnabled: nil
+        case .ruPayProviderDisabled: nil
+        case .ruPayPlatformCache: nil
         }
     }
 }

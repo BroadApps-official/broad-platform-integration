@@ -1,3 +1,4 @@
+import BroadRUBillingUI
 import BroadUIFlows
 import Foundation
 import SwiftUI
@@ -128,8 +129,9 @@ struct AppFlowRootView: View {
                 onCompleted: sceneViewModel.paywallCompleted
             )
         } else {
-            BroadPaywallView(
+            BroadRUPaywallView(
                 viewModel: paywallViewModel,
+                configuration: AppConfiguration.ruBillingPresentation,
                 theme: AppTokens.paywallTheme,
                 productFormatter: BroadPaywallProductFormatter(
                     locale: Locale(identifier: "ru_RU"),

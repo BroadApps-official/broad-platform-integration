@@ -35,14 +35,20 @@ Host app подключает **любой нужный модуль** напр�
   <img alt="Приложение выбирает нужные products. UIFlows использует Monetization и Core; Extensions подключается независимо." src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
 </picture>
 
-Проверенный набор **[4.1.2](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/4.1.2)**:
+Проверенный набор **[5.0.0](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/5.0.0)**:
 
 | Product / repository | Для чего | Версия |
 |---|---|---|
 | [BroadExtensions](https://github.com/BroadApps-official/broad-extensions-ios) | Цвета, шрифты, клавиатура, swipe-back | [1.0.1](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) |
-| [BroadCore](https://github.com/BroadApps-official/broad-core-ios) | Запуск, состояния, кеш, retry, логирование, Keychain ID | [2.1.0](https://github.com/BroadApps-official/broad-core-ios/releases/tag/2.1.0) |
-| [BroadMonetization](https://github.com/BroadApps-official/broad-monetization-ios) | Adapty, покупка, доступ, RU-оплата, токены | [4.1.0](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/4.1.0) |
-| [BroadUIFlows](https://github.com/BroadApps-official/broad-ui-flows-ios) | Готовые onboarding, AppFlow и paywall | [4.0.0](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/4.0.0) |
+| [BroadCore](https://github.com/BroadApps-official/broad-core-ios) | Запуск, состояния, кеш, retry, логирование, Keychain ID | [3.0.0](https://github.com/BroadApps-official/broad-core-ios/releases/tag/3.0.0) |
+| [BroadMonetization](https://github.com/BroadApps-official/broad-monetization-ios) | Adapty, покупка, доступ, токены | [5.0.0](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/5.0.0) |
+| [BroadUIFlows](https://github.com/BroadApps-official/broad-ui-flows-ios) | Готовые onboarding, AppFlow и paywall | [5.0.0](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/5.0.0) |
+
+| [BroadRUBilling / BroadRUBillingUI](https://github.com/BroadApps-official/broad-ru-billing-ios) | Опциональные RU-оплата и её интерфейс | [1.0.0](https://github.com/BroadApps-official/broad-ru-billing-ios/releases/tag/1.0.0) |
+
+С набора 5.0.0 RU Billing подключается отдельным пакетом. Без него приложение
+не содержит RU-кода, обработчиков возврата оплаты и RU-экранов.
+[Подключение и миграция](Documentation/OptionalRUBilling.md).
 
 Источник версий — [Compatibility/current.yml](Compatibility/current.yml).
 В наборе 4.1.0 live-пример сохраняет Adapty customer ID в Keychain и останавливает
@@ -53,7 +59,7 @@ SDK при ошибке чтения. Серверная авторизация 
 [`AccountIntegration.json`](Examples/BroadAppTemplate/Configuration/AccountIntegration.json)
 разработчик или агент может явно отметить отсутствие токенов (`notUsed`);
 для отсутствующей функции backend не требуется. [Как заполнить декларацию](Documentation/AccountRecovery.md#предупреждения-при-сборке-шаблона).
-С 4.1.2 обычный Adapty payload с explicit `ru_pay=true` открывает RU Billing;
+При подключённом RU-модуле обычный Adapty payload с explicit `ru_pay=true` открывает RU Billing;
 managed cache/fallback SDK считается provider payload, а persistent cache
 BroadMonetization остаётся fail-closed.
 [Обновление с набора 3.0.0](Documentation/UpdatingTo4.md): ограничения пакетов
@@ -95,6 +101,9 @@ UIFlows подтягивает Monetization и Core, Monetization — Core.
 
 ## Запустить общий пример
 
+Для приложения только с App Store используйте [BroadAppleOnlyTemplate](Examples/BroadAppleOnlyTemplate/README.md). Его зависимости и собранные Debug/Release приложения автоматически проверяются на отсутствие RU-модуля.
+
+
 `BroadAppTemplate` показывает совместную работу модулей: onboarding, paywall,
 Special Offer, токены, RU flow и состояния ошибок. Это технический пример
 с локальными сценариями, а не готовый дизайн приложения или настоящий платёж.
@@ -117,7 +126,7 @@ open Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj
 В Terminal из корня integration repository:
 
 ```bash
-# Проверить окружение, затем платформу и четыре модуля
+# Проверить окружение, затем платформу и модули
 bash Scripts/agent_review_and_fix.sh platform --doctor
 bash Scripts/agent_review_and_fix.sh platform
 
