@@ -1,4 +1,6 @@
 import BroadMonetization
+import BroadRUBilling
+import BroadRUBillingUI
 import Foundation
 
 @MainActor
@@ -118,11 +120,11 @@ extension MonetizationAnalyticsEvent {
         case .restoreNothingFound: "restore_nothing_found"
         case .restoreUnavailable: "restore_unavailable"
         case .entitlementResolved: "entitlement_resolved"
-        case .ruCheckoutCreated: "ru_checkout_created"
-        case .ruCheckoutOpenFailed: "ru_checkout_open_failed"
-        case .ruCheckoutSafariReturned: "ru_checkout_safari_returned"
-        case .ruCheckoutConfirmed: "ru_checkout_confirmed"
-        case .ruCheckoutTimedOut: "ru_checkout_timed_out"
+        case .providerCheckoutCreated: "ru_checkout_created"
+        case .providerCheckoutOpenFailed: "ru_checkout_open_failed"
+        case .providerCheckoutSafariReturned: "ru_checkout_safari_returned"
+        case .providerCheckoutConfirmed: "ru_checkout_confirmed"
+        case .providerCheckoutTimedOut: "ru_checkout_timed_out"
         }
     }
 
@@ -156,12 +158,12 @@ extension MonetizationAnalyticsEvent {
             "attempt=\(context.attemptID.rawValue) · \(Self.failureSummary(failure))"
         case let .entitlementResolved(context):
             Self.entitlementSummary(context)
-        case let .ruCheckoutCreated(context),
-             let .ruCheckoutSafariReturned(context),
-             let .ruCheckoutConfirmed(context),
-             let .ruCheckoutTimedOut(context):
+        case let .providerCheckoutCreated(context),
+             let .providerCheckoutSafariReturned(context),
+             let .providerCheckoutConfirmed(context),
+             let .providerCheckoutTimedOut(context):
             Self.ruSummary(context)
-        case let .ruCheckoutOpenFailed(context, failure):
+        case let .providerCheckoutOpenFailed(context, failure):
             "\(Self.ruSummary(context)) · \(Self.failureSummary(failure))"
         }
     }

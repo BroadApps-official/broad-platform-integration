@@ -11,7 +11,7 @@ enum SpecialOfferRuntimeProbe {
         check(elapsed: 86_401, expected: 0)
         check(elapsed: 172_800, expected: 0)
         print(
-            "PASS: the provider payload authorizes explicit Special Offer and RU Billing gates; "
+            "PASS: the provider payload authorizes explicit Special Offer and provider-extension gates; "
                 + "the 24-hour countdown expires at zero and does not loop"
         )
     }
@@ -19,7 +19,6 @@ enum SpecialOfferRuntimeProbe {
     private static func checkRemoteFeatureCapabilities() {
         let enabledOffer = SpecialOfferRemoteConfiguration(isEnabled: true)
         let parsedConfiguration = RemotePaywallConfiguration(
-            isRUBillingEnabled: true,
             specialOffer: enabledOffer
         )
         let presentationID = PaywallPresentationID(rawValue: "runtime-probe")
@@ -38,7 +37,7 @@ enum SpecialOfferRuntimeProbe {
             by: .providerCacheFallbackPossible
         )
         guard providerPayloadConfiguration.specialOffer?.isEnabled == true,
-              providerPayloadConfiguration.authorizesRUBillingPresentation,
+              providerPayloadConfiguration.authorizesProviderFeatures,
               SpecialOfferPresentationAuthorization(
                   paywallPresentationID: presentationID,
                   gatePaywallPresentationID: gatePresentationID,
@@ -57,7 +56,7 @@ enum SpecialOfferRuntimeProbe {
             by: .verifiedFreshRemote
         )
         guard verifiedConfiguration.specialOffer?.isEnabled == true,
-              verifiedConfiguration.authorizesRUBillingPresentation
+              verifiedConfiguration.authorizesProviderFeatures
         else {
             fatalError("Verified-fresh remote payload must retain both explicit gates")
         }
@@ -66,7 +65,7 @@ enum SpecialOfferRuntimeProbe {
             by: .platformCache
         )
         guard platformCacheConfiguration.specialOffer == nil,
-              !platformCacheConfiguration.authorizesRUBillingPresentation,
+              !platformCacheConfiguration.authorizesProviderFeatures,
               SpecialOfferPresentationAuthorization(
                   paywallPresentationID: presentationID,
                   gatePaywallPresentationID: gatePresentationID,
@@ -76,7 +75,7 @@ enum SpecialOfferRuntimeProbe {
                   trustedTime: trustedTime
               ) == nil
         else {
-            fatalError("Platform cache must not authorize Special Offer or RU Billing")
+            fatalError("Platform cache must not authorize Special Offer or provider-extension")
         }
 
         let missingGateConfiguration = RemotePaywallConfiguration.empty.qualified(

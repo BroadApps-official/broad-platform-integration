@@ -1,5 +1,5 @@
 {
-  "originHash" : "6158c3165bd3b241e45ac0bf84126fb524dd84a6ec4538c055475c8196d67ad1",
+  "originHash" : "9d68fbed7051def7511fdd5536ce65973414213e6df1520d317917a39000bb51",
   "pins" : [
     {
       "identity" : "adaptysdk-ios",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-core-ios.git",
       "state" : {
-        "revision" : "78c6c091d29d057c842092d2d1f0ccc557bef14d",
-        "version" : "2.1.0"
+        "revision" : "d784f2b179edafcfeb31b1b87d236ab96538588e",
+        "version" : "3.0.0"
       }
     },
     {
@@ -33,8 +33,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-monetization-ios.git",
       "state" : {
-        "revision" : "18cb4e2fca5283c37ee94d6e406b0011216b3aa2",
-        "version" : "4.1.0"
+        "revision" : "3f808b66b88338380ec47cda017dc307e6ec4ddd",
+        "version" : "5.0.0"
+      }
+    },
+    {
+      "identity" : "broad-ru-billing-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/BroadApps-official/broad-ru-billing-ios.git",
+      "state" : {
+        "revision" : "ad441f8bf36844516b5ac7d1a76ae2df76ce89bc",
+        "version" : "1.0.0"
       }
     },
     {
@@ -42,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
       "state" : {
-        "revision" : "030dbfd7b22f4b919c5e25b204a80de999d42b57",
-        "version" : "4.0.0"
+        "revision" : "6e7f3c9b6cf1e7b9b00b93d2e5460ad4295d3369",
+        "version" : "5.0.0"
       }
     },
     {

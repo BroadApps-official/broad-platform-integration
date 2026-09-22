@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0797DDF76EC6177E5E448619 /* ExamplePersistentAdaptyIdentityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 293D5B1B226B083C9994F5D0 /* ExamplePersistentAdaptyIdentityProvider.swift */; };
+		07D4EAAA9C49FD60198B3F36 /* BroadRUBillingUI in Frameworks */ = {isa = PBXBuildFile; productRef = 2EB64A4E9E51AC8F8ED96B92 /* BroadRUBillingUI */; };
 		0A787C5040A0F19289FC65D2 /* AppCompositionRoot+Tokens.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC01266C00493ECF8D51B635 /* AppCompositionRoot+Tokens.swift */; };
 		0B5EE15128E44F2DCEC0F213 /* DebugKeychainCleaner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 810D99B643B65934553892DE /* DebugKeychainCleaner.swift */; };
 		0B61AB392E367CA07AE3D947 /* ExampleMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0409C5D2EE1382A900A320F2 /* ExampleMainView.swift */; };
@@ -47,11 +48,12 @@
 		CFE51D6A6962A7FD82BDD483 /* AppFlowSceneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 394ADF80EF0BE0E024EF50D4 /* AppFlowSceneViewModel.swift */; };
 		D913D2853FA1976152CCB421 /* ExampleRemoteFeatureFixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEB76A88D40D6F47F28616AE /* ExampleRemoteFeatureFixtures.swift */; };
 		DDA95ED4A32456DFDC046D14 /* ExampleMonetizationEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17795A9CD24E5D2C8B86B6FD /* ExampleMonetizationEnvironment.swift */; };
-		E0A2EEBB3AB61DC9D2437FDA /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6FE4454F3C4C757862E38D73 /* Swinject */; };
+		E0A2EEBB3AB61DC9D2437FDA /* BroadRUBilling in Frameworks */ = {isa = PBXBuildFile; productRef = 22910804750ABB47F5FD2F8C /* BroadRUBilling */; };
 		E0AF617DAE8316BDE0968663 /* ExampleDebugScenariosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A85C7CBC88C9E69E09CBE4F /* ExampleDebugScenariosView.swift */; };
 		E2B81E9B3192F4250FBCEB03 /* BroadExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = A9CF7E03CF48797725DDC931 /* BroadExtensions */; };
 		E354F08316F9C875F1012FA1 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 045597B892558EA1B0A581B6 /* RootView.swift */; };
 		E8C9CF0577D1DB7F8D0FA490 /* AppCompositionRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10B8293BB2C9F339E61CD240 /* AppCompositionRoot.swift */; };
+		EEACF5862186D4C1D0BE218F /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 6FE4454F3C4C757862E38D73 /* Swinject */; };
 		F8A23DE3626A3E260D873EDC /* ExampleSpecialOfferFixtureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20BB088154A6ADED47B909C4 /* ExampleSpecialOfferFixtureView.swift */; };
 		F90BB868F299417C3930230D /* ExampleRUPaymentSheetFixtureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 295C03C6E505714DDEF4B5A8 /* ExampleRUPaymentSheetFixtureView.swift */; };
 		FD36C221BCECD6510113CEE6 /* AppError+Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = F452135168066F455E683A0B /* AppError+Example.swift */; };
@@ -115,7 +117,9 @@
 				37E354E1CAF56B8391EF0160 /* BroadMonetization in Frameworks */,
 				1844CEB68233066765E4BC35 /* BroadUIFlows in Frameworks */,
 				E2B81E9B3192F4250FBCEB03 /* BroadExtensions in Frameworks */,
-				E0A2EEBB3AB61DC9D2437FDA /* Swinject in Frameworks */,
+				E0A2EEBB3AB61DC9D2437FDA /* BroadRUBilling in Frameworks */,
+				07D4EAAA9C49FD60198B3F36 /* BroadRUBillingUI in Frameworks */,
+				EEACF5862186D4C1D0BE218F /* Swinject in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,6 +335,8 @@
 				9346EA10BD51FB5F8A5E81E2 /* BroadMonetization */,
 				EB208DBF6080158B84F162F0 /* BroadUIFlows */,
 				A9CF7E03CF48797725DDC931 /* BroadExtensions */,
+				22910804750ABB47F5FD2F8C /* BroadRUBilling */,
+				2EB64A4E9E51AC8F8ED96B92 /* BroadRUBillingUI */,
 				6FE4454F3C4C757862E38D73 /* Swinject */,
 			);
 			productName = BroadAppTemplate;
@@ -365,6 +371,7 @@
 				A4D9E3CF8C27A22D2B8FA96F /* XCRemoteSwiftPackageReference "broad-core-ios" */,
 				AF9F3A76F6D9744E7AC59292 /* XCRemoteSwiftPackageReference "broad-extensions-ios" */,
 				5F8DC2403C161AF1EA9FE1DD /* XCRemoteSwiftPackageReference "broad-monetization-ios" */,
+				A901511A63822F849EF78E79 /* XCRemoteSwiftPackageReference "broad-ru-billing-ios" */,
 				E21923989FD51E8C31E98422 /* XCRemoteSwiftPackageReference "broad-ui-flows-ios" */,
 				766E427D766A9ACD0377ED09 /* XCRemoteSwiftPackageReference "Swinject" */,
 			);
@@ -870,7 +877,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-monetization-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 4.1.0;
+				version = 5.0.0;
 			};
 		};
 		766E427D766A9ACD0377ED09 /* XCRemoteSwiftPackageReference "Swinject" */ = {
@@ -886,7 +893,15 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-core-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 2.1.0;
+				version = 3.0.0;
+			};
+		};
+		A901511A63822F849EF78E79 /* XCRemoteSwiftPackageReference "broad-ru-billing-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/BroadApps-official/broad-ru-billing-ios.git";
+			requirement = {
+				kind = exactVersion;
+				version = 1.0.0;
 			};
 		};
 		AF9F3A76F6D9744E7AC59292 /* XCRemoteSwiftPackageReference "broad-extensions-ios" */ = {
@@ -902,12 +917,22 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-ui-flows-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 4.0.0;
+				version = 5.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		22910804750ABB47F5FD2F8C /* BroadRUBilling */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A901511A63822F849EF78E79 /* XCRemoteSwiftPackageReference "broad-ru-billing-ios" */;
+			productName = BroadRUBilling;
+		};
+		2EB64A4E9E51AC8F8ED96B92 /* BroadRUBillingUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A901511A63822F849EF78E79 /* XCRemoteSwiftPackageReference "broad-ru-billing-ios" */;
+			productName = BroadRUBillingUI;
+		};
 		6FE4454F3C4C757862E38D73 /* Swinject */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 766E427D766A9ACD0377ED09 /* XCRemoteSwiftPackageReference "Swinject" */;

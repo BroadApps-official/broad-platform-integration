@@ -7,7 +7,7 @@
 
 - При обычной задаче в этом checkout работай внутри `BroadAppsIOSPlatform`.
   Единый reviewer получает явный контекст: `platform` разрешает проверку
-  integration и четырёх canonical module repositories; `app` выбирает ровно
+  integration и canonical module repositories; `app` выбирает ровно
   один host repository. Читай правила каждого владельца.
 - По решению руководства Codex automation запускается с полным доступом к Mac,
   чтобы Xcode видел CoreSimulatorService. Полный доступ не разрешает менять

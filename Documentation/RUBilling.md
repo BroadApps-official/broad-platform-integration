@@ -129,8 +129,15 @@ let ruPresentation = BroadRUBillingPresentationConfiguration()
 let paywallConfiguration = BroadPaywallConfiguration(
     placementID: .settings,
     copy: .russian,
-    legalLinks: appStoreLegalLinks,
-    ruBilling: ruPresentation
+    legalLinks: appStoreLegalLinks
+)
+
+// viewModel создаётся с paywallConfiguration и RU checkout adapter.
+BroadRUPaywallView(
+    viewModel: viewModel,
+    configuration: ruPresentation,
+    onClose: onClose,
+    onCompleted: onCompleted
 )
 ```
 

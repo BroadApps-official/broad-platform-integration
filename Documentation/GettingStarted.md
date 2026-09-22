@@ -571,7 +571,8 @@ let specialOfferConfiguration: SpecialOfferConfiguration? = nil
 Adapty или его продуктах подключите [серверный резерв](RUProviderFallback.md).
 Полученный false/invalid/absent запрещает резерв, отсутствие ответа отличается
 от отсутствующего поля. Старые методы фабрик остаются совместимыми; новый путь
-включается через `makeServicesWithRUFallback` или `makePaywallLoader`.
+подключается из `BroadRUBilling` через `makeServices(paywallLoaderFactory:)`
+или `makePaywallLoader`. См. [миграцию на набор 5](OptionalRUBilling.md).
 Persistent cache BroadMonetization не должен восстанавливать разрешение.
 
 Production adapters собирайте через `RUBillingCompositionFactory`: сначала `makeEntitlementRegistration()` добавляется в общий engine, затем `makeServices(refreshEntitlement:operationGate:)` получает уже созданный engine и тот же financial operation gate, что Apple purchase/restore. Это разрывает цикл «RU source нужен engine → RU checkout нужен refresh engine» и не позволяет Apple/RU оплатам идти параллельно.

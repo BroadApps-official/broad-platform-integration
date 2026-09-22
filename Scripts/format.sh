@@ -44,11 +44,13 @@ if [[ "$format_mode" == "lint" ]]; then
         --cache "$swiftformat_cache" \
         --lint \
         "$platform_root/Sources" \
-        "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate"
+        "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate" \
+        "$platform_root/Examples/BroadAppleOnlyTemplate/Sources"
 else
     "$swiftformat_binary" \
         --config "$platform_root/.swiftformat" \
         --cache "$swiftformat_cache" \
         "$platform_root/Sources" \
-        "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate"
+        "$platform_root/Examples/BroadAppTemplate/BroadAppTemplate" \
+        "$platform_root/Examples/BroadAppleOnlyTemplate/Sources"
 fi

@@ -1,3 +1,4 @@
+import BroadRUBillingUI
 import BroadUIFlows
 import SwiftUI
 
@@ -29,8 +30,9 @@ struct ExampleSpecialOfferCatalogFlowView: View {
         Group {
             switch phase {
             case .subscriptionPaywall:
-                BroadPaywallView(
+                BroadRUPaywallView(
                     viewModel: subscriptionPaywallViewModel,
+                    configuration: AppConfiguration.ruBillingPresentation,
                     theme: AppTokens.paywallTheme,
                     productFormatter: BroadPaywallProductFormatter(),
                     onClose: subscriptionPaywallClosed,
@@ -110,8 +112,9 @@ struct ExampleSpecialOfferFixtureView: View {
     var body: some View {
         Group {
             if let paywallViewModel = viewModel.paywallViewModel {
-                BroadPaywallView(
+                BroadRUPaywallView(
                     viewModel: paywallViewModel,
+                    configuration: AppConfiguration.ruBillingPresentation,
                     theme: AppTokens.paywallTheme,
                     productFormatter: BroadPaywallProductFormatter(),
                     onClose: close,

@@ -3,6 +3,13 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## 5.0.0 — 2026-09-22
+
+- RU Billing вынесен в отдельный opt-in repository с products BroadRUBilling и BroadRUBillingUI. Базовые Core, Monetization и UIFlows не зависят от него.
+- Сохранены durable pending, общий operation gate, server-authoritative доступ и ограниченное ожидание account policy.
+- Добавлены Apple-only пример и проверка отсутствия RU package, символов и артефактов в Debug/Release.
+- Обновлены интеграция, API migration и совместимый набор Core 3.0 / Monetization 5.0 / UIFlows 5.0 / RUBilling 1.0.
+
 ## Unreleased
 
 - Support email с BroadUIFlows 4.1.0 включает доступные идентификаторы текущего

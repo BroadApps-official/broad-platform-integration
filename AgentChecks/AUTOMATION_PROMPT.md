@@ -14,7 +14,7 @@ Scripts/agent_review_and_fix.sh; wrapper уже запустил тебя.
 - review_and_fix: минимальные исправления разрешены только в перечисленных
   repositories. Не начинай большой рефакторинг, миграцию версий или изменение
   продуктового поведения. Неизвестный контракт опиши как BLOCKED.
-- platform: реализация принадлежит четырём canonical repositories из контекста.
+- platform: реализация принадлежит canonical repositories из контекста.
   Integration владеет example, каталогом совместимости и проверками. Не исправляй
   код пакетов в .build/checkouts и не создавай его копию внутри integration.
   Проверяй module gate в каждом модуле, затем integration gate. Последний
