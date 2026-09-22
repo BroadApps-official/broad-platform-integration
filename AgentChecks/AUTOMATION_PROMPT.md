@@ -67,12 +67,13 @@ Presentation и свой дизайн сами по себе не являютс
    подписка требует активности и тарифа/периода, токены — роста свежего баланса
    от сохранённого значения до checkout. Проверь отсутствие cache fallback при
    ошибке, subject/session binding, coalescing и pending/Retry без нового checkout.
-   Для account-policy проверь `checkoutTerminationClient` и явное действие UI,
-   которое после подтверждения пользователя вызывает `pendingCheckoutTermination`.
-   `.pending`/`.unavailable` обязаны сохранять общий payment block, а
-   server-confirmed `.terminated` — освобождать purchase/restore. Автоотмена при
-   закрытии страницы или foreground запрещена. Если подключённая версия либо
-   backend не дают этого контракта, верни `BLOCKED`, не предлагай локальный reset.
+   Для account-policy с BroadMonetization 5.0.0 проверь `waitingCompleted` и
+   durable `awaitingReconciliation`: локальное ожидание завершено, платёж не отменён,
+   новая покупка требует свежей policy. Ошибка проверки остаётся unavailable;
+   UI перечитывает gate, storage/identity ошибки не обходятся. Старый callback
+   не очищает новую попытку. `checkoutTerminationClient` опционален, а вызов
+   `pendingCheckoutTermination` требует подтверждения пользователя. Автоотмены нет.
+   Для paymentStatus и Apple/token pending сохраняется прежняя блокировка.
    Не считай account policy доказательством оплаты конкретной транзакции.
    Успешное открытие checkout URL не означает оплату. Чувствительные gates не
    восстанавливаются из last-valid cache.
