@@ -201,10 +201,10 @@ for documentation_contract in \
     'Documentation/RUBilling.md|\.forceEnabled' \
     'Documentation/RemoteConfig.md|LoadPaywallWithRUFallbackUseCase' \
     'Documentation/Templates/AppIntegrationPlan.md|Какова offline policy Adapty' \
-    'Documentation/Templates/AppIntegrationPlan.md|Как снимается pending брошенного checkout' \
+    'Documentation/Templates/AppIntegrationPlan.md|Как завершается ожидание checkout' \
     'AgentChecks/AUTOMATION_PROMPT.md|checkoutTerminationClient' \
     'Examples/BroadAppTemplate/AGENTS.md|pendingCheckoutTermination' \
-    'Documentation/ProjectDelivery.md|`\.terminated` снимает блокировку purchase/restore' \
+    'Documentation/ProjectDelivery.md|ожидание через `waitingCompleted`' \
     'Examples/BroadAppTemplate/README.md|BROADAPPS_ADAPTY_FALLBACK_FILE_NAME' \
     'Documentation/Logging.md|ru-billing\.availability\.evaluated' \
     'Documentation/AccountRecovery.md|GET /me/token-balance' \

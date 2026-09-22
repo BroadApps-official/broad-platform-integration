@@ -138,13 +138,14 @@
 - Offline/timeout не превращаются в inactive/success. Неопределённый финансовый
   результат остаётся pending до reconciliation; появление сети не запускает
   purchase, token charge, RU checkout или cancellation автоматически.
-- Для RU account-policy агент обязан проверить app-side завершение брошенного
-  checkout: подключён `checkoutTerminationClient`, UI предлагает явную отмену
-  после `.pending`, а `pendingCheckoutTermination` вызывается только после
-  подтверждения пользователя. `.pending`/`.unavailable` сохраняют блокировку;
-  только server-confirmed `.terminated` разрешает следующую purchase/restore.
-  Если такого backend-контракта или API в подключённой версии нет, ставь
-  `BLOCKED`; не очищай pending локально и не запускай отмену при foreground.
+- Для RU account-policy с BroadMonetization 5.0.0 проверь ограниченный polling:
+  `waitingCompleted` завершает локальное ожидание без отмены платежа, последняя
+  попытка остаётся в `awaitingReconciliation` без блокировки новой покупки.
+  При unavailable UI показывает ошибку проверки и перечитывает operation gate.
+  Перед новым checkout требуется свежая policy. `checkoutTerminationClient`
+  опционален; `pendingCheckoutTermination` — только явная серверная отмена после
+  подтверждения пользователя. Режим с paymentStatus сохраняет строгий pending.
+  Для старой версии сначала обнови модуль; не имитируй новый контракт в host UI.
 - Usedesk подключается только когда он нужен конкретному приложению. Готовый GUI
   устанавливается через CocoaPods в app target и открывается только действием
   `Настройки → Онлайн-чат`, не в loader/bootstrap. Для обычного чата
@@ -160,7 +161,10 @@
   содержит этот инструмент; payment pending этой кнопкой не очищается.
 - Письмо в поддержку заполняется строго по `Documentation/SupportEmail.md`.
   Стандартная и RU/ЮKassa-формы отличаются только `(ukassa)` в первой строке;
-  остальные заголовки и порядок полей не меняются. Support log очищается от
+  базовые заголовки и порядок полей не меняются. После Subscription добавляются
+  доступные ID текущего аккаунта, особенно ID начисления токенов, и подтверждённый
+  баланс, если приложение использует токены. Неизвестный баланс не заменяется нулём.
+  Support log очищается от
   токенов, payment URL, receipt/JWS и raw payload.
 
 ## Ограничения проверки

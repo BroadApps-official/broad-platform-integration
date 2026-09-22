@@ -98,9 +98,10 @@ blocker, но не выдуманный endpoint, дизайн или ключ.
 - [ ] Release берёт `ru_pay` только из current Adapty provider payload; локальный force-on/off существует только в Debug.
 - [ ] Debug force-on не обходит RU device context, catalog, backend authorization и entitlement.
 - [ ] Managed cache/Dashboard fallback Adapty может сохранить explicit `ru_pay=true`; persistent platform cache нет.
-- [ ] В RU account-policy брошенный checkout имеет явные Retry/Cancel:
-      `checkoutTerminationClient` подключён, автоотмены нет, и только
-      `.terminated` снимает блокировку purchase/restore.
+- [ ] В RU account-policy (BroadMonetization 5.0.0) ограниченный polling завершает
+      ожидание через `waitingCompleted`, сохраняя попытку без блокировки;
+      новая покупка требует fresh policy. Ошибка проверки не означает отмену.
+      `checkoutTerminationClient` опционален, серверная отмена только по подтверждению.
 - [ ] Contact Us имеет composer и fallback.
 - [ ] Backend/SDK кнопки сразу показывают spinner и блокируют double tap.
 - [ ] Empty/error/offline/retry состояния видимы пользователю.

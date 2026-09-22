@@ -3,6 +3,20 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## Unreleased
+
+- Support email с BroadUIFlows 4.1.0 включает доступные идентификаторы текущего
+  аккаунта, особенно ID начисления токенов, и известный баланс для приложений
+  с токенами. Базовые секции и различие обычного/RU приветствий сохранены.
+
+- Инструкции account-policy integration подготовлены для BroadMonetization 5.0.0:
+  завершение ограниченного polling снимает локальное ожидание, не отменяя платёж.
+  Последняя попытка сохраняется для reconciliation; новый checkout требует fresh
+  policy. Серверный termination client опционален. Режим paymentStatus остаётся строгим.
+- Runtime-реализация и probes находятся в canonical broad-monetization-ios.
+  Published dependency pins платформы обновляются после выпуска модуля; текущий
+  platform build сам по себе не проверяет неопубликованный runtime.
+
 ## 4.1.2
 
 - BroadMonetization обновлён до 4.1.0. Обычный Adapty payload с
