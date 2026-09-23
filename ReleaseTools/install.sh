@@ -15,7 +15,7 @@ if [[ ! -f "$app_root/$project/project.pbxproj" ]]; then
     echo "Не найден Xcode-проект: $app_root/$project" >&2
     exit 1
 fi
-if [[ -e "$app_root/Scripts/prepare_release.rb" || -e "$app_root/Scripts/prepare_release.sh" || -e "$app_root/Scripts/check_release_artifact.rb" ]]; then
+if [[ -e "$app_root/Scripts/prepare_release.rb" || -e "$app_root/Scripts/prepare_release.sh" || -e "$app_root/Scripts/check_release_artifact.rb" || -e "$app_root/Scripts/check_release_source.rb" ]]; then
     echo "В приложении уже есть релизный инструмент. Обновите его после сравнения изменений." >&2
     exit 1
 fi
@@ -23,6 +23,7 @@ fi
 mkdir -p "$app_root/Scripts"
 cp "$tool_root/prepare_release.rb" "$app_root/Scripts/prepare_release.rb"
 cp "$tool_root/check_release_artifact.rb" "$app_root/Scripts/check_release_artifact.rb"
+cp "$tool_root/check_release_source.rb" "$app_root/Scripts/check_release_source.rb"
 
 printf -v project_quoted '%q' "$project"
 printf -v scheme_quoted '%q' "$scheme"
@@ -37,10 +38,12 @@ EOF
 chmod +x "$app_root/Scripts/prepare_release.sh"
 
 touch "$app_root/.gitignore"
-for ignored in ReleaseExport/ ReleaseRecords/; do
+for ignored in ReleaseExport/ ReleaseBranches/ ReleaseRecords/; do
     if ! grep -Fxq "$ignored" "$app_root/.gitignore"; then
         printf '\n%s\n' "$ignored" >> "$app_root/.gitignore"
     fi
 done
 
-echo "Инструмент установлен в $app_root/Scripts. Проверьте diff и создайте коммит."
+echo "Инструмент установлен в $app_root/Scripts."
+echo "Владелец приложения должен добавить Scripts/codemagic.release.yaml для сборки релизной ветки."
+echo "Проверьте diff и создайте коммит."

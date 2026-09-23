@@ -30,13 +30,18 @@ module ReleaseExport
 
   class Runner
     def initialize(argv)
-      @options = { project: nil, scheme: nil, output: nil, source_root: nil, audit: nil, skip_build: false, allow_dirty: false }
+      @options = { project: nil, scheme: nil, output: nil, source_root: nil, audit: nil,
+                   release_config: "Scripts/codemagic.release.yaml", export_only: false,
+                   no_push: false, skip_build: false, allow_dirty: false }
       parser = OptionParser.new do |opts|
         opts.banner = "Использование: bash Scripts/prepare_release.sh [версия] [параметры]"
         opts.on("--project PATH") { |value| @options[:project] = value }
         opts.on("--scheme NAME") { |value| @options[:scheme] = value }
         opts.on("--output PATH") { |value| @options[:output] = value }
         opts.on("--audit PATH", "Повторно проверить готовый релизный проект") { |value| @options[:audit] = value }
+        opts.on("--release-config PATH", "Codemagic-конфигурация релизной ветки") { |value| @options[:release_config] = value }
+        opts.on("--export-only", "Создать только локальную копию, без ветки") { @options[:export_only] = true }
+        opts.on("--no-push", "Создать ветку локально, не отправляя в GitHub") { @options[:no_push] = true }
         opts.on("--source-root PATH", "Локальные репозитории пакетов для проверки") { |value| @options[:source_root] = value }
         opts.on("--skip-build", "Только подготовка проекта") { @options[:skip_build] = true }
         opts.on("--allow-dirty", "Только для локальной проверки незакоммиченных правок") { @options[:allow_dirty] = true }
@@ -59,6 +64,17 @@ module ReleaseExport
       version = @options[:version]
       raise Error, "Версия должна иметь формат 1.2.3." unless version.match?(/\A\d+\.\d+\.\d+\z/)
       raise Error, "Версия приложения в Xcode не равна #{version}." unless app_version(original_project) == version
+      unless @options[:export_only]
+        config = File.expand_path(@options[:release_config], ROOT)
+        raise Error, "Не найдена релизная конфигурация Codemagic: #{config}." unless File.file?(config)
+        branch = "release/#{version}"
+        branch_dir = File.join(ROOT, "ReleaseBranches", version)
+        raise Error, "Релизная ветка #{branch} уже есть локально." if branch_exists?(branch)
+        raise Error, "Папка релизной ветки уже существует: #{branch_dir}." if File.exist?(branch_dir)
+        if !@options[:no_push] && remote_branch_exists?(branch)
+          raise Error, "В GitHub уже есть #{branch}. Не перезаписывайте её; выпустите новую версию."
+        end
+      end
 
       output = File.expand_path(@options[:output] || File.join("ReleaseExport", version), ROOT)
       raise Error, "Папка #{output} уже существует. Проверьте её или удалите перед повторным запуском." if File.exist?(output)
@@ -66,6 +82,7 @@ module ReleaseExport
 
       FileUtils.mkdir_p(File.dirname(output))
       staging = Dir.mktmpdir(".release-", File.dirname(output))
+      branch_snapshot = nil
       begin
         puts "Подготовка #{version}: копирую исходники приложения…"
         copy_app(staging)
@@ -138,6 +155,10 @@ module ReleaseExport
         audit_source!(staging)
 
         unless @options[:skip_build]
+          unless @options[:export_only]
+            branch_snapshot = Dir.mktmpdir(".release-branch-", File.dirname(output))
+            FileUtils.cp_r(Dir.children(staging).map { |name| File.join(staging, name) }, branch_snapshot)
+          end
           puts "Разрешаю сторонние зависимости и проверяю сборку…"
           verify_build!(staging)
         end
@@ -155,8 +176,10 @@ module ReleaseExport
         File.write(File.join(records, "#{version}.json"), JSON.pretty_generate(record) + "\n")
         puts "Готово. Релизный проект: #{output}"
         puts "Ссылок на Git BroadApps в релизном проекте нет."
+        create_release_branch!(branch_snapshot || output, version, record) unless @options[:export_only]
       ensure
         FileUtils.remove_entry(staging) if File.exist?(staging)
+        FileUtils.remove_entry(branch_snapshot) if branch_snapshot && File.exist?(branch_snapshot)
       end
     rescue Error => e
       warn "Ошибка подготовки релиза: #{e.message}"
@@ -193,7 +216,8 @@ module ReleaseExport
       paths = capture!("git", "-C", ROOT, "ls-files", "-z").split("\0")
       paths.each do |relative|
         next if relative.start_with?("docs/", ".github/", "Scripts/prepare_release")
-        next if relative == "Scripts/check_release_artifact.rb"
+        next if relative.split("/").any? { |part| %w[xcuserdata xcuserdatad].include?(part) }
+        next if %w[Scripts/check_release_artifact.rb Scripts/check_release_source.rb Scripts/codemagic.release.yaml].include?(relative)
         next if %w[codemagic.yaml .gitignore project.yml].include?(relative)
         next if %w[README.md README.dev.md CONTRIBUTING.md CHANGELOG.md].include?(relative)
         source = File.join(ROOT, relative)
@@ -289,6 +313,47 @@ module ReleaseExport
       capture!("xcodebuild", *source_arg, "-scheme", @options[:scheme], "-configuration", "Release",
                "-destination", "generic/platform=iOS", "CODE_SIGNING_ALLOWED=NO", "build")
       audit_source!(root)
+    end
+
+    def branch_exists?(branch)
+      _output, status = Open3.capture2e("git", "-C", ROOT, "show-ref", "--verify", "--quiet", "refs/heads/#{branch}")
+      status.success?
+    end
+
+    def remote_branch_exists?(branch)
+      !capture!("git", "-C", ROOT, "ls-remote", "--heads", "origin", "refs/heads/#{branch}").strip.empty?
+    end
+
+    def create_release_branch!(output, version, record)
+      branch = "release/#{version}"
+      checkout = File.join(ROOT, "ReleaseBranches", version)
+      FileUtils.mkdir_p(File.dirname(checkout))
+      capture!("git", "-C", ROOT, "worktree", "add", "--orphan", "-b", branch, checkout)
+      FileUtils.cp_r(Dir.children(output).map { |name| File.join(output, name) }, checkout)
+      FileUtils.cp(File.expand_path(@options[:release_config], ROOT), File.join(checkout, "codemagic.yaml"))
+      scripts = File.join(checkout, "Scripts")
+      FileUtils.mkdir_p(scripts)
+      %w[check_release_source.rb check_release_artifact.rb].each do |name|
+        FileUtils.cp(File.join(ROOT, "Scripts", name), File.join(scripts, name))
+      end
+      capture!("ruby", File.join(scripts, "check_release_source.rb"), checkout)
+      capture!("git", "-C", checkout, "add", "-A")
+      capture!("git", "-C", checkout, "diff", "--cached", "--check")
+      capture!("git", "-C", checkout, "commit", "-m", "Release #{version} with local platform packages")
+      record["release_branch"] = branch
+      record["release_commit"] = capture!("git", "-C", checkout, "rev-parse", "HEAD").strip
+      File.write(File.join(ROOT, "ReleaseRecords", "#{version}.json"), JSON.pretty_generate(record) + "\n")
+      puts "Релизная ветка готова: #{branch} (#{checkout})"
+      if @options[:no_push]
+        puts "Пробный запуск: отправка ветки в GitHub пропущена."
+      else
+        begin
+          capture!("git", "-C", ROOT, "push", "--set-upstream", "origin", branch)
+        rescue Error => e
+          raise Error, "#{e.message}\nВетка сохранена локально. После получения доступа: git push origin #{branch}"
+        end
+        puts "Ветка #{branch} отправлена в GitHub. Выберите её в Codemagic и запустите сборку вручную."
+      end
     end
   end
 end

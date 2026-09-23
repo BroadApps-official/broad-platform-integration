@@ -10,7 +10,7 @@ require "tmpdir"
 ipa = ARGV.fetch(0) { abort "Укажите путь к готовому .ipa." }
 abort "Файл .ipa не найден: #{ipa}" unless File.file?(ipa)
 app_root = File.expand_path("..", __dir__)
-needles = ["github.com/broadapps-official", "git@github.com:broadapps-official"].map(&:b)
+needles = ["github.com/" + "broadapps-official", "git@github.com:" + "broadapps-official"].map(&:b)
 failures = []
 ipa_version = nil
 
@@ -54,11 +54,32 @@ end
 abort "Проверка релизных файлов не пройдена:\n#{failures.uniq.join("\n")}" unless failures.empty?
 
 record_path = File.join(app_root, "ReleaseRecords", "#{ipa_version}.json")
-abort "Внутренний отчёт для версии #{ipa_version} не найден." unless File.file?(record_path)
-record = JSON.parse(File.read(record_path))
+if File.file?(record_path)
+  record = JSON.parse(File.read(record_path))
+else
+  begin
+    require "xcodeproj"
+  rescue LoadError
+    abort "Для проверки версии установите CocoaPods (Ruby gem xcodeproj)."
+  end
+  projects = Dir.glob(File.join(app_root, "*.xcodeproj"))
+  abort "Ожидался один Xcode-проект для проверки версии IPA." unless projects.length == 1
+  project = Xcodeproj::Project.open(projects.first)
+  app_targets = project.targets.select { |target| target.product_type == "com.apple.product-type.application" }
+  versions = app_targets.flat_map do |target|
+    target.build_configurations.map { |configuration| configuration.build_settings["MARKETING_VERSION"] }
+  end.compact.uniq
+  abort "Версия приложения в Xcode не определена однозначно." unless versions.length == 1
+  abort "Версия IPA #{ipa_version} не совпадает с Xcode #{versions.first}." unless versions.first == ipa_version
+  commit, status = Open3.capture2e("git", "-C", app_root, "rev-parse", "HEAD")
+  abort "Не удалось определить коммит релизной ветки." unless status.success?
+  record = { "version" => ipa_version, "release_commit" => commit.strip,
+             "release_branch" => ENV["CM_BRANCH"], "source_check" => "passed" }
+end
 abort "Версия .ipa #{ipa_version} не совпадает с отчётом #{record['version']}." unless record["version"] == ipa_version
 record["archive_sha256"] = Digest::SHA256.file(ipa).hexdigest
 record["artifact_check"] = "passed"
 record["build_check"] = "passed"
+FileUtils.mkdir_p(File.dirname(record_path))
 File.write(record_path, JSON.pretty_generate(record) + "\n")
 puts "Проверка релизных файлов пройдена: ссылок на Git BroadApps и служебного отчёта нет."

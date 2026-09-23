@@ -11,6 +11,7 @@ bash -n "$platform_root/Scripts/agent_review_and_fix.sh"
 bash -n "$platform_root/ReleaseTools/install.sh"
 /usr/bin/ruby -c "$platform_root/ReleaseTools/prepare_release.rb"
 /usr/bin/ruby -c "$platform_root/ReleaseTools/check_release_artifact.rb"
+/usr/bin/ruby -c "$platform_root/ReleaseTools/check_release_source.rb"
 /usr/bin/ruby -rjson -e 'JSON.parse(File.read(ARGV.fetch(0)))' \
     "$platform_root/AgentChecks/ReviewReport.schema.json"
 
