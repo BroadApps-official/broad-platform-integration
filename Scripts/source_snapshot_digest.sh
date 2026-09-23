@@ -39,6 +39,7 @@ platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
     "Examples/BroadAppTemplate/BroadAppTemplate.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
     "Documentation/**/*",
     "Scripts/**/*",
+    "ReleaseTools/**/*",
     "AgentChecks/*.md"
   ]
 

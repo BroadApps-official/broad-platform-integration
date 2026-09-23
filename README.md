@@ -69,6 +69,10 @@ UIFlows подтягивает Monetization и Core, Monetization — Core.
 [Выбор модулей](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/module-selection) ·
 [Совместимость и обновление](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/compatibility).
 
+Для подготовки релизной копии host app с локальными исходниками используемых
+модулей см. [ReleaseTools](ReleaseTools/README.md). Разработчику подключённого
+приложения достаточно одной команды из [инструкции на сайте](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-release-export).
+
 ## Быстрое подключение
 
 1. В Xcode откройте `File → Add Package Dependencies…` и добавьте URL нужного модуля, например `https://github.com/BroadApps-official/broad-core-ios.git`.

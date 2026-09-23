@@ -20,6 +20,7 @@ Markdown в repositories остаётся canonical source: его можно с
 | Понять папки и зависимости | [Architecture](Architecture.md) |
 | Выбрать и подключить отдельные repositories | [Федерация repositories](FederatedRepositories.md) |
 | Выпустить версию модуля | [SemVer и release policy](ModuleReleasePolicy.md) |
+| Подключить выпускной экспорт к приложению | [ReleaseTools](../ReleaseTools/README.md) |
 | Настроить Adapty, StoreKit и общий flow | [Monetization](Monetization.md) |
 | Выбрать subscriptions-only или subscriptions + tokens | [Purchase Managers](PurchaseManagers.md) |
 | Подключить отдельный consumable token paywall | [Token Paywall](TokenPaywall.md) |
