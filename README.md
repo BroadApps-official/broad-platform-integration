@@ -35,13 +35,13 @@ Host app подключает **любой нужный модуль** напр�
   <img alt="Приложение выбирает нужные products. UIFlows использует Monetization и Core; Extensions подключается независимо." src="Documentation/Assets/README/platform-module-selection-light.svg" width="100%">
 </picture>
 
-Проверенный набор **[5.0.0](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/5.0.0)**:
+Проверенный набор **[5.1.0](https://github.com/BroadApps-official/broad-platform-integration/releases/tag/5.1.0)**:
 
 | Product / repository | Для чего | Версия |
 |---|---|---|
 | [BroadExtensions](https://github.com/BroadApps-official/broad-extensions-ios) | Цвета, шрифты, клавиатура, swipe-back | [1.0.1](https://github.com/BroadApps-official/broad-extensions-ios/releases/tag/1.0.1) |
 | [BroadCore](https://github.com/BroadApps-official/broad-core-ios) | Запуск, состояния, кеш, retry, логирование, Keychain ID | [3.0.0](https://github.com/BroadApps-official/broad-core-ios/releases/tag/3.0.0) |
-| [BroadMonetization](https://github.com/BroadApps-official/broad-monetization-ios) | Adapty, покупка, доступ, токены | [5.0.0](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/5.0.0) |
+| [BroadMonetization](https://github.com/BroadApps-official/broad-monetization-ios) | Adapty, покупка, доступ, токены | [5.1.0](https://github.com/BroadApps-official/broad-monetization-ios/releases/tag/5.1.0) |
 | [BroadUIFlows](https://github.com/BroadApps-official/broad-ui-flows-ios) | Готовые onboarding, AppFlow и paywall | [5.0.0](https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/5.0.0) |
 
 | [BroadRUBilling / BroadRUBillingUI](https://github.com/BroadApps-official/broad-ru-billing-ios) | Опциональные RU-оплата и её интерфейс | [1.0.0](https://github.com/BroadApps-official/broad-ru-billing-ios/releases/tag/1.0.0) |
@@ -49,6 +49,11 @@ Host app подключает **любой нужный модуль** напр�
 С набора 5.0.0 RU Billing подключается отдельным пакетом. Без него приложение
 не содержит RU-кода, обработчиков возврата оплаты и RU-экранов.
 [Подключение и миграция](Documentation/OptionalRUBilling.md).
+При обновлении с набора 5.0.0 сохраните pending-хранилища и account identity.
+Новый [BroadMonetization 5.1 upgrade guide](https://github.com/BroadApps-official/broad-monetization-ios/blob/5.1.0/Documentation/UpgradeTo5.1.md)
+описывает повторную покупку после доказанной отмены, восстановление подтверждённой
+подписки, диагностику незавершённой попытки и обязанности backend для токенов.
+Premium catalog preflight включается приложением отдельно; старые вызовы работают.
 
 Источник версий — [Compatibility/current.yml](Compatibility/current.yml).
 В наборе 4.1.0 live-пример сохраняет Adapty customer ID в Keychain и останавливает

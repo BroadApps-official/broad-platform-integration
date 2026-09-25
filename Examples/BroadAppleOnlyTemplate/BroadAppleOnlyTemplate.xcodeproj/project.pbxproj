@@ -346,7 +346,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-monetization-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 5.0.0;
+				version = 5.1.0;
 			};
 		};
 		AB36C63BC74F9712E34777AD /* XCRemoteSwiftPackageReference "broad-core-ios" */ = {

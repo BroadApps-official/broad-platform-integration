@@ -138,7 +138,7 @@
 - Offline/timeout не превращаются в inactive/success. Неопределённый финансовый
   результат остаётся pending до reconciliation; появление сети не запускает
   purchase, token charge, RU checkout или cancellation автоматически.
-- Для RU account-policy с BroadMonetization 5.0.0 проверь ограниченный polling:
+- Для RU account-policy с BroadMonetization 5.0.0 или новее проверь ограниченный polling:
   `waitingCompleted` завершает локальное ожидание без отмены платежа, последняя
   попытка остаётся в `awaitingReconciliation` без блокировки новой покупки.
   При unavailable UI показывает ошибку проверки и перечитывает operation gate.
