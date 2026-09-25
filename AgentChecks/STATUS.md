@@ -1,5 +1,24 @@
 # Последняя подтверждённая проверка платформы
 
+## Apple purchase recovery — набор 5.1.0, 25 сентября 2026
+
+BroadMonetization 5.1.0 опубликован: [module quality](https://github.com/BroadApps-official/broad-monetization-ios/actions/runs/36121415233)
+и [release workflow](https://github.com/BroadApps-official/broad-monetization-ios/actions/runs/36123517209)
+прошли на коммите `825fe1c6be93ecb01a42ee7b9dddd0545641960c`.
+Core 3.0.0, Extensions 1.0.1, UIFlows 5.0.0 и RU Billing 1.0.0 сохраняются.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` прошёл с
+опубликованным тегом Monetization 5.1.0 и его точным SHA в трёх lockfile.
+Проверены общий RU-enabled пример, Apple-only Debug/Release, Simulator и
+unsigned generic iOS, две Adapty-конфигурации только сборкой. После перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+также прошёл. CI integration repository повторяет его на GitHub.
+
+Повторная покупка после доказанной отмены, сохранение подтверждённой подписки и
+безопасная диагностика pending проверены module contract probes. Неизвестный
+исход остаётся заблокирован до сверки. Реальные purchase, restore, Adapty backend
+и начисление токенов через webhook не выполнялись; это приёмка host app.
+
 ## Optional RU Billing — набор 5.0.0, 22 сентября 2026
 
 **PASS.** Модули опубликованы. Полный candidate gate и последующий обычный

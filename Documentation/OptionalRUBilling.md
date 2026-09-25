@@ -8,7 +8,7 @@ Neither base module depends on that repository.
 
 | Application | Products | Example |
 |---|---|---|
-| App Store only | BroadCore 3.0.0, BroadMonetization 5.0.0, BroadUIFlows 5.0.0 | BroadAppleOnlyTemplate |
+| App Store only | BroadCore 3.0.0, BroadMonetization 5.1.0, BroadUIFlows 5.0.0 | BroadAppleOnlyTemplate |
 | App Store + RU | Base products + BroadRUBilling 1.0.0 + optional BroadRUBillingUI 1.0.0 | BroadAppTemplate |
 
 Choose dependencies at build time. An app without RU billing has no disabled RU

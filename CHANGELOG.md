@@ -3,14 +3,21 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
-## 5.0.0 — 2026-09-22
+## 5.1.0 — 2026-09-25
 
-- RU Billing вынесен в отдельный opt-in repository с products BroadRUBilling и BroadRUBillingUI. Базовые Core, Monetization и UIFlows не зависят от него.
-- Сохранены durable pending, общий operation gate, server-authoritative доступ и ограниченное ожидание account policy.
-- Добавлены Apple-only пример и проверка отсутствия RU package, символов и артефактов в Debug/Release.
-- Обновлены интеграция, API migration и совместимый набор Core 3.0 / Monetization 5.0 / UIFlows 5.0 / RUBilling 1.0.
-
-## Unreleased
+- Проверенный набор сохраняет Core 3.0.0, Extensions 1.0.1, UIFlows 5.0.0 и
+  RU Billing 1.0.0; BroadMonetization обновлён до 5.1.0. Exact pins и
+  `Package.resolved` синхронизированы в общем и Apple-only примерах.
+- После доказанной отмены или окончательного отказа StoreKit Apple purchase
+  разрешает повторное нажатие. Подтверждённая подписка восстанавливает проверку
+  доступа после ошибки refresh или перезапуска. Неизвестный исход продолжает
+  ждать сверки; таймаут не снимает финансовую блокировку.
+- Платформа даёт безопасный диагностический снимок незавершённой попытки;
+  приложение добавляет его в своё обращение в поддержку. Начисление токенов
+  остаётся обязанностью backend конкретного приложения по точному transaction ID.
+- Premium catalog preflight включается host app отдельно. Старые вызовы API
+  сохраняются; инструкция обновления описывает pending-хранилища, account
+  identity и проверку приложения без Sandbox/TestFlight.
 
 - Выпускной экспорт теперь создаёт отдельную ветку `release/<версия>` без истории основной ветки; Codemagic собирает подготовленный проект из неё после ручного выбора. Добавлена проверка исходников ветки и отдельный короткий CI-отчёт вне IPA.
 
@@ -25,8 +32,15 @@
   Последняя попытка сохраняется для reconciliation; новый checkout требует fresh
   policy. Серверный termination client опционален. Режим paymentStatus остаётся строгим.
 - Runtime-реализация и probes находятся в canonical broad-monetization-ios.
-  Published dependency pins платформы обновляются после выпуска модуля; текущий
-  platform build сам по себе не проверяет неопубликованный runtime.
+  Published dependency pins платформы обновлены после выпуска модуля; общий
+  gate проверяет опубликованные версии, но не выполняет реальные платежи.
+
+## 5.0.0 — 2026-09-22
+
+- RU Billing вынесен в отдельный opt-in repository с products BroadRUBilling и BroadRUBillingUI. Базовые Core, Monetization и UIFlows не зависят от него.
+- Сохранены durable pending, общий operation gate, server-authoritative доступ и ограниченное ожидание account policy.
+- Добавлены Apple-only пример и проверка отсутствия RU package, символов и артефактов в Debug/Release.
+- Обновлены интеграция, API migration и совместимый набор Core 3.0 / Monetization 5.0 / UIFlows 5.0 / RUBilling 1.0.
 
 ## 4.1.2
 
