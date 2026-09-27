@@ -37,6 +37,10 @@ description: Start or continue a BroadApps iPhone app on the BroadApps iOS Platf
 
 ## Как проверять покупки
 
+TestFlight и доступа к кабинетам Adapty и App Store Connect у разработчиков нет — всё у
+аккаунт-менеджеров. Настоящую покупку не проверить; изменения плейсментов, продуктов и
+Remote Config разработчик просит у аккаунт-менеджера.
+
 Debug: Adapty + локальный `.storekit`. Он применяется только при запуске из Xcode (Run),
 не через `simctl`; сборка без подписи ломает Keychain-ID. Лист покупки StoreKit в
 Debug — тестовый, деньги не списываются. Настоящие purchase/restore не выполняй.
