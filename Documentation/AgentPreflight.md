@@ -43,10 +43,10 @@ Claude Design/Pencil; без этой метки проект используе
 
 Для Figma порядок такой:
 
-1. Figma MCP.
-2. Авторизованная Figma в Chrome.
-3. Экспортированные frames или приложенные скриншоты с однозначными названиями.
-4. Если ни один вариант не доступен — `BLOCKED`. Нельзя заменять источник
+1. Figma в браузере, где разработчик вошёл в аккаунт (computer use или браузер
+   агента): спецификации — на панели свойств, фоны — экспорт 6x. MCP не нужен.
+2. Экспортированные frames или приложенные скриншоты с однозначными названиями.
+3. Если ни один вариант не доступен — `BLOCKED`. Нельзя заменять источник
    похожим дизайном, reference-приложением или собственной интерпретацией.
 
 Для no-code-проекта нужен согласованный результат Claude Design/Pencil либо его
@@ -125,15 +125,19 @@ Platform repository: https://github.com/BroadApps-official/broad-platform-integr
    Platform source: BLOCKED; private BroadCore не используй как замену.
 3. Для Kaiten попробуй по порядку: Kaiten MCP; авторизованный Kaiten в Chrome;
    полный экспорт из рабочей папки. Если ничего нет — остановись с BLOCKED.
-4. Определи тип дизайна только по метке Kaiten. Для Figma попробуй Figma MCP;
-   авторизованную Figma в Chrome; экспортированные frames/скриншоты. Для
+4. Определи тип дизайна только по метке Kaiten. Для Figma открой её в браузере,
+   где разработчик вошёл (computer use/браузер агента): спецификации читай на панели
+   свойств, фоны выгружай в 6x (скилл `broadapps-figma` из AgentKit); MCP не нужен.
+   Если браузера нет — экспортированные frames/скриншоты. Для
    no-code открой согласованный Claude Design/Pencil или его экспорт. Если
    источник не виден — BLOCKED; не придумывай похожий интерфейс.
 5. Найди reference в Kaiten, доступных Git-репозиториях или live-проектах.
    Reference не изменяй. При неоднозначности запроси решение тимлида или ПМ.
 6. Сопоставь функции с backend: method, endpoint, request, response,
    обязательные поля, auth, ошибки и retry. Не придумывай endpoint.
-7. Проверь monetization decisions. Для RU Billing запиши `ru_pay` из Adapty,
+7. Проверь monetization decisions. Метка «Жду аккаунт» (нет ключа Adapty,
+   продуктов, PP/ToU): предложи временно взять их у похожего приложения компании,
+   пометить `TEMPORARY` и заменить до выпуска. Для RU Billing запиши `ru_pay` из Adapty,
    backend kill switch и необходимость Dashboard fallback. Не создавай
    Release-default для флага.
 8. Проверь support/legal: источник support address, Privacy Policy/Terms URLs и

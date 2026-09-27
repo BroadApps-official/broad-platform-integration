@@ -39,15 +39,19 @@ Platform repository: https://github.com/BroadApps-official/broad-platform-integr
    Platform source: BLOCKED; private BroadCore не используй как замену.
 3. Для Kaiten попробуй по порядку: Kaiten MCP; авторизованный Kaiten в Chrome;
    полный экспорт из рабочей папки. Если ничего нет — остановись с BLOCKED.
-4. Определи тип дизайна только по метке Kaiten. Для Figma попробуй Figma MCP;
-   авторизованную Figma в Chrome; экспортированные frames/скриншоты. Для
+4. Определи тип дизайна только по метке Kaiten. Для Figma открой её в браузере,
+   где разработчик вошёл (computer use/браузер агента): спецификации читай на панели
+   свойств, фоны выгружай в 6x (скилл `broadapps-figma` из AgentKit); MCP не нужен.
+   Если браузера нет — экспортированные frames/скриншоты. Для
    no-code открой согласованный Claude Design/Pencil или его экспорт. Если
    источник не виден — BLOCKED; не придумывай похожий интерфейс.
 5. Найди reference в Kaiten, доступных Git-репозиториях или live-проектах.
    Reference не изменяй. При неоднозначности запроси решение тимлида или ПМ.
 6. Сопоставь функции с backend: method, endpoint, request, response,
    обязательные поля, auth, ошибки и retry. Не придумывай endpoint.
-7. Проверь monetization decisions. Для RU Billing запиши `ru_pay` из Adapty,
+7. Проверь monetization decisions. Метка «Жду аккаунт» (нет ключа Adapty,
+   продуктов, PP/ToU): предложи временно взять их у похожего приложения компании,
+   пометить `TEMPORARY` и заменить до выпуска. Для RU Billing запиши `ru_pay` из Adapty,
    backend kill switch и необходимость Dashboard fallback. Не создавай
    Release-default для флага.
 8. Проверь support/legal: источник support address, Privacy Policy/Terms URLs и
@@ -184,8 +188,10 @@ N/A и точные шаги, которые разработчик должен
 Разработчик подтвердил функциональный flow. Выполни визуальную итерацию.
 
 1. Возьми screen map и точные source frames из Integration Plan.
-2. Сравнивай один экран и все его states за раз на маленьком и большом iPhone
-   Simulator; при model-specific source используй также его размер.
+2. Сравнивай один экран и все его states за раз на маленьком (iPhone SE) и большом
+   iPhone Simulator и на iPad-симуляторе: там iPhone-приложение открывается в окне
+   совместимости, его видит App Review (скилл `broadapps-ipad-check`). При
+   model-specific source используй также его размер. Покупки — запуском из Xcode.
 3. Исправь composition, typography, color, spacing, assets, safe area, длинные
    тексты, loading/empty/error и keyboard states.
 4. Не меняй подтверждённые backend, AppFlow и monetization contracts ради
@@ -193,8 +199,9 @@ N/A и точные шаги, которые разработчик должен
 5. Экран без source оставь BLOCKED; не делай похожий дизайн от себя.
 6. После каждого исправления повтори screenshot comparison.
 
-В конце верни НУЖНА ПРОВЕРКА ВНЕШНЕГО ВИДА с таблицей экран → source → размеры →
-результат и попроси разработчика лично посмотреть сборку. Остановись.
+В конце верни НУЖНА ПРОВЕРКА ВНЕШНЕГО ВИДА с таблицей экран → source → размеры
+(iPhone по макету, iPhone SE, iPad) → результат и попроси разработчика лично
+посмотреть сборку. Остановись.
 ```
 
 ## 6. Финальная acceptance

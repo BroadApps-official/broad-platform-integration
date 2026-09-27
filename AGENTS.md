@@ -71,6 +71,8 @@
 - Для стандартной верстки используй `BroadOnboardingView`. Для уникальной
   верстки используй logic-only `BroadOnboardingFlowHost`; не скрывай готовый
   экран и не копируй ATT/lifecycle-логику в приложение.
+- `AgentKit/` — правила и скиллы для агента разработчика (`install.sh`); при
+  изменении продуктовых правил обновляй и `AgentKit/rules.md`.
 - Экран = только вёрстка. Свои пейвол, токены и настройки по Figma рисуй внутри
   `BroadPaywallHost`, `BroadTokenPaywallHost` и `BroadSettingsHost` из готового
   `screen`; не копируй покупку, restore, крестик, таймер оффера, проверку
