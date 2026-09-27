@@ -71,6 +71,11 @@
 - Для стандартной верстки используй `BroadOnboardingView`. Для уникальной
   верстки используй logic-only `BroadOnboardingFlowHost`; не скрывай готовый
   экран и не копируй ATT/lifecycle-логику в приложение.
+- Экран = только вёрстка. Свои пейвол, токены и настройки по Figma рисуй внутри
+  `BroadPaywallHost`, `BroadTokenPaywallHost` и `BroadSettingsHost` из готового
+  `screen`; не копируй покупку, restore, крестик, таймер оффера, проверку
+  токен-покупки и защиту от двойного нажатия. Главный таб подключает
+  `.broadAppUpdateAlert(checker)`.
 - Конкретные Adapty placement ID задаёт host app; обычные подписочные placements
   используют резерв `main`, а `tokens` и `special_offer` сохраняют свои продукты.
 - Не фильтруй и не меняй данные продуктов Adapty. Экран показывает подписки от

@@ -5,6 +5,12 @@ consumable-пакеты. Они визуально используют те ж�
 button, что subscription paywall, но не импортируют его checkout, restore или
 premium completion.
 
+Экран по Figma рисуется внутри `BroadTokenPaywallHost` (BroadUIFlows 6.2.0): хост
+ведёт загрузку, выбор, покупку и зачисление, баланс и безопасную проверку
+сохранённой покупки. Экран получает `BroadTokenPaywallScreen`: `packages`,
+`balanceText`, `needsConfirmation`, `noticeMessage` и действия `purchase()`,
+`confirm()`, `refreshBalance()`. `confirm()` никогда не списывает повторно.
+
 Для RU-токенов с 3.0.0 есть отдельные `resolveTokenCheckoutMethods` и
 `startSelectedToken` с подтверждением через account policy. Они подключаются
 в собственном host UI; готовый экран ниже обслуживает Apple manager.

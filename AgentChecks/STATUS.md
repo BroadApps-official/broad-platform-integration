@@ -1,5 +1,16 @@
 # Последняя подтверждённая проверка платформы
 
+## Хосты токенов и настроек, алерт обновления — набор 6.2.0, 27 сентября 2026
+
+BroadUIFlows 6.2.0 (`ce91c97`) опубликован тегом; module gate прошёл до тега.
+Core 3.0.0, Extensions 1.0.1, Monetization 5.1.0 и RU Billing 1.0.1 сохраняются.
+Три lockfile указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore, RU-платёж и запрос в App Store не
+выполнялись.
+
 ## Хост пейвола и безопасный повтор токенов — набор 6.1.0, 27 сентября 2026
 
 BroadUIFlows 6.1.0 (`828638d`) опубликован тегом; module gate прошёл до тега.

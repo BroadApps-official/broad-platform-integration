@@ -21,7 +21,7 @@ packages:
     exactVersion: 5.1.0
   BroadUIFlows:
     url: https://github.com/BroadApps-official/broad-ui-flows-ios.git
-    exactVersion: 6.1.0
+    exactVersion: 6.2.0
   BroadExtensions:
     url: https://github.com/BroadApps-official/broad-extensions-ios.git
     exactVersion: 1.0.1
