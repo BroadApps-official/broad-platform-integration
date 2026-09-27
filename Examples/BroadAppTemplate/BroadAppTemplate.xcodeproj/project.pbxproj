@@ -901,7 +901,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-ru-billing-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 1.0.0;
+				version = 1.0.1;
 			};
 		};
 		AF9F3A76F6D9744E7AC59292 /* XCRemoteSwiftPackageReference "broad-extensions-ios" */ = {
@@ -917,7 +917,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-ui-flows-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 5.0.1;
+				version = 6.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

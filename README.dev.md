@@ -304,7 +304,7 @@ iPad не входит в scope платформы.
 <details>
 <summary><strong>Paywall, restore и специальные предложения</strong></summary>
 
-- UI принимает 0, 1 или любое количество продуктов в порядке Adapty.
+- UI принимает 0, 1 или любое количество продуктов; подписки идут от длинного периода к короткому.
 - Purchase и restore не открывают premium до новой подтверждённой проверки доступа.
 - Success, fail, cancel, offline и timeout — разные конечные состояния.
 - Special Offer существует только при строгом boolean `special_offer = true`
@@ -382,7 +382,7 @@ iPad не входит в scope платформы.
 [статье «Создание приложения»](https://broadapps-ios-docs.nkhsnv.chatgpt.site/docs/app-creation#работа-с-агентом).
 Не отправляйте агенту один запрос «сделай всё приложение». Используйте
 [`AgentPromptPack.md`](Documentation/AgentPromptPack.md) по одному этапу и
-проверяйте `PLAN`, `SKELETON`, `SLICE`, `FUNCTIONAL` и `VISUAL REVIEW REQUIRED`
+проверяйте `PLAN`, `SKELETON`, `SLICE`, `FUNCTIONAL` и `НУЖНА ПРОВЕРКА ВНЕШНЕГО ВИДА`
 до перехода дальше.
 
 Для уже существующего app этап 1 сначала фиксирует current state и gaps, а

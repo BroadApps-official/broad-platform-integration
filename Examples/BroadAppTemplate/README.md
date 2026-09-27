@@ -159,7 +159,7 @@ app configuration и платформы разобраны в
 Если приложение делает агент Codex/Claude, перед Swift-кодом дайте ему прочитать
 [`AGENTS.md`](AGENTS.md): там есть порядок read-only аудита reference,
 подтверждённые общие ручки, наводящие вопросы и обязательная остановка
-`BACKEND CONTRACT REVIEW REQUIRED`.
+`НУЖНА ПРОВЕРКА КОНТРАКТА BACKEND`.
 
 ## Полезные launch arguments
 

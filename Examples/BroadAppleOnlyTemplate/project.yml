@@ -8,7 +8,7 @@ options:
 packages:
   BroadUIFlows:
     url: https://github.com/BroadApps-official/broad-ui-flows-ios.git
-    exactVersion: 5.0.1
+    exactVersion: 6.0.0
   BroadCore:
     url: https://github.com/BroadApps-official/broad-core-ios.git
     exactVersion: 3.0.0

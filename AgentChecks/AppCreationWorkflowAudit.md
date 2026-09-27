@@ -39,7 +39,7 @@ README, developer/manual маршрутов и acceptance checklist.
 |---|---|---|
 | Агент выдумывает отсутствующую логику исходника | Feature-level `BLOCKED` с evidence и owner | PASS |
 | Ошибка одного предположения распространяется на весь app | Один vertical slice за prompt и developer review | PASS |
-| Каркас выдают за рабочий backend | Отдельный `SKELETON REVIEW REQUIRED`; fixture не доказывает production | PASS |
+| Каркас выдают за рабочий backend | Отдельный `НУЖНА ПРОВЕРКА КАРКАСА`; fixture не доказывает production | PASS |
 | Похожий UI выдают за точный дизайн | Visual stage начинается после functional review и требует source frames | PASS |
 | Platform PASS выдают за готовность host app | Отдельный `ProjectDelivery.md` и `READY FOR QA` | PASS |
 | Workflow привязывается к одному номеру проекта | Все platform-owned тексты и отчёты обезличены | PASS |

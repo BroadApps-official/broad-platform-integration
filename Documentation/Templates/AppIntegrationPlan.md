@@ -195,8 +195,8 @@ Fixture/Debug force-on не считается evidence provider config, backend
 
 Runtime slice начинается только после принятого dependency switch своей group.
 Каждый срез проходит `View → ViewModel → use case → repository → client` и
-заканчивается `MIGRATION SLICE REVIEW REQUIRED` для migration или
-`SLICE REVIEW REQUIRED` для new app до начала следующего.
+заканчивается `НУЖНА ПРОВЕРКА ШАГА МИГРАЦИИ` для migration или
+`НУЖНА ПРОВЕРКА ФУНКЦИИ` для new app до начала следующего.
 
 ## 8. Blockers
 
@@ -208,21 +208,21 @@ Runtime slice начинается только после принятого de
 
 | Checkpoint | Статус | Кто подтвердил | Evidence |
 |---|---|---|---|
-| `PLAN REVIEW REQUIRED` |  |  |  |
-| `SKELETON REVIEW REQUIRED` |  |  |  |
-| `FUNCTIONAL REVIEW REQUIRED` |  |  |  |
-| `VISUAL REVIEW REQUIRED` |  |  |  |
+| `НУЖНА ПРОВЕРКА ПЛАНА` |  |  |  |
+| `НУЖНА ПРОВЕРКА КАРКАСА` |  |  |  |
+| `НУЖНА ПРОВЕРКА ПОВЕДЕНИЯ` |  |  |  |
+| `НУЖНА ПРОВЕРКА ВНЕШНЕГО ВИДА` |  |  |  |
 | `READY FOR QA` |  |  |  |
 
 Для legacy migration дополнительно заполните:
 
 | Checkpoint | Статус | Кто подтвердил | Evidence |
 |---|---|---|---|
-| `MIGRATION PREFLIGHT REVIEW REQUIRED` |  |  |  |
-| `MIGRATION PLAN REVIEW REQUIRED` |  |  |  |
-| `DEPENDENCY SWITCH REVIEW REQUIRED` |  |  |  |
-| `MIGRATION SLICE REVIEW REQUIRED` |  |  |  |
-| `LEGACY CLEANUP REVIEW REQUIRED` |  |  |  |
+| `НУЖНА ПРОВЕРКА ИСТОЧНИКОВ МИГРАЦИИ` |  |  |  |
+| `НУЖНА ПРОВЕРКА ПЛАНА МИГРАЦИИ` |  |  |  |
+| `НУЖНА ПРОВЕРКА ЗАМЕНЫ ЗАВИСИМОСТЕЙ` |  |  |  |
+| `НУЖНА ПРОВЕРКА ШАГА МИГРАЦИИ` |  |  |  |
+| `НУЖНА ПРОВЕРКА УДАЛЕНИЯ СТАРОГО КОДА` |  |  |  |
 
 Пустая строка не означает согласование. Агент не переходит через checkpoint без
 явного ответа разработчика.

@@ -1,5 +1,5 @@
 schema: 1
-platform_set: "5.1.1"
+platform_set: "6.0.0"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
@@ -13,8 +13,8 @@ modules:
   BroadCore: "3.0.0"
   BroadExtensions: "1.0.1"
   BroadMonetization: "5.1.0"
-  BroadUIFlows: "5.0.1"
-  BroadRUBilling: "1.0.0"
+  BroadUIFlows: "6.0.0"
+  BroadRUBilling: "1.0.1"
 verification:
   status: passed
   command: "bash Scripts/agent_gate.sh"
@@ -42,19 +42,19 @@ module_verification:
     integration_gate: passed
     checked_at: "2026-09-25"
   BroadUIFlows:
-    version: "5.0.1"
+    version: "6.0.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/5.0.1"
+    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/6.0.0"
     integration_gate: passed
     checked_at: "2026-09-27"
   BroadRUBilling:
-    version: "1.0.0"
+    version: "1.0.1"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-ru-billing-ios/releases/tag/1.0.0"
+    release: "https://github.com/BroadApps-official/broad-ru-billing-ios/releases/tag/1.0.1"
     integration_gate: passed
-    checked_at: "2026-09-22"
+    checked_at: "2026-09-27"
 notes:
   - "Host applications connect only the repositories/products they need."
   - "BroadRUBilling and BroadRUBillingUI are optional products of the same repository."

@@ -1,5 +1,16 @@
 # Последняя подтверждённая проверка платформы
 
+## Порядок тарифов и русские остановки — набор 6.0.0, 27 сентября 2026
+
+BroadUIFlows 6.0.0 (`9b791fd`) и BroadRUBilling 1.0.1 (`b15bcc2`) опубликованы
+тегами; module gate обоих прошёл до тега, RU Billing — против UIFlows 6.0.0.
+Core 3.0.0, Extensions 1.0.1 и Monetization 5.1.0 сохраняются. Три lockfile
+указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore и RU-платёж не выполнялись.
+
 ## Support email без Bundle — набор 5.1.1, 27 сентября 2026
 
 BroadUIFlows 5.0.1 опубликован тегом на коммите

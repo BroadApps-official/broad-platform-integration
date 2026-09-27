@@ -56,8 +56,8 @@ app. Platform-owned AgentChecks не создают отдельный отчё�
 | Этап | Доказательство | Допустимый статус |
 |---|---|---|
 | Preflight | Все обязательные входы найдены или имеют владельца blocker-а | `READY/BLOCKED/N/A` |
-| Integration Plan | Screen map, backend contracts, ownership и vertical slices записаны без Swift-кода | `PLAN REVIEW REQUIRED/BLOCKED` |
-| Skeleton | Навигация, DI, состояния и безопасные заглушки собираются без выдуманной логики | `SKELETON REVIEW REQUIRED/BLOCKED` |
+| Integration Plan | Screen map, backend contracts, ownership и vertical slices записаны без Swift-кода | `НУЖНА ПРОВЕРКА ПЛАНА/BLOCKED` |
+| Skeleton | Навигация, DI, состояния и безопасные заглушки собираются без выдуманной логики | `НУЖНА ПРОВЕРКА КАРКАСА/BLOCKED` |
 | Functional iteration | Routes, API, state machine, offline/retry и monetization fixtures | `READY/BLOCKED/N/A` |
 | Functional review | Разработчик лично подтвердил поведение до визуальной полировки | `READY/BLOCKED` |
 | Visual iteration | Каждый source frame сверен на двух размерах Simulator | `READY/BLOCKED/N/A` |

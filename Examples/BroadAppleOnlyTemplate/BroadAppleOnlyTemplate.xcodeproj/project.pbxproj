@@ -338,7 +338,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-ui-flows-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 5.0.1;
+				version = 6.0.0;
 			};
 		};
 		91268FE17CDE9A0BB2C039AE /* XCRemoteSwiftPackageReference "broad-monetization-ios" */ = {

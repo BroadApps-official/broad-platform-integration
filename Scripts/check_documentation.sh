@@ -160,11 +160,11 @@ for documentation_contract in \
     'Documentation/MigrationGuide.md|packages, экспортирующие одинаковый Swift module' \
     'Documentation/MigrationGuide.md|## Определите cutover topology' \
     'Documentation/MigrationGuide.md|Runtime slices after cutover' \
-    'Documentation/LegacyAppMigrationAgent.md|MIGRATION PREFLIGHT REVIEW REQUIRED' \
-    'Documentation/LegacyAppMigrationAgent.md|MIGRATION PLAN REVIEW REQUIRED' \
-    'Documentation/LegacyAppMigrationAgent.md|DEPENDENCY SWITCH REVIEW REQUIRED' \
-    'Documentation/LegacyAppMigrationAgent.md|MIGRATION SLICE REVIEW REQUIRED' \
-    'Documentation/LegacyAppMigrationAgent.md|LEGACY CLEANUP REVIEW REQUIRED' \
+    'Documentation/LegacyAppMigrationAgent.md|НУЖНА ПРОВЕРКА ИСТОЧНИКОВ МИГРАЦИИ' \
+    'Documentation/LegacyAppMigrationAgent.md|НУЖНА ПРОВЕРКА ПЛАНА МИГРАЦИИ' \
+    'Documentation/LegacyAppMigrationAgent.md|НУЖНА ПРОВЕРКА ЗАМЕНЫ ЗАВИСИМОСТЕЙ' \
+    'Documentation/LegacyAppMigrationAgent.md|НУЖНА ПРОВЕРКА ШАГА МИГРАЦИИ' \
+    'Documentation/LegacyAppMigrationAgent.md|НУЖНА ПРОВЕРКА УДАЛЕНИЯ СТАРОГО КОДА' \
     'Documentation/LegacyAppMigrationAgent.md|READY FOR QA' \
     'Documentation/LegacyAppMigrationAgent.md|https://github.com/BroadApps-official/broad-platform-integration' \
     'Documentation/LegacyAppMigrationAgent.md|HOST REPOSITORY' \
@@ -348,11 +348,11 @@ if rg -q -- 'Архив: прежний монолитный build prompt|АРХ
 fi
 
 for checkpoint in \
-    'PLAN REVIEW REQUIRED' \
-    'SKELETON REVIEW REQUIRED' \
-    'SLICE REVIEW REQUIRED' \
-    'FUNCTIONAL REVIEW REQUIRED' \
-    'VISUAL REVIEW REQUIRED' \
+    'НУЖНА ПРОВЕРКА ПЛАНА' \
+    'НУЖНА ПРОВЕРКА КАРКАСА' \
+    'НУЖНА ПРОВЕРКА ФУНКЦИИ' \
+    'НУЖНА ПРОВЕРКА ПОВЕДЕНИЯ' \
+    'НУЖНА ПРОВЕРКА ВНЕШНЕГО ВИДА' \
     'READY FOR QA'
 do
     if ! rg -q -- "$checkpoint" "$platform_root/Documentation/AppCreationWorkflow.md" "$platform_root/Documentation/AgentPromptPack.md"; then

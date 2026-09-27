@@ -38,7 +38,7 @@
 ## Правильный результат агента
 
 ```text
-PLAN REVIEW REQUIRED
+НУЖНА ПРОВЕРКА ПЛАНА
 
 [BLOCKED] History
 Нет: method, endpoint, response и правило пагинации.

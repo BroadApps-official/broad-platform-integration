@@ -724,7 +724,7 @@ timer на другой paywall payload. Полный recipe находится 
 - [ ] bootstrap имеет конечные timeout и не содержит ATT;
 - [ ] onboarding не содержит Rate Us/review;
 - [ ] каждый app placement имеет явное соответствие, `.main` настроен;
-- [ ] UI показывает все provider products в исходном порядке;
+- [ ] UI показывает все provider products: подписки от длинного периода к короткому;
 - [ ] cached product rehydration не допускает purchase при variation/index/SKU/commercial fingerprint mismatch;
 - [ ] consumables либо имеют отдельный durable fulfillment flow, либо generic CTA fail-before-charge;
 - [ ] product tap/purchase не меняет opacity/scale/brightness;

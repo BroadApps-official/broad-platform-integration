@@ -142,7 +142,7 @@ PLAN
 - UI states
 - safe tests without payment
 
-BACKEND CONTRACT REVIEW REQUIRED
+НУЖНА ПРОВЕРКА КОНТРАКТА BACKEND
 ```
 
 К реализации переходи после ответа разработчика. Детальный контракт:
@@ -165,7 +165,7 @@ RU SPECIAL OFFER GIVEN
 QUESTIONS / BLOCKERS
 - только неизвестные значения, меняющие реализацию
 
-RU SPECIAL OFFER CONTRACT REVIEW REQUIRED
+НУЖНА ПРОВЕРКА КОНТРАКТА RU SPECIAL OFFER
 ```
 
 Правила:

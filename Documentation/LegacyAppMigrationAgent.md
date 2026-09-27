@@ -142,7 +142,7 @@ release зависимых platform repositories; он не доказывает
 Финальный ответ stage:
 
 ```text
-MIGRATION PREFLIGHT REVIEW REQUIRED
+НУЖНА ПРОВЕРКА ИСТОЧНИКОВ МИГРАЦИИ
 ```
 
 В ответе нужны current graph, `Cutover topology`, `Legacy owner`,
@@ -173,7 +173,7 @@ blockers и один следующий шаг. После ответа аген
 Финальный ответ stage:
 
 ```text
-MIGRATION PLAN REVIEW REQUIRED
+НУЖНА ПРОВЕРКА ПЛАНА МИГРАЦИИ
 ```
 
 До явного подтверждения package/project/Swift files не меняются.
@@ -205,13 +205,13 @@ MIGRATION PLAN REVIEW REQUIRED
 
 Если фактический resolve открывает новый conflict или group не сохраняет
 baseline compile, агент откатывает всю group, обновляет Plan и возвращает
-`APP MIGRATION · BLOCKED` либо новый `MIGRATION PLAN REVIEW REQUIRED`. Он не
+`APP MIGRATION · BLOCKED` либо новый `НУЖНА ПРОВЕРКА ПЛАНА МИГРАЦИИ`. Он не
 проталкивает по одному module из atomic group и не маскирует конфликт aliases.
 
 Финальный ответ stage:
 
 ```text
-DEPENDENCY SWITCH REVIEW REQUIRED
+НУЖНА ПРОВЕРКА ЗАМЕНЫ ЗАВИСИМОСТЕЙ
 ```
 
 ## Stage 3 — один runtime slice after cutover
@@ -232,7 +232,7 @@ retry/offline, cancellation и duplicate actions. Для monetization нельз
 Финальный ответ stage:
 
 ```text
-MIGRATION SLICE REVIEW REQUIRED
+НУЖНА ПРОВЕРКА ШАГА МИГРАЦИИ
 ```
 
 Ответ содержит expected/current/evidence и просит разработчика лично проверить
@@ -253,7 +253,7 @@ MIGRATION SLICE REVIEW REQUIRED
 Финальный ответ stage:
 
 ```text
-LEGACY CLEANUP REVIEW REQUIRED
+НУЖНА ПРОВЕРКА УДАЛЕНИЯ СТАРОГО КОДА
 ```
 
 Если usages остались, cleanup возвращает `BLOCKED`, а не скрывает проблему.
@@ -313,7 +313,7 @@ https://github.com/BroadApps-official/broad-platform-integration/blob/main/Docum
 решения и подтверждённые checkpoint-ы. Сравни структуру с canonical
 template и добавь только отсутствующие поля. Если нужно удалить или
 заменить существующее значение, не делай это на Stage 0: покажи diff
-и верни MIGRATION PREFLIGHT REVIEW REQUIRED.
+и верни НУЖНА ПРОВЕРКА ИСТОЧНИКОВ МИГРАЦИИ.
 Другие app-файлы на Stage 0 не создавай и не меняй.
 
 Обязательно прочитай из PLATFORM REPOSITORY:
@@ -335,7 +335,7 @@ Package.swift/Package.resolved или source membership. Не создавай �
 используемые modules, baseline build results и blockers. Обнови только current
 state/gaps и cutover graph в AppIntegrationPlan.md.
 
-Закончи MIGRATION PREFLIGHT REVIEW REQUIRED и остановись до моего явного
+Закончи НУЖНА ПРОВЕРКА ИСТОЧНИКОВ МИГРАЦИИ и остановись до моего явного
 подтверждения.
 ```
 
@@ -353,7 +353,7 @@ Documentation/LegacyAppMigrationAgent.md на commit SHA, записанном �
 
 Назови подтверждённый checkpoint и следующий stage. Выполни только этот stage,
 не повторяй принятые изменения и не затрагивай соседние modules/slices. При
-blocker-е обнови Plan и остановись с точным REVIEW REQUIRED или
+blocker-е обнови Plan и остановись с точной фразой «НУЖНА ПРОВЕРКА …» или
 APP MIGRATION · BLOCKED.
 ```
 
