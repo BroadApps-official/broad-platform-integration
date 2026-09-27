@@ -2,6 +2,9 @@
 
 set -euo pipefail
 
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 platform_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$platform_root/Scripts/lib/console.sh"
 logs_root="$platform_root/.build/GateLogs"
@@ -13,6 +16,10 @@ fi
 console_title \
     "BroadApps iOS Platform · полная проверка" \
     "Шесть этапов. При ошибке ниже появятся причина, лог и следующий шаг."
+
+# Installers verify and reuse pinned tools already present in .build/tooling.
+bash "$platform_root/Scripts/install_build_tools.sh"
+bash "$platform_root/Scripts/install_swiftformat.sh"
 
 BROADAPPS_GATE_TOTAL=6 \
     bash "$platform_root/Scripts/release_gate.sh"

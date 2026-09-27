@@ -1,5 +1,15 @@
 # Последняя подтверждённая проверка платформы
 
+## Хост пейвола и безопасный повтор токенов — набор 6.1.0, 27 сентября 2026
+
+BroadUIFlows 6.1.0 (`828638d`) опубликован тегом; module gate прошёл до тега.
+Core 3.0.0, Extensions 1.0.1, Monetization 5.1.0 и RU Billing 1.0.1 сохраняются.
+Три lockfile указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore и RU-платёж не выполнялись.
+
 ## Порядок тарифов и русские остановки — набор 6.0.0, 27 сентября 2026
 
 BroadUIFlows 6.0.0 (`9b791fd`) и BroadRUBilling 1.0.1 (`b15bcc2`) опубликованы

@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+env:
+  LANG: en_US.UTF-8
+  LC_ALL: en_US.UTF-8
+
+jobs:
+  release:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Validate platform set and SemVer tag
+        run: |
+          if [[ ! "$GITHUB_REF_NAME" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tag must be x.y.z."
+            exit 1
+          fi
+          platform_set="$(/usr/bin/ruby -ryaml -e 'puts YAML.load_file("Compatibility/current.yml").fetch("platform_set")')"
+          if [[ "$GITHUB_REF_NAME" != "$platform_set" ]]; then
+            echo "Release tag $GITHUB_REF_NAME does not match platform_set $platform_set."
+            exit 1
+          fi
+      - name: Require tag commit on main
+        run: |
+          git fetch origin main:refs/remotes/origin/main
+          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main
+      - name: Prepare version-specific release notes
+        run: bash Scripts/extract_release_notes.sh "$GITHUB_REF_NAME" "$RUNNER_TEMP/release-notes.md"
+      - name: Install ripgrep
+        run: brew install ripgrep
+      - name: Run full integration gate
+        run: bash Scripts/agent_gate.sh
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" --verify-tag --title "BroadApps iOS Platform $GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/release-notes.md"

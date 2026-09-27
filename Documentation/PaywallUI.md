@@ -177,6 +177,29 @@ BroadPaywallView(
 
 `onCompleted` различает `.purchased(EntitlementSnapshot)` и `.restored(EntitlementSnapshot)`. Callback приходит только после подтверждённого authoritative entitlement. `completedButUnverified` остаётся на paywall с отдельным app-supplied сообщением и не выдаётся за premium-доступ.
 
+## Свой экран из Figma
+
+С BroadUIFlows 6.1.0 экран по макету рисуется внутри `BroadPaywallHost`.
+Хост ведёт загрузку, порядок и выбор тарифа, задержку закрытия, purchase,
+restore, Special Offer, legal links и sheet способов оплаты. Приложение
+получает `BroadPaywallScreen` и только раскладывает его:
+
+```swift
+BroadPaywallHost(
+    viewModel: viewModel,
+    onClose: appFlowCoordinator.paywallDismissed,
+    onCompleted: handlePaywallCompletion
+) { screen in
+    AppPaywallScreen(screen: screen)
+}
+```
+
+`screen.plans` уже идут от длинного периода к короткому, с выбранным длинным,
+ценой за неделю, процентом экономии и `isBestValue`. Действия: `select`,
+`purchase`, `restore`, `retry`, `close`, `open(link)`. Результат операции —
+типизированный `screen.notice` и готовый текст `screen.noticeMessage`.
+`BroadPaywallScreen.preview(_:)` рисует все состояния в Xcode Previews без Adapty.
+
 ## Состояния и безопасный выход
 
 | State | UI | Close |
