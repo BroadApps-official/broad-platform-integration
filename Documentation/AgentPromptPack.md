@@ -108,11 +108,15 @@ BLOCKED с владельцем. Остановись и жди подтверж
    BroadExtensions. Собери один composition root и AppConfiguration.
 4. Подключи безопасный bootstrap, AppFlow entry points, Debug Status и typed
    logging. Используй fixture только с явной маркировкой fixture.
-5. Не реализуй backend feature, app-specific hook или точный UI экрана на этом
+5. Создай DesignSystem по образцу Examples/BroadAppTemplate/BroadAppTemplate/
+   Core/DesignSystem: токены цветов, шрифтов, отступов, радиусов и размеров и
+   `.scale` из Scalable.swift. В `LayoutScale.designWidth` запиши ширину
+   устройства, на котором сделан макет в Figma; без Figma оставь 393.
+6. Не реализуй backend feature, app-specific hook или точный UI экрана на этом
    этапе. Не трогай BLOCKED-области.
-6. Собери Debug и Release для iPhone Simulator. Не выполняй purchase, restore
+7. Собери Debug и Release для iPhone Simulator. Не выполняй purchase, restore
    или RU checkout.
-7. Обнови в Integration Plan только фактический статус каркаса.
+8. Обнови в Integration Plan только фактический статус каркаса.
 
 В конце верни SKELETON REVIEW REQUIRED, список созданных границ, команды сборки
 и то, что намеренно ещё не реализовано. Остановись.

@@ -3,9 +3,11 @@ import UIKit
 
 @MainActor
 private enum LayoutScale {
+    /// Width of the device the Figma layout is drawn for; 393 when there is no Figma.
+    static let designWidth: CGFloat = 393
+
     static var factor: CGFloat {
-        let referenceWidth: CGFloat = 393
-        let rawFactor = UIScreen.main.bounds.width / referenceWidth
+        let rawFactor = UIScreen.main.bounds.width / designWidth
         return min(max(rawFactor, 0.85), 1.25)
     }
 }

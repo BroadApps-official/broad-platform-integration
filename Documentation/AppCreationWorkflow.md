@@ -94,8 +94,10 @@ PLAN REVIEW REQUIRED
 ### Этап 2. Platform-based каркас
 
 Агент создаёт iPhone target с `Team = None`, подключает package products,
-composition root, AppConfiguration, безопасный bootstrap, Debug Status и пустые
-route entry points только для `READY`-областей.
+composition root, AppConfiguration, безопасный bootstrap, Debug Status, дизайн-систему
+и пустые route entry points только для `READY`-областей. Дизайн-система — токены и
+`.scale` по образцу `BroadAppTemplate`; базовая ширина `LayoutScale.designWidth` —
+ширина устройства макета в Figma, без Figma — 393.
 
 Каркас обязан собираться, но **не считается подключённым backend или готовым
 приложением**. Fixture разрешён только как явно подписанный fixture.

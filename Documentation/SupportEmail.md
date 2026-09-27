@@ -34,7 +34,6 @@ Hi! I need help with the app.
 App: <APP_NAME>
 Version: <APP_STORE_VERSION> (App Store)
 Installed: <INSTALLED_VERSION> (<BUILD_NUMBER>)
-Bundle: <BUNDLE_ID>
 
 --- Device ---
 System: iOS <IOS_VERSION>
@@ -65,7 +64,6 @@ Hi! I need help with the app. (ukassa)
 App: <APP_NAME>
 Version: <APP_STORE_VERSION> (App Store)
 Installed: <INSTALLED_VERSION> (<BUILD_NUMBER>)
-Bundle: <BUNDLE_ID>
 
 --- Device ---
 System: iOS <IOS_VERSION>
@@ -118,7 +116,6 @@ ID с понятными стабильными названиями в согл
 | `App` | Полное название бренда | Документ проекта; формат согласно регламенту Bundle ID |
 | `Version` | Маркетинговая версия, опубликованная в App Store | Согласованная app configuration/App Store metadata |
 | `Installed` | Установленная версия и build number | `CFBundleShortVersionString` + `CFBundleVersion` |
-| `Bundle` | Bundle ID приложения | `Bundle.main.bundleIdentifier`; формат по регламенту Bundle ID |
 | `System` | Версия iOS | `UIDevice.current.systemVersion` |
 | `Device` | Модель устройства | Компонент приложения, который определяет модель iPhone |
 | `Locale` | Локаль устройства | `Locale.current.identifier` |
@@ -159,7 +156,9 @@ flowchart LR
 ## Готовая реализация в платформе
 
 `BroadSupportEmailConfiguration` принимает адрес, subject, значения всех полей и
-уже очищенный support log. С 4.1.0 также принимает `deviceID`, `tokenBalance` и
+уже очищенный support log. Строки `Bundle` в письме нет: параметр
+`bundleIdentifier` сохранён только для совместимости API и в body не попадает.
+С 4.1.0 также принимает `deviceID`, `tokenBalance` и
 `additionalIdentifiers` с необязательными значениями по умолчанию.
 `BroadSupportEmailRequestBuilder` возвращает `nil`,
 если адрес, имя вложения или само вложение пусты: строка
@@ -208,8 +207,8 @@ ID из самого шаблона письма не нужно второй р
 1. Во всех новых приложениях форма добавляется сразу.
 2. В старых приложениях она заменяется по приоритетам.
 3. Каждое следующее изменение формата синхронно вносится во все приложения.
-4. Полное название бренда и Bundle ID всегда берутся по регламенту «Правило
-   создания Bundle ID».
+4. Полное название бренда всегда берётся по регламенту «Правило создания
+   Bundle ID». Сам Bundle ID в письмо не добавляется.
 
 ## Проверка перед сдачей
 
@@ -218,7 +217,8 @@ ID из самого шаблона письма не нужно второй р
 - [ ] Обычное письмо не содержит `(ukassa)`.
 - [ ] RU/ЮKassa-письмо содержит `(ukassa)` только в первой строке.
 - [ ] `Version` и `Installed` не перепутаны.
-- [ ] Bundle ID и ID относятся к текущему приложению/аккаунту.
+- [ ] В письме нет строки `Bundle`.
+- [ ] ID относятся к текущему приложению/аккаунту.
 - [ ] Переданы все доступные ID, включая ID начисления токенов, если он отличается.
 - [ ] Баланс передан только для приложения с токенами; неизвестное значение не заменено нулём.
 - [ ] Статус подписки получен из последнего подтверждённого результата.
@@ -236,8 +236,8 @@ ID из самого шаблона письма не нужно второй р
 определённого RU/ЮKassa-контура добавь (ukassa) только в первую строку. Не определяй
 этот тип по одному Locale или TimeZone.
 
-Заполни App, версию в App Store, установленную версию/build, Bundle ID, iOS,
-модель устройства, locale, timezone, Adapty profileID, backend userID и статус
+Заполни App, версию в App Store, установленную версию/build, iOS, модель
+устройства, locale, timezone, Adapty profileID, backend userID и статус
 подписки из данных текущего пользователя. После Subscription добавь доступный
 device ID и остальные ID текущего аккаунта, особенно ID начисления токенов.
 Если приложение использует токены и баланс известен, добавь Token balance.
