@@ -22,7 +22,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
-            exact: "5.0.0"
+            exact: "5.0.1"
         ),
         // Integration showcase only; host apps choose optional products.
         .package(url: "https://github.com/BroadApps-official/broad-ru-billing-ios.git", exact: "1.0.0"),

@@ -1,5 +1,16 @@
 # Последняя подтверждённая проверка платформы
 
+## Support email без Bundle — набор 5.1.1, 27 сентября 2026
+
+BroadUIFlows 5.0.1 опубликован тегом на коммите
+`3e227784c448b7b996e57b72d334a9191ef5e3aa`; module gate прошёл локально до тега.
+Core 3.0.0, Extensions 1.0.1, Monetization 5.1.0 и RU Billing 1.0.0 сохраняются.
+Три lockfile указывают на UIFlows 5.0.1 и этот SHA.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore и отправка письма не выполнялись.
+
 ## Apple purchase recovery — набор 5.1.0, 25 сентября 2026
 
 BroadMonetization 5.1.0 опубликован: [module quality](https://github.com/BroadApps-official/broad-monetization-ios/actions/runs/36121415233)
