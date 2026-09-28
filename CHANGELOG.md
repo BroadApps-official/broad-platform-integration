@@ -3,8 +3,10 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
-## Unreleased
+## 6.4.0 — 2026-09-28
 
+- BroadUIFlows 6.4.0 и BroadMonetization 5.2.1. Каталог, манифест, оба примера и три
+  `Package.resolved` указывают на релизы.
 - Спецоффер продаёт один продукт: одна карточка без выбора
   (`BroadPaywallScreen.specialOfferPlan`, UIFlows Unreleased), DEBUG-предупреждение о
   лишних продуктах в `special_offer` (Monetization Unreleased). AGENTS.md,

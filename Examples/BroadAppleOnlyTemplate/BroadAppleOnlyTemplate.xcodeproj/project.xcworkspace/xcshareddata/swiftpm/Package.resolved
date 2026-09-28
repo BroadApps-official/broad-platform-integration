@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-monetization-ios.git",
       "state" : {
-        "revision" : "93e495984668e6312609cfe77a7695bd92e14f75",
-        "version" : "5.2.0"
+        "revision" : "19bb982321dc9a39e60d014c622fb14daee7ed0f",
+        "version" : "5.2.1"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
       "state" : {
-        "revision" : "9a28389569d4e2fbeddb608542e736f3507a62c3",
-        "version" : "6.3.0"
+        "revision" : "432d5575df8646308014cfcf3e61bde1e3dbd641",
+        "version" : "6.4.0"
       }
     },
     {

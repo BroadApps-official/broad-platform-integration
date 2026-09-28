@@ -1,5 +1,15 @@
 # Последняя подтверждённая проверка платформы
 
+## Спецоффер — один продукт — набор 6.4.0, 28 сентября 2026
+
+BroadUIFlows 6.4.0 (`432d557`) и BroadMonetization 5.2.1 (`19bb982`) опубликованы
+тегами; module gate обоих прошёл до тега. Core 3.0.0, Extensions 1.0.1 и RU Billing
+1.0.1 сохраняются. Три lockfile указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore и RU-платёж не выполнялись.
+
 ## Спецоффер сразу, предзагрузка PRO, AgentKit — набор 6.3.0, 28 сентября 2026
 
 BroadMonetization 5.2.0 (`93e4959`) и BroadUIFlows 6.3.0 (`9a28389`) опубликованы

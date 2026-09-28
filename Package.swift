@@ -18,11 +18,11 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/BroadApps-official/broad-monetization-ios.git",
-            exact: "5.2.0"
+            exact: "5.2.1"
         ),
         .package(
             url: "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
-            exact: "6.3.0"
+            exact: "6.4.0"
         ),
         // Integration showcase only; host apps choose optional products.
         .package(url: "https://github.com/BroadApps-official/broad-ru-billing-ios.git", exact: "1.0.1"),
