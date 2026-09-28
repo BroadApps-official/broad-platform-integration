@@ -1,5 +1,17 @@
 # Последняя подтверждённая проверка платформы
 
+## Спецоффер сразу, предзагрузка PRO, AgentKit — набор 6.3.0, 28 сентября 2026
+
+BroadMonetization 5.2.0 (`93e4959`) и BroadUIFlows 6.3.0 (`9a28389`) опубликованы
+тегами; module gate обоих прошёл до тега. Core 3.0.0, Extensions 1.0.1 и RU Billing
+1.0.1 сохраняются. Три lockfile указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Поведение проверено в приложении 5153 на iPhone 17 Pro, iPhone SE и
+iPad в Debug с локальным `.storekit`. Реальные purchase, restore и RU-платёж не
+выполнялись.
+
 ## Хосты токенов и настроек, алерт обновления — набор 6.2.0, 27 сентября 2026
 
 BroadUIFlows 6.2.0 (`ce91c97`) опубликован тегом; module gate прошёл до тега.

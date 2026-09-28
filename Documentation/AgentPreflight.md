@@ -136,8 +136,10 @@ Platform repository: https://github.com/BroadApps-official/broad-platform-integr
 6. Сопоставь функции с backend: method, endpoint, request, response,
    обязательные поля, auth, ошибки и retry. Не придумывай endpoint.
 7. Проверь monetization decisions. Метка «Жду аккаунт» (нет ключа Adapty,
-   продуктов, PP/ToU): предложи временно взять их у похожего приложения компании,
-   пометить `TEMPORARY` и заменить до выпуска. Для RU Billing запиши `ru_pay` из Adapty,
+   продуктов, PP/ToU): спроси разработчика, данные какого похожего приложения
+   компании взять (с теми же экранами, например токенами), сам не выбирай; пометь их
+   `TEMPORARY` и замени до выпуска. Продукты образца переносятся в Debug `.storekit`
+   все, с ценами App Store. Для RU Billing запиши `ru_pay` из Adapty,
    backend kill switch и необходимость Dashboard fallback. Не создавай
    Release-default для флага.
 8. Проверь support/legal: источник support address, Privacy Policy/Terms URLs и

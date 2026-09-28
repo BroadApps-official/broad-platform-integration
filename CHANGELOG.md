@@ -3,8 +3,16 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
-## Unreleased
+## 6.3.0 — 2026-09-28
 
+- BroadMonetization 5.2.0: `ResolveSpecialOfferUseCase.prepare(configuration:)`
+  готовит спецоффер, пока обычный пейвол на экране, — он появляется сразу по
+  крестику. DEBUG-предупреждение перечисляет продукты, которых Adapty не отдал
+  (нет в `.storekit`).
+- BroadUIFlows 6.3.0: `BroadPaywallPreloader` — пейвол с кнопки PRO открывается уже
+  с тарифами; зачёркнутая цена и скидка оффера (`regularPrice`, `discountPercent`),
+  `dismissNotice()`, слайд между маршрутами `BroadAppFlowView(transition: .slide)`.
+- Каталог, манифест, оба примера и три `Package.resolved` указывают на релизы.
 - `AgentKit/`: правила разработки BroadApps и скиллы для Claude Code и Codex
   (`broadapps-new-app`, `broadapps-figma`, `broadapps-ipad-check`) и `install.sh`,
   который ставит их агенту разработчика и обновляет на месте.
@@ -13,6 +21,13 @@
   `TEMPORARY` до выдачи аккаунта.
 - Визуальный этап проверяет iPhone SE и iPad: App Review открывает iPhone-приложение
   на iPad в окне совместимости.
+- «Жду аккаунт»: агент спрашивает разработчика, какое похожее приложение взять за
+  образец, и сам не выбирает.
+- Debug `.storekit`: все продукты плейсментов с ценами App Store, файл в проекте и не в
+  бандле; скрипт `check_debug_storekit.rb` в скилле `broadapps-new-app`.
+- PaywallUI: крупно — списываемая сумма с периодом, недельная цена мелко; пейвол с PRO
+  загружается заранее; Special Offer — сразу по крестику после любого обычного пейвола;
+  экран анимируется, когда данные уже на месте.
 
 ## 6.2.0 — 2026-09-27
 
