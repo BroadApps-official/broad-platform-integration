@@ -216,6 +216,8 @@ BroadPaywallHost(
   главного экрана и после закрытия без покупки, `take(.proIcon)` в
   `PaywallViewModel(initialPayload:)` при нажатии, `discardAll()` после покупки или
   restore. Иначе шторка выезжает с загрузкой, а потом тарифы и фон прыгают.
+- Special Offer продаёт один продукт: рисуйте одну карточку `screen.specialOfferPlan`
+  без выбора, заголовок скидки — из неё же, тогда вёрстка не меняется.
 - Special Offer появляется сразу по крестику: пока обычный пейвол на экране,
   приложение вызывает `ResolveSpecialOfferUseCase.prepare(configuration:)`
   (BroadMonetization 5.2.0+). Оффер показывается после закрытия любого обычного

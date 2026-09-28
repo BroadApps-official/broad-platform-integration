@@ -3,6 +3,13 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## Unreleased
+
+- Спецоффер продаёт один продукт: одна карточка без выбора
+  (`BroadPaywallScreen.specialOfferPlan`, UIFlows Unreleased), DEBUG-предупреждение о
+  лишних продуктах в `special_offer` (Monetization Unreleased). AGENTS.md,
+  SpecialOffer.md, PaywallUI.md и AgentKit — то же правило.
+
 ## 6.3.0 — 2026-09-28
 
 - BroadMonetization 5.2.0: `ResolveSpecialOfferUseCase.prepare(configuration:)`
