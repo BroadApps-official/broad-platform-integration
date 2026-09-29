@@ -12,6 +12,7 @@
 # - with --expect, every product ID of the Adapty paywalls is in the file. The
 #   IDs come from the account manager, the reference app or the platform DEBUG
 #   warning "missing vendor product IDs".
+# - every product and subscription has a nonblank displayName in each localization.
 #
 # Prints the products with their prices so they can be compared with App Store.
 # Exit status 1 when a check fails.
@@ -70,17 +71,33 @@ projects.each do |project|
 end
 
 products = {}
+check_display_names = lambda do |item|
+  id = item['productID'] || '(missing productID)'
+  localizations = Array(item['localizations'])
+  if localizations.empty?
+    failures << "product #{id}: add a localization with a nonblank displayName in .storekit"
+  end
+  localizations.each do |localization|
+    next if localization['displayName'].is_a?(String) && !localization['displayName'].strip.empty?
+
+    locale = localization['locale'] || '(unknown locale)'
+    failures << "product #{id} (#{locale}): fill in displayName in .storekit"
+  end
+end
 storekit_files.uniq.each do |path|
   data = JSON.parse(File.read(path))
   Array(data['subscriptionGroups']).each do |group|
     Array(group['subscriptions']).each do |item|
+      check_display_names.call(item)
       products[item['productID']] = [item['recurringSubscriptionPeriod'], item['displayPrice']]
     end
   end
   Array(data['nonRenewingSubscriptions']).each do |item|
+    check_display_names.call(item)
     products[item['productID']] = ['non-renewing', item['displayPrice']]
   end
   Array(data['products']).each do |item|
+    check_display_names.call(item)
     products[item['productID']] = [item['type'], item['displayPrice']]
   end
   puts "#{path.delete_prefix("#{app_dir}/")}: #{products.size} products"

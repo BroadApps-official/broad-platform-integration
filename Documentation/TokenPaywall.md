@@ -24,6 +24,11 @@ consumable-пакеты. Они визуально используют те ж�
 button, что subscription paywall, но не импортируют его checkout, restore или
 premium completion.
 
+На экране название пакета берётся из отображаемого имени StoreKit (в Debug —
+`displayName` локализации `.storekit`), а количество токенов — из каталога
+backend (credits по product ID) или из полного названия продукта; число из
+product ID не извлекается, в том числе регулярным выражением.
+
 Экран по Figma рисуется внутри `BroadTokenPaywallHost` (BroadUIFlows 6.2.0): хост
 ведёт загрузку, выбор, покупку и зачисление, баланс и безопасную проверку
 сохранённой покупки. Экран получает `BroadTokenPaywallScreen`: `packages`,

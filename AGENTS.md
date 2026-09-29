@@ -189,6 +189,7 @@
 ## Ограничения проверки
 
 - В Debug через `.storekit` покупаются все продукты Adapty с ценами App Store (подписки, спецоффер, consumable-токены из `tokens`): `LocalStoreKitPurchaseRepository` подключён к `PurchaseSelectedProductUseCase` и `TokenPurchaseManager`; агент сам покупает каждый тип из Xcode, проверяет доступ/баланс, а при отказе backend сообщает код ответа и не имитирует зачисление; в Release — Adapty.
+- На временных данных `TEMPORARY` экраны показывают реальные цену, название StoreKit (`displayName` в `.storekit`) и количество из Adapty/StoreKit и backend, а не примеры Figma; все имена в `.storekit` заполнены, токены берутся из backend-каталога или полного названия продукта, не из его ID.
 - Не выполнять покупку за реальные деньги, restore или RU-платёж.
 - Не требовать StoreKit sandbox: он недоступен по правилам компании.
 - Не добавлять обязательную screen-reader или отдельную device accessibility

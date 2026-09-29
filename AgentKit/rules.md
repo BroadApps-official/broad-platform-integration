@@ -34,6 +34,10 @@ onboarding или RU Billing, перечитай документацию пла
   нужны) — сам не выбирай. Временно возьми его ключ Adapty, плейсменты, продукты
   (`.storekit`) и ссылки в одном месте конфигурации с пометкой
   `TEMPORARY: <номер приложения>`. Перед выпуском замени на данные приложения.
+- Пока данные `TEMPORARY`, показывай реальные цену, название и количество товаров
+  похожего приложения из Adapty/StoreKit и backend. Числа и названия тарифов в Figma
+  (например, «1000 / 100 images / $80») — только пример дизайнера; не переноси их
+  в код или на экран.
 - Покупки в Debug идут через локальный `.storekit` схемы — он применяется только при
   запуске из Xcode (Run). Для проверки пейвола и покупок запускай приложение сам:
   `osascript -e 'tell application "Xcode"' -e 'set ws to active workspace document' -e 'set active run destination of ws to (first run destination of ws whose name is "<simulator>")' -e 'run ws' -e 'end tell'`.
@@ -48,6 +52,12 @@ onboarding или RU Billing, перечитай документацию пла
   товаров, чем в Adapty, или в логе DEBUG есть `missing vendor product IDs` —
   сначала допиши продукты в `.storekit`. Проверка:
   `ruby <skills>/broadapps-new-app/scripts/check_debug_storekit.rb . --expect <ID>`.
+- Название на экране бери из отображаемого имени StoreKit (`displayName` локализации
+  в Debug `.storekit`). Заполни его у каждого продукта как в App Store; если
+  настоящего имени пока нет — по образцу остальных продуктов похожего приложения.
+  Пустое имя даёт заглушку «Token pack». Количество токенов для экрана бери из
+  каталога backend (credits по product ID) или из полного названия продукта;
+  не извлекай число из product ID, в том числе регулярным выражением.
 - Каждый путь покупки в Debug использует `LocalStoreKitPurchaseRepository`:
   подписки основных пейволов и спецоффера через `PurchaseSelectedProductUseCase`,
   пакеты токенов через `TokenPurchaseManager`. В Release покупка идёт через Adapty.
