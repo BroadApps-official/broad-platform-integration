@@ -2,6 +2,12 @@
 
 ## Когда открывать
 
+Всё на этой странице — только для приложений с токенами: `tokens.mode = backend` в
+`Configuration/AccountIntegration.json` ([AccountRecovery.md](AccountRecovery.md)).
+Приложение без токенов объявляет `tokens.mode = notUsed` с причиной, не подключает
+токен-пейвол и плейсмент `tokens`. Есть ли токены, агент решает на preflight по
+Kaiten, Figma и backend и спрашивает, если источники не дают ответа.
+
 Любое действие, которому не хватает токенов (генерация, повтор, шаблон, «ещё
 раз»), сразу открывает пейвол. Нажатие на баланс токенов в шапке ведёт туда же.
 Алерт «Not enough tokens… top up later» вместо пейвола запрещён.
@@ -34,6 +40,13 @@ product ID не извлекается, в том числе регулярны�
 сохранённой покупки. Экран получает `BroadTokenPaywallScreen`: `packages`,
 `balanceText`, `needsConfirmation`, `noticeMessage` и действия `purchase()`,
 `confirm()`, `refreshBalance()`. `confirm()` никогда не списывает повторно.
+
+Токен-пейвол, как и пейвол с кнопки PRO, открывается сразу с пакетами. Пока
+виден экран с балансом, вызовите `BroadPaywallPreloader.preload(.tokens)`, а при
+открытии передайте `preloader.take(.tokens)` как `initialPayload` в
+`BroadTokenPaywallViewModel` (BroadUIFlows, Unreleased). Устаревший или
+невалидный payload даёт обычную загрузку; показ засчитывается при появлении
+экрана. После подтверждённой покупки или Restore — `discardAll()`.
 
 Для RU-токенов с 3.0.0 есть отдельные `resolveTokenCheckoutMethods` и
 `startSelectedToken` с подтверждением через account policy. Они подключаются

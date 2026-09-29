@@ -13,6 +13,15 @@
   `BroadSettingsScreen.showPaywall()`; `manageSubscription()` открывает тот же
   пейвол через общий tap gate вместо страницы App Store. Набор `6.5.0` не меняется
   до выпуска.
+- Токены — только для приложений с токенами (`tokens.mode = backend`); без токенов —
+  `notUsed`, без токен-пейвола и плейсмента `tokens`. Добавлено в
+  `Documentation/TokenPaywall.md` и `AgentKit/rules.md`. BroadUIFlows Unreleased:
+  `BroadTokenPaywallViewModel(initialPayload:)` — токен-пейвол открывается уже с
+  пакетами через `BroadPaywallPreloader`.
+- Правило предзагрузки токен-пейвола: как пейвол с кнопки PRO, он загружается
+  заранее (`preload(.tokens)`, `initialPayload: preloader.take(.tokens)`) и
+  открывается сразу с пакетами. Добавлено в `AGENTS.md`, `AgentKit/rules.md` и
+  `Documentation/TokenPaywall.md`.
 
 ## 6.5.0 — 2026-09-29
 

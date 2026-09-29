@@ -116,6 +116,11 @@
   через `BroadTokenPaywallHost`. После покупки перечитай серверный
   `TokenBalanceSnapshot`, без автоповтора действия; если backend требует
   подписку для токенов, синхронизируй её после покупки, Restore и при запуске.
+- Пейвол с кнопки PRO/настроек и токен-пейвол загружаются заранее через
+  `BroadPaywallPreloader` и открываются сразу с продуктами: для токенов —
+  `preload(.tokens)`, пока виден экран с балансом, и
+  `initialPayload: preloader.take(.tokens)` в `BroadTokenPaywallViewModel`
+  (UIFlows, Unreleased). Loader на пустом токен-экране после тапа — дефект.
 - Текущий Adapty payload может включить `special_offer` и explicit
   `ru_pay=true`, даже если SDK прозрачно использовал provider cache
   или Dashboard fallback. Paywall из persistent cache BroadMonetization не
