@@ -4,6 +4,18 @@
 него. Цель — сначала получить подтверждённый backend-контракт, а затем
 подключить платформу без догадок и копирования значений другого приложения.
 
+Для нового приложения с работающим backend в референсе следуй
+`Documentation/AgentPreflight.md` и `Documentation/AppCreationWorkflow.md`
+платформы. Читай референс без изменений, фиксируй commit SHA, сверяй запросы
+с OpenAPI/проверками и согласуй расхождения с владельцем backend. На этапе
+плана создай `Documentation/BackendContract.md`; неподтверждённое — `BLOCKED`
+и конкретный вопрос. Переноси подтверждённое поведение через адаптеры платформы,
+не старую архитектуру и хардкод; контент и продукты бери с backend/Adapty.
+Чужие production URL, секреты, email, checkout URL, SKU и персональные данные
+автоматически не копируй. Адрес нового приложения подтверждается отдельно.
+`TEMPORARY` — только выбранные разработчиком данные Adapty, Debug-продуктов
+и legal с источником и условием замены, не серверные секреты или production URL.
+
 ## Обязательная декларация функций аккаунта
 
 До реализации определите по задаче и `Documentation/AppIntegrationPlan.md`,
@@ -135,24 +147,28 @@ checkout опциональна. Если обязательные значен�
 
 ## Что показать перед изменениями
 
-Первый результат агента — не код, а короткий отчёт:
+Для любого backend до app-кода покажи короткий отчёт по нужным функциям.
+Для референсного backend добавь commit SHA, источник и статус подтверждения
+каждого endpoint и расхождения с OpenAPI/владельцем backend:
 
 ```text
 BACKEND CONTRACT GIVEN
-- catalog: method/path/auth/response shape
-- checkout: method/path/body/response
-- confirmation: subscription authority + token authority
-- cancellation: subscription cancellation + pending-checkout termination
-- differences from current platform contract
+- каждая функция: method/path, request/response, auth, ошибки/лимиты/retry/idempotency
+- источник, статус подтверждения, компонент платформы
+- для RU Billing: catalog (method/path/auth/response shape), checkout
+  (method/path/body/response), confirmation (subscription authority + token
+  authority), cancellation (subscription cancellation + pending-checkout
+  termination) и расхождения с контрактом платформы
 
-QUESTIONS / BLOCKERS
-- только неизвестные значения, влияющие на реализацию
+QUESTIONS
+- только то, чего нет в источниках и что влияет на реализацию
+
+BLOCKERS
+- неподтверждённые endpoints и зависимые срезы с владельцем решения
 
 PLAN
-- app-owned configuration
-- platform adapter/composition
-- UI states
-- safe tests without payment
+- app-owned configuration и platform adapters
+- порядок срезов, UI states и безопасные проверки
 
 НУЖНА ПРОВЕРКА КОНТРАКТА BACKEND
 ```

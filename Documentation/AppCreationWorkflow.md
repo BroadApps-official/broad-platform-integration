@@ -34,6 +34,12 @@
 [`Templates/AppIntegrationPlan.md`](Templates/AppIntegrationPlan.md) в
 `Documentation/AppIntegrationPlan.md` host app и заполните его фактическими
 ссылками и статусами.
+Если backend уже работает в референсном приложении, на этом же этапе создайте
+`Documentation/BackendContract.md` в host app: таблицу из
+[`AgentPreflight.md`](AgentPreflight.md#reference-и-backend), commit SHA
+референса, ссылки на OpenAPI/проверки, расхождения, подтверждения владельца
+backend и список не переносимых обходов. `AppIntegrationPlan.md` ссылается на
+этот контракт и хранит mapping функций на компоненты платформы и порядок срезов.
 
 Это не второй паспорт проекта: Kaiten остаётся источником исходных данных.
 Integration Plan хранит только доказанное техническое сопоставление:
@@ -79,8 +85,16 @@ Support/legal: READY / BLOCKED / N/A
 
 ### Этап 1. Integration Plan, всё ещё без Swift
 
-Агент создаёт только `Documentation/AppIntegrationPlan.md`, заполняет screen
-map, backend matrix, monetization decisions и порядок вертикальных срезов.
+Агент создаёт только `Documentation/AppIntegrationPlan.md` и, для сценария
+референсного backend, `Documentation/BackendContract.md`. Заполняет screen map,
+backend matrix, monetization decisions и порядок вертикальных срезов.
+
+Для референсного backend до app-кода агент показывает отчёт
+`BACKEND CONTRACT GIVEN / QUESTIONS / BLOCKERS / PLAN` по всем функциям, а не
+только RU Billing, и останавливается с фразой «НУЖНА ПРОВЕРКА КОНТРАКТА
+BACKEND». После ответа разработчика обновляет оба документа и завершает этот
+же этап обычной проверкой плана. Неподтверждённый endpoint блокирует зависимый
+срез; успешная сборка или fixture не доказывают интеграцию.
 
 Конечный статус:
 
@@ -183,6 +197,7 @@ restore и RU checkout не выполняются.
 
 - источник экрана не открыт или противоречит другому источнику;
 - обязательной backend-ручки, поля, auth или правила retry нет;
+- endpoint найден только в коде референса, но не подтверждён актуальным контрактом;
 - неизвестно, какой hook исходника меняет server-owned состояние;
 - subscription, tokens, RU Billing или Special Offer не имеют подтверждённого
   продуктового решения;

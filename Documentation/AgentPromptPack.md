@@ -27,6 +27,7 @@ skeleton/composition root, а не созданием второго проек�
 Проект: <НАЗВАНИЕ ИЛИ ИДЕНТИФИКАТОР>.
 Kaiten: <ССЫЛКА / ТОЧНОЕ НАЗВАНИЕ / ЭКСПОРТ>.
 Reference: <ССЫЛКА / ЛОКАЛЬНЫЙ ПУТЬ / НАЙДИ>.
+Backend/OpenAPI: <ССЫЛКА / НЕТ>.
 Platform repository: https://github.com/BroadApps-official/broad-platform-integration.
 
 Пока не создавай и не изменяй файлы приложения.
@@ -41,18 +42,36 @@ Platform repository: https://github.com/BroadApps-official/broad-platform-integr
    полный экспорт из рабочей папки. Если ничего нет — остановись с BLOCKED.
 4. Определи тип дизайна только по метке Kaiten. Для Figma открой её в браузере,
    где разработчик вошёл (computer use/браузер агента): спецификации читай на панели
-   свойств, фоны выгружай в 6x (скилл `broadapps-figma` из AgentKit); MCP не нужен.
+   свойств, отметь фоны для экспорта в 6x позже (скилл `broadapps-figma` из
+   AgentKit); MCP не нужен. Сейчас файлы не выгружай.
    Если браузера нет — экспортированные frames/скриншоты. Для
    no-code открой согласованный Claude Design/Pencil или его экспорт. Если
    источник не виден — BLOCKED; не придумывай похожий интерфейс.
 5. Найди reference в Kaiten, доступных Git-репозиториях или live-проектах.
-   Reference не изменяй. При неоднозначности запроси решение тимлида или ПМ.
-6. Сопоставь функции с backend: method, endpoint, request, response,
-   обязательные поля, auth, ошибки и retry. Не придумывай endpoint.
+   Не изменяй его, зафиксируй commit SHA. При неоднозначности запроси решение
+   тимлида или ПМ.
+6. Для любого backend сопоставь функции с method/path, request/response,
+   обязательными полями, auth, ошибками и retry. Если backend работает в
+   reference, проследи endpoint builders, auth/refresh,
+   DTO, загрузки, генерации, polling, баланс и подтверждение начислений.
+   Верни таблицу: функция → method/path → request/response → auth →
+   ошибки/лимиты/retry/idempotency → источник → статус подтверждения → компонент
+   платформы. Отдельно укажи старую архитектуру, обходы и хардкод, которые не
+   переносим. Сверь с OpenAPI и доступными проверками backend: код reference
+   сам по себе не подтверждает контракт. Расхождения передай владельцу backend.
+   Спроси только неизвестное: backend и окружение нового приложения (инстанс
+   общий или новый, разделение аккаунтов/данных/кредитов); актуальные reference
+   и ветку, OpenAPI и владельца расхождений; переносимые функции, первый срез
+   (онбординг+пейвол или основная функция) и его кадры Figma; тестовый аккаунт,
+   кредиты, разрешённые операции, admin-доступ или выдачу кредитов для проверки
+   генераций и начислений; готовность Adapty и выбранное приложение для TEMPORARY.
+   Секреты — отдельно, вне git, приложения и отчёта. Не придумывай endpoint.
 7. Проверь monetization decisions. Метка «Жду аккаунт» (нет ключа Adapty,
    продуктов, PP/ToU): спроси разработчика, данные какого похожего приложения
    компании взять (с теми же экранами, например токенами), сам не выбирай; пометь их
-   `TEMPORARY` и замени до выпуска. Продукты образца переносятся в Debug `.storekit`
+   `TEMPORARY` с источником и условием замены до выпуска. Разрешены только данные
+   Adapty, Debug-продуктов и legal, не серверные секреты и production URL.
+   Продукты образца переносятся в Debug `.storekit`
    все, с ценами App Store. Для RU Billing запиши `ru_pay` из Adapty,
    backend kill switch и необходимость Dashboard fallback. Не создавай
    Release-default для флага.
@@ -85,7 +104,10 @@ Support/legal: READY / BLOCKED / N/A
 1. Прочитай результат preflight и
    Documentation/Templates/AppIntegrationPlan.md платформы.
 2. В repository приложения создай Documentation/AppIntegrationPlan.md по
-   шаблону. Не создавай и не изменяй Swift, Xcode project или конфигурации.
+   шаблону. Если backend работает в референсном приложении, создай также
+   Documentation/BackendContract.md: commit SHA референса, таблица функций из
+   AgentPreflight.md, OpenAPI/проверки, расхождения и статус подтверждения.
+   Не создавай и не изменяй Swift, Xcode project или конфигурации.
 3. Заполни фактическими доказательствами:
    - входы и владельцев blockers;
    - ownership platform / agent / app developer;
@@ -93,12 +115,17 @@ Support/legal: READY / BLOCKED / N/A
    - backend method/request/response/auth/errors/retry и server-owned hooks;
    - monetization decisions;
    - независимые вертикальные срезы и порядок реализации.
+   Для референсного backend свяжи Plan с BackendContract.md и запиши mapping
+   функций на компоненты платформы. Старую архитектуру и хардкод не переноси.
 4. Для неизвестного поставь BLOCKED. Не создавай предполагаемый endpoint,
    локальную production-заглушку или похожий экран.
 5. Не переноси внутреннюю логику платформы в host app.
 
-В конце верни НУЖНА ПРОВЕРКА ПЛАНА, короткий список READY-срезов и каждый
-BLOCKED с владельцем. Остановись и жди подтверждения разработчика.
+Если backend взят из референса, перед кодом верни BACKEND CONTRACT GIVEN /
+QUESTIONS / BLOCKERS / PLAN по всем функциям и НУЖНА ПРОВЕРКА КОНТРАКТА
+BACKEND. Остановись. После ответа разработчика обнови документы и верни
+НУЖНА ПРОВЕРКА ПЛАНА, короткий список READY-срезов и каждый BLOCKED с
+владельцем. Для остальных приложений верни НУЖНА ПРОВЕРКА ПЛАНА сразу.
 ```
 
 ## 2. Безопасный каркас
@@ -137,14 +164,16 @@ BLOCKED с владельцем. Остановись и жди подтверж
 
 1. Не расширяй scope и не начинай следующий срез.
 2. Повтори доказанный путь View → ViewModel → use case → repository → client.
-3. Используй только method/schema/auth/hook, записанные в Integration Plan.
+3. Используй только method/schema/auth/hook, записанные в Integration Plan
+   и, если есть, подтверждённые в BackendContract.md.
    Если они неполны или код расходится с источником — поставь BLOCKED и
    останови этот срез; не угадывай.
 4. Реализуй loading/content/empty/error/offline, immediate spinner и блокировку
    double tap. Не превращай timeout/pending в success.
 5. Используй готовые platform contracts; не копируй их внутреннюю логику в app.
 6. Проведи contract smoke по обезличенному production-shape fixture/schema и
-   перечисли обязательные поля, которые дошли до UI.
+   перечисли обязательные поля, которые дошли до UI. Сборка и fixture не
+   доказывают интеграцию с backend.
 7. Собери Debug/Release и пройди безопасный fixture flow.
 8. Обнови только строки этого среза в Integration Plan.
 

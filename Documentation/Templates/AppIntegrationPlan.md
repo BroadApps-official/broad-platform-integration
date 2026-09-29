@@ -17,6 +17,7 @@
 | Platform documentation commit |  |
 | Compatibility `platform_set` |  |
 | Legacy source / package reference |  |
+| Backend contract (если backend из референса) | `Documentation/BackendContract.md` / `N/A` |
 | Текущий stage |  |
 | Последний подтверждённый checkpoint |  |
 | Ссылка на source requirements |  |

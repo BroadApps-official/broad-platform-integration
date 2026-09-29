@@ -39,6 +39,17 @@
   по platform template. Неизвестный экран, endpoint, backend hook или правило
   исходника получает `BLOCKED`; агент не придумывает его и не выдаёт fixture за
   production flow. Platform-owned AgentChecks не хранят этот app-specific план.
+- Если backend нового приложения уже работает в референсе, следуй
+  `Documentation/AgentPreflight.md` и `Documentation/AppCreationWorkflow.md`:
+  читай референс без правок, сохрани commit SHA, подтверди контракт с backend
+  owner и создай `Documentation/BackendContract.md` в host app до кода.
+  Поведение реализуй через адаптеры платформы, без старой архитектуры и хардкода;
+  контент и продукты бери с backend/Adapty. Чужие production URL, секреты,
+  email, checkout URL, SKU и персональные данные автоматически не копируй. Адрес backend
+  нового приложения подтверждается отдельно; неизвестное — `BLOCKED` и вопрос.
+  `TEMPORARY` допускает только выбранные разработчиком данные Adapty,
+  Debug-продуктов и legal с источником и условием замены, не серверные секреты
+  или production URL. Расхождения с backend согласуй с его владельцем.
 - Для backend-каталога/RU Billing используй порядок и вопросы из
   `Examples/BroadAppTemplate/AGENTS.md`: reference остаётся read-only, а первый
   результат заканчивается `НУЖНА ПРОВЕРКА КОНТРАКТА BACKEND`, не Swift-кодом.
