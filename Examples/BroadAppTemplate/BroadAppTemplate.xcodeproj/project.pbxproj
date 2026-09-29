@@ -917,7 +917,7 @@
 			repositoryURL = "https://github.com/BroadApps-official/broad-ui-flows-ios.git";
 			requirement = {
 				kind = exactVersion;
-				version = 6.4.0;
+				version = 6.5.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

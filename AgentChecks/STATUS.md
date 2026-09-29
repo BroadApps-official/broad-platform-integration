@@ -1,5 +1,15 @@
 # Последняя подтверждённая проверка платформы
 
+## Токен-пейвол на английском, правила токенов и готового backend — набор 6.5.0, 29 сентября 2026
+
+BroadUIFlows 6.5.0 (`a9caba1`) опубликован тегом; module gate прошёл на том же коде,
+тег меняет только метки версии. Core 3.0.0, Extensions 1.0.1, Monetization 5.2.1 и
+RU Billing 1.0.1 сохраняются. Три lockfile указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore и RU-платёж не выполнялись.
+
 ## Спецоффер — один продукт — набор 6.4.0, 28 сентября 2026
 
 BroadUIFlows 6.4.0 (`432d557`) и BroadMonetization 5.2.1 (`19bb982`) опубликованы

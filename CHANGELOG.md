@@ -3,7 +3,14 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
-## Unreleased — 2026-09-29
+## 6.5.0 — 2026-09-29
+
+- BroadUIFlows 6.5.0: английские тексты токен-пейвола (`BroadTokenPaywallCopy.english`
+  / `.standard`), задержка крестика `BroadTokenPaywallConfiguration.closeDelay`,
+  автоматическая сверка баланса без уведомления. Каталог, манифест, оба примера и три
+  `Package.resolved` указывают на релиз. Core 3.0.0, Extensions 1.0.1,
+  Monetization 5.2.1 и RU Billing 1.0.1 сохраняются.
+
 
 ### Documentation / Rules
 

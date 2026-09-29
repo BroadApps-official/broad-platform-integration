@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
       "state" : {
-        "revision" : "432d5575df8646308014cfcf3e61bde1e3dbd641",
-        "version" : "6.4.0"
+        "revision" : "a9caba1121b701e34e4b65793e885054c85a471f",
+        "version" : "6.5.0"
       }
     },
     {
