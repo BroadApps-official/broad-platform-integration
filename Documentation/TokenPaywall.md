@@ -50,6 +50,11 @@ placement .tokens
 ```
 
 Стандартный Adapty adapter пробует token/tokens и не подменяет продукты `main`.
+В host app для Debug подключите `TokenPurchaseManager` к
+`LocalStoreKitPurchaseRepository` и добавьте consumable-продукты placement `tokens`
+в локальный `.storekit` с ценами App Store; в Release покупка идёт через Adapty.
+То же Debug-подключение нужно подписочным путям через
+`PurchaseSelectedProductUseCase`.
 Ниже описана защитная обработка legacy/custom payload в UI и fixture.
 Token ViewModel принимает такой payload только когда requested context остался
 `.tokens`, origin содержит typed fallback, а **все** продукты резервного

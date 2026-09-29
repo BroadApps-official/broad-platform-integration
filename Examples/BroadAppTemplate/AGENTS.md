@@ -34,6 +34,8 @@ build phase. Подробности: `Documentation/AccountRecovery.md` плат
 
 ## Монетизация токенов
 
+В Debug через `.storekit` покупаются все продукты Adapty с ценами App Store (подписки, спецоффер, consumable-токены из `tokens`): `LocalStoreKitPurchaseRepository` подключите к `PurchaseSelectedProductUseCase` и `TokenPurchaseManager`, каждый тип проверьте покупкой из Xcode с обновлением доступа/баланса; отказ backend сообщите с кодом ответа без локального зачисления; в Release — Adapty.
+
 Нехватка токенов в любом действии и тап по балансу сразу открывают пейвол:
 без подписки — подписочный (обычно `pro_icon`), с подпиской — `tokens` через
 `BroadTokenPaywallHost`; алерт вместо пейвола запрещён. После покупки обновите
@@ -46,7 +48,7 @@ build phase. Подробности: `Documentation/AccountRecovery.md` плат
   агента, который пишет app-side код.
 - Не копируй production base URL, Bearer token, API key, email, checkout URL,
   SKU или персональные данные из другого приложения.
-- Не выполняй настоящий purchase, restore, RU checkout или cancellation.
+- Не выполняй покупку за реальные деньги, restore, RU checkout или cancellation.
 - Не начинай Swift-изменения, пока backend-раздел
   `Documentation/AppIntegrationPlan.md` не заполнен и неизвестные значения не
   отмечены `BLOCKED`.
