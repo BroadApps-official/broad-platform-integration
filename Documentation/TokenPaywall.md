@@ -63,6 +63,11 @@ Token ViewModel принимает такой payload только когда re
 flow. Строки принятого каталога не сортируются и не дедуплицируются. Купить можно
 только consumable с валидной числовой ценой.
 
+Product ID пакета в каталоге backend совпадает с продуктом Adapty/App Store символ
+в символ, с регистром. Иначе backend отвечает `422` (`.rejected`): покупка прошла,
+токены не начислены. Приложение ID не нормализует и не подбирает по цене —
+каталог сводят аккаунт-менеджер и backend.
+
 Баланс меняется только после `.credited` или `.alreadyCredited` от backend.
 `pending`, cancellation, provider failure, offline и backend error не меняют
 баланс и не выдают premium. Безопасный retry сначала вызывает
