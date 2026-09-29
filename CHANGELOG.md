@@ -3,6 +3,16 @@
 Все заметные изменения BroadApps iOS Platform фиксируются здесь вместе с
 объяснением причин, проверок и границ каждого platform set.
 
+## Unreleased
+
+- Правило подписки в настройках: при покупках через Adapty/App Store нет
+  «Cancel subscription», системного экрана и веб-страницы подписок App Store;
+  «Get Pro», статус подписки и «Manage subscription» открывают пейвол. Добавлено в
+  `AGENTS.md`, `AgentKit/rules.md` и `Examples/BroadAppTemplate/AGENTS.md`.
+  BroadUIFlows Unreleased: `BroadSettingsHost(showPaywall:)`,
+  `BroadSettingsScreen.showPaywall()`; `manageSubscription()` открывает тот же
+  пейвол вместо страницы App Store. Набор `6.5.0` не меняется до выпуска.
+
 ## 6.5.0 — 2026-09-29
 
 - BroadUIFlows 6.5.0: английские тексты токен-пейвола (`BroadTokenPaywallCopy.english`
