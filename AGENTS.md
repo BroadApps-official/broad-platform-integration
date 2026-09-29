@@ -92,6 +92,11 @@
   не заменяются fallback. Продукты/variation сохраняют свой placement.
 - Token placement пробует настроенное имя и известный token/tokens alias;
   оба написания исключены из подписочного fallback.
+- Нехватка токенов в любом действии и тап по балансу сразу открывают пейвол, без
+  алерта: без подписки — подписочный (обычно `pro_icon`), с подпиской — `tokens`
+  через `BroadTokenPaywallHost`. После покупки перечитай серверный
+  `TokenBalanceSnapshot`, без автоповтора действия; если backend требует
+  подписку для токенов, синхронизируй её после покупки, Restore и при запуске.
 - Текущий Adapty payload может включить `special_offer` и explicit
   `ru_pay=true`, даже если SDK прозрачно использовал provider cache
   или Dashboard fallback. Paywall из persistent cache BroadMonetization не
