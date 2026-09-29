@@ -9,9 +9,10 @@
   «Cancel subscription», системного экрана и веб-страницы подписок App Store;
   «Get Pro», статус подписки и «Manage subscription» открывают пейвол. Добавлено в
   `AGENTS.md`, `AgentKit/rules.md` и `Examples/BroadAppTemplate/AGENTS.md`.
-  BroadUIFlows Unreleased: `BroadSettingsHost(showPaywall:)`,
+  BroadUIFlows Unreleased (MAJOR): обязательный `BroadSettingsHost(showPaywall:)`,
   `BroadSettingsScreen.showPaywall()`; `manageSubscription()` открывает тот же
-  пейвол вместо страницы App Store. Набор `6.5.0` не меняется до выпуска.
+  пейвол через общий tap gate вместо страницы App Store. Набор `6.5.0` не меняется
+  до выпуска.
 
 ## 6.5.0 — 2026-09-29
 

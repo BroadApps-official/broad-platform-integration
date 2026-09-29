@@ -174,8 +174,9 @@ ID совпадают с Adapty символ в символ. `tokens` и `speci
 - Подписка через Adapty/App Store: «Cancel subscription», системный экран и
   веб-страница подписок App Store не показываются, даже если нарисованы в Figma.
   «Get Pro», статус подписки и «Manage subscription» открывают пейвол
-  (`BroadSettingsHost(showPaywall:)` — BroadUIFlows после 6.5.0; на 6.5.0 строка
-  вызывает пейвол приложения сама). Отмена — только в RU Billing через backend.
+  (`BroadSettingsHost(showPaywall:)` — BroadUIFlows после 6.5.0, через общий tap gate).
+  В 6.5.0 `manageSubscription()` ведёт в App Store — строки подписки к нему не
+  подключай. Отмена — только в RU Billing через backend.
 - Алерт обновления на главном табе: версия App Store по bundle id, базовая версия в
   `UserDefaults`, числовое сравнение, без сети — без алерта (`.broadAppUpdateAlert`).
 - Письмо в поддержку — строго по шаблону `SupportEmail.md` платформы, без строки `Bundle`.

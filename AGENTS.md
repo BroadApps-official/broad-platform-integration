@@ -93,8 +93,10 @@
   «Cancel subscription», не отменяют подписку и не открывают системный экран или
   веб-страницу подписок App Store, даже если это нарисовано в Figma. «Get Pro»,
   статус подписки и нарисованная «Manage subscription» открывают пейвол приложения:
-  `BroadSettingsHost(showPaywall:)` (BroadUIFlows Unreleased; до выпуска — пейвол
-  приложения напрямую из строки). Отмена есть только в RU Billing через backend.
+  `BroadSettingsHost(showPaywall:)` (BroadUIFlows Unreleased). В 6.5.0 обработчика
+  нет, а `manageSubscription()` ведёт в App Store: строки подписки к нему не
+  подключай, нужен выпуск с `showPaywall` — так пейвол проходит общий tap gate
+  хоста. Отмена есть только в RU Billing через backend.
 - Конкретные Adapty placement ID задаёт host app; обычные подписочные placements
   используют резерв `main`, а `tokens` и `special_offer` сохраняют свои продукты.
 - Не фильтруй и не меняй данные продуктов Adapty. Экран показывает подписки от

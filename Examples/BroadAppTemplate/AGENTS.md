@@ -22,8 +22,9 @@
 «Cancel subscription», не отменяет подписку и не открывает системный экран или
 веб-страницу подписок App Store, даже если это есть в Figma. «Get Pro», статус
 подписки и «Manage subscription» открывают пейвол приложения (обычно placement
-`settings`) через `BroadSettingsHost(showPaywall:)` (BroadUIFlows после 6.5.0; на
-6.5.0 строка вызывает пейвол приложения сама). Отмена подписки существует
+`settings`) через `BroadSettingsHost(showPaywall:)` (BroadUIFlows после 6.5.0, через
+общий tap gate). В 6.5.0 `manageSubscription()` ведёт в App Store — строки подписки
+к нему не подключайте. Отмена подписки существует
 только в RU Billing и идёт через backend.
 
 ## Обязательная декларация функций аккаунта
