@@ -1,5 +1,19 @@
 # Последняя подтверждённая проверка платформы
 
+## Настройки открывают пейвол, названия тарифов, предзагрузка токенов — набор 7.0.0, 30 сентября 2026
+
+BroadUIFlows 7.0.0 (`7d6b1d0`) и BroadRUBilling 1.0.2 (`4c1fd6f`) опубликованы тегами;
+module gate обоих прошёл до тега, GitHub Actions — зелёные. Единственное ломающее
+изменение UIFlows — обязательный `showPaywall` у `BroadSettingsHost`; остальные
+сигнатуры 6.x закреплены compile probe, поведение токен-каталога и названий — contract
+probes. Приложения на 6.5.0 без правок падают только на `showPaywall` и собираются после
+одной строки; оба шаблона собираются без правок. Core 3.0.0, Extensions 1.0.1 и
+Monetization 5.2.1 сохраняются. Три lockfile указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore и RU-платёж не выполнялись.
+
 ## Токен-пейвол на английском, правила токенов и готового backend — набор 6.5.0, 29 сентября 2026
 
 BroadUIFlows 6.5.0 (`a9caba1`) опубликован тегом; module gate прошёл на том же коде,
