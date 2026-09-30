@@ -1,5 +1,21 @@
 # Последняя подтверждённая проверка платформы
 
+## Настройки без ссылки App Store, окно «нет почты», ATT после перехода — набор 7.1.0, 30 сентября 2026
+
+BroadUIFlows 7.1.0 (`c7eac7f`) опубликован тегом; module gate прошёл до тега, GitHub
+Actions (Module quality и Release) — зелёные. MINOR: ссылка App Store в настройках
+необязательна, окно «Почта недоступна» встроено в `BroadSettingsHost`, задержка ATT
+считается после перехода к первому слайду. Сигнатуры 7.0.0, включая ссылки `Type.init`
+без явного типа, закреплены compile probe; поведение — contract probes и Gallery на
+iPhone Simulator. Приложение на 7.0.0 и шаблон (Debug и Release) собрались без правок,
+приложение на 6.5.0 — только с однострочной миграцией `showPaywall` из 7.0.0. Core 3.0.0,
+Extensions 1.0.1, Monetization 5.2.1 и RU Billing 1.0.2 сохраняются; три lockfile
+указывают на опубликованные версии.
+
+`BROAD_PLATFORM_VERIFY_CANDIDATE=1 bash Scripts/agent_gate.sh` и после перевода
+`Compatibility/current.yml` в `passed` обычный `bash Scripts/agent_gate.sh`
+проверяют набор. Реальные purchase, restore и RU-платёж не выполнялись.
+
 ## Настройки открывают пейвол, названия тарифов, предзагрузка токенов — набор 7.0.0, 30 сентября 2026
 
 BroadUIFlows 7.0.0 (`7d6b1d0`) и BroadRUBilling 1.0.2 (`4c1fd6f`) опубликованы тегами;

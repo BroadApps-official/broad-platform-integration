@@ -16,7 +16,7 @@ modules:
   BroadUIFlows: "7.1.0"
   BroadRUBilling: "1.0.2"
 verification:
-  status: pending
+  status: passed
   command: "bash Scripts/agent_gate.sh"
   checked_at: "2026-09-30"
 module_verification:
@@ -46,7 +46,7 @@ module_verification:
     module_gate: passed
     github_actions: passed
     release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/7.1.0"
-    integration_gate: pending
+    integration_gate: passed
     checked_at: "2026-09-30"
   BroadRUBilling:
     version: "1.0.2"
