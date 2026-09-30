@@ -118,7 +118,9 @@ onboarding или RU Billing, перечитай документацию пла
 
 ## Onboarding, ATT, Rate Us
 
-- ATT — только после появления первого слайда, никогда в loader.
+- ATT — только после появления первого слайда, никогда в loader. С BroadUIFlows 7.1.0
+  задержка считается от конца перехода к слайду; на 7.0.0 и раньше — не меньше
+  длительности перехода + 400 мс.
 - Rate Us и review API запрещены внутри onboarding.
 - Количество слайдов задаёт только `OnboardingConfiguration.pages`; неясно — спроси.
 
@@ -190,6 +192,10 @@ ID совпадают с Adapty символ в символ. `tokens` и `speci
 - Алерт обновления на главном табе: версия App Store по bundle id, базовая версия в
   `UserDefaults`, числовое сравнение, без сети — без алерта (`.broadAppUpdateAlert`).
 - Письмо в поддержку — строго по шаблону `SupportEmail.md` платформы, без строки `Bundle`.
+  Без системной почты окно «Скопировать адрес» / «Закрыть» показывает `BroadSettingsHost`
+  (BroadUIFlows 7.1.0+); своё не дублируй.
+- Нет App Store ID — `BroadSettingsConfiguration.withAppStoreLink(userID:appStoreLink: nil, …)` (7.1.0+):
+  «Поделиться» и «Оценить» скрыты; чужую ссылку или выдуманный ID не подставляй.
 
 ## RU Billing (если подключён)
 

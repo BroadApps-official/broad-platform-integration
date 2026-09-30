@@ -1,5 +1,5 @@
 {
-  "originHash" : "e025c0c7a5eae7c157833559e247012353a6933678ea3b8d8513171e30815400",
+  "originHash" : "7ea94a130e69ba5d6c60db3f9c07fb1f75157cf445e85e6adf2122344e87d505",
   "pins" : [
     {
       "identity" : "adaptysdk-ios",
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/BroadApps-official/broad-ui-flows-ios.git",
       "state" : {
-        "revision" : "7d6b1d0e121b9c0d8b3ea4025c7f826c4dff30e3",
-        "version" : "7.0.0"
+        "revision" : "c7eac7fb0624a6a31e7e35006dc6e69a6fafa47f",
+        "version" : "7.1.0"
       }
     },
     {

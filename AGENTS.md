@@ -74,9 +74,11 @@
   его останавливает. `UILaunchScreen` в Info.plist показывает ту же скруглённую иконку
   (`UIImageName`) на фоне сплеша (`UIColorName`, `UIImageRespectsSafeAreaInsets = false`)
   в той же точке и того же размера, чтобы старт не прыгал. Запуск искусственно не
-  задерживается. На сплеше нет ATT, пейвола и Rate Us; при анимированном переходе
-  `launch → onboarding` задержка `.afterFirstSlide(delay:)` не меньше длительности
-  перехода + 400 мс, иначе запрос ATT выскакивает поверх сплеша.
+  задерживается. На сплеше нет ATT, пейвола и Rate Us. С BroadUIFlows 7.1.0 задержка
+  `.afterFirstSlide(delay:)` считается от конца перехода к первому слайду — обычно
+  хватает 1 с. На 7.0.0 и раньше при анимированном переходе `launch → onboarding`
+  задержка не меньше длительности перехода + 400 мс, иначе запрос ATT выскакивает
+  поверх сплеша.
 - Rate Us разрешён в приложении, но запрещён внутри onboarding.
 - `OnboardingConfiguration.pages` — единственный источник количества
   onboarding-слайдов. Три страницы `BroadAppTemplate` являются примером, а не
@@ -106,6 +108,12 @@
   `showPaywall`; `screen.showPaywall()` и `screen.manageSubscription()` проходят общий
   tap gate хоста). На 6.x `manageSubscription()` ведёт в App Store — обнови UIFlows
   до 7.0.0. Отмена есть только в RU Billing через backend.
+- Ссылка App Store в настройках необязательна (BroadUIFlows 7.1.0+): пока у
+  приложения нет App Store ID, передавай `BroadSettingsConfiguration.withAppStoreLink(userID:appStoreLink: nil, …)`
+  — «Поделиться» и «Оценить» скрыты (`screen.canShareApp`, `screen.canRateApp`).
+  Ссылку другого приложения и выдуманный ID не подставляй. Без системной почты
+  `BroadSettingsHost` сам показывает окно «Скопировать адрес» / «Закрыть» по
+  `SupportEmail.md`; своё такое окно в приложении не дублируй.
 - Конкретные Adapty placement ID задаёт host app; обычные подписочные placements
   используют резерв `main`, а `tokens` и `special_offer` сохраняют свои продукты.
 - Не фильтруй и не меняй данные продуктов Adapty. Экран показывает подписки от

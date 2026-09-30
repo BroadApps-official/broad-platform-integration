@@ -1,5 +1,5 @@
 schema: 1
-platform_set: "7.0.0"
+platform_set: "7.1.0"
 ios: "17.0"
 swift_language_mode: "5"
 swift_tools: "6.0"
@@ -13,10 +13,10 @@ modules:
   BroadCore: "3.0.0"
   BroadExtensions: "1.0.1"
   BroadMonetization: "5.2.1"
-  BroadUIFlows: "7.0.0"
+  BroadUIFlows: "7.1.0"
   BroadRUBilling: "1.0.2"
 verification:
-  status: passed
+  status: pending
   command: "bash Scripts/agent_gate.sh"
   checked_at: "2026-09-30"
 module_verification:
@@ -42,11 +42,11 @@ module_verification:
     integration_gate: passed
     checked_at: "2026-09-28"
   BroadUIFlows:
-    version: "7.0.0"
+    version: "7.1.0"
     module_gate: passed
     github_actions: passed
-    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/7.0.0"
-    integration_gate: passed
+    release: "https://github.com/BroadApps-official/broad-ui-flows-ios/releases/tag/7.1.0"
+    integration_gate: pending
     checked_at: "2026-09-30"
   BroadRUBilling:
     version: "1.0.2"
