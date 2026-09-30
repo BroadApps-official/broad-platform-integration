@@ -5,6 +5,13 @@
 
 ## Unreleased
 
+- Название тарифа больше не берётся из App Store: аккаунт-менеджеры пишут в имя продукта
+  его ID, и в проде StoreKit `displayName`/`localizedTitle` — это ID. Подписка называется
+  по периоду («Yearly», «Monthly», «Weekly»), пакет токенов — «N Tokens» (N из
+  backend-каталога, без него — ведущее число из product ID, только для надписи).
+  BroadUIFlows Unreleased: `plan.name` и `package.name`. Обновлены `AGENTS.md`,
+  `AgentKit/rules.md`, skill нового приложения, `Documentation/TokenPaywall.md` и
+  `Examples/BroadAppTemplate/AGENTS.md`.
 - Правило подписки в настройках: при покупках через Adapty/App Store нет
   «Cancel subscription», системного экрана и веб-страницы подписок App Store;
   «Get Pro», статус подписки и «Manage subscription» открывают пейвол. Добавлено в

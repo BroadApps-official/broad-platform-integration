@@ -30,10 +30,14 @@ consumable-пакеты. Они визуально используют те ж�
 button, что subscription paywall, но не импортируют его checkout, restore или
 premium completion.
 
-На экране название пакета берётся из отображаемого имени StoreKit (в Debug —
-`displayName` локализации `.storekit`), а количество токенов — из каталога
-backend (credits по product ID) или из полного названия продукта; число из
-product ID не извлекается, в том числе регулярным выражением.
+Название пакета формирует приложение, а не App Store: аккаунт-менеджер пишет в
+имя продукта его ID, и в проде `localizedTitle` — это ID. Готовое название —
+`package.name` (BroadUIFlows, Unreleased): «N Tokens», где N из каталога backend
+(credits по product ID), а если его там нет — ведущее число из product ID
+(`50_Tokens_9.99` → 50). Число из ID — только для надписи: зачисление и баланс
+по-прежнему только из подтверждения backend. `package.title` (имя из StoreKit) на
+экран не выводится. Подписки на обычном пейволе так же называются по периоду —
+`plan.name`.
 
 Экран по Figma рисуется внутри `BroadTokenPaywallHost` (BroadUIFlows 6.2.0): хост
 ведёт загрузку, выбор, покупку и зачисление, баланс и безопасную проверку
