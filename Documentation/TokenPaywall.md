@@ -32,7 +32,7 @@ premium completion.
 
 Название пакета формирует приложение, а не App Store: аккаунт-менеджер пишет в
 имя продукта его ID, и в проде `localizedTitle` — это ID. Готовое название —
-`package.name` (BroadUIFlows, Unreleased): «N Tokens», где N из каталога backend
+`package.name` (BroadUIFlows 7.0.0+; со встроенными текстами включено, в своих — параметр `tokenName`): «N Tokens», где N из каталога backend
 (credits по product ID), а если его там нет — ведущее число из product ID
 (`50_Tokens_9.99` → 50). Число из ID — только для надписи: зачисление и баланс
 по-прежнему только из подтверждения backend. `package.title` (имя из StoreKit) на
@@ -48,7 +48,7 @@ premium completion.
 Токен-пейвол, как и пейвол с кнопки PRO, открывается сразу с пакетами. Пока
 виден экран с балансом, вызовите `BroadPaywallPreloader.preload(.tokens)`, а при
 открытии передайте `preloader.take(.tokens)` как `initialPayload` в
-`BroadTokenPaywallViewModel` (BroadUIFlows, Unreleased). Устаревший или
+`BroadTokenPaywallViewModel` (BroadUIFlows 7.0.0+). Устаревший или
 невалидный payload даёт обычную загрузку; показ засчитывается при появлении
 экрана. После подтверждённой покупки или Restore — `discardAll()`.
 

@@ -69,7 +69,8 @@ onboarding или RU Billing, перечитай документацию пла
   продукта («Yearly», «Monthly», «Weekly»); пакет токенов — «N Tokens», где N из
   каталога backend (credits по product ID), а без него — ведущее число из product ID
   (`50_Tokens_9.99` → 50) только для надписи, не для зачисления и баланса. На
-  платформе — готовые `plan.name` и `package.name` (UIFlows, Unreleased).
+  платформе — готовые `plan.name` и `package.name` (UIFlows 7.0.0+; со своими
+  текстами включи их параметрами `planNames`/`tokenName`).
   `displayName` в Debug `.storekit` заполни как в App Store, без цены.
 - Каждый путь покупки в Debug использует `LocalStoreKitPurchaseRepository`:
   подписки основных пейволов и спецоффера через `PurchaseSelectedProductUseCase`,
@@ -173,8 +174,7 @@ ID совпадают с Adapty символ в символ. `tokens` и `speci
   (`BroadPaywallPreloader`), чтобы шторка выезжала сразу с тарифами. Токен-пейвол
   (если в приложении есть токены) — так же: `preload(.tokens)`, пока виден экран с
   балансом, и `initialPayload: preloader.take(.tokens)` в
-  `BroadTokenPaywallViewModel` — экран открывается сразу с пакетами (UIFlows,
-  Unreleased).
+  `BroadTokenPaywallViewModel` — экран открывается сразу с пакетами (UIFlows 7.0.0+).
 - Purchase/restore не открывают premium до подтверждения доступа. Offline/timeout не
   превращаются в success/inactive.
 
@@ -184,9 +184,9 @@ ID совпадают с Adapty символ в символ. `tokens` и `speci
 - Подписка через Adapty/App Store: «Cancel subscription», системный экран и
   веб-страница подписок App Store не показываются, даже если нарисованы в Figma.
   «Get Pro», статус подписки и «Manage subscription» открывают пейвол
-  (`BroadSettingsHost(showPaywall:)` — BroadUIFlows после 6.5.0, через общий tap gate).
-  В 6.5.0 `manageSubscription()` ведёт в App Store — строки подписки к нему не
-  подключай. Отмена — только в RU Billing через backend.
+  (`BroadSettingsHost(configuration:showPaywall:…)` — BroadUIFlows 7.0.0+, обязательный
+  `showPaywall`, через общий tap gate). На 6.x `manageSubscription()` ведёт в App Store —
+  обнови UIFlows. Отмена — только в RU Billing через backend.
 - Алерт обновления на главном табе: версия App Store по bundle id, базовая версия в
   `UserDefaults`, числовое сравнение, без сети — без алерта (`.broadAppUpdateAlert`).
 - Письмо в поддержку — строго по шаблону `SupportEmail.md` платформы, без строки `Bundle`.

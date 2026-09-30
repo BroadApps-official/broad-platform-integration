@@ -102,10 +102,10 @@
   «Cancel subscription», не отменяют подписку и не открывают системный экран или
   веб-страницу подписок App Store, даже если это нарисовано в Figma. «Get Pro»,
   статус подписки и нарисованная «Manage subscription» открывают пейвол приложения:
-  `BroadSettingsHost(showPaywall:)` (BroadUIFlows Unreleased). В 6.5.0 обработчика
-  нет, а `manageSubscription()` ведёт в App Store: строки подписки к нему не
-  подключай, нужен выпуск с `showPaywall` — так пейвол проходит общий tap gate
-  хоста. Отмена есть только в RU Billing через backend.
+  `BroadSettingsHost(configuration:showPaywall:…)` (BroadUIFlows 7.0.0+, обязательный
+  `showPaywall`; `screen.showPaywall()` и `screen.manageSubscription()` проходят общий
+  tap gate хоста). На 6.x `manageSubscription()` ведёт в App Store — обнови UIFlows
+  до 7.0.0. Отмена есть только в RU Billing через backend.
 - Конкретные Adapty placement ID задаёт host app; обычные подписочные placements
   используют резерв `main`, а `tokens` и `special_offer` сохраняют свои продукты.
 - Не фильтруй и не меняй данные продуктов Adapty. Экран показывает подписки от
@@ -129,7 +129,7 @@
   `BroadPaywallPreloader` и открываются сразу с продуктами: для токенов —
   `preload(.tokens)`, пока виден экран с балансом, и
   `initialPayload: preloader.take(.tokens)` в `BroadTokenPaywallViewModel`
-  (UIFlows, Unreleased). Loader на пустом токен-экране после тапа — дефект.
+  (UIFlows 7.0.0+). Loader на пустом токен-экране после тапа — дефект.
 - Текущий Adapty payload может включить `special_offer` и explicit
   `ru_pay=true`, даже если SDK прозрачно использовал provider cache
   или Dashboard fallback. Paywall из persistent cache BroadMonetization не
@@ -226,7 +226,7 @@
 
 - В Debug через `.storekit` покупаются все продукты Adapty с ценами App Store (подписки, спецоффер, consumable-токены из `tokens`): `LocalStoreKitPurchaseRepository` подключён к `PurchaseSelectedProductUseCase` и `TokenPurchaseManager`; агент сам покупает каждый тип из Xcode, проверяет доступ/баланс, а при отказе backend сообщает код ответа и не имитирует зачисление; в Release — Adapty.
 - На временных данных `TEMPORARY` экраны показывают реальные цену и количество из Adapty/StoreKit и backend, а не примеры Figma.
-- Название тарифа формирует приложение, а не App Store: аккаунт-менеджер пишет в имя продукта его ID, поэтому имя из StoreKit (`displayName`/`localizedTitle`, `plan.title`, `package.title`) на экран не выводится. Подписка называется по периоду из данных продукта («Yearly», «Monthly», «Weekly»); пакет — «N Tokens», где N из backend-каталога, а без него — ведущее число из product ID (`50_Tokens_9.99` → 50), только для надписи, не для зачисления. На платформе — `plan.name` и `package.name` (UIFlows, Unreleased).
+- Название тарифа формирует приложение, а не App Store: аккаунт-менеджер пишет в имя продукта его ID, поэтому имя из StoreKit (`displayName`/`localizedTitle`, `plan.title`, `package.title`) на экран не выводится. Подписка называется по периоду из данных продукта («Yearly», «Monthly», «Weekly»); пакет — «N Tokens», где N из backend-каталога, а без него — ведущее число из product ID (`50_Tokens_9.99` → 50), только для надписи, не для зачисления. На платформе — `plan.name` и `package.name` (UIFlows 7.0.0+; включены со встроенными текстами, в своих — параметрами `planNames`/`tokenName`).
 - Не выполнять покупку за реальные деньги, restore или RU-платёж.
 - Не требовать StoreKit sandbox: он недоступен по правилам компании.
 - Не добавлять обязательную screen-reader или отдельную device accessibility

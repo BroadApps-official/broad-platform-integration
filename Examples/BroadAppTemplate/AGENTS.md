@@ -22,9 +22,8 @@
 «Cancel subscription», не отменяет подписку и не открывает системный экран или
 веб-страницу подписок App Store, даже если это есть в Figma. «Get Pro», статус
 подписки и «Manage subscription» открывают пейвол приложения (обычно placement
-`settings`) через `BroadSettingsHost(showPaywall:)` (BroadUIFlows после 6.5.0, через
-общий tap gate). В 6.5.0 `manageSubscription()` ведёт в App Store — строки подписки
-к нему не подключайте. Отмена подписки существует
+`settings`) через обязательный `showPaywall` у `BroadSettingsHost` (BroadUIFlows
+7.0.0+, через общий tap gate). Отмена подписки существует
 только в RU Billing и идёт через backend.
 
 ## Обязательная декларация функций аккаунта
@@ -59,7 +58,7 @@ build phase. Подробности: `Documentation/AccountRecovery.md` плат
 
 В Debug через `.storekit` покупаются все продукты Adapty с ценами App Store (подписки, спецоффер, consumable-токены из `tokens`): `LocalStoreKitPurchaseRepository` подключите к `PurchaseSelectedProductUseCase` и `TokenPurchaseManager`, каждый тип проверьте покупкой из Xcode с обновлением доступа/баланса; отказ backend сообщите с кодом ответа без локального зачисления; в Release — Adapty.
 
-На временных данных `TEMPORARY` показывайте реальные цену и количество из Adapty/StoreKit и backend, а не примеры Figma. Название тарифа формирует приложение: менеджер пишет в имя продукта в App Store его ID, поэтому `plan.title`/`package.title` (имя из StoreKit) не показывайте. Подписка — по периоду («Yearly», «Monthly», «Weekly»), пакет — «N Tokens»: N из backend-каталога, а без него — ведущее число из product ID, только для надписи. На платформе — `plan.name` и `package.name` (UIFlows, Unreleased).
+На временных данных `TEMPORARY` показывайте реальные цену и количество из Adapty/StoreKit и backend, а не примеры Figma. Название тарифа формирует приложение: менеджер пишет в имя продукта в App Store его ID, поэтому `plan.title`/`package.title` (имя из StoreKit) не показывайте. Подписка — по периоду («Yearly», «Monthly», «Weekly»), пакет — «N Tokens»: N из backend-каталога, а без него — ведущее число из product ID, только для надписи. На платформе — `plan.name` и `package.name` (UIFlows 7.0.0+).
 
 Нехватка токенов в любом действии и тап по балансу сразу открывают пейвол:
 без подписки — подписочный (обычно `pro_icon`), с подпиской — `tokens` через
