@@ -63,12 +63,14 @@ onboarding или RU Billing, перечитай документацию пла
   товаров, чем в Adapty, или в логе DEBUG есть `missing vendor product IDs` —
   сначала допиши продукты в `.storekit`. Проверка:
   `ruby <skills>/broadapps-new-app/scripts/check_debug_storekit.rb . --expect <ID>`.
-- Название на экране бери из отображаемого имени StoreKit (`displayName` локализации
-  в Debug `.storekit`). Заполни его у каждого продукта как в App Store; если
-  настоящего имени пока нет — по образцу остальных продуктов похожего приложения.
-  Пустое имя даёт заглушку «Token pack». Количество токенов для экрана бери из
-  каталога backend (credits по product ID) или из полного названия продукта;
-  не извлекай число из product ID, в том числе регулярным выражением.
+- Название тарифа формирует приложение, а не App Store: аккаунт-менеджер пишет в имя
+  продукта его ID, и в проде `displayName`/`localizedTitle` — это ID. Имя из StoreKit
+  (`plan.title`, `package.title`) не показывай. Подписка — по периоду из данных
+  продукта («Yearly», «Monthly», «Weekly»); пакет токенов — «N Tokens», где N из
+  каталога backend (credits по product ID), а без него — ведущее число из product ID
+  (`50_Tokens_9.99` → 50) только для надписи, не для зачисления и баланса. На
+  платформе — готовые `plan.name` и `package.name` (UIFlows, Unreleased).
+  `displayName` в Debug `.storekit` заполни как в App Store, без цены.
 - Каждый путь покупки в Debug использует `LocalStoreKitPurchaseRepository`:
   подписки основных пейволов и спецоффера через `PurchaseSelectedProductUseCase`,
   пакеты токенов через `TokenPurchaseManager`. В Release покупка идёт через Adapty.

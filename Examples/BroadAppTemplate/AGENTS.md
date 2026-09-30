@@ -59,7 +59,7 @@ build phase. Подробности: `Documentation/AccountRecovery.md` плат
 
 В Debug через `.storekit` покупаются все продукты Adapty с ценами App Store (подписки, спецоффер, consumable-токены из `tokens`): `LocalStoreKitPurchaseRepository` подключите к `PurchaseSelectedProductUseCase` и `TokenPurchaseManager`, каждый тип проверьте покупкой из Xcode с обновлением доступа/баланса; отказ backend сообщите с кодом ответа без локального зачисления; в Release — Adapty.
 
-На временных данных `TEMPORARY` показывайте реальные цену, название StoreKit (`displayName` в `.storekit`) и количество из Adapty/StoreKit и backend, а не примеры Figma; все имена в `.storekit` заполните, токены берите из backend-каталога или полного названия продукта, не из его ID.
+На временных данных `TEMPORARY` показывайте реальные цену и количество из Adapty/StoreKit и backend, а не примеры Figma. Название тарифа формирует приложение: менеджер пишет в имя продукта в App Store его ID, поэтому `plan.title`/`package.title` (имя из StoreKit) не показывайте. Подписка — по периоду («Yearly», «Monthly», «Weekly»), пакет — «N Tokens»: N из backend-каталога, а без него — ведущее число из product ID, только для надписи. На платформе — `plan.name` и `package.name` (UIFlows, Unreleased).
 
 Нехватка токенов в любом действии и тап по балансу сразу открывают пейвол:
 без подписки — подписочный (обычно `pro_icon`), с подпиской — `tokens` через
