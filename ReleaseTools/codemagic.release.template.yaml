@@ -1,0 +1,78 @@
+# Fill in the placeholders before using this workflow.
+workflows:
+  broadapps-release:
+    name: BroadApps release
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: <APP_STORE_CONNECT_INTEGRATION>
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: <BUNDLE_ID>
+      vars:
+        XCODE_PROJECT: <PATH_TO_APP_XCODEPROJ>
+        XCODE_WORKSPACE: "" # Set to a workspace path when building a workspace.
+        XCODE_PODFILE: "" # Set to a Podfile path if it is not beside the workspace or project.
+        XCODE_SCHEME: <SHARED_SCHEME>
+        APP_STORE_APPLE_ID: <APP_STORE_APPLE_ID>
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Check release branch and source
+        script: |
+          set -e
+          case "$CM_BRANCH" in release/*) ;; *) echo "Expected a release/* branch" >&2; exit 1 ;; esac
+          ruby Scripts/check_release_source.rb
+      - name: Install CocoaPods dependencies
+        script: |
+          set -e
+          podfile="$XCODE_PODFILE"
+          if [ -z "$podfile" ]; then
+            if [ -n "$XCODE_WORKSPACE" ] && [ -f "$(dirname "$XCODE_WORKSPACE")/Podfile" ]; then
+              podfile="$(dirname "$XCODE_WORKSPACE")/Podfile"
+            elif [ -f "$(dirname "$XCODE_PROJECT")/Podfile" ]; then
+              podfile="$(dirname "$XCODE_PROJECT")/Podfile"
+            fi
+          fi
+          if [ -n "$podfile" ]; then
+            (cd "$(dirname "$podfile")" && pod install --deployment)
+          fi
+      - name: Resolve packages and check source again
+        script: |
+          set -e
+          if [ -n "$XCODE_WORKSPACE" ]; then
+            xcodebuild -resolvePackageDependencies -workspace "$XCODE_WORKSPACE" -scheme "$XCODE_SCHEME"
+          else
+            xcodebuild -resolvePackageDependencies -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME"
+          fi
+          ruby Scripts/check_release_source.rb
+      - name: Set up signing profiles
+        script: xcode-project use-profiles
+      - name: Increment build number
+        script: |
+          set -e
+          # The first release has no build in App Store Connect yet.
+          latest=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || echo 0)
+          case "$latest" in ''|*[!0-9]*) latest=0 ;; esac
+          (cd "$(dirname "$XCODE_PROJECT")" && agvtool new-version -all "$((latest + 1))")
+      - name: Build IPA
+        script: |
+          if [ -n "$XCODE_WORKSPACE" ]; then
+            xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+          else
+            xcode-project build-ipa --project "$XCODE_PROJECT" --scheme "$XCODE_SCHEME"
+          fi
+      - name: Check IPA before publishing
+        script: |
+          set -- build/ios/ipa/*.ipa
+          [ "$#" -eq 1 ] && [ -f "$1" ] || { echo "Expected one IPA" >&2; exit 1; }
+          ruby Scripts/check_release_artifact.rb "$1" --project "$XCODE_PROJECT"
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - ReleaseRecords/*.json
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false

@@ -5,6 +5,16 @@
 
 ## Unreleased
 
+- Инструмент релиза поддерживает `.xcworkspace` с CocoaPods и без него: выбирает
+  проект приложения, переключает пакеты BroadApps во всех проектах workspace,
+  устанавливает Pods до resolve и собирает через нужный контейнер. Установщик
+  проверяет shared-схему и добавляет универсальный шаблон Codemagic; исправлены
+  диагностика ошибок и проверка IPA для вложенного проекта. Ошибка команды
+  показывает строки `error:` (а не только итог xcodebuild) и подсказку про
+  `post_install` в Podfile для Xcode 27; заметки разработчика
+  (`Documentation/*.md`, `AGENTS.md`, `CLAUDE.md`) не копируются в релизную ветку;
+  шаблон Codemagic переживает первый релиз без build number в App Store Connect.
+  Проверено на CocoaPods (проект и workspace), обычном проекте и своём workspace.
 - Правило подписки в настройках: при покупках через Adapty/App Store нет
   «Cancel subscription», системного экрана и веб-страницы подписок App Store;
   «Get Pro», статус подписки и «Manage subscription» открывают пейвол. Добавлено в

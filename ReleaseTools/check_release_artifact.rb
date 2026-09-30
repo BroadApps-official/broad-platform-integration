@@ -5,11 +5,19 @@ require "digest"
 require "fileutils"
 require "json"
 require "open3"
+require "pathname"
 require "tmpdir"
 
 ipa = ARGV.fetch(0) { abort "Укажите путь к готовому .ipa." }
 abort "Файл .ipa не найден: #{ipa}" unless File.file?(ipa)
 app_root = File.expand_path("..", __dir__)
+arguments = ARGV.drop(1)
+project_option = ENV["XCODE_PROJECT"]
+if (index = arguments.index("--project"))
+  abort "После --project укажите путь к .xcodeproj." unless arguments[index + 1]
+  project_option = arguments[index + 1]
+  arguments.slice!(index, 2)
+end
 needles = ["github.com/" + "broadapps-official", "git@github.com:" + "broadapps-official"].map(&:b)
 failures = []
 ipa_version = nil
@@ -45,7 +53,7 @@ Dir.mktmpdir("release-ipa-") do |unpacked|
   end
 end
 
-ARGV.drop(1).each do |symbols_root|
+arguments.each do |symbols_root|
   next unless File.directory?(symbols_root)
   Dir.glob(File.join(symbols_root, "**", "*.dSYM", "**", "*"), File::FNM_DOTMATCH).each do |path|
     scan_file.call(path, path) if File.file?(path)
@@ -62,9 +70,21 @@ else
   rescue LoadError
     abort "Для проверки версии установите CocoaPods (Ruby gem xcodeproj)."
   end
-  projects = Dir.glob(File.join(app_root, "*.xcodeproj"))
-  abort "Ожидался один Xcode-проект для проверки версии IPA." unless projects.length == 1
-  project = Xcodeproj::Project.open(projects.first)
+  if project_option && !project_option.empty?
+    project_path = File.expand_path(project_option, app_root)
+    relative = Pathname.new(project_path).relative_path_from(Pathname.new(app_root)).to_s
+    abort "Xcode-проект должен быть внутри релизной ветки." if relative.start_with?("../")
+    abort "Не найден Xcode-проект: #{project_option}." unless File.file?(File.join(project_path, "project.pbxproj"))
+  else
+    projects = Dir.glob(File.join(app_root, "*.xcodeproj"))
+    abort "Передайте --project или XCODE_PROJECT для проверки версии IPA." unless projects.length == 1
+    project_path = projects.first
+  end
+  begin
+    project = Xcodeproj::Project.open(project_path)
+  rescue StandardError => e
+    abort "Не удалось открыть Xcode-проект #{project_path}: #{e.message}."
+  end
   app_targets = project.targets.select { |target| target.product_type == "com.apple.product-type.application" }
   versions = app_targets.flat_map do |target|
     target.build_configurations.map { |configuration| configuration.build_settings["MARKETING_VERSION"] }
